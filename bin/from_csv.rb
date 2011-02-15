@@ -4,11 +4,11 @@ require 'erb'
 require 'audibleturk'
 require 'optparse'
 
-home = "#{ENV['HOME']}/Applications/audibleturk"
+home = "#{ENV['HOME']}/Documents/Software/dist/ruby/audibleturk"
 
 csv_file = ARGV[0] or abort "Usage: from_csv.rb CSV_FILE [AUDIO_URL_PATH]\n"
 audio_url_path = ARGV[1]
-template = IO.read("#{home}/transcription.html.erb")
+template = IO.read("#{home}/www/transcription.html.erb")
 
 transcription = Audibleturk::Transcription.from_csv(IO.read(csv_file))
 
@@ -18,6 +18,5 @@ if (audio_url_path)
 end
 
 html = ERB.new(template, nil, '<>').result
-
-  print html
+print html
 
