@@ -7,7 +7,7 @@ module Audibleturk
   class Transcription
     include Enumerable
     require 'csv'
-    attr_accessor :title, :notes
+    attr_accessor :title, :notes, :url
 
     def initialize(title=nil, chunks=[])
       @title = title
@@ -70,8 +70,9 @@ module Audibleturk
       end
 
       def url=(url)
-        #http://ryantate.com/transfer/Speech.00.00-01.00.mp3
-        matches = /.+\/([\w\/\-]+\.(\d+)\.(\d\d)\.[^\/\.]+)$/.match(url) or raise "Unexpected format to url '#{url}'"
+        #http://ryantate.com/transfer/Speech.01.00.mp3
+        #OR, obfuscated: http://ryantate.com/transfer/Speech.01.00.ISEAOMB.mp3
+        matches = /.+\/([\w\/\-]+\.(\d+)\.(\d\d)(\.\w+)?\.[^\/\.]+)$/.match(url) or raise "Unexpected format to url '#{url}'"
         @url = matches[0]
         @filename = matches[1]
         @offset_start = "#{matches[2]}:#{matches[3]}"
@@ -106,6 +107,7 @@ module Audibleturk
         text.gsub!(/\s+\z/, '')
         text = text.split("\n").collect {|line| wrap_text(line) }.join("\n") 
         text.gsub!(/\n\n+/, "\n\n")
+        text
       end
     end
   end

@@ -38,7 +38,7 @@
   }
 
   a[href], a[href]:link { 
-    color: grayx;
+    color: gray;
   }
 
   a[href]:visited {
@@ -49,13 +49,14 @@
 </head>
 <body>
 <h1><%= transcription.title %> transcription</h1>
-<p class="notes"><% if transcription.notes %><%= transcription.notes %><% end %></p>
+<h2><% if transcription.notes %><%= transcription.notes %><% end %></h2>
+<% if transcription.url %><h3><a href="<%= transcription.url %>">Full audio</a></h3><% end %>
 
 <% transcription.sort.each do |chunk| %>
 
 <h3><a href="<%= chunk.url %>"><%= chunk.offset_start %></a></h3>
 <h3><audio src="<%= chunk.url %>" controls></audio></h3>
-<h4><%= chunk.worker %></h4>
+<h4><a href="https://requester.mturk.com/bulk/workers/<%= chunk.worker %>"><%= chunk.worker %></a></h4>
 
 <p><%= chunk.body_as_html %>
 <% end %>

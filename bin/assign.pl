@@ -13,6 +13,7 @@ use File::Copy;
 use File::Spec;
 use POSIX qw(floor);
 use Text::CSV;
+use String::Random;
 use Mac::AppleScript 'RunAppleScript';
 
 my $Dialoger = '/Applications/CocoaDialog.app/Contents/MacOS/CocoaDialog';
@@ -32,15 +33,28 @@ $config{$_} or error_bye("Required param '$_' missing from config file", "$ENV{H
 #my @fails = $config{scp} =~ /[^\w\s_\@\/\.\:\-]+/g;
 #print "DEBUG fail $_\n" foreach @fails;
 $config{scp} =~ /^[\w\s_\@\/\.\:\+\-]+$/ or error_bye("Unexpected scp format in config file", "$ENV{HOME}/.audibleturk");
-$config{url} =~ s/\/$//;
 if ($config{local}) {
   $config{local} =~ s/^~\/?/$ENV{HOME}/;
   $config{local} = "$ENV{HOME}/$config{local}" if $config{local} =~ /^[^\/]/;
   $config{local} =~ s/\/$//;
 }
 $config{local} ||= "$ENV{HOME}/Desktop";
-shell_safe($config{local}) or error_bye("Unsafe dir name", $config{local});
 
+foreach (qw(scp url local)){
+    $config{$_} =~ s/\s+$//;
+    $config{$_} =~ s/\/$//;
+}
+
+shell_safe($config{local}) or error_bye("Unsafe dir name", $config{local});
+if (exists $config{randomize}){
+    $config{randomize} = 0 if $config{randomize} =~ /\bfalse\b/i;
+    $config{randomize} = 0 if $config{randomize} =~ /\bno\b/i;
+    $config{randomize} = 0 if $config{randomize} =~ /\b0\b/;
+    $config{randomize} = 0 if not defined $config{randomize}
+}
+else {
+    $config{randomize} = 1;
+}
 
 #Get split interval
 my $default_interval = $config{last_split_interval} || $config{default_split_interval} || '1:00';
@@ -97,7 +111,10 @@ foreach my $file (@files) {
   my ($pathbase, $ext) = filebase_split($file);
   if ((lc $ext) ne 'mp3') {
     my $file_display_name = filepath_base($file);
-    print "Converting $file_display_name to mp3\n";
+    print "Determining original bitrate for $file_display_name\n";
+    my $bitrate = file_bitrate($file) || 192;
+    $bitrate =~ /^\d+$/ or error_bye("Unexpected bitrate format", $bitrate);
+    print "Converting $file_display_name to mp3 at $bitrate kbps\n";
     $temp_dir{convert} ||= tempdir();
     my $temp_file;
     {
@@ -105,7 +122,7 @@ foreach my $file (@files) {
       (undef, $temp_file) = tempfile('audibleturkXXXXXX', SUFFIX => '.mp3', DIR => $temp_dir{convert}, OPEN => 0); 
     }
     shell_safe($temp_file) or error_bye("Unsafe tempfile name", $temp_file);
-    system("ffmpeg -i $file -acodec libmp3lame '$temp_file' 2> /dev/null") == 0 or error_bye("Could not convert the file $file", "$? / $!");
+    system("ffmpeg -i $file -acodec libmp3lame -ab ${bitrate}k -ac 2 '$temp_file' 2> /dev/null") == 0 or error_bye("Could not convert the file $file", "$? / $!");
     $file = $temp_file;
   }
 }
@@ -139,10 +156,13 @@ shell_safe($_) or error_bye("Unsafe file name", $_) foreach @output_files;
 @output_files = sort { filepath_sortable_mp3splt($a) <=>  filepath_sortable_mp3splt($b) } @output_files;
 
 #SCP files to remote server
+#Randomize remote file names so they're unguessable
 foreach my $file (@output_files) {
-    my $display_name = filepath_base($file);
-    print "Uploading $display_name to $config{scp}\n";
-    system("scp '$wrap_file_dir/$file' '$config{scp}' > /dev/null") == 0 or error_bye("Could not upload file", "$file: $? / $!");
+    my ($base, $ext) = filebase_split($file);
+    my $remote_name = $config{randomize} ? "$base." . String::Random->new->randregex('[A-Z]{6}') . ".$ext" : $file; 
+    print "Uploading $file to $config{scp} as $remote_name\n";
+    system("scp '$wrap_file_dir/$file' '$config{scp}/$remote_name' > /dev/null") == 0 or error_bye("Could not upload file", "$file as $remote_name: $? / $!");
+    $file = $remote_name;
 }
 
 #Make CSV file
@@ -287,4 +307,12 @@ sub filepath_sortable_mp3splt{
     my ($start_min, $start_sec) = filepath_base($filepath) =~ /\.(\d+)\.(\d\d)\.mp3/i or error_bye("Could not extract minutes, seconds from file", filepath_base($filepath));
     my $seconds = to_seconds("$start_min:$start_sec");
     return $seconds;
+}
+
+sub file_bitrate{
+    my ($file) = @_;
+    shell_safe($file) or error_bye("Unsafe file name", $file);
+    my $info = `ffmpeg -i $file 2>&1`;
+    my ($bitrate) = $info =~ /(\d+) kb\/s/;
+    return $bitrate;
 }
