@@ -54,7 +54,7 @@
 
 <% transcription.sort.each do |chunk| %>
 
-<h3><a href="<%= chunk.url %>"><%= chunk.offset_start %></a></h3>
+<h3><%= chunk.offset_start %></h3>
 <h3><audio src="<%= chunk.url %>" controls></audio></h3>
 <h4><a href="https://requester.mturk.com/bulk/workers/<%= chunk.worker %>"><%= chunk.worker %></a></h4>
 
