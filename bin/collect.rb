@@ -23,6 +23,7 @@ available_folders.each do |folder|
   next if File.exists?("#{folder.path}/#{filename['done']}")
   transcription = Audibleturk::Transcription.new(shortname, results.select{|result| result.transcription.title == shortname}.collect{|result| result.transcription})
   transcription.each{|chunk| chunk.url = "audio/#{chunk.filename_local}" }
+  transcription.subtitle = folder.subtitle
   html = ERB.new(template, nil, '<>').result(binding())
   File.delete("#{folder.path}/#{filename['working']}") if File.exists?("#{folder.path}/#{filename['working']}")
   is_done = (transcription.to_a.length == folder.audio_chunks)

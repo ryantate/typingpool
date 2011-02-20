@@ -97,6 +97,17 @@ until ($project_name) {
   }
 }
 
+#Get optional subtitle, write to etc
+{
+    my $dialog_input =  `$Dialoger standard-inputbox --title "Subtitle" --no-newline --informative-text "Subtitle to appear at top of the transcription. Date, meeting location or other notes. Optional."`;
+    my ($button, $subtitle) = split /\n/, $dialog_input, 2;
+    if ($subtitle && $button == 1){
+	open(my $fh, '>', "$config{local}/$project_name/etc/subtitle.txt") or error_bye("Error writing subtitle", "$config{local}/$project_name/etc/subtitle.txt: $!");
+	print $fh $subtitle;
+	close $fh;
+    }
+}
+
 #Copy audio files to 'originals' folder
 foreach my $file (@files){
     my $base = filepath_base($file);
@@ -200,6 +211,7 @@ sub config_file{
     my ($key, $value) = split /\s+/, $_, 2;
     if ($key) {
       $key =~ s/:$//;
+      $value =~ s/^"([^\"]+)"/$1/ if $value;
       $config{$key} = $value;
     }
     push @order, ($key || undef);

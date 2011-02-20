@@ -73,6 +73,18 @@ module Audibleturk
       Dir.glob("#{@path}/audio/*.mp3").select{|file| not file.match(/\.all\.mp3$/)}.length
     end
 
+    def subtitle
+      loc = "#{@path}/etc/subtitle.txt"
+      return IO.read(loc) if File.exists?(loc)
+      return
+    end
+
+    def subtitle=(subtitle)
+      File.open("#{@path}/etc/subtitle.txt", 'w') do |out|
+        out << subtitle
+      end
+    end
+
   end
 
   class Config
@@ -115,7 +127,7 @@ module Audibleturk
   class Transcription
     include Enumerable
     require 'csv'
-    attr_accessor :title, :notes, :url
+    attr_accessor :title, :subtitle, :url
 
     def initialize(title=nil, chunks=[])
       @title = title
