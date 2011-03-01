@@ -16,7 +16,7 @@ module Audibleturk
       def initialize(assignment)
         @hit_id = assignment.hit_id
         @transcription = Audibleturk::Transcription::Chunk.new(assignment.answers.to_hash['transcription']);
-        @transcription.url = assignment.answers.to_hash['url']
+        @transcription.url = assignment.answers.to_hash['audibleturk_url']
         @transcription.worker = assignment.worker_id
       end
 
@@ -31,7 +31,7 @@ module Audibleturk
           end
           hits.push(*new_hits)
         end while new_hits.length > 0
-        results = hits.collect {|hit| self.from_cache(hit.id) || self.to_cache(hit.id, hit.assignments.select{|assignment| (assignment.status == 'Approved') && (assignment.answers.to_hash['url'])}.collect{|assignment| self.new(assignment)})}.flatten
+        results = hits.collect {|hit| self.from_cache(hit.id) || self.to_cache(hit.id, hit.assignments.select{|assignment| (assignment.status == 'Approved') && (assignment.answers.to_hash['audibleturk_url'])}.collect{|assignment| self.new(assignment)})}.flatten
         results
       end
 

@@ -15,6 +15,7 @@ use POSIX qw(floor);
 use Text::CSV;
 use String::Random;
 use Mac::AppleScript 'RunAppleScript';
+use YAML ();
 
 my $Dialoger = '/Applications/CocoaDialog.app/Contents/MacOS/CocoaDialog';
 
@@ -97,7 +98,7 @@ until ($project_name) {
   }
 }
 
-#Get optional subtitle, write to etc
+#Get optional subtitle, write to etc/
 {
     my $dialog_input =  `$Dialoger standard-inputbox --title "Subtitle" --no-newline --informative-text "Subtitle to appear at top of the transcription. Date, meeting location or other notes. Optional."`;
     my ($button, $subtitle) = split /\n/, $dialog_input, 2;
@@ -203,34 +204,19 @@ sub clean_up{
 
 sub config_file{
   my %new_config = @_;
-  my %config;
-  my @order;
+  my $yaml;
   open(my $fh, '<', "$ENV{HOME}/.audibleturk") or error_bye("Could not open required config file $ENV{HOME}/.audibleturk", $!);
-  while (<$fh>) {
-    chomp;
-    my ($key, $value) = split /\s+/, $_, 2;
-    if ($key) {
-      $key =~ s/:$//;
-      $value =~ s/^"([^\"]+)"/$1/ if $value;
-      $config{$key} = $value;
-    }
-    push @order, ($key || undef);
-  }
+  $yaml .= $_ while <$fh>;
   close $fh;
+  my ($config) = YAML::Load($yaml);
   if (keys %new_config) {
+    $config->{$_} = $new_config{$_} foreach keys %new_config;
+    $yaml = YAML::Dump($config);
     open($fh, '>', "$ENV{HOME}/.audibleturk") or error_bye("Could not write to config file", "$ENV{HOME}/.audibleturk: $!");
-    foreach my $key (@order) {
-      if (defined $key) {
-	print $fh "$key: " . (defined $new_config{$key} ? $new_config{$key} : $config{$key}) . "\n"; 
-	delete $new_config{$key}
-      } else {
-	print $fh "\n";
-      }
-    }
-    print $fh "$_: $new_config{$_}\n" foreach sort keys %new_config;
-    close $fh;
+    print $fh $yaml;
+    close $fh or error_bye("Could not close config file", "$ENV{HOME}/.audibleturk: $!");
   }
-  return %config;
+  return %$config;
 }
 
 sub error_bye{
