@@ -26,9 +26,7 @@ module Audibleturk
         i=0
         begin
           i += 1
-          new_hits = RTurk.GetReviewableHITs(:page_number => i).hit_ids.inject([]) do |array, hit_id|
-            array << RTurk::Hit.new(hit_id); array
-          end
+          new_hits = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }
           hits.push(*new_hits)
         end while new_hits.length > 0
         results = hits.collect {|hit| self.from_cache(hit.id) || self.to_cache(hit.id, hit.assignments.select{|assignment| (assignment.status == 'Approved') && (assignment.answers.to_hash['audibleturk_url'])}.collect{|assignment| self.new(assignment)})}.flatten
