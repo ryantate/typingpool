@@ -31,6 +31,8 @@ GetOptions(
 	  );
 my $usage = "USAGE: assign.pl --file foo.mp3 [--file bar.mp3...] --title Foo --chunks 1:00 [--subtitle 'Foo telephone interview']\n";
 die $usage if $opt{help};
+my $name_via_command_line;
+$name_via_command_line = 1 if $project_name;
 
 @files = @ARGV if not @files;
 @files or error_bye("Drag audio files onto the icon");
@@ -121,7 +123,7 @@ sub init_project_dir{
 #Get optional subtitle, write to etc/
 if ($subtitle) {
   write_subtitle($subtitle);
-} else {
+} elsif (not $name_via_command_line) {
   my $dialog_input =  `$Dialoger standard-inputbox --title "Subtitle" --no-newline --informative-text "Subtitle to appear at top of the transcription. Date, meeting location or other notes. Optional."`;
   my $button;
   ($button, $subtitle) = split /\n/, $dialog_input, 2;
