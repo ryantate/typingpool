@@ -88,7 +88,7 @@ until ($min_dot_seconds) {
 
 #Get base name for mp3s we'll be outputting
 my ($default_name) = filebase_split(filepath_base($files[0]));
-$default_name =~ s/(\w+)(\.)?\d+$/$1/;
+$default_name =~ s/(\w+)(\.)?\d+(\.mono)?$/$1/;
 until ($project_name && init_project_dir($project_name)) {
   my $filled_in_name = $project_name || $default_name;
   shell_safe($filled_in_name) or error_bye("Potentially unsafe name encountered: $filled_in_name");
