@@ -16,10 +16,23 @@ use Text::CSV;
 use String::Random;
 use Mac::AppleScript 'RunAppleScript';
 use YAML ();
+use Getopt::Long;
 
 my $Dialoger = '/Applications/CocoaDialog.app/Contents/MacOS/CocoaDialog';
+Getopt::Long::Configure(qw(bundling ignore_case));
 
-my @files = @ARGV;
+my (%opt, @files, $subtitle, $time, $project_name);
+GetOptions(
+	   'help' => \$opt{help},
+	   'file=s' => \@files,
+	   'title=s' => \$project_name,
+	   'chunks=s' => \$time,
+	   'subtitle=s' => \$subtitle,
+	  );
+my $usage = "USAGE: assign.pl --file foo.mp3 [--file bar.mp3...] --title Foo --chunks 1:00 [--subtitle 'Foo telephone interview']\n";
+die $usage if $opt{help};
+
+@files = @ARGV if not @files;
 @files or error_bye("Drag audio files onto the icon");
 
 #Need files in proper order before joining them
@@ -61,6 +74,7 @@ else {
 my $default_interval = $config{last_split_interval} || $config{default_split_interval} || '1:00';
 $default_interval =~ /^[\d\:\s\.]+$/ or error_bye("Unexpected format to default split interval '$default_interval'");
 my $min_dot_seconds;
+$min_dot_seconds = to_min_seconds($time) if $time;
 until ($min_dot_seconds) {
   my $dialog_input = `$Dialoger standard-inputbox --title "Length" --no-newline --informative-text "Split audio every (hh:mm:ss)" --text '$default_interval'`;
   my ($button, $time) = split /\n/, $dialog_input, 2;
@@ -72,41 +86,56 @@ until ($min_dot_seconds) {
 
 #Get base name for mp3s we'll be outputting
 my ($default_name) = filebase_split(filepath_base($files[0]));
-$default_name =~ s/(\w+)\d+$/$1/;
-my $project_name;
-until ($project_name) {
-  my $dialog_input = `$Dialoger standard-inputbox --title "Name" --no-newline --informative-text "Base name for mp3s:" --text '$default_name'`;
+$default_name =~ s/(\w+)(\.)?\d+$/$1/;
+until ($project_name && init_project_dir($project_name)) {
+  my $filled_in_name = $project_name || $default_name;
+  shell_safe($filled_in_name) or error_bye("Potentially unsafe name encountered: $filled_in_name");
+  my $dialog_input = `$Dialoger standard-inputbox --title "Name" --no-newline --informative-text "Base name for mp3s:" --text '$filled_in_name'`;
   my $button;
   ($button, $project_name) = split /\n/, $dialog_input, 2;
   $button == 1 or exit;
   $project_name =~ s/\s/_/g;
   $project_name =~ s/[^\w_-]//g;
-  if ($project_name =~ /\w/) {
-    if (mkdir "$config{local}/$project_name") {
-      mkdir "$config{local}/$project_name/$_" or error_bye("Failed to create folder", "$config{local}/$project_name/$_") foreach qw(audio csv originals etc);
-    } else {
-      if ($! =~ /file exists/i) {
-	error_box("Name taken, please choose another", "Folder already exists at $config{local}/$project_name");
-	$project_name = '';
-      } else {
-	error_bye("Failed to create folder", "$config{local}/$project_name: $!");
-      }
-    }
-  } else {
+  if (not($project_name =~ /\w/)) {
     error_box('Name must contain one letter or number');
     $project_name = '';
   }
 }
 
-#Get optional subtitle, write to etc/
-{
-    my $dialog_input =  `$Dialoger standard-inputbox --title "Subtitle" --no-newline --informative-text "Subtitle to appear at top of the transcription. Date, meeting location or other notes. Optional."`;
-    my ($button, $subtitle) = split /\n/, $dialog_input, 2;
-    if ($subtitle && $button == 1){
-	open(my $fh, '>', "$config{local}/$project_name/etc/subtitle.txt") or error_bye("Error writing subtitle", "$config{local}/$project_name/etc/subtitle.txt: $!");
-	print $fh $subtitle;
-	close $fh;
+sub init_project_dir{
+  my ($project_name) = @_;
+
+  if (mkdir "$config{local}/$project_name") {
+    mkdir "$config{local}/$project_name/$_" or error_bye("Failed to create folder", "$config{local}/$project_name/$_") foreach qw(audio csv originals etc);
+    return 1;
+  } else {
+    if ($! =~ /file exists/i) {
+      error_box("Name taken, please choose another", "Folder already exists at $config{local}/$project_name");
+      return 0;
+    } else {
+      error_bye("Failed to create folder", "$config{local}/$project_name: $!");
     }
+  }
+}
+
+#Get optional subtitle, write to etc/
+if ($subtitle) {
+  write_subtitle($subtitle);
+} else {
+  my $dialog_input =  `$Dialoger standard-inputbox --title "Subtitle" --no-newline --informative-text "Subtitle to appear at top of the transcription. Date, meeting location or other notes. Optional."`;
+  my $button;
+  ($button, $subtitle) = split /\n/, $dialog_input, 2;
+  if ($subtitle && $button == 1) {
+    write_subtitle($subtitle)
+  }
+}
+
+sub write_subtitle{
+  my ($subtitle) = @_;
+  return if not defined $subtitle;
+  open(my $fh, '>', "$config{local}/$project_name/etc/subtitle.txt") or error_bye("Error writing subtitle", "$config{local}/$project_name/etc/subtitle.txt: $!");
+  print $fh $subtitle;
+  close $fh;
 }
 
 #Copy audio files to 'originals' folder
