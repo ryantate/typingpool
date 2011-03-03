@@ -14,7 +14,6 @@ use File::Spec;
 use POSIX qw(floor);
 use Text::CSV;
 use String::Random;
-use Mac::AppleScript 'RunAppleScript';
 use YAML ();
 use Getopt::Long;
 
@@ -112,7 +111,7 @@ sub init_project_dir{
     return 1;
   } else {
     if ($! =~ /file exists/i) {
-      error_box("Name taken, please choose another", "Folder already exists at $config{local}/$project_name");
+      error_box("Name '$project_name' taken, please choose another", "Folder already exists at $config{local}/$project_name");
       return 0;
     } else {
       error_bye("Failed to create folder", "$config{local}/$project_name: $!");
@@ -124,7 +123,7 @@ sub init_project_dir{
 if ($subtitle) {
   write_subtitle($subtitle);
 } elsif (not $name_via_command_line) {
-  my $dialog_input =  `$Dialoger standard-inputbox --title "Subtitle" --no-newline --informative-text "Subtitle to appear at top of the transcription. Date, meeting location or other notes. Optional."`;
+  my $dialog_input =  `$Dialoger standard-inputbox --title "Subtitle" --no-newline --informative-text "Subtitle to appear at top of $project_name transcription. Date, meeting location or other notes. Optional."`;
   my $button;
   ($button, $subtitle) = split /\n/, $dialog_input, 2;
   if ($subtitle && $button == 1) {
@@ -216,11 +215,18 @@ open(my $fh, '>', $csv_path) or error_bye("Could not write CSV file", "$csv_path
 $csv->print($fh, ['url']);
 $csv->print($fh, ["$config{url}/$_"]) foreach @output_files;
 close $fh or error_bye("Trouble finalizing write to CSV file", "$csv_path: $!");
+print "Wrote assign.csv to $config{local}/$project_name/csv\n";
 
-RunAppleScript(qq(tell application "Finder"\nopen POSIX file "$csv_path"\nend tell));
-RunAppleScript(qq(tell application "Finder"\nopen folder POSIX file "$config{local}/$project_name"\nend tell));
+print "Opening assign.csv via AppleScript...\n";
+system("open '$csv_path'") == 0 or error_bye("Could not launch file with Finder", "$csv_path: $!/$?");
+print "Opening project folder $config{local}/$project_name via AppleScript...\n";
+system("open '$config{local}/$project_name'") == 0 or error_bye("Could not open folder in Finder", "$config{local}/$project_name: $!/$?");
+
+print "Deleting temp files...\n";
 
 clean_up();
+
+print "Done.\n";
 
 sub clean_up{
   my ($quiet) = @_;
