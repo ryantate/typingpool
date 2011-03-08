@@ -2,6 +2,7 @@
 
 require 'erb'
 require 'audibleturk'
+require 'pp'
 
 home = "#{Dir.home}/Documents/Software/dist/ruby/audibleturk"
 

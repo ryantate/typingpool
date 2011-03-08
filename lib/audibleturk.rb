@@ -22,14 +22,23 @@ module Audibleturk
 
       def self.all_approved
         Audibleturk::Remote.setup
-        hits=[]
+        results=[]
         i=0
         begin
           i += 1
           new_hits = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }
-          hits.push(*new_hits)
-        end while new_hits.length > 0
-        results = hits.collect {|hit| self.from_cache(hit.id) || self.to_cache(hit.id, hit.assignments.select{|assignment| (assignment.status == 'Approved') && (assignment.answers.to_hash['audibleturk_url'])}.collect{|assignment| self.new(assignment)})}.flatten
+          hit_page_results=[]
+          new_hits.each do |hit|
+            unless hit_results = self.from_cache(hit.id)
+              assignments = hit.assignments
+              hit_results = assignments.select{|assignment| (assignment.status == 'Approved') && (assignment.answers.to_hash['audibleturk_url'])}.collect{|assignment| self.new(assignment)}
+              self.to_cache(hit.id, hit_results) if assignments.select{|assignment| assignment.status == 'Approved' }.length > 0
+            end
+            hit_page_results.push(hit_results)
+          end
+          hit_page_results = hit_page_results.flatten
+          results.push(*hit_page_results)
+        end while new_hits.length > 0 
         results
       end
 
