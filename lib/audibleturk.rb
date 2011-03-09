@@ -66,6 +66,7 @@ module Audibleturk
 
     def self.named(string)
       target = Audibleturk::Config.param['local'] || "Desktop"
+      target.sub!(/^~\/?/, '')
       target = "#{Dir.home}/#{target}" unless target.match(/^\//)
       match = Dir.glob("#{target}/*").select{|entry| File.basename(entry) == string }[0]
       return unless (match && File.directory?(match) && self.is_ours(match))
