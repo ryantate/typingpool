@@ -13,14 +13,16 @@ module Audibleturk
     class Result
       require 'pstore'
       attr_accessor :transcription, :hit_id
-      def initialize(assignment)
+      def initialize(assignment, params)
+        params[:url_at] or raise ":url_at param required"
         @hit_id = assignment.hit_id
         @transcription = Audibleturk::Transcription::Chunk.new(assignment.answers.to_hash['transcription']);
-        @transcription.url = assignment.answers.to_hash['audibleturk_url']
+        @transcription.url = assignment.answers.to_hash[params[:url_at]]
         @transcription.worker = assignment.worker_id
       end
 
-      def self.all_approved
+      def self.all_approved(params)
+        params[:url_at] or raise ":url_at param required"
         Audibleturk::Remote.setup
         results=[]
         i=0
@@ -29,10 +31,10 @@ module Audibleturk
           new_hits = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }
           hit_page_results=[]
           new_hits.each do |hit|
-            unless hit_results = self.from_cache(hit.id)
+            unless hit_results = self.from_cache(hit.id, params[:url_at])
               assignments = hit.assignments
-              hit_results = assignments.select{|assignment| (assignment.status == 'Approved') && (assignment.answers.to_hash['audibleturk_url'])}.collect{|assignment| self.new(assignment)}
-              self.to_cache(hit.id, hit_results) if assignments.select{|assignment| assignment.status == 'Approved' }.length > 0
+              hit_results = assignments.select{|assignment| (assignment.status == 'Approved') && (assignment.answers.to_hash[params[:url_at]])}.collect{|assignment| self.new(assignment, params)}
+              self.to_cache(hit.id, params[:url_at], hit_results) if assignments.select{|assignment| assignment.status == 'Approved' }.length > 0
             end
             hit_page_results.push(hit_results)
           end
@@ -42,15 +44,18 @@ module Audibleturk
         results
       end
 
-      def self.from_cache(hit_id)
-        self.cache.transaction { self.cache[hit_id] }
+      def self.from_cache(hit_id, url_at)
+        self.cache.transaction { self.cache[self.to_cache_key(hit_id, url_at)] }
       end
 
-      def self.to_cache(hit_id, results)
-        self.cache.transaction { self.cache[hit_id] = results }
+      def self.to_cache(hit_id, url_at, results)
+        self.cache.transaction { self.cache[self.to_cache_key(hit_id, url_at)] = results }
         results
       end
 
+      def self.to_cache_key(hit_id, url_at)
+        "#{hit_id}///#{url_at}"
+      end
       def self.cache
         @@cache ||= PStore.new("#{Dir.home}/.audibleturk.cache")
         @@cache

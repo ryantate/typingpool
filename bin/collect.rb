@@ -2,12 +2,15 @@
 
 require 'erb'
 require 'audibleturk'
-require 'pp'
+
+#Name of form field in Mechanical Turk assignment form
+# containing URL to audio file
+url_at = ARGV[0] || 'audibleturk_url'
 
 home = "#{Dir.home}/Documents/Software/dist/ruby/audibleturk"
 
 puts "Collecting results from Amazon..."
-results = Audibleturk::Remote::Result.all_approved
+results = Audibleturk::Remote::Result.all_approved(:url_at => url_at)
 
 puts "Sorting results..."
 available_folders = results.collect{|result| result.transcription.title }.uniq.select{|title| Audibleturk::Folder.named(title)}
