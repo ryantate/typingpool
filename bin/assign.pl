@@ -217,8 +217,6 @@ $csv->print($fh, ["$config{url}/$_"]) foreach @output_files;
 close $fh or error_bye("Trouble finalizing write to CSV file", "$csv_path: $!");
 print "Wrote assign.csv to $config{local}/$project_name/csv\n";
 
-print "Opening assign.csv via AppleScript...\n";
-system("open '$csv_path'") == 0 or error_bye("Could not launch file with Finder", "$csv_path: $!/$?");
 print "Opening project folder $config{local}/$project_name via AppleScript...\n";
 system("open '$config{local}/$project_name'") == 0 or error_bye("Could not open folder in Finder", "$config{local}/$project_name: $!/$?");
 
