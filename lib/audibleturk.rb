@@ -19,6 +19,7 @@ module Audibleturk
         @transcription = Audibleturk::Transcription::Chunk.new(assignment.answers.to_hash['transcription']);
         @transcription.url = assignment.answers.to_hash[params[:url_at]]
         @transcription.worker = assignment.worker_id
+        @transcription.hit = @hit_id
       end
 
       def self.all_approved(params)
@@ -180,7 +181,7 @@ module Audibleturk
       require 'text/format'
       require 'cgi'
 
-      attr_accessor :body, :worker, :title
+      attr_accessor :body, :worker, :title, :hit
       attr_reader :offset_start, :offset_start_seconds, :filename
 
       def initialize(body)
