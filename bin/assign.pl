@@ -164,7 +164,7 @@ foreach my $file (@files) {
       (undef, $temp_file) = tempfile('audibleturkXXXXXX', SUFFIX => '.mp3', DIR => $temp_dir{convert}, OPEN => 0); 
     }
     shell_safe($temp_file) or error_bye("Unsafe tempfile name", $temp_file);
-    system("ffmpeg -i $file -acodec libmp3lame -ab ${bitrate}k -ac 2 '$temp_file' 2> /dev/null") == 0 or error_bye("Could not convert the file $file", "$? / $!");
+    system("ffmpeg -i '$file' -acodec libmp3lame -ab ${bitrate}k -ac 2 '$temp_file' 2> /dev/null") == 0 or error_bye("Could not convert the file $file", "$? / $!");
     $file = $temp_file;
   }
 }
