@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title><%= transcription.title %> transcription</title>
+<link rel="stylesheet" href="<%= url_prefix %>etc/transcript.css">
+<style type="text/css">
+
+</style>
+</head>
+<body>
+<h1><%= transcription.title %> transcription</h1>
+<h2><% if transcription.subtitle %><%= transcription.subtitle %><% end %></h2>
+<% if transcription.url %><h3><a href="<%= url_prefix %><%= transcription.url %>">Full audio</a></h3><% end %>
+
+<% transcription.sort.each do |chunk| %>
+
+<h3><%= chunk.offset_start %></h3>
+<h3><audio src="<%= url_prefix %><%= chunk.url %>" controls></audio></h3>
+<h4><a href="https://requester.mturk.com/bulk/workers/<%= chunk.worker %>">Worker</a> | <a href="https://requester.mturk.com/mturk/manageHIT?HITId=<%= chunk.hit %>&amp;viewableEditPane=manageHIT_downloadResults">HIT</a></h4>
+
+<p><%= chunk.body_as_html %>
+<% end %>
+
+</body>
+</html>
