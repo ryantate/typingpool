@@ -2,7 +2,6 @@
 
 ##TODO
 #Verify all URLs to make sure there are no 404s
-#Add random string to filenames to make URLs unguessable
 
 use strict;
 use warnings;
