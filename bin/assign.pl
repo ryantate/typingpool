@@ -44,7 +44,7 @@ filebase_split($_) or error_bye("You need a file extension on the file '$_'") fo
 shell_safe($_) or error_bye("Unsafe file name", $_) foreach @files;
 
 my %config = config_file();
-$config{$_} or error_bye("Required param '$_' missing from config file", "$ENV{HOME}/.audibleturk") foreach qw(scp url);
+$config{$_} or error_bye("Required param '$_' missing from config file", "$ENV{HOME}/.audibleturk") foreach qw(scp url app);
 #my @fails = $config{scp} =~ /[^\w\s_\@\/\.\:\-]+/g;
 #print "DEBUG fail $_\n" foreach @fails;
 $config{scp} =~ /^[\w\s_\@\/\.\:\+\-]+$/ or error_bye("Unexpected scp format in config file", "$ENV{HOME}/.audibleturk");
@@ -58,7 +58,6 @@ foreach (qw(local app)){
 }
 
 $config{local} ||= "$ENV{HOME}/Desktop";
-$config{app} ||= "$ENV{HOME}/Documents/Software/dist/ruby/audibleturk";
 
 foreach (qw(scp url local app)){
     $config{$_} =~ s/\s+$//;
