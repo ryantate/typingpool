@@ -48,19 +48,24 @@ $config{$_} or error_bye("Required param '$_' missing from config file", "$ENV{H
 #my @fails = $config{scp} =~ /[^\w\s_\@\/\.\:\-]+/g;
 #print "DEBUG fail $_\n" foreach @fails;
 $config{scp} =~ /^[\w\s_\@\/\.\:\+\-]+$/ or error_bye("Unexpected scp format in config file", "$ENV{HOME}/.audibleturk");
-if ($config{local}) {
-  $config{local} =~ s/^~\/?/$ENV{HOME}/;
-  $config{local} = "$ENV{HOME}/$config{local}" if $config{local} =~ /^[^\/]/;
-  $config{local} =~ s/\/$//;
-}
-$config{local} ||= "$ENV{HOME}/Desktop";
 
-foreach (qw(scp url local)){
+foreach (qw(local app)){
+    if ($config{$_}) {
+	$config{$_} =~ s/^~(\/?)/$ENV{HOME}$1/;
+	$config{$_} = "$ENV{HOME}/$config{$_}" if $config{$_} =~ /^[^\/]/;
+	$config{$_} =~ s/\/$//;
+    }
+}
+
+$config{local} ||= "$ENV{HOME}/Desktop";
+$config{app} ||= "$ENV{HOME}/Documents/Software/dist/ruby/audibleturk";
+
+foreach (qw(scp url local app)){
     $config{$_} =~ s/\s+$//;
     $config{$_} =~ s/\/$//;
 }
 
-shell_safe($config{local}) or error_bye("Unsafe dir name", $config{local});
+shell_safe($config{$_}) or error_bye("Unsafe $_ dir name", $config{$_}) foreach qw(config app);
 if (exists $config{randomize}){
     $config{randomize} = 0 if $config{randomize} =~ /\bfalse\b/i;
     $config{randomize} = 0 if $config{randomize} =~ /\bno\b/i;
@@ -138,6 +143,9 @@ sub write_subtitle{
   print $fh $subtitle;
   close $fh;
 }
+
+#Copy CSV default to etc/
+copy("$config{app}/www/transcript.css", "$config{local}/$project_name/etc/transcript.css") or error_bye("Could not copy CSS template", "Could not copy '$config{app}/www/transcript.css' to '$config{local}/$project_name/etc': $!");
 
 #Copy audio files to 'originals' folder
 foreach my $file (@files){
