@@ -76,7 +76,7 @@ else {
 }
 
 #Get split interval
-my $default_interval = $config{last_split_interval} || $config{default_split_interval} || '1:00';
+my $default_interval = $config{split} || '1:00';
 $default_interval =~ /^[\d\:\s\.]+$/ or error_bye("Unexpected format to default split interval '$default_interval'");
 my $min_dot_seconds;
 $min_dot_seconds = to_min_seconds($time) if $time;
@@ -85,7 +85,7 @@ until ($min_dot_seconds) {
   my ($button, $time) = split /\n/, $dialog_input, 2;
   $button == 1 or exit;
   $min_dot_seconds = to_min_seconds($time) or error_box("Did not understand the time '$time'");
-  config_file('last_split_interval' => $time) if $min_dot_seconds;
+  config_file('split' => $time) if $min_dot_seconds;
 }
 
 
