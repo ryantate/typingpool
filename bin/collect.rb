@@ -7,34 +7,27 @@ require 'audibleturk'
 # containing URL to audio file
 url_at_form_field = ARGV[0] || 'audibleturk_url'
 
-home = "#{Dir.home}/Documents/Software/dist/ruby/audibleturk"
-
 puts "Collecting results from Amazon..."
 results = Audibleturk::Remote::Result.all_approved(:url_at => url_at_form_field)
+needed_titles = results.collect{|result| result.transcription.title }.uniq.select{|title| Audibleturk::Folder.named(title)}
 
-puts "Sorting results..."
-available_folders = results.collect{|result| result.transcription.title }.uniq.select{|title| Audibleturk::Folder.named(title)}
-
-template = IO.read("#{home}/www/transcript.html.erb") unless available_folders.empty?
-
-available_folders.each do |folder|
-  shortname = folder
-  folder = Audibleturk::Folder.named(folder)
-  filename = {
-    :done => 'transcript.html',
-    :working => 'transcript_in_progress.html'
-  }
+template = nil
+filename = {
+  :done => 'transcript.html',
+  :working => 'transcript_in_progress.html'
+}
+needed_titles.each do |title|
+  folder = Audibleturk::Folder.named(title)
   next if File.exists?("#{folder.path}/#{filename[:done]}")
-  transcription = Audibleturk::Transcription.new(shortname, results.select{|result| result.transcription.title == shortname}.collect{|result| result.transcription})
+  transcription = Audibleturk::Transcription.new(title, results.select{|result| result.transcription.title == title}.collect{|result| result.transcription})
   transcription.each{|chunk| chunk.url = "audio/#{chunk.filename_local}" }
   transcription.subtitle = folder.subtitle
   File.delete("#{folder.path}/#{filename[:working]}") if File.exists?("#{folder.path}/#{filename[:working]}")
-  is_done = (transcription.to_a.length == folder.audio_chunks)
-  out_file = is_done ? filename[:done] : filename[:working]
+  out_file = (transcription.to_a.length == folder.audio_chunks) ? filename[:done] : filename[:working]
+  template ||= IO.read("#{File.expand_path(Audibleturk::Config.param['app'])}/www/transcript.html.erb")
   html = ERB.new(template, nil, '<>').result(binding())
   File.open("#{folder.path}/#{out_file}", 'w') do |out|
     out << html
   end
-  puts "Wrote #{out_file} to folder #{shortname}."
+  puts "Wrote #{out_file} to folder #{title}."
 end
-
