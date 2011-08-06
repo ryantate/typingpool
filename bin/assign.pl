@@ -1,4 +1,8 @@
-#!/opt/local/bin/perl
+#!/usr/bin/env perl
+
+###Script that takes audio file paths and some metadata and creates a
+###local and web server folder suitable for creating an audio
+###transcription assignment on Amazon Mechanical Turk.
 
 ##TODO
 #Verify all URLs to make sure there are no 404s
