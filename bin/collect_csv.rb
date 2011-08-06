@@ -9,7 +9,7 @@ csv_file = ARGV[0] or abort "Usage: collect_csv.rb CSV_FILE [AUDIO_URL_PATH [REM
 audio_url_path = ARGV[1] ? ARGV[1].dup : nil
 remove_filename_randomization = ARGV[2] || true
 remove_filename_randomization = false if remove_filename_randomization.to_s == '0'
-template = IO.read("#{home}/www/transcription.html.erb")
+template = IO.read("#{home}/www/transcript.html.erb")
 
 transcription = Audibleturk::Transcription.from_csv(IO.read(csv_file))
 
