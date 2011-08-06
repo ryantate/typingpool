@@ -8,7 +8,7 @@ require 'audibleturk'
 url_at_form_field = ARGV[0] || 'audibleturk_url'
 
 puts "Collecting results from Amazon..."
-results = Audibleturk::Remote::Result.all_approved(:url_at => url_at_form_field)
+results = Audibleturk::Amazon::Result.all_approved(:url_at => url_at_form_field)
 needed_titles = results.collect{|result| result.transcription.title }.uniq.select{|title| Audibleturk::Folder.named(title)}
 
 template = nil

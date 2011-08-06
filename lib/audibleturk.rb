@@ -1,5 +1,5 @@
 module Audibleturk
-  class Remote
+  class Amazon
     require 'rturk'
     @@did_setup = false
     def self.setup
@@ -24,7 +24,7 @@ module Audibleturk
 
       def self.all_approved(params)
         params[:url_at] or raise ":url_at param required"
-        Audibleturk::Remote.setup
+        Audibleturk::Amazon.setup
         results=[]
         i=0
         begin
