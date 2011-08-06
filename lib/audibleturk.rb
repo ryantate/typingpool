@@ -61,8 +61,8 @@ module Audibleturk
         @@cache ||= PStore.new("#{Dir.home}/.audibleturk.cache")
         @@cache
       end
-    end
-  end
+    end #Result class
+  end #Amazon class
 
   class Folder
     attr_reader :path
@@ -96,8 +96,7 @@ module Audibleturk
         out << subtitle
       end
     end
-
-  end
+  end #Folder class
 
   class Config
     require 'yaml'
@@ -133,8 +132,7 @@ module Audibleturk
     def param
       @params
     end
-
-  end
+  end #Config class
 
   class Transcription
     include Enumerable
@@ -239,6 +237,6 @@ module Audibleturk
         text.gsub!(/\n\n+/, "\n\n")
         text
       end
-    end
-  end
-end
+    end #Chunk subclass
+  end #Transcription class
+end #Audibleturk module
