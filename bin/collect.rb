@@ -9,6 +9,7 @@ url_at_form_field = ARGV[0] || 'audibleturk_url'
 
 puts "Collecting results from Amazon..."
 results = Audibleturk::Amazon::Result.all_approved(:url_at => url_at_form_field)
+#Only pay attention to results that have a local folder waiting to receive them:
 needed_titles = results.collect{|result| result.transcription.title }.uniq.select{|title| Audibleturk::Project.new(title).folder}
 
 template = nil
@@ -21,15 +22,15 @@ needed_titles.each do |title|
   next if File.exists?("#{project.folder.path}/#{filename[:done]}")
   transcription = Audibleturk::Transcription.new(title, results.select{|result| result.transcription.title == title}.collect{|result| result.transcription})
   www_files = transcription.collect{|chunk| chunk.filename }
+  #Rewrite URLs to point to local copies:
   transcription.each{|chunk| chunk.url = "audio/#{chunk.filename_local}" }
   transcription.subtitle = project.folder.subtitle
   File.delete("#{project.folder.path}/#{filename[:working]}") if File.exists?("#{project.folder.path}/#{filename[:working]}")
   done = (transcription.to_a.length == project.folder.audio_chunks)
   out_file = done ? filename[:done] : filename[:working]
-  template ||= IO.read("#{File.expand_path(Audibleturk::Config.param['app'])}/www/transcript.html.erb")
-  html = ERB.new(template, nil, '<>').result(binding())
+  template ||= IO.read("#{File.expand_path(project.config.param['app'])}/www/transcript.html.erb")
   File.open("#{project.folder.path}/#{out_file}", 'w') do |out|
-    out << html
+    out << ERB.new(template, nil, '<>').result(binding())
   end
   puts "Wrote #{out_file} to folder #{title}."
   if done && project.config.param['scp']
