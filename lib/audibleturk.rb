@@ -31,6 +31,10 @@ module Audibleturk
       self.main.local
     end
 
+    def self.app
+      self.main.app
+    end
+
     def save
       File.open(@path, 'w') do |out|
         YAML.dump(@params, out)
@@ -43,6 +47,10 @@ module Audibleturk
 
     def local
       File.expand_path(@params['local'])
+    end
+
+    def app
+      File.expand_path(@params['app'])
     end
   end #Config class
 
@@ -122,9 +130,9 @@ module Audibleturk
       Audibleturk::Project::WWW.new(@name, scp)
     end
 
-    def folder(path=nil)
+    def local(path=nil)
       path ||= @config.local || File.expand_path('Desktop')
-      Audibleturk::Project::Folder.named(@name, path)
+      Audibleturk::Project::Local.named(@name, path)
     end
 
     class WWW
@@ -171,7 +179,7 @@ module Audibleturk
       end
     end #WWW class
 
-    class Folder
+    class Local
       attr_reader :path
       def initialize(path)
         @path = path
@@ -202,7 +210,7 @@ module Audibleturk
           out << subtitle
         end
       end
-    end #Folder class
+    end #Local class
   end #Project class
 
   class Transcription
