@@ -1,4 +1,51 @@
 module Audibleturk
+  class Config
+    require 'yaml'
+    @@config_file = "#{Dir.home}/.audibleturk"
+    def initialize(params, path=nil)
+      @params = params
+      @path = path
+    end
+
+    def self.file(path=@@config_file)
+      file = IO.read(path)
+      config = YAML.load(file)
+      self.new(config, path)
+    end
+
+    def self.main
+      @@main ||= self.file
+    end
+
+    def self.param
+      self.main.param
+    end
+
+    def self.save
+      @@main or raise "Nothing to save"
+      @@main.save
+    end
+
+
+    def self.local
+      self.main.local
+    end
+
+    def save
+      File.open(@path, 'w') do |out|
+        YAML.dump(@params, out)
+      end
+    end
+
+    def param
+      @params
+    end
+
+    def local
+      File.expand_path(@params['local'])
+    end
+  end #Config class
+
   class Amazon
     require 'rturk'
     @@did_setup = false
@@ -64,75 +111,99 @@ module Audibleturk
     end #Result class
   end #Amazon class
 
-  class Folder
-    attr_reader :path
-    def initialize(path)
-      @path = path
+  class Project
+    attr_accessor :name, :config
+    def initialize(name, config=Audibleturk::Config.file)
+      @name = name
+      @config = config
     end
 
-    def self.named(string)
-      target = File.expand_path(Audibleturk::Config.param['local'] || "Desktop")
-      match = Dir.glob("#{target}/*").select{|entry| File.basename(entry) == string }[0]
-      return unless (match && File.directory?(match) && self.is_ours(match))
-      return self.new(match) 
+    def www(scp=@config.param['scp'])
+      Audibleturk::Project::WWW.new(@name, scp)
     end
 
-    def self.is_ours(dir)
-      (Dir.exists?("#{dir}/audio") && Dir.exists?("#{dir}/originals"))
+    def folder(path=nil)
+      path ||= @config.local || File.expand_path('Desktop')
+      Audibleturk::Project::Folder.named(@name, path)
     end
 
-    def audio_chunks
-      Dir.glob("#{@path}/audio/*.mp3").select{|file| not file.match(/\.all\.mp3$/)}.length
-    end
-
-    def subtitle
-      loc = "#{@path}/etc/subtitle.txt"
-      return IO.read(loc) if File.exists?(loc)
-      return
-    end
-
-    def subtitle=(subtitle)
-      File.open("#{@path}/etc/subtitle.txt", 'w') do |out|
-        out << subtitle
+    class WWW
+      require 'net/sftp'
+      attr_accessor :name, :host, :user, :path
+      def initialize(name, scp)
+        @name = name
+        connection = scp.match(/^(.+?)\@(.+?)(\:(.*))?$/) or raise "Could not extract server connection info from scp string '#{scp}'"
+        @user = connection[1]
+        @host = connection[2]
+        @path = connection[4]
+        if @path
+          @path = @path.sub(/\/$/,'')
+          @path = "#{@path}/"
+        else
+          @path = ''
+        end
       end
-    end
-  end #Folder class
 
-  class Config
-    require 'yaml'
-    @@config_file = "#{Dir.home}/.audibleturk"
-
-    def initialize(params, path=nil)
-      @params = params
-      @path = path
-    end
-
-    def self.open(path=@@config_file)
-      file = IO.read(path)
-      config = YAML.load(file)
-      self.new(config, path)
-    end
-
-    def self.param
-      @@main ||= self.open
-      @@main.param
-    end
-
-    def self.save
-      @@main or raise "Nothing to save"
-      @@main.save
-    end
-
-    def save
-      File.open(@path, 'w') do |out|
-        YAML.dump(@params, out)
+      def remove(files)
+        removals = []
+        begin
+          Net::SFTP.start(@host, @user) do |sftp|
+            files.each do |file|
+              removals.push(
+                            sftp.remove("#{@path}#{file}")
+                            )
+            end
+            sftp.loop
+          end
+          failures = removals.reject{|request| request.response.ok? } 
+          return {
+            :success => failures.empty?,
+            :failures => failures,
+            :message => failures.empty? ? '' : "File removal error: " + failures.collect{|request| request.response.to_s }.join('; ')
+          }
+        rescue Net::SSH::AuthenticationFailed
+          return {
+            :success => false,
+            :failures => [],
+            :message => "SSH authentication error: #{$!}"
+          }
+        end
       end
-    end
+    end #WWW class
 
-    def param
-      @params
-    end
-  end #Config class
+    class Folder
+      attr_reader :path
+      def initialize(path)
+        @path = path
+      end
+
+      def self.named(string, path)
+        match = Dir.glob("#{path}/*").select{|entry| File.basename(entry) == string }[0]
+        return unless (match && File.directory?(match) && self.is_ours(match))
+        return self.new(match) 
+      end
+
+      def self.is_ours(dir)
+        (Dir.exists?("#{dir}/audio") && Dir.exists?("#{dir}/originals"))
+      end
+
+      def audio_chunks
+        Dir.glob("#{@path}/audio/*.mp3").select{|file| not file.match(/\.all\.mp3$/)}.length
+      end
+
+      def subtitle
+        loc = "#{@path}/etc/subtitle.txt"
+        return IO.read(loc) if File.exists?(loc)
+        return
+      end
+
+      def subtitle=(subtitle)
+        File.open("#{@path}/etc/subtitle.txt", 'w') do |out|
+          out << subtitle
+        end
+      end
+    end #Folder class
+  end #Project class
 
   class Transcription
     include Enumerable
