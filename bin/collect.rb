@@ -21,9 +21,6 @@ needed_titles.each do |title|
   project = Audibleturk::Project.new(title)
   next if File.exists?("#{project.folder.path}/#{filename[:done]}")
   transcription = Audibleturk::Transcription.new(title, results.select{|result| result.transcription.title == title}.collect{|result| result.transcription})
-  www_files = transcription.collect{|chunk| chunk.filename }
-  #Rewrite URLs to point to local copies:
-  transcription.each{|chunk| chunk.url = "audio/#{chunk.filename_local}" }
   transcription.subtitle = project.folder.subtitle
   File.delete("#{project.folder.path}/#{filename[:working]}") if File.exists?("#{project.folder.path}/#{filename[:working]}")
   done = (transcription.to_a.length == project.folder.audio_chunks)
@@ -34,7 +31,7 @@ needed_titles.each do |title|
   end
   puts "Wrote #{out_file} to folder #{title}."
   if done && project.config.param['scp']
-    removed = project.www.remove(www_files)
+    removed = project.www.remove(transcription.collect{|chunk| chunk.filename })
     if removed[:success]
       puts "Removed #{project.name} files from #{project.www.host}"
     else
