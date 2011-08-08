@@ -11,7 +11,7 @@ use strict;
 use warnings;
 
 use File::Temp qw(tempfile tempdir);
-use File::Path 'remove_tree';
+use File::Path qw(remove_tree);
 use File::Copy;
 use File::Spec;
 use POSIX qw(floor);
@@ -114,7 +114,7 @@ sub init_project_dir{
   my ($project_name) = @_;
 
   if (mkdir "$config{local}/$project_name") {
-    mkdir "$config{local}/$project_name/$_" or error_bye("Failed to create folder", "$config{local}/$project_name/$_") foreach qw(audio csv originals etc);
+    mkdir "$config{local}/$project_name/$_" or error_bye("Failed to create folder", "$_ ($!)") foreach qw(audio csv originals etc);
     return 1;
   } else {
     if ($! =~ /file exists/i) {
@@ -147,7 +147,12 @@ sub write_subtitle{
 }
 
 #Copy CSV default to etc/
-copy("$config{app}/www/transcript.css", "$config{local}/$project_name/etc/transcript.css") or error_bye("Could not copy CSS template", "Could not copy '$config{app}/www/transcript.css' to '$config{local}/$project_name/etc': $!");
+copy("$config{app}/www/transcript.css", "$config{local}/$project_name/etc/transcript.css") or error_bye("Could not copy CSS template", "Could not copy 'transcript.css' to 'etc/': $!");
+
+#Copy Javascript files to etc/
+mkdir("$config{local}/$project_name/etc/player") or error_bye("Failed to create folder", "etc/player ($!)");
+copy("$config{app}/www/player/$_", "$config{local}/$project_name/etc/player/$_") or error_bye("Could not copy $_ to etc/player/ ($!)") foreach ('license.txt', 'player.swf','audio-player.js');
+copy("$config{app}/www/audio-compat.js", "$config{local}/$project_name/etc/audio-compat.js") or error_bye("Could not copy 'audio-compat.js' to 'etc/': $!");
 
 #Copy audio files to 'originals' folder
 foreach my $file (@files){
