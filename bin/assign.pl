@@ -23,21 +23,23 @@ use Getopt::Long;
 my $Dialoger = '/Applications/CocoaDialog.app/Contents/MacOS/CocoaDialog';
 Getopt::Long::Configure(qw(bundling ignore_case));
 
-my (%opt, @files, $subtitle, $time, $project_name);
+my (%opt, @files, @voices, $subtitle, $time, $project_name);
 GetOptions(
-	   'help' => \$opt{help},
-	   'file=s' => \@files,
-	   'title=s' => \$project_name,
-	   'chunks=s' => \$time,
-	   'subtitle=s' => \$subtitle,
-	  );
-my $usage = "USAGE: assign.pl --file foo.mp3 [--file bar.mp3...] --title Foo --chunks 1:00 [--subtitle 'Foo telephone interview']\n";
+    'help' => \$opt{help},
+    'file=s' => \@files,
+    'title=s' => \$project_name,
+    'chunks=s' => \$time,
+    'subtitle=s' => \$subtitle,
+    'voice=s' => \@voices,
+    );
+my $usage = "USAGE: at-assign --file foo.mp3 [--file bar.mp3...] --title Foo --chunks 1:00 [--subtitle 'Foo telephone interview'][--voice 'John Foo' [--voice 'Sally Bar, Female interiewer with British accent'...]...]\n";
 die $usage if $opt{help};
 my $name_via_command_line;
 $name_via_command_line = 1 if $project_name;
 
 @files = @ARGV if not @files;
 @files or error_bye("Drag audio files onto the icon");
+@voices < 4 or error_bye("Maximum 3 voice names supported in templates");
 
 #Need files in proper order before joining them
 @files = sort { filepath_sortable($a) cmp filepath_sortable($b) } @files;
@@ -146,7 +148,7 @@ sub write_subtitle{
   close $fh;
 }
 
-#Copy CSV default to etc/
+#Copy CSS default to etc/
 copy("$config{app}/www/transcript.css", "$config{local}/$project_name/etc/transcript.css") or error_bye("Could not copy CSS template", "Could not copy 'transcript.css' to 'etc/': $!");
 
 #Copy Javascript files to etc/
@@ -222,13 +224,24 @@ foreach my $file (@output_files) {
     $file = $remote_name;
 }
 
+#Process @voices args for insertion into CSV
+foreach my $voice (@voices) {
+    my ($name, $description) = split /,/, $voice, 2;
+    $description = '' if not defined $description;
+    $voice = {
+	name => $name,
+	description => $description,
+    }
+}
+push @voices, { name => '', description => '' } foreach (0 .. (3 - scalar(@voices)));
+
 #Make CSV file
 #(for Amazon Mechanical Turk)
 my $csv_path = "$config{local}/$project_name/csv/assignment.csv";
 my $csv = Text::CSV->new({ eol => "\n" }) or error_bye("Cannot use CSV module", Text::CSV->error_diag);
 open(my $fh, '>', $csv_path) or error_bye("Could not write CSV file", "$csv_path: $!");
-$csv->print($fh, ['url']);
-$csv->print($fh, ["$config{url}/$_"]) foreach @output_files;
+$csv->print($fh, ['url','voice1','voice1title','voice2','voice2title','voice3','voice3title']);
+$csv->print($fh, [ "$config{url}/$_", map { ($_->{name}, $_->{description}) } @voices ]) foreach @output_files;
 close $fh or error_bye("Trouble finalizing write to CSV file", "$csv_path: $!");
 print "Wrote assign.csv to $config{local}/$project_name/csv\n";
 
