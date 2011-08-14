@@ -40,7 +40,6 @@ $name_via_command_line = 1 if $project_name;
 
 @files = @ARGV if not @files;
 @files or error_bye("Drag audio files onto the icon");
-@voices < 4 or error_bye("Maximum 3 voice names supported in templates");
 
 #Need files in proper order before joining them
 @files = sort { filepath_sortable($a) cmp filepath_sortable($b) } @files;
@@ -234,7 +233,6 @@ foreach my $voice (@voices) {
 	description => $description,
     }
 }
-push @voices, { name => '', description => '' } foreach (0 .. (3 - scalar(@voices)));
 
 #Process @unusual args for insertion into CSV
 @unusual = map { split /,\s*/, $_ } @unusual;
@@ -244,8 +242,8 @@ push @voices, { name => '', description => '' } foreach (0 .. (3 - scalar(@voice
 my $csv_path = "$config{local}/$project_name/csv/assignment.csv";
 my $csv = Text::CSV->new({ eol => "\n" }) or error_bye("Cannot use CSV module", Text::CSV->error_diag);
 open(my $fh, '>', $csv_path) or error_bye("Could not write CSV file", "$csv_path: $!");
-$csv->print($fh, ['url','unusual','voice1','voice1title','voice2','voice2title','voice3','voice3title']);
-$csv->print($fh, [ "$config{url}/$_", join(',', @unusual), map { ($_->{name}, $_->{description}) } @voices ]) foreach @output_files;
+$csv->print($fh, ['url','unusual', (map { ("voice$_", "voice${_}title") } 1 .. scalar(@voices))]);
+$csv->print($fh, [ "$config{url}/$_", join(', ', @unusual), map { $_->{name}, $_->{description} } @voices ]) foreach @output_files;
 close $fh or error_bye("Trouble finalizing write to CSV file", "$csv_path: $!");
 print "Wrote assign.csv to $config{local}/$project_name/csv\n";
 
