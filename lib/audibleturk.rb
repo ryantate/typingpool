@@ -132,7 +132,7 @@ module Audibleturk
 
     def local(path=nil)
       path ||= @config.local || File.expand_path('Desktop')
-      Audibleturk::Project::Local.named(@name, path)
+      Audibleturk::Project::Local.named(@name, path) or raise "Can't find '#{@name}' in '#{path}'"
     end
 
     class WWW
@@ -187,11 +187,11 @@ module Audibleturk
 
       def self.named(string, path)
         match = Dir.glob("#{path}/*").select{|entry| File.basename(entry) == string }[0]
-        return unless (match && File.directory?(match) && self.is_ours(match))
+        return unless (match && File.directory?(match) && self.ours?(match))
         return self.new(match) 
       end
 
-      def self.is_ours(dir)
+      def self.ours?(dir)
         (Dir.exists?("#{dir}/audio") && Dir.exists?("#{dir}/originals"))
       end
 
@@ -200,14 +200,27 @@ module Audibleturk
       end
 
       def subtitle
-        loc = "#{@path}/etc/subtitle.txt"
-        return IO.read(loc) if File.exists?(loc)
-        return
+        read('etc/subtitle.txt')
       end
 
       def subtitle=(subtitle)
-        File.open("#{@path}/etc/subtitle.txt", 'w') do |out|
-          out << subtitle
+        write('etc/subtitle.txt', subtitle)
+      end
+
+      def csv(base_name)
+        arys = CSV.parse(read("csv/#{base_name}.csv"))
+        headers = arys.shift
+        arys.collect{|row| Hash[*headers.zip(row).flatten]}
+      end
+
+      def read(relative_path)
+        path = "#{@path}/#{relative_path}"
+        IO.read(path) if File.exists?(path)
+      end
+
+      def write(relative_path, data)
+        File.open( "#{@path}/#{relative_path}", 'w') do |out|
+          out << data
         end
       end
     end #Local class
