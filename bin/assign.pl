@@ -23,7 +23,7 @@ use Getopt::Long;
 my $Dialoger = '/Applications/CocoaDialog.app/Contents/MacOS/CocoaDialog';
 Getopt::Long::Configure(qw(bundling ignore_case));
 
-my (%opt, @files, @voices, $subtitle, $time, $project_name);
+my (%opt, @files, @voices, @unusual, $subtitle, $time, $project_name);
 GetOptions(
     'help' => \$opt{help},
     'file=s' => \@files,
@@ -31,8 +31,9 @@ GetOptions(
     'chunks=s' => \$time,
     'subtitle=s' => \$subtitle,
     'voice=s' => \@voices,
+    'unusual=s', => \@unusual,
     );
-my $usage = "USAGE: at-assign --file foo.mp3 [--file bar.mp3...] --title Foo --chunks 1:00 [--subtitle 'Foo telephone interview'][--voice 'John Foo' [--voice 'Sally Bar, Female interiewer with British accent'...]...]\n";
+my $usage = "USAGE: at-assign --file foo.mp3 [--file bar.mp3...] --title Foo --chunks 1:00 [--subtitle 'Foo telephone interview about Yahoo Hack Day'][--voice 'John Foo' [--voice 'Sally Bar, Female interiewer with British accent'...]...][--unusual 'Yahoo' --unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson, Zawodny']\n";
 die $usage if $opt{help};
 my $name_via_command_line;
 $name_via_command_line = 1 if $project_name;
@@ -69,7 +70,7 @@ foreach (qw(scp url local app)){
     $config{$_} =~ s/\/$//;
 }
 
-shell_safe($config{$_}) or error_bye("Unsafe $_ dir name", $config{$_}) foreach qw(config app);
+shell_safe($config{$_}) or error_bye("Unsafe $_ dir name", $config{$_}) foreach qw(local app);
 if (exists $config{randomize}){
     $config{randomize} = 0 if $config{randomize} =~ /\bfalse\b/i;
     $config{randomize} = 0 if $config{randomize} =~ /\bno\b/i;
@@ -226,7 +227,7 @@ foreach my $file (@output_files) {
 
 #Process @voices args for insertion into CSV
 foreach my $voice (@voices) {
-    my ($name, $description) = split /,/, $voice, 2;
+    my ($name, $description) = split /,\s*/, $voice, 2;
     $description = '' if not defined $description;
     $voice = {
 	name => $name,
@@ -235,13 +236,16 @@ foreach my $voice (@voices) {
 }
 push @voices, { name => '', description => '' } foreach (0 .. (3 - scalar(@voices)));
 
+#Process @unusual args for insertion into CSV
+@unusual = map { split /,\s*/, $_ } @unusual;
+
 #Make CSV file
 #(for Amazon Mechanical Turk)
 my $csv_path = "$config{local}/$project_name/csv/assignment.csv";
 my $csv = Text::CSV->new({ eol => "\n" }) or error_bye("Cannot use CSV module", Text::CSV->error_diag);
 open(my $fh, '>', $csv_path) or error_bye("Could not write CSV file", "$csv_path: $!");
-$csv->print($fh, ['url','voice1','voice1title','voice2','voice2title','voice3','voice3title']);
-$csv->print($fh, [ "$config{url}/$_", map { ($_->{name}, $_->{description}) } @voices ]) foreach @output_files;
+$csv->print($fh, ['url','unusual','voice1','voice1title','voice2','voice2title','voice3','voice3title']);
+$csv->print($fh, [ "$config{url}/$_", join(',', @unusual), map { ($_->{name}, $_->{description}) } @voices ]) foreach @output_files;
 close $fh or error_bye("Trouble finalizing write to CSV file", "$csv_path: $!");
 print "Wrote assign.csv to $config{local}/$project_name/csv\n";
 
