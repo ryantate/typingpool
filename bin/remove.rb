@@ -24,15 +24,15 @@ OptionParser.new do |opts|
 end.parse!
 
 project_name = ARGV[0] or abort "#{options[:banner]}\nat-remove --help for more.\n"
-(options[:local] || options[:remote]) or abort "Did not specify what to remove (--remote or --local or --all).\nat-remove --help for more.\n"
 project = Audibleturk::Project.new(project_name) or abort "No such project '#{project_name}'\n"
+(options[:local] || options[:remote]) or abort "Did not specify what to remove (--remote or --local or --all).\nat-remove --help for more.\n"
 
 if options[:remote]
   project.www.remove(project.local.csv('assignment').collect{|row_hash| File.basename(URI.parse(row_hash['url']).path) })
 end
 
 if options[:local]
-  path=project.local.path
+  path = project.local.path
   Audibleturk::Project::Local.ours?(path) or abort "Contents of dir #{path} look wrong"
   FileUtils.rm_r(path, :secure => true)
 end

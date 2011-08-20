@@ -31,9 +31,10 @@ GetOptions(
     'chunks=s' => \$time,
     'subtitle=s' => \$subtitle,
     'voice=s' => \@voices,
-    'unusual=s', => \@unusual,
+    'unusual=s' => \@unusual,
+    'moveorig' => \$opt{moveorig},
     );
-my $usage = "USAGE: at-assign --file foo.mp3 [--file bar.mp3...] --title Foo --chunks 1:00 [--subtitle 'Foo telephone interview about Yahoo Hack Day'][--voice 'John Foo' [--voice 'Sally Bar, Female interiewer with British accent'...]...][--unusual 'Yahoo' --unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson, Zawodny']\n";
+my $usage = "USAGE: at-assign --file foo.mp3 [--file bar.mp3...] --title Foo --chunks 1:00 [--subtitle 'Foo telephone interview about Yahoo Hack Day'][--voice 'John Foo' [--voice 'Sally Bar, Female interiewer with British accent'...]...][--unusual 'Yahoo' --unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson, Zawodny'][--moveorig]\n";
 die $usage if $opt{help};
 my $name_via_command_line;
 $name_via_command_line = 1 if $project_name;
@@ -160,7 +161,12 @@ copy("$config{app}/www/audio-compat.js", "$config{local}/$project_name/etc/audio
 foreach my $file (@files){
     my $base = filepath_base($file);
     my $new_path = "$config{local}/$project_name/originals/$base";
-    copy($file, $new_path) or error_bye ("Could not copy original audio file", "Could not move $file to $new_path: $!");
+    if ($opt{moveorig}){
+	move($file, $new_path) or error_bye ("Could not move original audio file", "Could not move $file to $new_path: $!");
+    }
+    else {
+	copy($file, $new_path) or error_bye ("Could not copy original audio file", "Could not copy $file to $new_path: $!");
+    }
     $file = $new_path;
 }
 
