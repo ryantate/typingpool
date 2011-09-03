@@ -132,7 +132,7 @@ module Audibleturk
 
     def local(path=nil)
       path ||= @config.local || File.expand_path('Desktop')
-      Audibleturk::Project::Local.named(@name, path) or raise "Can't find '#{@name}' in '#{path}'"
+      Audibleturk::Project::Local.named(@name, path) 
     end
 
     class WWW
@@ -177,7 +177,7 @@ module Audibleturk
           }
         end
       end
-    end #WWW class
+    end #Audibleturk::Project::WWW
 
     class Local
       attr_reader :path
@@ -208,7 +208,8 @@ module Audibleturk
       end
 
       def csv(base_name)
-        arys = CSV.parse(read("csv/#{base_name}.csv"))
+        csv = read("csv/#{base_name}.csv") or raise "No file #{base_name} in #{@path}/csv"
+        arys = CSV.parse(csv)
         headers = arys.shift
         arys.collect{|row| Hash[*headers.zip(row).flatten]}
       end
@@ -223,8 +224,8 @@ module Audibleturk
           out << data
         end
       end
-    end #Local class
-  end #Project class
+    end #Audibleturk::Project::Local
+  end #Audibleturk::Project
 
   class Transcription
     include Enumerable
