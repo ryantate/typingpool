@@ -10,41 +10,41 @@ options = {
   :chunk => '1:00'
 }
 OptionParser.new do |opts|
-  options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} --title Foo --file foo.mp3 [--file bar.mp3...] [--chunks 1:00] [--subtitle 'Interview about Hack Day'][--voice 'John Foo' --voice 'Sally Bar, female voice'][--unusual 'Hack Day' --unusual 'Hack Day, Sunnyvale, Dickerson'][--moveorig]\n--help for more\n"
+  options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} --title Foo --file foo.mp3 [--file bar.mp3...] [--chunks 1:00] [--subtitle 'Hack Day interview'][--voice 'John' --voice 'Pat Foo, British female'...][--unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson'...][--moveorig]\n"
 
-  opts.on('--file FILE', 'Required. Audio file to be transcribed. Specify repeatedly for multiple files (will be sorted by name).') do |file|
+  opts.on('--file FILE', 'Required. Audio for transcribing. Repeatable (sorting is by name).') do |file|
     options[:files].push(file)
   end
 
-  opts.on('--title TITLE', 'Required. Title for naming files and the transcript.') do |title|
+  opts.on('--title TITLE', 'Required. For file names and transcript.') do |title|
     options[:title] = title
   end
 
-  opts.on('--subtitle SUBTITLE', 'Subtitle for the transcript.') do |subtitle|
+  opts.on('--subtitle SUBTITLE', 'For transcript.') do |subtitle|
     options[:subtitle] = subtitle
   end
 
-  opts.on('--chunks MM:SS' 'Default: 1:00. Audio divded into chunks of this length for transcribing. Format expandable to HH:MM:SS.ss') do |chunk|
+  opts.on('--chunks MM:SS', 'Default: 1:00. Audio divided thusly for transcribing. Expandable to HH:MM:SS.ss') do |chunk|
     options[:chunk] = chunk
   end
 
-  opts.on('--voice "NAME[, TITLE]"', 'Name and optional title of a person in the transcript. Specify repeatedly for multiple voices.') do |voice|
+  opts.on('--voice "NAME[, DESCR]"', 'Name and optional description of person in recording, to aid transcriber. Repeatable.') do |voice|
     options[:voices].push(voice)
   end
 
-  opts.on('--unusual WORD[,WORD, WORD,...]', 'Unusual word occuring in the transcript, to help the transcriber. Specify repeatedly for multiple words, or separate with commas.') do |word|
+  opts.on('--unusual WORD[,WORD,...]', 'Unusual word occuring in the transcript, to aid the transcriber. Repeatable, or comma separate words.') do |word|
     options[:unusual].push(word)
   end
 
-  opts.on('--config PATH', 'Default: ~/.audibleturk. Path to a config file.') do |config|
+  opts.on('--config PATH', 'Default: ~/.audibleturk. A config file.') do |config|
     options[:config] = config
   end
 
-  opts.on('--bitrate KBPS', 'Default: Input file bitrate. Output file bitrate, as an integer representing kilobits per second.') do |kbps|
+  opts.on('--bitrate KBPS', 'Default: Mirror input. Output bitrate in kb/s.') do |kbps|
     options[:bitrate] = kbps
   end
 
-  opts.on('--moveorig', 'Move audio input files instead of copying.') do
+  opts.on('--moveorig', 'Move input files instead of copying.') do
     options[:moveorig] = true
   end
 
@@ -54,7 +54,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-abort "No files specified.\n#{options[:banner]}" if options[:files].empty?
+abort "No files specified.\n#{options[:banner]}\n--help for more" if options[:files].empty?
 options[:files].sort!
 options[:files].each do |file|
   File.extname(file) or abort "You need a file extension on the file '#{file}'"
