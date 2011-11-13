@@ -23,9 +23,9 @@ needed_titles.each do |title|
   transcription = Audibleturk::Transcription.new(title, results.select{|result| result.transcription.title == title}.collect{|result| result.transcription})
   transcription.subtitle = project.local.subtitle
   File.delete("#{project.local.path}/#{filename[:working]}") if File.exists?("#{project.local.path}/#{filename[:working]}")
-  done = (transcription.to_a.length == project.local.audio_chunks)
+  done = (transcription.to_a.length == project.local.audio_chunks.length)
   out_file = done ? filename[:done] : filename[:working]
-  template ||= IO.read("#{project.config.app}/www/transcript.html.erb")
+  template ||= IO.read("#{project.config.app}/templates/transcript.html.erb")
   File.open("#{project.local.path}/#{out_file}", 'w') do |out|
     out << ERB.new(template, nil, '<>').result(binding())
   end
