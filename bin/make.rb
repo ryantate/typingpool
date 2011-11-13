@@ -54,7 +54,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-abort "No files specified.\n#{options[:banner]}\n--help for more" if options[:files].empty?
+abort "No files specified.\n\n#{options[:banner]}\n\n--help for more" if options[:files].empty?
 options[:files].sort!
 options[:files].each do |file|
   File.extname(file) or abort "You need a file extension on the file '#{file}'"
