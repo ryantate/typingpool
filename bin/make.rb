@@ -24,7 +24,7 @@ OptionParser.new do |opts|
     options[:subtitle] = subtitle
   end
 
-  opts.on('--chunks MM:SS', 'Default: 1:00. Audio divided thusly for transcribing. Expandable to HH:MM:SS.ss') do |chunk|
+  opts.on('--chunks MM:SS', 'Default: 1:00. Audio divided thusly for transcribing. Try also HH:MM:SS.ss and SSS.') do |chunk|
     options[:chunk] = chunk
   end
 
@@ -32,7 +32,7 @@ OptionParser.new do |opts|
     options[:voices].push(voice)
   end
 
-  opts.on('--unusual WORD[,WORD,...]', 'Unusual word occuring in the transcript, to aid the transcriber. Repeatable, or comma separate words.') do |word|
+  opts.on('--unusual WORD[,WORD,...]', 'Unusual word occuring in the transcript, to aid the transcriber. Repeatable, or use commas.') do |word|
     options[:unusual].push(word)
   end
 
