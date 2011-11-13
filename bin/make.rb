@@ -10,7 +10,7 @@ options = {
   :chunk => '1:00'
 }
 OptionParser.new do |opts|
-  options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} --title Foo --file foo.mp3 [--file bar.mp3...] [--chunks 1:00] [--subtitle 'Hack Day interview'][--voice 'John' --voice 'Pat Foo, British female'...][--unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson'...][--moveorig]\n"
+  options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} --title Foo --file foo.mp3 [--file bar.mp3...] [--chunks 1:00] [--subtitle 'Hack Day interview'][--voice 'John' --voice 'Pat Foo, British female'...][--unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson'...][--bitrate 256][--moveorig]\n"
 
   opts.on('--file FILE', 'Required. Audio for transcribing. Repeatable (sorting is by name).') do |file|
     options[:files].push(file)
