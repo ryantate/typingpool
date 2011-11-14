@@ -28,11 +28,11 @@ OptionParser.new do |opts|
     options[:chunk] = chunk
   end
 
-  opts.on('--voice "NAME[, DESCR]"', 'Name and optional description of person in recording, to aid transcriber. Repeatable.') do |voice|
+  opts.on('--voice "NAME[, DESCR]"', 'Name, optional description of recorded person, to aid transcriber. Repeatable.') do |voice|
     options[:voices].push(voice)
   end
 
-  opts.on('--unusual WORD[,WORD,...]', 'Unusual word occuring in the transcript, to aid the transcriber. Repeatable, or use commas.') do |word|
+  opts.on('--unusual WORD[,WORD,]', 'Unusual word within recording, to aid transcriber. Commas for multiple. Repeatable.') do |word|
     options[:unusual].push(word)
   end
 
