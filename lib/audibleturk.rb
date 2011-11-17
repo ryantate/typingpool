@@ -199,7 +199,7 @@ module Audibleturk
     end
 
     def upload_audio(files=local.audio_chunks, &progress)
-     dest = files.collect{|file| File.basename(file.path) + ((@config.randomize == false) ? '' : ".#{psuedo_random_uppercase_string}") + File.extname(file.path)}
+     dest = files.collect{|file| File.basename(file.path, '.*') + ((@config.randomize == false) ? '' : ".#{psuedo_random_uppercase_string}") + File.extname(file.path)}
       www.put(files.collect{|f| f.path}, dest){|file, as| progress.yield(file, as, www) if progress}
       return dest
     end
