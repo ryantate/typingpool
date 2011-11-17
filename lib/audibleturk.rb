@@ -257,14 +257,14 @@ module Audibleturk
         return results
       end
 
-      def put(files, as=nil, &progress)
+      def put(files, as=nil)
         as ||= files.collect{|file| File.basename(file)}
         begin
           i = 0
           batch(files) do |file, sftp|
             dest = as[i]
             i += 1
-            progress.yield(file, dest) if progress
+            yield(file, dest) if block_given?
             sftp.upload(file, "#{@path}/#{dest}")
           end
         rescue Net::SFTP::StatusException => e
