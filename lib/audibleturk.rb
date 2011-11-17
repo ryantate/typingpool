@@ -182,10 +182,10 @@ module Audibleturk
       @bitrate = kbps
     end
 
-    def convert_audio(&progress)
+    def convert_audio
       local.original_audio.collect do |path|
         audio = Audio::File.new(path)
-        progress.yield(path, bitrate) if progress
+        yield(path, bitrate) if block_given?
         File.extname(path).downcase.eql?('.mp3') ? audio : audio.to_mp3(local.tmp_dir, bitrate)
       end
     end
@@ -377,11 +377,11 @@ module Audibleturk
       #STDOUT all over your screen! (when called with multiple args,
       #which with Kernel#systems kills the chance to do shell style
       #stream redirects like 2>/dev/null)
-      def self.system_quietly(*cmd, &block)
+      def self.system_quietly(*cmd)
         exit_status=nil
         err=nil
         Open3.popen3(*cmd) do |stdin, stdout, stderr, wait_thread|
-          block.yield(stdin, stdout, stderr, wait_thread) if block
+          yield(stdin, stdout, stderr, wait_thread) if block_given?
           err = stderr.gets(nil)
           [stdin, stdout, stderr].each{|stream| stream.send('close')}
           exit_status = wait_thread.value
