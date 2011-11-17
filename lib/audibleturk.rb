@@ -186,7 +186,7 @@ module Audibleturk
       local.original_audio.collect do |path|
         audio = Audio::File.new(path)
         progress.yield(path, bitrate) if progress
-        File.extname(path).downcase.eql?('mp3') ? audio : audio.to_mp3(local.tmp_dir, bitrate)
+        File.extname(path).downcase.eql?('.mp3') ? audio : audio.to_mp3(local.tmp_dir, bitrate)
       end
     end
 
