@@ -399,7 +399,7 @@ module Audibleturk
           written = "#{::File.dirname(dest)}/#{::File.basename(dest, '.*')}_MP3WRAP.mp3"
           FileUtils.mv(written, dest)
         else
-          FileUtils.cp(files[0], dest)
+          FileUtils.cp(files[0].path, dest)
         end
         File.new(dest)
       end
