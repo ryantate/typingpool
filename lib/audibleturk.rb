@@ -147,7 +147,8 @@ module Audibleturk
     end #Result class
   end #Amazon class
 
- class Project
+  class Project
+    require 'securerandom'
     attr_reader :interval, :bitrate
     attr_accessor :name, :config
     def initialize(name, config=Audibleturk::Config.file)
@@ -164,7 +165,13 @@ module Audibleturk
     end
 
     def create_local(basedir=@config.local)
-      Audibleturk::Project::Local.create(@name, basedir, "#{@config.app}/templates/project")
+      local = Audibleturk::Project::Local.create(@name, basedir, "#{@config.app}/templates/project")
+      local.id = id
+      local
+    end
+
+    def id
+      @id ||= (local && local.id) || SecureRandom.hex(16)
     end
 
     def interval=(mmss)
@@ -297,6 +304,7 @@ module Audibleturk
         dest = "#{base_dir}/#{name}"
         FileUtils.mkdir(dest)
         FileUtils.cp_r("#{template_dir}/.", dest)
+        return self.new(dest)
       end
 
       def self.named(string, path)
@@ -335,6 +343,14 @@ module Audibleturk
 
       def subtitle=(subtitle)
         write('etc/subtitle.txt', subtitle)
+      end
+
+      def id
+        read('etc/id.txt')
+      end
+
+      def id=(id)
+        write('etc/id.txt', id)
       end
 
       def original_audio
@@ -500,7 +516,7 @@ module Audibleturk
       def url=(url)
         #http://ryantate.com/transfer/Speech.01.00.mp3
         #OR, obfuscated: http://ryantate.com/transfer/Speech.01.00.ISEAOMB.mp3
-        matches = /.+\/(([\w\/\-]+)\.(\d+)\.(\d\d)(\.\w+)?\.[^\/\.]+)$/.match(url) or raise "Unexpected format to url '#{url}'"
+        matches = /.+\/(([\w\/\-]+)\.(\d+)\.(\d\d)(\.\w+)?\.[^\/\.]+)/.match(url) or raise "Unexpected format to url '#{url}'"
         @url = matches[0]
         @filename = matches[1]
         @title = matches[2] unless @title
