@@ -54,6 +54,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+abort "Unfamiliar argument '#{ARGV[0]}'" if ARGV.size > 0
 abort "No files specified.\n\n#{options[:banner]}\n\n--help for more" if options[:files].empty?
 options[:files].sort!
 options[:files].each do |file|
