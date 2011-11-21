@@ -101,6 +101,7 @@ module Audibleturk
         @hit_id = assignment.hit_id
         @transcription = Audibleturk::Transcription::Chunk.new(assignment.answers.to_hash['transcription']);
         @transcription.url = assignment.answers.to_hash[params[:url_at]]
+        @transcription.project = assignment.answers.to_hash[params[:id_at]]
         @transcription.worker = assignment.worker_id
         @transcription.hit = @hit_id
       end
@@ -206,7 +207,7 @@ module Audibleturk
     end
 
     def upload_audio(files=local.audio_chunks, &progress)
-     dest = files.collect{|file| File.basename(file.path, '.*') + ((@config.randomize == false) ? '' : ".#{psuedo_random_uppercase_string}") + File.extname(file.path)}
+      dest = files.collect{|file| File.basename(file.path, '.*') + ((@config.randomize == false) ? '' : ".#{psuedo_random_uppercase_string}") + File.extname(file.path)}
       www.put(files.collect{|f| f.path}, dest){|file, as| progress.yield(file, as, www) if progress}
       return dest
     end
@@ -214,9 +215,9 @@ module Audibleturk
     def create_assignment_csv(remote_files, unusual_words=[], voices=[])
       assignment_path = "#{local.path}/csv/assignment.csv"
       CSV.open(assignment_path, 'wb') do |csv|
-        csv << ['url', 'unusual', (1 .. voices.size).collect{|n| ["voice#{n}", "voice#{n}title"]}].flatten
+        csv << ['url', 'project_id', 'unusual', (1 .. voices.size).collect{|n| ["voice#{n}", "voice#{n}title"]}].flatten
         remote_files.each do |file|
-          csv << ["#{@config.url}/#{file}", unusual_words.join(', '), voices.collect{|v| [v[:name], v[:description]]}].flatten
+          csv << ["#{@config.url}/#{file}", id, unusual_words.join(', '), voices.collect{|v| [v[:name], v[:description]]}].flatten
         end
       end
       return assignment_path
@@ -371,7 +372,11 @@ module Audibleturk
 
       def read(relative_path)
         path = "#{@path}/#{relative_path}"
-        IO.read(path) if File.exists?(path)
+        if File.exists?(path)
+          return IO.read(path)
+        else
+          return nil
+        end
       end
 
       def write(relative_path, data)
@@ -411,7 +416,7 @@ module Audibleturk
 
       def self.merge(files, dest)
         if files.size > 1
-            Audio.system_quietly('mp3wrap', dest, *files.collect{|file| file.path})
+          Audio.system_quietly('mp3wrap', dest, *files.collect{|file| file.path})
           written = "#{::File.dirname(dest)}/#{::File.basename(dest, '.*')}_MP3WRAP.mp3"
           FileUtils.mv(written, dest)
         else
@@ -444,7 +449,7 @@ module Audibleturk
           #mp3splt is absolutely retarded at handling absolute directory paths
           dir = ::File.dirname(@path)
           Dir.chdir(dir) do
-              Audio.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{base_name}.@m.@s", ::File.basename(@path)) 
+            Audio.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{base_name}.@m.@s", ::File.basename(@path)) 
           end
           Dir.entries(dir).select{|entry| ::File.file?("#{dir}/#{entry}")}.reject{|file| file.match(/^\./)}.reject{|file| file.eql?(::File.basename(@path))}.collect{|file| self.class.new("#{dir}/#{file}")}
         end
@@ -495,7 +500,7 @@ module Audibleturk
       require 'text/format'
       require 'cgi'
 
-      attr_accessor :body, :worker, :title, :hit
+      attr_accessor :body, :worker, :title, :hit, :project
       attr_reader :offset_start, :offset_start_seconds, :filename
 
       def initialize(body)
