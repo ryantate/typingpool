@@ -1,0 +1,23 @@
+<div id="overview">
+  <h2 id="title">Transcribe MP3 of 1-minute phone call</h2>
+  <p id="description">I split up a telephone conversation into 1-minute parts, you transcribe the audio for one 1-minute part.</p>
+  <h3>Important</h3>
+  <ul>
+    <li>Some unusual words you might hear: <%= unusual %></li>
+    <li>If there are inaudible words, type ??</li>
+  </ul>
+  <h3>Labeling</h3>
+  <p>For this HIT, there are two speakers. The person asking the questions is <strong><%= voice1 %></strong>. The person answering the questions, on the distant end of the telephone line, is <strong><%= voice2 %></strong>, <%= voice2title %>. Label each speaker with a colon, like this:</p>
+  <blockquote>
+    <p><%= voice1 %>:&nbsp;Do you think it was a mistake to set up Saturn as its own Corporation?</p>
+    <p><%= voice2 %>:&nbsp;In hindsight, you can look at it that way, and I think a lot of people do, quite honestly. They don't think GM needed another brand. But at the time this was all developed. it sure seemed like a good idea.</p>
+    <p><%= voice1 %>:&nbsp;What was the biggest difference, in your opinion, in labor relations at Saturn versus labor relations within the rest of GM?</p>
+    <p><%= voice2 %>:&nbsp;In all honesty. you wouldn&rsquo;t do that now -- start a whole new company, a new brand, a new plant, and an entirely new vehicle all at one time.&nbsp;</p>
+  </blockquote>
+  <p>&nbsp;</p>
+</div>
+<div id="question">
+  <h3>Instructions</h3>
+  <p>&nbsp;Please transcribe this 1-minute MP3: <a target="_blank" href="<%= url %>"><%= url %></a></p>
+  <p><input name="typingpool_url" type="hidden" value="<%= url %>" /><input name="typingpool_project_id" type="hidden" value="<%= project_id %>" />Enter your transcription below:</p>
+</div>

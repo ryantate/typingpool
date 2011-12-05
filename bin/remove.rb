@@ -6,7 +6,7 @@ require 'audibleturk'
 
 options = {}
 OptionParser.new do |opts|
-  options[:banner] = opts.banner = "USAGE: at-remove PROJECTNAME --local | --remote | --all"
+  options[:banner] = opts.banner = "USAGE: at-remove PROJECT --local | --remote | --all"
   opts.on('-l', '--local', 'Permanently delete the local project directory') do
     options[:local] = true
   end

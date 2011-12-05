@@ -26,32 +26,11 @@ module Audibleturk
       @@main ||= self.file
     end
 
-    def self.param
-      self.main.param
-    end
-
-    def self.save
-      @@main or raise "Nothing to save"
-      @@main.save
-    end
-
-    def self.local
-      self.main.local
-    end
-
-    def self.app
-      self.main.app
-    end
-
-    def save(path=@path)
-      path or raise "No path to save to"
-      File.open(path, 'w') do |out|
-        YAML.dump(@params, out)
-      end
-    end
-
     def param
       @params
+    end
+    def self.param
+      self.main.param
     end
 
     def to_bool(string)
@@ -64,34 +43,254 @@ module Audibleturk
     def local
       File.expand_path(@params['local'])
     end
+    def self.local
+      self.main.local
+    end
 
     def app
       File.expand_path(@params['app'])
+    end
+    def self.app
+      self.main.app
     end
 
     def scp
       @params['scp'].sub(/\/$/, '')
     end
+    def self.scp
+      self.main.scp
+    end
 
     def url
       @params['url'].sub(/\/$/, '')
+    end
+    def self.url
+      self.main.url
     end
 
     def randomize
       to_bool(@params['randomize'])
     end
+    def self.randomize
+      self.main.randomize
+    end
 
+    def assignments
+      self.assignments = @params['assignments'] || {} if not(@assignments)
+      @assignments
+    end
+    def self.assignments
+      self.main.assignments
+    end
+
+    def assignments=(params)
+      @assignments = Assignments.new(params)
+    end
+
+    def self.assignments=(params)
+      self.main.assignments = params
+    end
+
+    class Assignments
+      require 'set'
+      def initialize(params)
+        @params = params
+      end
+
+      def param
+        @params
+      end
+
+      def templates
+        File.expand_path(@params['templates']) if @params['templates']
+      end
+
+      def qualify
+        self.qualify = @params['qualify'] || [] if not(@qualify)
+        @qualify
+      end
+
+      def qualify=(specs)
+        @qualify = specs.collect{|spec| Qualification.new(spec)}
+      end
+
+      def add_qualification(spec)
+        self.qualify.push(Qualification.new(spec))
+      end
+
+      def keywords
+        @params['keywords'] ||= []
+      end
+
+      def keywords=(array)
+        @params['keywords'] = array
+      end
+
+      def time_methods
+        Set.new(%w(deadline approval lifetime))
+      end
+
+      def time_method?(meth)
+        time_methods.include?(meth.to_s)
+      end
+
+      def timespec_to_seconds(timespec)
+        timespec or return
+        suffix_to_time = {
+          's'=>1,
+          'm'=>60,
+          'h'=>60*60,
+          'd'=>60*60*24,
+          'M'=>60*60*24*30,
+          'y'=>60*60*24*365
+        }
+        match = timespec.to_s.match(/^\+?(\d+(\.\d+)?)\s*([#{suffix_to_time.keys.join}])?$/) or raise Audibleturk::Error::Argument::Format, "Can't convert '#{timespec}' to time"
+        suffix = match[3] || 's'
+        return (match[1].to_f * suffix_to_time[suffix].to_i).to_i
+      end
+
+      def equals_method?(meth)
+        match = meth.to_s.match(/([^=]+)=$/) or return
+        return match[1]
+      end
+
+      def method_missing(meth, *args)
+        equals_param = equals_method?(meth)
+        if equals_param
+          args.size == 1 or raise Audibleturk::Error::Argument, "Too many args"
+          value = args[0]
+          if time_method?(equals_param) && value
+            timespec_to_seconds(value) or raise Audibeturk::Error::Argument::Format, "Can't convert '#{timespec}' to time"
+          end
+          return param[equals_param] = value
+        end
+        args.empty? or raise Audibleturk::Error::Argument, "Too many args"
+        return timespec_to_seconds(param[meth.to_s]) if time_method?(meth) && param[meth.to_s]
+        return param[meth.to_s]
+      end
+
+      class Qualification
+        def initialize(spec)
+          @raw = spec
+          to_arg #make sure value parses
+        end
+
+        def to_s
+          @raw
+        end
+
+        def to_arg
+          [type, opts]
+        end
+
+        def type
+          @raw.split(/\s+/)[0].to_sym
+        end
+
+        def opts
+          args = @raw.split(/\s+/)
+          if (args.size > 3) || (args.size < 2)
+            raise Audibleturk::Error::Argument, "Unexpected number of qualification tokens: #{@raw}"
+          end
+          args.shift
+          comparator(args[0]) or raise Audibleturk::Error::Argument, "Unknown comparator '#{args[0]}' in qualification '#{@raw}'"
+          value = 1
+          value = args[1] if args.size == 2
+          return {comparator(args[0]) => value}
+        end
+
+        def comparator(value)
+          Hash[
+               '>' => :gt,
+               '>=' => :gte,
+               '<' => :lt,
+               '<=' => :lte,
+               '==' => :eql,
+               '!=' => :not,
+               'true' => :eql,
+               'exists' => :exists
+              ][value]
+        end
+      end #Config::Assignments::Qualification
+    end #Config::Assignments
   end #Config class
 
   class Amazon
     require 'rturk'
     @@did_setup = false
-    def self.setup(aws_key=Audibleturk::Config.param['aws']['key'], aws_secret=Audibleturk::Config.param['aws']['secret'])
+    def self.setup(args={})
       unless @@did_setup
-        RTurk.setup(aws_key, aws_secret)
+        args[:key] ||= Audibleturk::Config.param['aws']['key']
+        args[:secret] ||= Audibleturk::Config.param['aws']['secret']
+        args[:sandbox] = false if args[:sandbox].nil?
+        RTurk.setup(args[:key], args[:secret], :sandbox => args[:sandbox])
         @@did_setup = true
       end
     end
+
+    class Assignment
+      require 'nokogiri'
+      require 'uri'
+
+      def initialize(htmlf, config_assignment)
+        @htmlf = htmlf
+        @config = config_assignment
+      end
+
+      def assign
+        HIT.create(:title => title) do |hit|
+          hit.description = description
+          hit.reward = @config.reward or raise Audibleturk::Error, "Missing reward config"
+          hit.assignments = @config.copies or raise Audibleturk::Error, "Missing copies config"
+          hit.question(question)
+          hit.lifetime = @config.lifetime or raise Audibleturk::Error, "Missing lifetime config"
+          hit.duration = @config.deadline or raise Audibleturk::Error, "Missing deadline config"
+          hit.auto_approval = @config.approval or raise Audibleturk::Error, "Missing approval config"
+          hit.keywords = @config.keywords if @config.keywords
+          hit.currency = @config.currency if @config.currency
+          @config.qualifications.each{|q| hit.qualifications.add(*q.to_arg)} if @config.qualifications
+          hit.note = annotation if annotation
+        end
+      end
+
+      def title
+        noko.css('#title')[0].content
+      end
+
+      def description
+        noko.css('#description')[0].content
+      end
+
+      def question
+        Hash[
+         :id => 1, 
+         :overview => to_allowed_xhtml(noko.css('#overview')[0].inner_html),
+         :question => to_allowed_xhtml(noko.css('#question')[0].inner_html)
+        ]
+      end
+
+      def annotation
+          URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').collect{|e| [e['name'], e['value']]}.flatten])
+      end
+
+      def to_allowed_xhtml(htmlf)
+        h = noko(htmlf)
+        %w(id class style).each do |attribute| 
+          h.css("[#{attribute}]").each do |element|
+            element.remove_attribute(attribute)
+          end
+        end
+        %w(input div span).each do |name| 
+          h.css(name).each{|e| e.remove}
+        end
+        h.css('body').inner_html
+      end
+
+      def noko(html=@htmlf)
+        Nokogiri::HTML(html, nil, 'US-ASCII')
+      end
+    end #Amazon::Assignment
+
 
     class Result
       require 'pstore'
@@ -145,8 +344,63 @@ module Audibleturk
         @@cache ||= PStore.new("#{Dir.home}/.audibleturk.cache")
         @@cache
       end
-    end #Result class
-  end #Amazon class
+    end #Amazon::Result
+
+    class HIT
+      #RTurk only handles external questions, so we do some subclassing
+      def self.create(*args, &blk)
+        response = CreateHIT.create(*args, &blk)
+        RTurk::Hit.new(response.hit_id, response)
+      end
+      class Question
+        require 'nokogiri'
+        def initialize(args)
+          @id = args[:id] or raise Audibleturk::Error::Argument, 'missing :id arg'
+          @question = args[:question] or raise Audibleturk::Error::Argument, 'missing :question arg'
+          @title = args[:title]
+          @overview = args[:overview]
+        end
+
+        def to_params
+          Nokogiri::XML::Builder.new do |xml|
+            xml.root{
+              xml.QuestionForm(:xmlns => 'http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionForm.xsd'){
+                xml.Overview{
+                  xml.Title @title if @title
+                  if @overview
+                    xml.FormattedContent{
+                      xml.cdata @overview
+                    }
+                  end
+                }  
+                xml.Question{
+                  xml.QuestionIdentifier @id
+                  xml.IsRequired 'true'
+                  xml.QuestionContent{
+                    xml.FormattedContent{
+                      xml.cdata @question
+                    }
+                  }
+                  xml.AnswerSpecification{
+                    xml.FreeTextAnswer()
+                  }
+                }
+              }
+            }
+          end.doc.root.children.collect{|c| c.to_xml}.join
+        end
+      end #Amazon::HIT::Question
+    end #Amazon::HIT
+  end #Amazon
+  class CreateHIT < RTurk::CreateHIT
+    def question(*args)
+      if args.empty?
+        @question
+      else
+        @question ||= Amazon::HIT::Question.new(*args)
+      end
+    end
+  end #CreateHIT
 
   class Project
     require 'securerandom'
@@ -560,6 +814,12 @@ module Audibleturk
         text.gsub!(/\n\n+/, "\n\n")
         text
       end
-    end #Chunk subclass
-  end #Transcription class
+    end #Transcription::Chunk 
+  end #Transcription 
+  require 'ostruct'
+  class ErbBinding < OpenStruct
+    def get_binding
+      binding()
+    end
+  end #ErbBinding
 end #Audibleturk module
