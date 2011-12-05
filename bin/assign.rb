@@ -8,14 +8,16 @@ options = nil
 config = nil
 configs = [Audibleturk::Config.file]
 
-#We need to incorporate most options immediately into the config
-#object, since it checks incoming values for us (see rescue clauses).
+#We need to incorporate command line options immediately into the
+#config object, since it checks incoming values for us (see rescue
+#clauses).
 #
 #BUT the user can specify an alternate config file at an arbitrary
-#point in the options string. So in those cases we loop and do it all
-#again. (Actually we loop twice in all cases, because we need to do a
-#destructive parse the second time around, and there's no way of
-#knowing in advance if this will be superflous.)
+#point in the command line options string. So in those cases we loop
+#and do it all again. (Actually we loop twice in all cases, because we
+#need to do a destructive parse the second time around, and there's no
+#way of knowing in advance if we can do a destructive parse the first
+#time.)
 #
 #This solution is DRY and simple. The alternatives tend to be complex
 #or repetitive.
@@ -99,6 +101,7 @@ end
 
 options[:banner] += "`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
 options[:banner] = "\n#{options[:banner]}"
+
 positional = %w(project template)
 #Anything waiting on STDIN?
 if STDIN.fcntl(Fcntl::F_GETFL, 0) == 0
@@ -116,6 +119,7 @@ positional.each do |name|
   abort "Missing required arg #{name}#{options[:banner]}" if options[name.to_sym].to_s.empty?
 end
 abort "Unexpected argument(s): #{ARGV.join(';')}" if not(ARGV.empty?)
+
 if not(File.exists?(options[:project]))
   abort "Required param 'local' missing from config file '#{config.path}'" if config.local.to_s.empty?
   options[:project] = "#{config.local}/#{options[:project]}"
