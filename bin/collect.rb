@@ -79,5 +79,9 @@ projects.each do |key, project|
     else
       $stderr.puts "Removed #{project.name} files from #{project.www.host}"
     end
+    transcription.each do |chunk|
+      RTurk::Hit.new(chunk.hit).dispose!
+      Audibleturk::Amazon::Result.delete_cache(chunk.hit, options[:url_at])
+    end
   end
 end

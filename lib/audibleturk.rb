@@ -353,12 +353,23 @@ module Audibleturk
       end
 
       def self.from_cache(hit_id, url_at)
-        self.cache.transaction { self.cache[self.to_cache_key(hit_id, url_at)] }
+        self.cache.transaction do
+          self.cache[self.to_cache_key(hit_id, url_at)] 
+        end
       end
 
       def self.to_cache(hit_id, url_at, results)
-        self.cache.transaction { self.cache[self.to_cache_key(hit_id, url_at)] = results }
+        self.cache.transaction do
+          self.cache[self.to_cache_key(hit_id, url_at)] = results 
+        end
         results
+      end
+
+      def self.delete_cache(hit_id, url_at)
+        self.cache.transaction do
+          cached = self.cache[self.to_cache_key(hit_id, url_at)]
+          cached.delete unless cached.nil?
+        end
       end
 
       def self.to_cache_key(hit_id, url_at)
