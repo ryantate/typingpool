@@ -9,17 +9,20 @@ module Audibleturk
 
   class Config
     require 'yaml'
-    @@config_file = "#{Dir.home}/.audibleturk"
+    @@config_file = "~/.audibleturk"
     attr_reader :path
 
-    def initialize(params, path=nil)
+    def initialize(params)
       @params = params
-      @path = path
+    end
+
+    def self.default_file
+      @@config_file
     end
 
     def self.file(path=nil)
       path ||= @@config_file
-      self.new(YAML.load(IO.read(path)), path)
+      self.new(YAML.load(IO.read(File.expand_path(path))))
     end
 
     def self.main
