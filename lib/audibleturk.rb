@@ -294,13 +294,14 @@ module Audibleturk
 
     class Result
       require 'pstore'
+      require 'uri'
       attr_accessor :transcription, :hit_id
-      def initialize(assignment, params)
+      def initialize(assignment, hit, params)
         params[:url_at] or raise ":url_at param required"
         @hit_id = assignment.hit_id
-        @transcription = Audibleturk::Transcription::Chunk.new(assignment.answers.to_hash['transcription']);
-        @transcription.url = assignment.answers.to_hash[params[:url_at]]
-        @transcription.project = assignment.answers.to_hash[params[:id_at]]
+        @transcription = Audibleturk::Transcription::Chunk.new(assignment.answers.to_hash['transcription'] || assignment.answers.to_hash['1']);
+        @transcription.url = assignment.answers.to_hash[params[:url_at]] || self.class.annotation_to_hash(hit.annotation)[params[:url_at]]
+        @transcription.project = assignment.answers.to_hash[params[:id_at]] || self.class.annotation_to_hash(hit.annotation)[params[:id_at]]
         @transcription.worker = assignment.worker_id
         @transcription.hit = @hit_id
       end
@@ -316,8 +317,13 @@ module Audibleturk
           hit_page_results=[]
           new_hits.each do |hit|
             unless hit_results = self.from_cache(hit.id, params[:url_at])
-              assignments = hit.assignments
-              hit_results = assignments.select{|assignment| (assignment.status == 'Approved') && (assignment.answers.to_hash[params[:url_at]])}.collect{|assignment| self.new(assignment, params)}
+              begin
+                assignments = hit.assignments #expensive!
+              rescue RestClient::ServiceUnavailable => e
+                warn "Warning: Service unavailable error, skipped HIT #{hit.id}. (Error: #{e})"
+                next
+              end
+              hit_results = assignments.select{|assignment| (assignment.status == 'Approved') && self.our_hit?(assignment, hit, params[:url_at])}.collect{|assignment| self.new(assignment, hit, params)}
               self.to_cache(hit.id, params[:url_at], hit_results) if assignments.select{|assignment| assignment.status == 'Approved' }.length > 0
             end
             hit_page_results.push(hit_results)
@@ -326,6 +332,24 @@ module Audibleturk
           results.push(*hit_page_results)
         end while new_hits.length > 0 
         results
+      end
+
+      def self.our_hit?(assignment, hit, url_at)
+        (assignment.answers.to_hash[url_at]) || 
+          (self.annotation_to_hash(hit.annotation)[url_at])
+      end
+
+      def self.annotation_to_hash(annotation)
+        annotation ||= ''
+        decoded = nil
+        #Web interface makes HITs with annotations like
+        #Department:Transcription, which makes URI.decode_www_form barf
+        begin
+          decoded = URI.decode_www_form(annotation) 
+        rescue ArgumentError
+          return {}
+        end
+        Hash[*decoded.flatten]
       end
 
       def self.from_cache(hit_id, url_at)
