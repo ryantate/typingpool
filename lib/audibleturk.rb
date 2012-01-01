@@ -5,6 +5,9 @@ module Audibleturk
     class Argument < Error
       class Format < Argument; end
     end
+    class Amazon < Error
+      class UnreviewedContent < Amazon; end
+    end
   end
 
   class Config
@@ -298,85 +301,146 @@ module Audibleturk
     class Result
       require 'pstore'
       require 'uri'
-      attr_accessor :transcription, :hit_id
-      def initialize(assignment, hit, params)
-        params[:url_at] or raise ":url_at param required"
-        @hit_id = assignment.hit_id
-        @transcription = Audibleturk::Transcription::Chunk.new(assignment.answers.to_hash['transcription'] || assignment.answers.to_hash['1']);
-        @transcription.url = assignment.answers.to_hash[params[:url_at]] || self.class.annotation_to_hash(hit.annotation)[params[:url_at]]
-        @transcription.project = assignment.answers.to_hash[params[:id_at]] || self.class.annotation_to_hash(hit.annotation)[params[:id_at]]
-        @transcription.worker = assignment.worker_id
-        @transcription.hit = @hit_id
+      require 'set'
+      attr_reader :hit, :url_at, :id_at
+      def initialize(hit, params)
+        @hit = hit
+        @url_at = params[:url_at] or raise ":url_at param required"
+        @id_at = params[:id_at] or raise ":id_at param required"
+      end
+
+      def transcription
+        if @transcription.nil?
+          @transcription = Audibleturk::Transcription::Chunk.new(body)
+          @transcription.url = url
+          @transcription.project = project_id
+          @transcription.worker = assignment.worker_id
+          @transcription.hit = @hit.id
+        end
+        @transcription
+      end
+
+      def body
+        @body ||= assignment.answers.to_hash['transcription'] || assignment.answers.to_hash['1']
+      end
+
+      def assignment
+        @assignment ||= @hit.assignments[0] #expensive!
+      end
+
+      def url
+        @url ||= assignment.answers.to_hash[@url_at] || annotation[@url_at]
+      end
+
+      def project_id
+        @project_id ||= assignment.answers.to_hash[@id_at] || annotation[@id_at]
+      end
+
+      def annotation
+        if @annotation.nil?
+          #Handle annotations like Department:Transcription (from the
+          #MT web interface), which make URI.decode_www_form barf
+          begin
+            # @hit.annotation is expensive!
+            @annotation = URI.decode_www_form(@hit.annotation) 
+            @annotation = Hash[*@annotation.flatten]
+          rescue ArgumentError
+            @annotation = {}
+          end
+        end
+        @annotation
+      end
+
+      def approved?
+        assignment.status == 'Approved'
+      end
+
+      def ours?
+        url
+      end
+
+
+      def from_cache
+        self.class.from_cache(@hit.id) || self
+      end
+
+      def to_cache
+        self.class.to_cache(@hit.id, self) if cacheable?
+      end
+
+      def cacheable?
+        @cacheable_status ||= Set.new %w(Approved Rejected)
+        @cacheable_status.include?(assignment.status) ||
+          not(ours?)
+      end
+
+      def remove_hit
+        if @hit.status == 'Reviewable'
+          if assignment.status == 'Submitted'
+            raise Audibleturk::Error::Amazon::UnreviewedContent, "There is an unreviewed submission for #{url}"
+          end
+          @hit.dispose!
+        else
+          @hit.disable!
+        end
       end
 
       def self.all_approved(params)
-        params[:url_at] or raise ":url_at param required"
         Audibleturk::Amazon.setup
         results=[]
         i=0
         begin
           i += 1
-          new_hits = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }
-          hit_page_results=[]
-          new_hits.each do |hit|
-            unless hit_results = self.from_cache(hit.id, params[:url_at])
-              begin
-                assignments = hit.assignments #expensive!
-              rescue RestClient::ServiceUnavailable => e
-                warn "Warning: Service unavailable error, skipped HIT #{hit.id}. (Error: #{e})"
-                next
-              end
-              hit_results = assignments.select{|assignment| (assignment.status == 'Approved') && self.our_hit?(assignment, hit, params[:url_at])}.collect{|assignment| self.new(assignment, hit, params)}
-              self.to_cache(hit.id, params[:url_at], hit_results) if assignments.select{|assignment| assignment.status == 'Approved' }.length > 0
+          page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }.collect{|hit| self.new(hit, params).from_cache }
+          filtered_results = page_results.select do |result| 
+            begin
+              result.approved? && result.ours? 
+            rescue RestClient::ServiceUnavailable => e
+              warn "Warning: Service unavailable error, skipped HIT #{result.hit.id}. (Error: #{e})"
+              false
             end
-            hit_page_results.push(hit_results)
-          end
-          hit_page_results = hit_page_results.flatten
-          results.push(*hit_page_results)
-        end while new_hits.length > 0 
+          end 
+          page_results.each{|result| result.to_cache }
+          results.push(*filtered_results)
+        end while page_results.length > 0 
         results
       end
 
-      def self.our_hit?(assignment, hit, url_at)
-        (assignment.answers.to_hash[url_at]) || 
-          (self.annotation_to_hash(hit.annotation)[url_at])
-      end
-
-      def self.annotation_to_hash(annotation)
-        annotation ||= ''
-        decoded = nil
-        #Web interface makes HITs with annotations like
-        #Department:Transcription, which makes URI.decode_www_form barf
+      def self.all_for_project(id, params)
+        results = []
+        i=0
         begin
-          decoded = URI.decode_www_form(annotation) 
-        rescue ArgumentError
-          return {}
-        end
-        Hash[*decoded.flatten]
+          i += 1
+          page_results = RTurk::SearchHITs.create(:page_number => i).hits.collect{|hit| RTurk::Hit.new(hit.id, hit) }.collect{|hit| self.new(hit, params).from_cache }
+          filtered_results = page_results.select{|result| result.project_id && result.project_id == id}
+          page_results.each{|result| result.to_cache}
+          results.push(*filtered_results)
+        end while page_results.length > 0
+        results
       end
 
-      def self.from_cache(hit_id, url_at)
+      def self.from_cache(hit_id)
         self.cache.transaction do
-          self.cache[self.to_cache_key(hit_id, url_at)] 
+          self.cache[self.to_cache_key(hit_id)] 
         end
       end
 
-      def self.to_cache(hit_id, url_at, results)
+      def self.to_cache(hit_id, results)
         self.cache.transaction do
-          self.cache[self.to_cache_key(hit_id, url_at)] = results 
+          self.cache[self.to_cache_key(hit_id)] = results 
         end
         results
       end
 
-      def self.delete_cache(hit_id, url_at)
+      def self.delete_cache(hit_id)
         self.cache.transaction do
-          cached = self.cache[self.to_cache_key(hit_id, url_at)]
+          cached = self.cache[self.to_cache_key(hit_id)]
           cached.delete unless cached.nil?
         end
       end
 
-      def self.to_cache_key(hit_id, url_at)
-        "#{hit_id}///#{url_at}"
+      def self.to_cache_key(hit_id)
+        "HIT///#{hit_id}"
       end
       def self.cache
         @@cache ||= PStore.new("#{Dir.home}/.audibleturk.cache")
@@ -385,7 +449,6 @@ module Audibleturk
     end #Amazon::Result
 
     class HIT
-      #RTurk only handles external questions, so we do some subclassing
       def self.create(*args, &blk)
         response = CreateHIT.create(*args, &blk)
         RTurk::Hit.new(response.hit_id, response)
@@ -430,6 +493,8 @@ module Audibleturk
       end #Amazon::HIT::Question
     end #Amazon::HIT
   end #Amazon
+
+  #RTurk only handles external questions, so we do some subclassing
   class CreateHIT < RTurk::CreateHIT
     def question(*args)
       if args.empty?
@@ -451,6 +516,10 @@ module Audibleturk
 
     def www(scp=@config.scp)
       Audibleturk::Project::WWW.new(@name, scp)
+    end
+
+    def amazon(id=self.id)
+      Audibleturk::Amazon::Results.for_project(id)
     end
 
     def local(dir=@config.local)
