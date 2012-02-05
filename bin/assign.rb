@@ -142,24 +142,34 @@ abort "Not a project directory at '#{options[:project]}'" if not(project_local)
 abort "No data in assignment CSV" if project_local.csv('assignment').empty?
 abort "No AWS key+secret in config" if not(config.param['aws'] && config.param['aws']['key'] && config.param['aws']['secret'])
 
-Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :key => config.param['aws']['key'], :secret => config.param['aws']['secret'])
+Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 template = IO.read(options[:template])
-results = []
-$stderr.puts 'Assigning...'
+hits = []
+amazon_hit_type_id = nil
+$stderr.puts 'Assigning'
 assignments = project_local.csv('assignment')
-assignments.each do |hit|
-  xhtmlf = ERB.new(template, nil, '<>').result(Audibleturk::ErbBinding.new(hit).send(:get_binding))
+assignments.each do |assignment|
+  xhtmlf = ERB.new(template, nil, '<>').result(Audibleturk::ErbBinding.new(assignment).send(:get_binding))
   assignment = Audibleturk::Amazon::Assignment.new(xhtmlf, config.assignments)
   begin
-    results.push(assignment.assign)
+    hit = assignment.assign
   rescue  RTurk::RTurkError => e
     $stderr.puts "Mechanical Turk error: #{e}"
-    unless results.empty?
-      $stderr.puts "Rolling back assignments..."
-      results.each{|hit| hit.disable!}
+    unless hits.empty?
+      $stderr.puts "Rolling back assignments"
+      hits.each{|hit| hit.disable!}
     end
     abort
   end
-  $stderr.puts "Assigned #{results.size} / #{assignments.size}"
+  hits.push(hit)
+  amazon_hit_type_id ||= hit.type_id
+  if not(hit.type_id == amazon_hit_type_id)
+    $stderr.puts "Error: amazon id mismatch (#{hit.type_id} vs. #{amazon_hit_type_id})"
+    $stderr.puts "Rolling back assignments"
+    hits.each{|hit| hit.disable!}
+    abort
+  end
+  $stderr.puts "Assigned #{hits.size} / #{assignments.size}"
 end
+project_local.amazon_hit_type_id = amazon_hit_type_id

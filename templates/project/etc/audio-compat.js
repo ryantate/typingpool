@@ -1,9 +1,9 @@
 function audioCompat() {
-    AudioPlayer.setup("etc/player/player.swf", { width: 290 });  
     var audioTag = window.document.createElement('audio');
     //Check for HTML5 audio tag compatibility
     if (!(audioTag.canPlayType && audioTag.canPlayType('audio/mpeg') && (audioTag.canPlayType('audio/mpeg') != 'no'))){
 	//not compatible - fallback to Flash
+	AudioPlayer.setup("etc/player/player.swf", { width: 290 });  
 	var audioTags = window.document.getElementsByTagName('audio');
 	var audioTagMeta = [];
 	for (var i = 0; i < audioTags.length; i++) {

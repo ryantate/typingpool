@@ -11,7 +11,7 @@ options = {
 }
 
 OptionParser.new do |commands|
-  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} [--url_at=#{options[:url_at]}] [--id_at=#{options[:id_at]}]\n  [--config='#{Audibleturk::Config.default_file}'] [--sandbox]\n"
+  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} [--config='#{Audibleturk::Config.default_file}'] [--sandbox]\n [--url_at=#{options[:url_at]}] [--id_at=#{options[:id_at]}]\n"
   commands.on('--sandbox', "Collect from the Mechanical Turk test sandbox") do
     options[:sandbox] = true
   end
@@ -39,13 +39,13 @@ filename = {
   :working => 'transcript_in_progress.html'
 }
 
-$stderr.puts "Collecting results from Amazon..."
-Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :key => options[:config].param['aws']['key'], :secret => options[:config].param['aws']['secret'])
+$stderr.puts "Collecting results from Amazon"
+Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
 results = Audibleturk::Amazon::Result.all_approved(:url_at => options[:url_at], :id_at => options[:id_at])
 #Only pay attention to results that have a local folder waiting to receive them:
 projects = {}
 need = {}
-$stderr.puts "Looking for local project folders to receive results..."
+$stderr.puts "Looking for local project folders to receive results" unless results.empty?
 results.each do |result| 
   key = result.transcription.project.to_s + result.transcription.title.to_s
   if need[key] == false
@@ -77,17 +77,11 @@ projects.each do |key, project|
     out << ERB.new(template, nil, '<>').result(binding())
   end
   $stderr.puts "Wrote #{out_file} to local folder #{project.name}."
-  if done && project.config.param['scp']
-    begin
-      removed = project.www.remove(transcription.collect{|chunk| chunk.filename })
-    rescue Audibleturk::Error::SFTP => e
-      $stderr.puts "Could not remove #{project.name} files from #{project.www.host}: #{e}"
-    else
-      $stderr.puts "Removed #{project.name} files from #{project.www.host}"
-    end
-    transcription.each do |chunk|
-      RTurk::Hit.new(chunk.hit).dispose!
-      Audibleturk::Amazon::Result.delete_cache(chunk.hit, options[:url_at])
+  if not(project.local.amazon_hit_type_id)
+    amazon_hit_type_id = need[key].first.hit.type_id
+    if need[key].select{|result| result.hit.type_id == amazon_hit_type_id}.size == need[key].size
+      project.local.amazon_hit_type_id = amazon_hit_type_id
     end
   end
 end
+

@@ -224,14 +224,49 @@ module Audibleturk
   class Amazon
     require 'rturk'
     @@did_setup = false
+    @@cache_file = '~/.audibleturk.cache'
+
     def self.setup(args={})
-      unless @@did_setup
-        args[:key] ||= Audibleturk::Config.param['aws']['key']
-        args[:secret] ||= Audibleturk::Config.param['aws']['secret']
-        args[:sandbox] = false if args[:sandbox].nil?
-        RTurk.setup(args[:key], args[:secret], :sandbox => args[:sandbox])
-        @@did_setup = true
+      @@did_setup = true
+      args[:config] ||= Audibleturk::Config.file
+      args[:key] ||= args[:config].param['aws']['key']
+      args[:secret] ||= args[:config].param['aws']['secret']
+      args[:sandbox] = false if args[:sandbox].nil?
+      if args[:config].param['cache']
+        @@cache = nil
+        @@cache_file = args[:config].param['cache']
       end
+      RTurk.setup(args[:key], args[:secret], :sandbox => args[:sandbox])
+    end
+
+    def self.setup?
+      @@did_setup
+    end
+
+    def self.cache_file
+      File.expand_path(@@cache_file)
+    end
+
+    def self.cache
+      @@cache ||= PStore.new(cache_file)
+    end
+
+    def self.to_cache(hash)
+      self.cache.transcation do
+        hash.each do |key, value|
+          self.cache[key] = value
+        end
+      end
+    end
+
+    def self.from_cache(keys)
+      values = []
+      self.cache.transaction do
+        keys.each do |key|
+          values.push(self.cache[key])
+        end
+      end
+      values
     end
 
     class Assignment
@@ -300,161 +335,417 @@ module Audibleturk
 
     class Result
       require 'pstore'
-      require 'uri'
+      require 'nokogiri'
       require 'set'
-      attr_reader :hit, :url_at, :id_at
-      def initialize(hit, params)
-        @hit = hit
-        @url_at = params[:url_at] or raise ":url_at param required"
-        @id_at = params[:id_at] or raise ":id_at param required"
-      end
 
-      def transcription
-        if @transcription.nil?
-          @transcription = Audibleturk::Transcription::Chunk.new(body)
-          @transcription.url = url
-          @transcription.project = project_id
-          @transcription.worker = assignment.worker_id
-          @transcription.hit = @hit.id
-        end
-        @transcription
-      end
-
-      def body
-        @body ||= assignment.answers.to_hash['transcription'] || assignment.answers.to_hash['1']
-      end
-
-      def assignment
-        @assignment ||= @hit.assignments[0] #expensive!
-      end
-
-      def url
-        @url ||= assignment.answers.to_hash[@url_at] || annotation[@url_at]
-      end
-
-      def project_id
-        @project_id ||= assignment.answers.to_hash[@id_at] || annotation[@id_at]
-      end
-
-      def annotation
-        if @annotation.nil?
-          #Handle annotations like Department:Transcription (from the
-          #MT web interface), which make URI.decode_www_form barf
-          begin
-            # @hit.annotation is expensive!
-            @annotation = URI.decode_www_form(@hit.annotation) 
-            @annotation = Hash[*@annotation.flatten]
-          rescue ArgumentError
-            @annotation = {}
-          end
-        end
-        @annotation
-      end
-
-      def approved?
-        assignment.status == 'Approved'
-      end
-
-      def ours?
-        url
-      end
-
-
-      def from_cache
-        self.class.from_cache(@hit.id) || self
-      end
-
-      def to_cache
-        self.class.to_cache(@hit.id, self) if cacheable?
-      end
-
-      def cacheable?
-        @cacheable_status ||= Set.new %w(Approved Rejected)
-        @cacheable_status.include?(assignment.status) ||
-          not(ours?)
-      end
-
-      def remove_hit
-        if @hit.status == 'Reviewable'
-          if assignment.status == 'Submitted'
-            raise Audibleturk::Error::Amazon::UnreviewedContent, "There is an unreviewed submission for #{url}"
-          end
-          @hit.dispose!
+      def self.cached_or_new(hit, params)
+        #        self.from_cache(hit.id, params[:id_at], params[:url_at]) || self.new(hit, params)
+        r=nil
+        if r = self.from_cache(hit.id, params[:id_at], params[:url_at])
+          puts "DEBUG from_cache"
         else
-          @hit.disable!
+          r = self.new(hit, params)
+puts "DEBUG from_new"
         end
+        r
+      end
+
+      def self.from_cache(hit_id, id_at, url_at)
+        Amazon.cache.transaction do
+          Amazon.cache[self.cache_key(hit_id, id_at, url_at)] 
+        end
+      end
+
+      def self.delete_cache(hit_id, id_at, url_at)
+        Amazon.cache.transaction do
+          cached = Amazon.cache[self.cache_key(hit_id, id_at, url_at)]
+          cached.delete unless cached.nil?
+        end
+      end
+
+      def self.cache_key(hit_id, id_at, url_at)
+        "RESULT///#{hit_id}///#{url_at}///#{id_at}"
       end
 
       def self.all_approved(params)
-        Audibleturk::Amazon.setup
         results=[]
         i=0
         begin
           i += 1
-          page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }.collect{|hit| self.new(hit, params).from_cache }
+          page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }.collect{|hit| self.cached_or_new(hit, params) }
           filtered_results = page_results.select do |result| 
             begin
               result.approved? && result.ours? 
             rescue RestClient::ServiceUnavailable => e
-              warn "Warning: Service unavailable error, skipped HIT #{result.hit.id}. (Error: #{e})"
+              warn "Warning: Service unavailable error, skipped HIT #{result.hit_id}. (Error: #{e})"
               false
             end
           end 
           page_results.each{|result| result.to_cache }
           results.push(*filtered_results)
+          puts "DEBUG page results: #{page_results.size} filtered: #{filtered_results.size}"
         end while page_results.length > 0 
         results
       end
 
       def self.all_for_project(id, params)
+        results = all(params)
+        filtered = results.select{|result| result.ours? && result.project_id == id}
+        results.each{|result| result.to_cache}
+        filtered
+      end
+
+      def self.all_for_hit_type_id(id, params)
+        results = all(params)
+        filtered = results.select{|result| result.hit.type_id == id}
+        results.each{|result| result.to_cache}
+        filtered
+      end
+
+      def self.all(params)
+        params[:full_hit] = true
         results = []
-        i=0
+        i = 0
         begin
           i += 1
-          page_results = RTurk::SearchHITs.create(:page_number => i).hits.collect{|hit| RTurk::Hit.new(hit.id, hit) }.collect{|hit| self.new(hit, params).from_cache }
-          filtered_results = page_results.select{|result| result.project_id && result.project_id == id}
-          page_results.each{|result| result.to_cache}
-          results.push(*filtered_results)
+          page = RTurk::SearchHITs.create(:page_number => i)
+          raw_hits = page.xml.xpath('//HIT')
+          page_results=[]
+          page.hits.each_with_index do |hit, i|
+            #We have to jump through hoops because SearchHITs stupidly
+            #throws away annotation data (unlike GetHIT) and also
+            #renames some fields
+            annotation = raw_hits[i].xpath('RequesterAnnotation').inner_text.strip
+            wrapped_hit = Amazon::HIT::FromSearchHITs.new(hit, annotation, raw_hits[i])
+            result = self.cached_or_new(wrapped_hit, params)
+            result.to_cache
+            page_results.push(result)
+          end
+          #          page_results = RTurk::SearchHITs.create(:page_number => i).hits.collect{|hit| RTurk::Hit.new(hit.id, hit) }.collect{|hit| self.cached_or_new(hit, params) }
+          #          page_results.each{|result| result.to_cache}
+          results.push(*page_results)
         end while page_results.length > 0
         results
       end
 
-      def self.from_cache(hit_id)
-        self.cache.transaction do
-          self.cache[self.to_cache_key(hit_id)] 
+      attr_reader :url_at, :id_at, :hit_id
+      def initialize(hit, params)
+        @url_at = params[:url_at] or raise ":url_at param required"
+        @id_at = params[:id_at] or raise ":id_at param required"
+        @hit_id = hit.id
+        self.hit(hit) if params[:full_hit]
+      end
+
+      def url
+        @url ||= stashed_param(@url_at)
+      end
+
+      def project_id
+        @project_id ||= stashed_param(@id_at)
+      end
+
+      def stashed_param(param)
+        if @from_assignment && assignment.answers[param]
+          return assignment.answers[param]
+        elsif hit.annotation[param]
+          #A question assigned through this software. May be
+          #expensive: May result in HTTP request to fetch HIT
+          #fields. We choose to fetch (sometimes) the HIT rather than
+          #the assignment on the assumption it will be MORE common to
+          #encounter HITs with no answers and LESS common to encounter
+          #HITs assigned through the RUI (and thus lacking in an
+          #annotation from this software and thus rendering the HTTP
+          #request to fetch the HIT fields pointless).
+          return hit.annotation[param]
+        elsif hit.assignments_completed.to_i >= 1
+          #A question assigned through Amazon's RUI, with an answer
+          #submitted. If the HIT belongs to this software, this
+          #assignment's answers will include our param.  We prefer
+          #fetching the assignment to fetching the external question
+          #(as below) because fetching the assignment will potentially
+          #save us an HTTP request down the line -- for example, if we
+          #need other assignment data (e.g. assignment status).
+          #Fetching the external question only serves to give us
+          #access to params. If the answers do not include our param,
+          #we know the HIT does not belong to this software, since we
+          #know the param was also not in the annotation. So we are
+          #safe returning nil in that case.
+          return assignment.answers[param]
+        else
+          #A question assigned via Amazon's RUI, with no answer
+          #submitted.  Expensive: Results in HTTP request to fetch
+          #external question.
+          return hit.external_question_param(param)
         end
       end
 
-      def self.to_cache(hit_id, results)
-        self.cache.transaction do
-          self.cache[self.to_cache_key(hit_id)] = results 
-        end
-        results
+      def approved?
+        assignment_status_match?('Approved')
       end
 
-      def self.delete_cache(hit_id)
-        self.cache.transaction do
-          cached = self.cache[self.to_cache_key(hit_id)]
-          cached.delete unless cached.nil?
+      def rejected?
+        assignment_status_match?('Rejected')
+      end
+
+      def assignment_status_match?(status)
+        if @from_hit
+          return false if hit.assignments_completed == 0
+          return false if hit.status != 'Reviewable'
+        end
+        assignment.status == status
+      end
+
+      def ours?
+        #As in, belonging to this software.
+        #One Amazon account can be used for many tasks.
+        @ours ||= not(url.to_s.empty?)
+      end
+
+      def transcription
+        transcript = Audibleturk::Transcription::Chunk.new(assignment.body)
+        transcript.url = url
+        transcript.project = project_id
+        transcript.worker = assignment.worker_id
+        transcript.hit = hit_id
+        transcript
+      end
+
+      def to_cache
+        #any obj containing a Nokogiri object cannot be stored in pstore - do
+        #not forget this (again)
+        if cacheable?
+          Amazon.cache.transaction do
+            Amazon.cache[self.class.cache_key(@hit_id, @id_at, @url_at)] = self 
+          end
         end
       end
 
-      def self.to_cache_key(hit_id)
-        "HIT///#{hit_id}"
+      @@cacheable_assignment_status = Set.new %w(Approved Rejected)
+      def cacheable?
+        if @ours == false
+          return true
+        end
+        if @from_hit
+          return true if hit.expired_and_overdue?
+        end
+        if @from_assignment && assignment.status
+          return true if @@cacheable_assignment_status.include?(assignment.status)
+        end
+        return false
       end
-      def self.cache
-        @@cache ||= PStore.new("#{Dir.home}/.audibleturk.cache")
-        @@cache
+
+      def remove_hit
+        if hit.status == 'Reviewable'
+          if assignment.status == 'Submitted'
+            raise Audibleturk::Error::Amazon::UnreviewedContent, "There is an unreviewed submission for #{url}"
+          end
+          hit_at_amazon.dispose!
+        else
+          hit_at_amazon.disable!
+        end
       end
+
+      def hit_at_amazon
+        Amazon::HIT.new_full(@hit_id)
+      end
+      
+      #hit fields segregated because accessing any one of them is
+      #expensive if we only have a hit id (but after fetching one all
+      #are cheap)
+      def hit(hit=nil)
+        if @from_hit.nil?
+          if hit
+            #If the hit was supplied, it was from SearchHIT and lacks a question element
+puts "DEBUG using received HIT"
+            @from_hit = Fields::FromHIT::WithoutQuestion.new(hit)
+          else
+            puts "DEBUG fetching HIT"
+
+            @from_hit = Fields::FromHIT.new(hit_at_amazon)
+          end
+        end
+        @from_hit
+      end
+
+      #assignment fields segregated because accessing any one of
+      #them is expensive (but after fetching one all are cheap)
+      def assignment
+        if @from_assignment.nil?
+          if @from_hit && hit.assignments_completed == 0
+            @from_assignment = Fields::FromAssignment::Empty.new
+          else
+            @from_assignment = Fields::FromAssignment.new(hit_at_amazon) #expensive
+          end
+        end
+        @from_assignment
+      end
+
+      class Fields
+        class FromHIT
+          require 'uri'
+          require 'open-uri'
+          require 'nokogiri'
+          attr_reader :type_id, :status, :external_question_url, :assignments_completed, :assignments_pending, :expires_at, :assignments_duration
+          def initialize(hit)
+            @id = hit.id
+            @type_id = hit.type_id
+            @status = hit.status
+            @expires_at = hit.expires_at
+            @assignments_duration = hit.assignments_duration
+            @assignments_completed = hit.assignments_completed_count
+            @assignments_pending = hit.assignments_pending_count
+            self.annotation = hit
+            self.external_question_url = hit.xml
+            puts "DEBUG hit status '#{@status}' pending #{@assignments_pending} completed #{@assignments_completed} annotation #{annotation}"
+          end
+
+          def annotation=(hit)
+            begin
+              @annotation = hit.annotation  || ''
+              @annotation = URI.decode_www_form(@annotation) 
+              @annotation = Hash[*@annotation.flatten]
+            rescue ArgumentError
+              #Handle annotations like Department:Transcription (from
+              #the Amazon RUI), which make URI.decode_www_form barf
+              @annotation = {}
+            end
+          end
+
+          def annotation
+            @annotation ||= {}
+          end
+
+          def external_question_url=(noko_xml)
+            if question_node = noko_xml.css('HIT Question')[0] #escaped XML
+              if url_node = Nokogiri::XML::Document.parse(question_node.inner_text).css('ExternalQuestion ExternalURL')[0]
+                @external_question_url = url_node.inner_text
+              end
+            end
+          end
+
+          def external_question
+            if @external_question.nil?
+              if external_question_url && external_question_url.match(/^http/)
+                #expensive, obviously:
+puts "DEBUG fetching external question"
+                @external_question = open(external_question_url).read
+              end
+            end
+            @external_question
+          end
+
+          def external_question_param(param)
+            if external_question
+              if input = Nokogiri::HTML::Document.parse(external_question).css("input[name=#{param}]")[0]
+                return input['value']
+              end
+            end
+          end
+
+          def expired?
+            expires_at < Time.now
+          end
+
+          def expired_and_overdue?
+            (expires_at + assignments_duration) < Time.now
+          end
+
+          class WithoutQuestion < FromHIT
+            def external_question_url
+              unless @checked_question
+puts "DEBUG re-fetching HIT to get question"
+                self.external_question_url = at_amazon.xml
+                @checked_question = true
+              end
+              @external_question_url
+            end
+
+            def at_amazon
+              Amazon::HIT.new_full(@id)
+            end
+          end #Amazon::Result::Fields::FromHIT::WithoutQuestion
+        end #Amazon::Result::Fields::FromHIT
+
+        class FromAssignment
+          attr_reader :status, :worker_id
+
+          def initialize(hit)
+            puts "DEBUG fetching assignment"
+            if assignment = hit.assignments[0] #expensive!
+              @status = assignment.status
+              puts "DEBUG assignment status #{@status}"
+              @worker_id = assignment.worker_id
+              if answers = assignment.answers
+                @answers = answers.to_hash
+                require 'pp'
+                print "DEBUG answers"
+                pp(@answers)
+              end
+            end
+          end
+
+          def answers
+            @answers ||= {}
+          end
+
+          def body
+            (answers['transcription'] || answers['1']).to_s
+          end
+          
+          class Empty < FromAssignment
+            def initialize
+              @answers = {}
+            end
+
+          end #Amazon::Result::Fields::FromAssignment::Empty
+        end #Amazon::Result::Fields::FromAssignment
+      end #Amazon::Result::Fields
     end #Amazon::Result
 
     class HIT
+      #Extend RTurk to handle external questions (see
+      #Audibleturk::CreateHIT and Audibleturk::Amazon::HIT::Question
+      #class below)
       def self.create(*args, &blk)
         response = CreateHIT.create(*args, &blk)
         RTurk::Hit.new(response.hit_id, response)
       end
-      class Question
-        require 'nokogiri'
+
+      #Convenience method for new RTurk HITs that do what you want
+      def self.new_full(id)
+        RTurk::Hit.new(id, nil, :include_assignment_summary => true)
+      end
+
+      class FromSearchHITs
+        #Wrap RTurk::HITParser objects returned by RTurk::SearchHITs, which are pointlessly and stupidly and
+        #subtly different from RTurk::GetHITResponse objects
+        attr_reader :annotation, :xml
+        def initialize(rturk_hit, annotation, noko_xml)
+          @rturk_hit = rturk_hit
+          @annotation = annotation
+          @xml = noko_xml
+        end
+
+        def method_missing(meth, *args)
+          @rturk_hit.send(meth, *args)
+        end
+
+        def assignments_pending_count
+          self.pending_assignments
+        end
+
+        def assignments_available_count
+          self.available_assignments
+        end
+
+        def assignments_completed_count
+          self.completed_assignments
+        end
+
+      end #Amazon::HIT::FromSearchHITs
+
+        class Question
+          require 'nokogiri'
         def initialize(args)
           @id = args[:id] or raise Audibleturk::Error::Argument, 'missing :id arg'
           @question = args[:question] or raise Audibleturk::Error::Argument, 'missing :question arg'
@@ -506,7 +797,6 @@ module Audibleturk
   end #CreateHIT
 
   class Project
-    require 'securerandom'
     attr_reader :interval, :bitrate
     attr_accessor :name, :config
     def initialize(name, config=Audibleturk::Config.file)
@@ -518,23 +808,14 @@ module Audibleturk
       Audibleturk::Project::WWW.new(@name, scp)
     end
 
-    def amazon(id=self.id)
-      Audibleturk::Amazon::Results.for_project(id)
-    end
-
     def local(dir=@config.local)
       Audibleturk::Project::Local.named(@name, dir) 
     end
 
     def create_local(basedir=@config.local)
-      local = Audibleturk::Project::Local.create(@name, basedir, "#{@config.app}/templates/project")
-      local.id = id
-      local
+      Audibleturk::Project::Local.create(@name, basedir, "#{@config.app}/templates/project")
     end
 
-    def id
-      @id ||= (local && local.id) || SecureRandom.hex(16)
-    end
 
     def interval=(mmss)
       formatted = mmss.match(/(\d+)$|((\d+:)?(\d+):(\d\d)(\.(\d+))?)/) or raise Audibleturk::Error::Argument::Format, "Interval does not match nnn or [nn:]nn:nn[.nn]"
@@ -570,7 +851,13 @@ module Audibleturk
     def upload_audio(files=local.audio_chunks, &progress)
       dest = files.collect{|file| File.basename(file.path, '.*') + ((@config.randomize == false) ? '' : ".#{psuedo_random_uppercase_string}") + File.extname(file.path)}
       www.put(files.collect{|f| f.path}, dest){|file, as| progress.yield(file, as, www) if progress}
+      local.audio_is_on_www = dest.collect{|file| "#{@config.url}/#{file}"}.join("\n")
       return dest
+    end
+
+    def updelete_audio(files=local.audio_chunks_online, &progress)
+      www.remove(files){|file| progress.yield(file) if progress}
+      local.delete_audio_is_on_www
     end
 
     def create_assignment_csv(remote_files, unusual_words=[], voices=[])
@@ -578,7 +865,7 @@ module Audibleturk
       CSV.open(assignment_path, 'wb') do |csv|
         csv << ['url', 'project_id', 'unusual', (1 .. voices.size).collect{|n| ["voice#{n}", "voice#{n}title"]}].flatten
         remote_files.each do |file|
-          csv << ["#{@config.url}/#{file}", id, unusual_words.join(', '), voices.collect{|v| [v[:name], v[:description]]}].flatten
+          csv << ["#{@config.url}/#{file}", local.id, unusual_words.join(', '), voices.collect{|v| [v[:name], v[:description]]}].flatten
         end
       end
       return assignment_path
@@ -643,6 +930,7 @@ module Audibleturk
 
       def remove(files)
         requests = batch(files) do |file, sftp|
+          yield(file) if block_given?
           sftp.remove("#{@path}#{file}")
         end
         failures = requests.reject{|request| request.response.ok?}
@@ -655,6 +943,7 @@ module Audibleturk
 
     class Local
       require 'fileutils'
+      require 'securerandom'
       attr_reader :path
       def initialize(path)
         @path = path
@@ -666,7 +955,9 @@ module Audibleturk
         dest = "#{base_dir}/#{name}"
         FileUtils.mkdir(dest)
         FileUtils.cp_r("#{template_dir}/.", dest)
-        return self.new(dest)
+        local = self.new(dest)
+        local.create_id
+        local
       end
 
       def self.named(string, path)
@@ -678,6 +969,23 @@ module Audibleturk
       def self.ours?(dir)
         (Dir.exists?("#{dir}/audio") && Dir.exists?("#{dir}/originals"))
       end
+
+
+      def self.etc_file_accessor(*syms)
+        syms.each do |sym|
+          define_method(sym) do
+            read_file("etc/#{sym.to_s}.txt")
+          end
+          define_method("#{sym.to_s}=".to_sym) do |value|
+            write_file("etc/#{sym.to_s}.txt", value)
+          end
+          define_method("delete_#{sym.to_s}".to_sym) do
+            delete_file("etc/#{sym.to_s}.txt")
+          end
+        end
+      end
+
+      etc_file_accessor :subtitle, :amazon_hit_type_id, :audio_is_on_www
 
       def tmp_dir
         "#{@path}/etc/tmp"
@@ -696,23 +1004,50 @@ module Audibleturk
       end
 
       def audio_chunks
-        Dir.glob("#{final_audio_dir}/*.mp3").select{|file| not file.match(/\.all\.mp3$/)}.collect{|path| Audio.new(path)}
+        Dir.glob("#{final_audio_dir}/*.mp3").select{|file| not file.match(/\.all\.mp3$/)}.collect{|path| Audio::File.new(path)}
       end
 
-      def subtitle
-        read('etc/subtitle.txt')
+      def audio_chunks_online
+        audio_urls.collect{|url| File.basename(URI.parse(url).path)}
       end
 
-      def subtitle=(subtitle)
-        write('etc/subtitle.txt', subtitle)
+      def audio_urls
+        csv('assignment').collect{|row_hash| row_hash['url'] }
       end
 
-      def id
-        read('etc/id.txt')
-      end
+      # def subtitle
+      #   read_file('etc/subtitle.txt')
+      # end
 
-      def id=(id)
-        write('etc/id.txt', id)
+      # def subtitle=(subtitle)
+      #   write_file('etc/subtitle.txt', subtitle)
+      # end
+
+      # def amazon_hit_type_id
+      #   read_file('etc/amazon_hit_type_id.txt')
+      # end
+
+      # def amazon_hit_type_id=(hit_type_id)
+      #   write_file('etc/amazon_hit_type_id.txt', hit_type_id)
+      # end
+
+      # def removed_www_audio
+      #   read_file('etc/removed_www_audio.txt')
+      # end
+
+      # def removed_www_audio=(value)
+      #   write_file('etc/removed_www_audio.txt', value)
+      # end
+
+       def id
+         read_file('etc/id.txt')
+       end
+
+      def create_id
+        if id 
+          raise Audibleturk::Error, "id already exists" 
+        end
+        write_file('etc/id.txt', SecureRandom.hex(16))
       end
 
       def original_audio
@@ -725,13 +1060,13 @@ module Audibleturk
       end
 
       def csv(base_name)
-        csv = read("csv/#{base_name}.csv") or raise "No file #{base_name} in #{@path}/csv"
+        csv = read_file("csv/#{base_name}.csv") or raise "No file #{base_name} in #{@path}/csv"
         arys = CSV.parse(csv)
         headers = arys.shift
         arys.collect{|row| Hash[*headers.zip(row).flatten]}
       end
 
-      def read(relative_path)
+      def read_file(relative_path)
         path = "#{@path}/#{relative_path}"
         if File.exists?(path)
           return IO.read(path)
@@ -740,9 +1075,18 @@ module Audibleturk
         end
       end
 
-      def write(relative_path, data)
+      def write_file(relative_path, data)
         File.open( "#{@path}/#{relative_path}", 'w') do |out|
           out << data
+        end
+      end
+
+      def delete_file(relative_path)
+        path = "#{@path}/#{relative_path}"
+        if File.exists?(path)
+          File.delete(path)
+        else
+          return nil
         end
       end
 

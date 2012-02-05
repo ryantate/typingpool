@@ -5,16 +5,27 @@ require 'uri'
 require 'audibleturk'
 
 options = {
-  :config => Audibleturk::Config.file
+  :config => Audibleturk::Config.file,
+  :url_at => 'typingpool_url',
+  :id_at => 'typingpool_project_id',
 }
 OptionParser.new do |commands|
-  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT [--config PATH] [--sandbox]\n"
+  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT | --dead\n  [--sandbox]\n  [--config PATH]\n  [--url_at=#{options[:url_at]}] [--id_at=#{options[:id_at]}]\n"
+  commands.on('--dead', "Remove ALL expired and rejected results, regardless of project.","  Use in leiu of PROJECT.", "  Removes only Mechanical Turk HITs, not remote audio files") do
+    options[:dead] = true
+  end
+  commands.on('--sandbox', "Test in Mechanical Turk's sandbox") do
+    options[:sandbox] = true
+  end
   commands.on('--config=PATH', "Default: #{Audibleturk::Config.default_file}.", " A config file") do |path|
     File.exists?(File.expand_path(path)) && File.file?(File.expand_path(path)) or abort "No such file #{path}"
     options[:config] = Audibleturk::Config.file(path)
   end
-  commands.on('--sandbox', "Test in Mechanical Turk's sandbox") do
-    options[:sandbox] = true
+  commands.on('--url_at=PARAM', "Default: #{options[:url_at]}.", " Name of the HTML form field for audio URLs") do |url_at|
+    options[:url_at] = url_at
+  end
+  commands.on('--id_at=PARAM', "Default: #{options[:id_at]}.", " Name of the HTML form field for project IDs") do |id_at|
+    options[:id_at] = id_at
   end
   commands.on('--help', 'Display this screen') do
     $stderr.puts commands 
@@ -22,20 +33,78 @@ OptionParser.new do |commands|
   end
 end.parse!
 options[:banner] += "`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
-project_name_or_path = ARGV[0] or abort options[:banner]
 
-project = Audibleturk::Project.new(File.basename(project_name_or_path), options[:config])
-project_local = project.local(File.dirname(project_name_or_path)) or abort "No such project '#{project_name_or_path}'\n"
-project_local.id or abort "Can't find project id in #{project_local.path}"
+project_name_or_path = ARGV[0] 
+project_name_or_path = nil if project_name_or_path.to_s.match(/^\s+$/)
+abort "Can't specify both PROJECT and --dead" if project_name_or_path && options[:dead]
+abort "No PROJECT specified (and no --dead option)\n#{options[:banner]}" if not(project_name_or_path || options[:dead])
 
-$stderr.puts "Removing from Amazon..."
-Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :key => options[:config].param['aws']['key'], :secret => options[:config].param['aws']['secret'])
-begin
-  Audibleturk::Amazon::Result.all_for_project(project_local.id).each{|result| result.remove_hit }
-rescue Audibleturk::Error::Amazon::UnreviewedContent => e
-  abort "Can't finish: One or more transcriptions are submitted but unprocessed (#{e})"
+project=nil
+#Error checking on project info first
+if project_name_or_path
+  project_path = nil
+  if File.exists?(project_name_or_path)
+    project_path = project_name_or_path
+    options[:config].param['local'] = project_name_or_path
+  else
+    project_path = "#{options[:config].local}/#{project_name_or_path}"
+  end
+
+  project = Audibleturk::Project.new(File.basename(project_path), options[:config])
+  project.local or abort "No such project '#{project_name_or_path}'\n"
+  project.local.id or abort "Can't find project id in #{project.local.path}"
 end
 
-$stderr.puts "Removing from #{project.www.host}..."
-project.www.remove(project_local.csv('assignment').collect{|row_hash| File.basename(URI.parse(row_hash['url']).path) })
+Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
+$stderr.puts "Removing from Amazon"
+$stderr.puts "  Collecting all results"
+#Set up result set, depending on options
+results = nil
+result_options = {:url_at => options[:url_at], :id_at => options[:id_at]}
+if project
+    puts "DEBUG collecting all for #{project.local.id}"
+    results = Audibleturk::Amazon::Result.all_for_project(project.local.id, result_options)
+elsif options[:dead]
+  results = Audibleturk::Amazon::Result.all(result_options).select do |result|
+    dead = ((result.hit.expired_and_overdue? || result.rejected?) && result.ours?)
+    result.to_cache
+    dead
+  end
+end
 
+#Remove the results from Mechanical Turk
+fails = []
+results.each do |result| 
+  $stderr.puts "  Removing HIT #{result.hit_id} (#{result.hit.status})"
+  begin
+    result.remove_hit 
+  rescue Audibleturk::Error::Amazon::UnreviewedContent => e
+    fails.push(e)
+  else
+    $stderr.puts "  Removing from local cache"
+    Audibleturk::Amazon::Result.delete_cache(result.hit_id, options[:url_at], options[:id_at])
+  end
+end
+if not (fails.empty?)
+  $stderr.puts "Removed " + (results.size - fails.size) + " HITs from Amazon"
+  abort "Can't finish: #{fails.size} transcriptions are submitted but unprocessed (#{fails.join('; ')})"
+end
+
+#Remove the remote audio files associated with the results
+if project 
+  filenames = project.local.audio_chunks_online
+  if project.local.audio_is_on_www && (not(results.empty?))
+    $stderr.puts "Removing audio from #{project.www.host}"
+    begin
+      project.updelete_audio(filenames)
+    rescue Audibleturk::Error::SFTP => e
+      if e.to_s.match(/no such file/)
+        $stderr.puts "  No files to remove - may have been removed previously"
+      else
+        abort "Can't remove remote audio files: #{e}"
+      end
+    else
+      $stderr.puts "  Removed #{filenames.size} audio files from #{project.www.host}"
+    end
+  end
+end

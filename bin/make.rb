@@ -10,7 +10,7 @@ options = {
   :chunk => '1:00'
 }
 OptionParser.new do |opts|
-  options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} --title Foo --file foo.mp3 [--file bar.mp3...] [--chunks 1:00] [--subtitle 'Hack Day interview'][--voice 'John' --voice 'Pat Foo, British female'...][--unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson'...][--bitrate 256][--moveorig]\n"
+  options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} --title Foo --file foo.mp3 [--file bar.mp3...]\n  [--chunks 1:00] [--subtitle 'Hack Day interview']\n  [--voice 'John' --voice 'Pat Foo, British female'...]\n  [--unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson'...]\n  [--bitrate 256][--moveorig]\n"
 
   opts.on('--file FILE', 'Required. Audio for transcribing. Repeatable (sorting is by name).') do |file|
     options[:files].push(file)
@@ -53,10 +53,10 @@ OptionParser.new do |opts|
     exit
   end
 end.parse!
-
+options[:banner] += "`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
 abort "Unfamiliar argument '#{ARGV[0]}'" if ARGV.size > 0
-abort "No files specified" if options[:files].empty?
-abort "No title specified" if options[:title].to_s.empty?
+abort "No files specified\n#{options[:banner]}" if options[:files].empty?
+abort "No title specified\n#{options[:banner]}" if options[:title].to_s.empty?
 options[:files].sort!
 options[:files].each do |file|
   File.extname(file) or abort "You need a file extension on the file '#{file}'"
