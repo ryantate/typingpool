@@ -120,7 +120,9 @@ positional.each do |name|
 end
 abort "Unexpected argument(s): #{ARGV.join(';')}" if not(ARGV.empty?)
 
-if not(File.exists?(options[:project]))
+if File.exists?(options[:project])
+  config.param['local'] = File.dirname(options[:project])
+else
   abort "Required param 'local' missing from config file '#{config.path}'" if config.local.to_s.empty?
   options[:project] = "#{config.local}/#{options[:project]}"
 end
@@ -135,25 +137,37 @@ end
 abort "Template '#{options[:template]}' is not a file" if not(File.file?(options[:template]))
 abort "Project '#{options[:project]}' is not a directory" if not(File.directory?(options[:project]))
 
-project = Audibleturk::Project.new(File.basename(options[:project]))
-project_local = project.local(File.dirname(options[:project]))
+project = Audibleturk::Project.new(File.basename(options[:project]), config)
 
-abort "Not a project directory at '#{options[:project]}'" if not(project_local)
-abort "No data in assignment CSV" if project_local.csv('assignment').empty?
+abort "Not a project directory at '#{options[:project]}'" if not(project.local)
+abort "No data in assignment CSV" if project.local.read_csv('assignment').empty?
 abort "No AWS key+secret in config" if not(config.param['aws'] && config.param['aws']['key'] && config.param['aws']['secret'])
 
 Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :config => config)
+
+#we'll need to re-upload audio if we ran tp-finish on the project
+if not(project.local.audio_is_on_www)
+  project.upload_audio(project.local.audio_chunks, project.local.audio_chunks_online) do |file, as, www|
+    puts "Uploading #{File.basename(file)} to #{www.host}/#{www.path} as #{as}"
+  end
+end
 
 template = IO.read(options[:template])
 hits = []
 amazon_hit_type_id = nil
 $stderr.puts 'Assigning'
-assignments = project_local.csv('assignment')
+assignments = project.local.read_csv('assignment')
 assignments.each do |assignment|
-  xhtmlf = ERB.new(template, nil, '<>').result(Audibleturk::ErbBinding.new(assignment).send(:get_binding))
-  assignment = Audibleturk::Amazon::Assignment.new(xhtmlf, config.assignments)
+  next if assignment['transcription']
+  if assignment['hit_expires_at'].to_s.match(/\S/) #has been assigned previously
+    if (Time.parse(assignment['hit_expires_at']) + assignment['hit_assignments_duration'].to_i) > Time.now
+      #unexpired active HIT - do not reassign
+      next
+    end
+  xhtmlf = ERB.new(template, nil, '<>').result(Audibleturk::ErbBinding.new(assignment_hash).send(:get_binding))
+  amazon_assignment = Audibleturk::Amazon::Assignment.new(xhtmlf, config.assignments)
   begin
-    hit = assignment.assign
+    hit = amazon_assignment.assign
   rescue  RTurk::RTurkError => e
     $stderr.puts "Mechanical Turk error: #{e}"
     unless hits.empty?
@@ -170,6 +184,10 @@ assignments.each do |assignment|
     hits.each{|hit| hit.disable!}
     abort
   end
+  assignment['hit_id'] = hit.id
+  assignment['hit_expires_at'] = hit.expires_at.to_s
+  assignment['hit_assignments_duration'] = hit.assignments_duration.to_s
   $stderr.puts "Assigned #{hits.size} / #{assignments.size}"
 end
-project_local.amazon_hit_type_id = amazon_hit_type_id
+project.local.amazon_hit_type_id = amazon_hit_type_id
+project.local.write_csv('assignment', assignments)

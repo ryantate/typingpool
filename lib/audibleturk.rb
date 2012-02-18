@@ -848,12 +848,15 @@ puts "DEBUG re-fetching HIT to get question"
       file.split(interval_as_min_dot_sec, @name)
     end
 
-    def upload_audio(files=local.audio_chunks, &progress)
-      dest = files.collect{|file| File.basename(file.path, '.*') + ((@config.randomize == false) ? '' : ".#{psuedo_random_uppercase_string}") + File.extname(file.path)}
-      www.put(files.collect{|f| f.path}, dest){|file, as| progress.yield(file, as, www) if progress}
+    def upload_audio(files=local.audio_chunks, as=audio_chunks_for_online(files, @config.randomize), &progress)
+      www.put(files, as){|file, as| progress.yield(file, as, www) if progress}
       local.audio_is_on_www = dest.collect{|file| "#{@config.url}/#{file}"}.join("\n")
-      return dest
+      return as
     end
+
+      def audio_chunks_for_online(files=local.audio_chunks, randomize=@config.randomize)
+        files.collect{|file| File.basename(file, '.*') + ((randomize == false) ? '' : ".#{psuedo_random_uppercase_string}") + File.extname(file) }
+      end
 
     def updelete_audio(files=local.audio_chunks_online, &progress)
       www.remove(files){|file| progress.yield(file) if progress}
@@ -1007,37 +1010,14 @@ puts "DEBUG re-fetching HIT to get question"
         Dir.glob("#{final_audio_dir}/*.mp3").select{|file| not file.match(/\.all\.mp3$/)}.collect{|path| Audio::File.new(path)}
       end
 
+
       def audio_chunks_online
         audio_urls.collect{|url| File.basename(URI.parse(url).path)}
       end
 
       def audio_urls
-        csv('assignment').collect{|row_hash| row_hash['url'] }
+        read_csv('assignment').collect{|row_hash| row_hash['url'] }
       end
-
-      # def subtitle
-      #   read_file('etc/subtitle.txt')
-      # end
-
-      # def subtitle=(subtitle)
-      #   write_file('etc/subtitle.txt', subtitle)
-      # end
-
-      # def amazon_hit_type_id
-      #   read_file('etc/amazon_hit_type_id.txt')
-      # end
-
-      # def amazon_hit_type_id=(hit_type_id)
-      #   write_file('etc/amazon_hit_type_id.txt', hit_type_id)
-      # end
-
-      # def removed_www_audio
-      #   read_file('etc/removed_www_audio.txt')
-      # end
-
-      # def removed_www_audio=(value)
-      #   write_file('etc/removed_www_audio.txt', value)
-      # end
 
        def id
          read_file('etc/id.txt')
@@ -1059,11 +1039,18 @@ puts "DEBUG re-fetching HIT to get question"
         paths.each{|path| FileUtils.send(action, path, original_audio_dir)}
       end
 
-      def csv(base_name)
+      def read_csv(base_name)
         csv = read_file("csv/#{base_name}.csv") or raise "No file #{base_name} in #{@path}/csv"
         arys = CSV.parse(csv)
         headers = arys.shift
         arys.collect{|row| Hash[*headers.zip(row).flatten]}
+      end
+
+      def write_csv(base_name, hashes, headers=hashes[0].keys)
+        CSV.open("#{@path}/csv/#{base_name}.csv", 'wb') do |csv|
+          csv << headers
+          hashes.each{|hash| csv << headers.collect{|header| hash[header] } }
+        end
       end
 
       def read_file(relative_path)
@@ -1135,6 +1122,10 @@ puts "DEBUG re-fetching HIT to get question"
         def initialize(path)
           raise "No single quotes allowed in file names" if path.match(/'/)
           @path = path
+        end
+
+        def to_s
+          @path
         end
 
         def to_mp3(dir=::File.dirname(@path), bitrate=nil)

@@ -3,6 +3,7 @@
 require 'optparse'
 require 'uri'
 require 'audibleturk'
+require 'set'
 
 options = {
   :config => Audibleturk::Config.file,
@@ -45,11 +46,10 @@ if project_name_or_path
   project_path = nil
   if File.exists?(project_name_or_path)
     project_path = project_name_or_path
-    options[:config].param['local'] = project_name_or_path
+    options[:config].param['local'] = File.dirname(project_name_or_path)
   else
     project_path = "#{options[:config].local}/#{project_name_or_path}"
   end
-
   project = Audibleturk::Project.new(File.basename(project_path), options[:config])
   project.local or abort "No such project '#{project_name_or_path}'\n"
   project.local.id or abort "Can't find project id in #{project.local.path}"
@@ -62,8 +62,8 @@ $stderr.puts "  Collecting all results"
 results = nil
 result_options = {:url_at => options[:url_at], :id_at => options[:id_at]}
 if project
-    puts "DEBUG collecting all for #{project.local.id}"
-    results = Audibleturk::Amazon::Result.all_for_project(project.local.id, result_options)
+  puts "DEBUG collecting all for #{project.local.id}"
+  results = Audibleturk::Amazon::Result.all_for_project(project.local.id, result_options)
 elsif options[:dead]
   results = Audibleturk::Amazon::Result.all(result_options).select do |result|
     dead = ((result.hit.expired_and_overdue? || result.rejected?) && result.ours?)
@@ -87,24 +87,30 @@ results.each do |result|
 end
 if not (fails.empty?)
   $stderr.puts "Removed " + (results.size - fails.size) + " HITs from Amazon"
-  abort "Can't finish: #{fails.size} transcriptions are submitted but unprocessed (#{fails.join('; ')})"
+  abort "#{fails.size} transcriptions are submitted but unprocessed (#{fails.join('; ')})"
 end
 
-#Remove the remote audio files associated with the results
+#Remove the remote audio files associated with the results and update the assignment.csb associated with the project
 if project 
-  filenames = project.local.audio_chunks_online
-  if project.local.audio_is_on_www && (not(results.empty?))
-    $stderr.puts "Removing audio from #{project.www.host}"
-    begin
-      project.updelete_audio(filenames)
-    rescue Audibleturk::Error::SFTP => e
-      if e.to_s.match(/no such file/)
-        $stderr.puts "  No files to remove - may have been removed previously"
-      else
-        abort "Can't remove remote audio files: #{e}"
-      end
-    else
-      $stderr.puts "  Removed #{filenames.size} audio files from #{project.www.host}"
+  assignments = project.local.read_csv('assignment')
+  assignments.each do |assignment|
+    if assignment['hit_expires_at'].to_s.match(/\S/)
+      #we don't delete the hit_id because we may need it when building
+      #the transcript (if the HIT was approved)
+      %w(hit_expires_at hit_assignments_duration).each{|key| assignment[key] = nil }
     end
+  end
+  project.local.write_csv('assignment', assignments)
+  $stderr.puts "Removing audio from #{project.www.host}"
+  begin
+    project.updelete_audio
+  rescue Audibleturk::Error::SFTP => e
+    if e.to_s.match(/no such file/)
+      $stderr.puts "  No files to remove - may have been removed previously"
+    else
+      abort "Can't remove remote audio files: #{e}"
+    end
+  else
+    $stderr.puts "  Removed #{assignments.size} audio files from #{project.www.host}"
   end
 end

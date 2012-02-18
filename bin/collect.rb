@@ -47,27 +47,44 @@ projects = {}
 need = {}
 $stderr.puts "Looking for local project folders to receive results" unless results.empty?
 results.each do |result| 
-  key = result.transcription.project.to_s + result.transcription.title.to_s
-  if need[key] == false
-    next
-  elsif need[key]
+  key = result.transcription.project #project id
+  if need[key]
     need[key].push(result)
+  elsif need[key] == false
+    next
   else
     need[key] = false
     project = Audibleturk::Project.new(result.transcription.title, options[:config])
     #folder must exist
-    local = project.local or next;
+    project.local or next;
     #transcript must not be complete
-    next if File.exists?("#{local.path}/#{filename[:done]}")
+    next if File.exists?("#{project.local.path}/#{filename[:done]}")
     #folder id must match incoming id
-    next if local.id && (local.id != result.transcription.project)
+    next if project.local.id != result.transcription.project
     projects[key] = project
     need[key] = [result]
   end
 end
 template = nil
 projects.each do |key, project|
-  transcription = Audibleturk::Transcription.new(project.name, need[key].collect{|result| result.transcription})
+  results_by_url = Hash[ *need[key].collect{|result| [result.url, result] }.flatten ]
+  assignments = project.local.read_csv('assignment')
+  assignments.each do |assignment|
+    result = results_by_url[assignment['url']] or next
+    next if assignment['transcription']
+    assignment['transcription'] = result.transcription.body
+    assignment['worker'] = result.transcription.worker
+    assignment['hit_id'] result.hit_id
+  end
+  project.local.write_csv('assignment', assignments)
+  transcription_chunks = project.local.read_csv('assignment').select{|assignment| assignment['transcription']}.collect do |assignment|
+    chunk = Audibleturk::Transcription::Chunk.new(assignment['transcription'])
+    chunk.url = assignment['url']
+    chunk.project = assignment['project_id']
+    chunk.worker = assignment['worker']
+    chunk.hit = assignment['hit_id']
+  end
+  transcription = Audibleturk::Transcription.new(project.name, transcription_chunks)
   transcription.subtitle = project.local.subtitle
   File.delete("#{project.local.path}/#{filename[:working]}") if File.exists?("#{project.local.path}/#{filename[:working]}")
   done = (transcription.to_a.length == project.local.audio_chunks.length)
