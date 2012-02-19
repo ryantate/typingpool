@@ -1,6 +1,6 @@
 module Audibleturk
   class Error < StandardError 
-    class External < Error; end
+    class Shell < Error; end
     class SFTP < Error; end
     class Argument < Error
       class Format < Argument; end
@@ -10,9 +10,33 @@ module Audibleturk
     end
   end
 
+  module Utility
+    require 'open3'
+
+    #much like Kernel#system, except it doesn't spew STDERR and
+    #STDOUT all over your screen! (when called with multiple args,
+    #which with Kernel#systems kills the chance to do shell style
+    #stream redirects like 2>/dev/null)
+    def self.system_quietly(*cmd)
+      exit_status=nil
+      err=nil
+      Open3.popen3(*cmd) do |stdin, stdout, stderr, wait_thread|
+        yield(stdin, stdout, stderr, wait_thread) if block_given?
+        err = stderr.gets(nil)
+        [stdin, stdout, stderr].each{|stream| stream.send('close')}
+        exit_status = wait_thread.value
+      end
+      if exit_status.to_i > 0
+        raise Audibleturk::Error::Shell, err
+      else
+        return true
+      end
+    end
+  end #Audibleturk::Utility
+
   class Config
     require 'yaml'
-    @@config_file = "~/.audibleturk"
+    @@default_file = File.expand_path("~/.audibleturk")
     attr_reader :path
 
     def initialize(params)
@@ -20,12 +44,12 @@ module Audibleturk
     end
 
     def self.default_file
-      @@config_file
+      @@default_file
     end
 
     def self.file(path=nil)
-      path ||= @@config_file
-      self.new(YAML.load(IO.read(File.expand_path(path))))
+      path ||= default_file
+      self.new(YAML.load(IO.read((path))))
     end
 
     def self.main
@@ -850,7 +874,7 @@ puts "DEBUG re-fetching HIT to get question"
 
     def upload_audio(files=local.audio_chunks, as=audio_chunks_for_online(files, @config.randomize), &progress)
       www.put(files, as){|file, as| progress.yield(file, as, www) if progress}
-      local.audio_is_on_www = dest.collect{|file| "#{@config.url}/#{file}"}.join("\n")
+      local.audio_is_on_www = as.collect{|file| "#{@config.url}/#{file}"}.join("\n")
       return as
     end
 
@@ -1084,31 +1108,10 @@ puts "DEBUG re-fetching HIT to get question"
 
     class Audio
       require 'fileutils'
-      require 'open3'
-
-      #much like Kernel#system, except it doesn't spew STDERR and
-      #STDOUT all over your screen! (when called with multiple args,
-      #which with Kernel#systems kills the chance to do shell style
-      #stream redirects like 2>/dev/null)
-      def self.system_quietly(*cmd)
-        exit_status=nil
-        err=nil
-        Open3.popen3(*cmd) do |stdin, stdout, stderr, wait_thread|
-          yield(stdin, stdout, stderr, wait_thread) if block_given?
-          err = stderr.gets(nil)
-          [stdin, stdout, stderr].each{|stream| stream.send('close')}
-          exit_status = wait_thread.value
-        end
-        if exit_status.to_i > 0
-          raise Audibleturk::Error::External, err
-        else
-          return true
-        end
-      end
 
       def self.merge(files, dest)
         if files.size > 1
-          Audio.system_quietly('mp3wrap', dest, *files.collect{|file| file.path})
+          Utility.system_quietly('mp3wrap', dest, *files.collect{|file| file.path})
           written = "#{::File.dirname(dest)}/#{::File.basename(dest, '.*')}_MP3WRAP.mp3"
           FileUtils.mv(written, dest)
         else
@@ -1128,10 +1131,14 @@ puts "DEBUG re-fetching HIT to get question"
           @path
         end
 
+        def to_str
+          to_s
+        end
+
         def to_mp3(dir=::File.dirname(@path), bitrate=nil)
           bitrate ||= self.bitrate || 192
           dest =  "#{dir}/#{::File.basename(@path, '.*')}.mp3"
-          Audio.system_quietly('ffmpeg', '-i', @path, '-acodec', 'libmp3lame', '-ab', "#{bitrate}k", '-ac', '2', dest)
+          Utility.system_quietly('ffmpeg', '-i', @path, '-acodec', 'libmp3lame', '-ab', "#{bitrate}k", '-ac', '2', dest)
           return self.class.new(dest)
         end
 
@@ -1145,7 +1152,7 @@ puts "DEBUG re-fetching HIT to get question"
           #mp3splt is absolutely retarded at handling absolute directory paths
           dir = ::File.dirname(@path)
           Dir.chdir(dir) do
-            Audio.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{base_name}.@m.@s", ::File.basename(@path)) 
+            Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{base_name}.@m.@s", ::File.basename(@path)) 
           end
           Dir.entries(dir).select{|entry| ::File.file?("#{dir}/#{entry}")}.reject{|file| file.match(/^\./)}.reject{|file| file.eql?(::File.basename(@path))}.collect{|file| self.class.new("#{dir}/#{file}")}
         end
