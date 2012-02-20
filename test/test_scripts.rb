@@ -2,7 +2,15 @@
 
 require 'test/unit'
 
+
+def MiniTest.filter_backtrace(bt)
+  bt
+end
+
 class TestScripts < Test::Unit::TestCase
+  require 'set'
+  require 'net/http'
+
   def self.app_dir
     File.join(File.dirname(__FILE__), '..')
   end
@@ -21,8 +29,9 @@ class TestScripts < Test::Unit::TestCase
     File.join(template_dir, 'audio')
   end
 
-  def audio_files
-    Dir.entries(audio_dir).map{|entry| File.join(audio_dir, entry)}.select{|path| File.file?(path) }
+  def audio_files(subdir='mp3')
+    dir = File.join(audio_dir, subdir)
+    Dir.entries(dir).reject{|entry| entry.match(/^\./) }.map{|entry| File.join(dir, entry)}.select{|path| File.file?(path) }
   end
 
   def in_temp_tp_dir
@@ -53,7 +62,26 @@ class TestScripts < Test::Unit::TestCase
     end
   end
 
+  def working_url?(url, max_redirects=6)
+    response = nil
+    seen = Set.new
+    loop do
+      url = URI.parse(url)
+      break if seen.include? url.to_s
+      break if seen.size > max_redirects
+      seen.add(url.to_s)
+      response = Net::HTTP.new(url.host, url.port).request_head(url.path)
+      if response.kind_of?(Net::HTTPRedirection)
+        url = response['location']
+      else
+        break
+      end
+    end
+    response.kind_of?(Net::HTTPSuccess) && url.to_s
+  end
+
   class TestTpMake < TestScripts
+
     def path_to_tp_make
       File.join(self.class.app_dir, 'bin', 'make.rb')
     end
@@ -71,17 +99,49 @@ class TestScripts < Test::Unit::TestCase
     end
 
     def test_tp_make
-      assert_nothing_raised do
-        in_temp_tp_dir do |dir|
-          Audibleturk::Utility.system_quietly(
-                                              path_to_tp_make, 
-                                              '--config', File.join(dir, project_default[:config_filename]), 
-                                              *[:title, :subtitle].map{|param| ["--#{param}", project_default[param]] }.flatten,
-                                              *[:voice, :unusual].map{|param| project_default[param].map{|value| ["--#{param}", value] }.flatten }.flatten,
-                                              *audio_files.map{|path| ['--file', path]}.flatten
-                                              )
+      Dir.entries(audio_dir).select{|entry| File.directory?(File.join(audio_dir, entry))}.reject{|entry| entry.match(/^\./) }.each do |subdir|
+        assert_nothing_raised do
+          in_temp_tp_dir do |dir|
+            config_path = File.join(dir, project_default[:config_filename])
+            Audibleturk::Utility.system_quietly(
+                                                path_to_tp_make, 
+                                                '--config', config_path, 
+                                                '--chunks', project_default[:chunks],
+                                                *[:title, :subtitle].map{|param| ["--#{param}", project_default[param]] }.flatten,
+                                                *[:voice, :unusual].map{|param| project_default[param].map{|value| ["--#{param}", value] }.flatten }.flatten,
+                                                *audio_files(subdir).map{|path| ['--file', path]}.flatten
+                                                )
+            project = nil
+            assert_nothing_raised do
+              project = Audibleturk::Project.new(project_default[:title], Audibleturk::Config.file(config_path))
+            end
+            assert_not_nil(project.local)
+            assert_not_nil(project.local.id)
+            assert(project.local.audio_chunks.size >= 6)
+            assert(project.local.audio_chunks.size <= 7)
+            assert_equal(project_default[:subtitle], project.local.subtitle)
+            assignments = nil
+            assert_nothing_raised do 
+              assignments = project.local.read_csv('assignment')
+            end
+            assert_equal(project.local.audio_chunks.size, assignments.size)
+            assignments.each do |assignment|
+              assert_not_nil(assignment['url'])
+              assert(working_url?(assignment['url']))
+              assert_equal(assignment['project_id'], project.local.id)
+              assert_equal(assignment['unusual'].split(/\s*,\s*/), project_default[:unusual])
+              project_default[:voice].each_with_index do |voice, i|
+                name, description = voice.split(/\s*,\s*/)
+                assert_equal(name, assignment["voice#{i+1}"])
+                if not(description.to_s.empty?)
+                  assert_equal(description, assignment["voice#{i+1}title"])
+                end
+              end
+            end
+          end
         end
       end
     end
+
   end #TestTpMake
 end

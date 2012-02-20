@@ -62,7 +62,6 @@ $stderr.puts "  Collecting all results"
 results = nil
 result_options = {:url_at => options[:url_at], :id_at => options[:id_at]}
 if project
-  puts "DEBUG collecting all for #{project.local.id}"
   results = Audibleturk::Amazon::Result.all_for_project(project.local.id, result_options)
 elsif options[:dead]
   results = Audibleturk::Amazon::Result.all(result_options).select do |result|

@@ -580,11 +580,8 @@ puts "DEBUG from_new"
         if @from_hit.nil?
           if hit
             #If the hit was supplied, it was from SearchHIT and lacks a question element
-puts "DEBUG using received HIT"
             @from_hit = Fields::FromHIT::WithoutQuestion.new(hit)
           else
-            puts "DEBUG fetching HIT"
-
             @from_hit = Fields::FromHIT.new(hit_at_amazon)
           end
         end
@@ -620,7 +617,6 @@ puts "DEBUG using received HIT"
             @assignments_pending = hit.assignments_pending_count
             self.annotation = hit
             self.external_question_url = hit.xml
-            puts "DEBUG hit status '#{@status}' pending #{@assignments_pending} completed #{@assignments_completed} annotation #{annotation}"
           end
 
           def annotation=(hit)
@@ -1001,13 +997,13 @@ puts "DEBUG re-fetching HIT to get question"
       def self.etc_file_accessor(*syms)
         syms.each do |sym|
           define_method(sym) do
-            read_file("etc/#{sym.to_s}.txt")
+            read_file(File.join('etc',"#{sym.to_s}.txt"))
           end
           define_method("#{sym.to_s}=".to_sym) do |value|
-            write_file("etc/#{sym.to_s}.txt", value)
+            write_file(File.join('etc',"#{sym.to_s}.txt"), value)
           end
           define_method("delete_#{sym.to_s}".to_sym) do
-            delete_file("etc/#{sym.to_s}.txt")
+            delete_file(File.join('etc',"#{sym.to_s}.txt"))
           end
         end
       end
@@ -1015,7 +1011,7 @@ puts "DEBUG re-fetching HIT to get question"
       etc_file_accessor :subtitle, :amazon_hit_type_id, :audio_is_on_www
 
       def tmp_dir
-        "#{@path}/etc/tmp"
+        File.join(path, 'etc', 'tmp')
       end
 
       def rm_tmp_dir
@@ -1023,39 +1019,39 @@ puts "DEBUG re-fetching HIT to get question"
       end
 
       def original_audio_dir
-        "#{@path}/originals"
+        File.join(path, 'originals')
       end
 
       def final_audio_dir
-        "#{@path}/audio"
+        File.join(path, 'audio')
       end
 
       def audio_chunks
-        Dir.glob("#{final_audio_dir}/*.mp3").select{|file| not file.match(/\.all\.mp3$/)}.collect{|path| Audio::File.new(path)}
+        Dir.glob("#{final_audio_dir}/*.mp3").reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
       end
 
 
       def audio_chunks_online
-        audio_urls.collect{|url| File.basename(URI.parse(url).path)}
+        audio_urls.map{|url| File.basename(URI.parse(url).path)}
       end
 
       def audio_urls
-        read_csv('assignment').collect{|row_hash| row_hash['url'] }
+        read_csv('assignment').map{|row_hash| row_hash['url'] }
       end
 
        def id
-         read_file('etc/id.txt')
+         read_file(File.join('etc','id.txt'))
        end
 
       def create_id
         if id 
           raise Audibleturk::Error, "id already exists" 
         end
-        write_file('etc/id.txt', SecureRandom.hex(16))
+        write_file(File.join('etc','id.txt'), SecureRandom.hex(16))
       end
 
       def original_audio
-        Dir.entries(original_audio_dir).select{|entry| File.file?("#{original_audio_dir}/#{entry}") }.reject{|entry| File.extname(entry).downcase.eql?('html')}.collect{|entry| "#{original_audio_dir}/#{entry}"}
+        Dir.entries(original_audio_dir).select{|entry| File.file?(File.join(original_audio_dir, entry)) }.reject{|entry| File.extname(entry).downcase.eql?('html')}.reject{|entry| entry.match(/^\./) }.map{|entry| File.join(original_audio_dir, entry) }
       end
 
       def add_audio(paths, move=false)
@@ -1110,6 +1106,7 @@ puts "DEBUG re-fetching HIT to get question"
       require 'fileutils'
 
       def self.merge(files, dest)
+        raise Audibleturk::Error::Argument, "No files to merge" if files.empty?
         if files.size > 1
           Utility.system_quietly('mp3wrap', dest, *files.collect{|file| file.path})
           written = "#{::File.dirname(dest)}/#{::File.basename(dest, '.*')}_MP3WRAP.mp3"
