@@ -2,6 +2,7 @@
 
 require 'test/unit'
 
+#Yes, big fat integration tests written in Test::Unit. Get over it.
 
 def MiniTest.filter_backtrace(bt)
   bt
@@ -49,6 +50,12 @@ class TestScripts < Test::Unit::TestCase
     add_goodbye_message("#{message} (No Amazon credentials in config file)")
   end
 
+  def add_goodbye_message(msg)
+    at_exit do
+      STDERR.puts msg
+    end
+  end
+
   def in_temp_tp_dir
     Dir.mktmpdir('typingpool_') do |dir|
       make_temp_tp_dir_config(dir)
@@ -94,12 +101,6 @@ class TestScripts < Test::Unit::TestCase
       end
     end
     response.kind_of?(Net::HTTPSuccess) && url.to_s
-  end
-
-  def add_goodbye_message(msg)
-    at_exit do
-      STDERR.puts msg
-    end
   end
 
   def call_script(*args)
@@ -209,7 +210,7 @@ class TestScripts < Test::Unit::TestCase
   class TestTpAssign < TestScripts
     #TODO: test that qualifications are sent (will need heroic effort
     #(or at least some xml parsing) since rturk doesn't provide an
-    #easy way to look at HIT qualifications
+    #easy way to look at HIT qualifications)
     def path_to_tp_assign
       File.join(self.class.app_dir, 'bin', 'assign.rb')
     end
@@ -265,7 +266,7 @@ class TestScripts < Test::Unit::TestCase
       end
       in_temp_tp_dir do |dir|
         tp_make(dir)
-assigning_started = Time.now
+        assigning_started = Time.now
         assert_nothing_raised do
           call_tp_assign(
                          project_default[:title],
@@ -291,7 +292,6 @@ assigning_started = Time.now
         keywords = results[0].hit_at_amazon.keywords
         assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
         assert_nothing_raised{tp_finish(dir)}
-
         assert_equal(0, Audibleturk::Amazon::Result.all_for_project(project.local.id, params).size)
       end # in_temp_tp_dir
     end
