@@ -113,7 +113,7 @@ assignment_path = project.create_assignment_csv(remote_files, options[:unusual],
 puts "Wrote #{assignment_path}"
 
 puts "Opening project folder #{project.local.path}"
-project.local.finder_open
+project.local.finder_open if STDOUT.tty?
 
 puts "Deleting temp files"
 project.local.rm_tmp_dir

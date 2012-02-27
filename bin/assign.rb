@@ -85,7 +85,7 @@ configs = [Audibleturk::Config.file]
       path = File.expand_path(path)
       File.exists?(path) && File.file?(path) or abort "No such file #{path}"
       new_config = Audibleturk::Config.file(path)
-      configs.push(new_config) unless new_config.path == config.path
+      configs.push(new_config)
     end
     opts.on('--help', 'Display this screen') do
       $stderr.puts opts
@@ -105,8 +105,9 @@ options[:banner] = "\n#{options[:banner]}"
 positional = %w(project template)
 #Anything waiting on STDIN?
 if STDIN.fcntl(Fcntl::F_GETFL, 0) == 0
-  project = $stdin.gets.chomp
+  project = $stdin.gets
   if project
+    project.chomp!
     abort "Duplicate project values (STDIN and --project)" if options[:project]
     options[:project] = project
     positional.shift
@@ -160,11 +161,12 @@ assignments = project.local.read_csv('assignment')
 assignments.each do |assignment|
   next if assignment['transcription']
   if assignment['hit_expires_at'].to_s.match(/\S/) #has been assigned previously
-    if (Time.parse(assignment['hit_expires_at']) + assignment['hit_assignments_duration'].to_i) > Time.now
+    if ((Time.parse(assignment['hit_expires_at']) + assignment['hit_assignments_duration'].to_i) > Time.now)
       #unexpired active HIT - do not reassign
       next
     end
-  xhtmlf = ERB.new(template, nil, '<>').result(Audibleturk::ErbBinding.new(assignment_hash).send(:get_binding))
+  end
+  xhtmlf = ERB.new(template, nil, '<>').result(Audibleturk::ErbBinding.new(assignment).send(:get_binding))
   amazon_assignment = Audibleturk::Amazon::Assignment.new(xhtmlf, config.assignments)
   begin
     hit = amazon_assignment.assign

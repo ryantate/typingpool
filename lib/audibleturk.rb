@@ -18,31 +18,38 @@ module Audibleturk
     #which with Kernel#systems kills the chance to do shell style
     #stream redirects like 2>/dev/null)
     def self.system_quietly(*cmd)
-      exit_status=nil
-      err=nil
-      out=nil
-      Open3.popen3(*cmd) do |stdin, stdout, stderr, wait_thread|
-        yield(stdin, stdout, stderr, wait_thread) if block_given?
-        err = stderr.gets(nil)
-        out = stdout.gets(nil)
-        [stdin, stdout, stderr].each{|stream| stream.send('close')}
-        exit_status = wait_thread.value
-      end
-      if exit_status.to_i > 0
-        err = err.chomp if err
-        raise Audibleturk::Error::Shell, err
-      elsif out
-        return out.chomp
+      out, err, status = Open3.capture3(*cmd)
+      if status.success?
+        return out ? out.chomp : true
       else
-        return true
+        if err
+          raise Audibleturk::Error::Shell, err.chomp
+        else
+          raise Audibleturk::Error::Shell
+        end
       end
     end
+
+    def self.timespec_to_seconds(timespec)
+      timespec or return
+      suffix_to_time = {
+        's'=>1,
+        'm'=>60,
+        'h'=>60*60,
+        'd'=>60*60*24,
+        'M'=>60*60*24*30,
+        'y'=>60*60*24*365
+      }
+      match = timespec.to_s.match(/^\+?(\d+(\.\d+)?)\s*([#{suffix_to_time.keys.join}])?$/) or raise Audibleturk::Error::Argument::Format, "Can't convert '#{timespec}' to time"
+      suffix = match[3] || 's'
+      return (match[1].to_f * suffix_to_time[suffix].to_i).to_i
+    end
+
   end #Audibleturk::Utility
 
   class Config
     require 'yaml'
     @@default_file = File.expand_path("~/.audibleturk")
-    attr_reader :path
 
     def initialize(params)
       @params = params
@@ -169,21 +176,6 @@ module Audibleturk
         time_methods.include?(meth.to_s)
       end
 
-      def timespec_to_seconds(timespec)
-        timespec or return
-        suffix_to_time = {
-          's'=>1,
-          'm'=>60,
-          'h'=>60*60,
-          'd'=>60*60*24,
-          'M'=>60*60*24*30,
-          'y'=>60*60*24*365
-        }
-        match = timespec.to_s.match(/^\+?(\d+(\.\d+)?)\s*([#{suffix_to_time.keys.join}])?$/) or raise Audibleturk::Error::Argument::Format, "Can't convert '#{timespec}' to time"
-        suffix = match[3] || 's'
-        return (match[1].to_f * suffix_to_time[suffix].to_i).to_i
-      end
-
       def equals_method?(meth)
         match = meth.to_s.match(/([^=]+)=$/) or return
         return match[1]
@@ -195,12 +187,12 @@ module Audibleturk
           args.size == 1 or raise Audibleturk::Error::Argument, "Too many args"
           value = args[0]
           if time_method?(equals_param) && value
-            timespec_to_seconds(value) or raise Audibeturk::Error::Argument::Format, "Can't convert '#{timespec}' to time"
+            Utility.timespec_to_seconds(value) or raise Audibeturk::Error::Argument::Format, "Can't convert '#{timespec}' to time"
           end
           return param[equals_param] = value
         end
         args.empty? or raise Audibleturk::Error::Argument, "Too many args"
-        return timespec_to_seconds(param[meth.to_s]) if time_method?(meth) && param[meth.to_s]
+        return Utility.timespec_to_seconds(param[meth.to_s]) if time_method?(meth) && param[meth.to_s]
         return param[meth.to_s]
       end
 
@@ -219,7 +211,9 @@ module Audibleturk
         end
 
         def type
-          @raw.split(/\s+/)[0].to_sym
+          type = @raw.split(/\s+/)[0].to_sym
+          RTurk::Qualification::TYPES[type] or raise Audibleturk::Error::Argument, "Unknown qualification type '#{type.to_s}'"
+          type
         end
 
         def opts
