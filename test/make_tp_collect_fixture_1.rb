@@ -15,6 +15,10 @@ class MakeAndAssignProject < Audibleturk::Test::Script
       FileUtils.remove_entry_secure(dir)
       raise
     end
+    #copy key files over to permanent locations within fixture dir
+    with_tp_collect_fixtures_in_temp_tp_dir(dir) do |fixture_path, project_path|
+      FileUtils.cp(project_path, fixture_path)
+    end
     add_goodbye_message("Temp project assigned in MT sandbox. Please complete and approve two assignments and run make_tp_collect_fixture_2.rb. Check for assignments at\nhttps://workersandbox.mturk.com/mturk/searchbar?minReward=0.00&searchWords=typingpooltest&selectedSearchType=hitgroups\n...and then approve them at\nhttps://requestersandbox.mturk.com/mturk/manageHITs?hitSortType=CREATION_DESCENDING&%2Fsort.x=11&%2Fsort.y=7")
   end
 end #MakeAndAssignProject

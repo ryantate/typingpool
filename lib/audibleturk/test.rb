@@ -27,6 +27,7 @@ module Audibleturk
       require 'yaml'
       require 'set'
       require 'net/http'
+      require 'fileutils'
 
       def audio_dir
         File.join(template_dir, 'audio')
@@ -66,6 +67,12 @@ module Audibleturk
 
       def setup_amazon(dir)
         Audibleturk::Amazon.setup(:sandbox => true, :config => config_from_dir(dir))
+      end
+
+      def add_goodbye_message(msg)
+        at_exit do
+          STDERR.puts msg
+        end
       end
 
       def in_temp_tp_dir
@@ -210,7 +217,7 @@ module Audibleturk
       end
 
       def tp_collect_fixture_project_dir
-        File.join(fixtures_dir, 'tp_collect_project')
+        File.join(fixtures_dir, 'tp_collect_project_temp')
       end
 
       def make_tp_collect_fixture_project_dir
@@ -221,14 +228,16 @@ module Audibleturk
         tp_collect_fixture_project_dir
       end
 
-      def tp_collect_fixture_gen_project_dir
-        if @dir.nil?
-          @dir = IO.read(File.join(fixtures_dir, '.tp_collect_meta'))
-          @dir or raise "Can't find the project dir created by make_tp_collect_fixture_1.rb."
-          File.exists?(@dir) or raise Test::Error, "The tp_collect fixture dir is missing (#{@dir})"
-          File.directory?(@dir) or raise Test::Error, "Not a dir (#{@dir})"
+      def remove_tp_collect_fixture_project_dir
+        FileUtils.remove_entry_secure(tp_collect_fixture_project_dir, :secure => true)
+      end
+
+      def with_tp_collect_fixtures_in_temp_tp_dir(dir)
+        [['etc', 'id.txt'],['csv','assignment.csv']].each do |path_elems|
+          project_path = File.join(temp_tp_dir_project_dir(dir), *path_elems)
+          fixture_path = File.join(fixtures_dir, "tp_collect_#{path_elems.last}")
+          yield(fixture_path, project_path)
         end
-        @dir
       end
     end #Script
   end #Test
