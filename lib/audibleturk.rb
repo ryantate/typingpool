@@ -64,15 +64,8 @@ module Audibleturk
       self.new(YAML.load(IO.read((path))))
     end
 
-    def self.main
-      @@main ||= self.file
-    end
-
     def param
       @params
-    end
-    def self.param
-      self.main.param
     end
 
     def to_bool(string)
@@ -85,52 +78,30 @@ module Audibleturk
     def local
       File.expand_path(@params['local'])
     end
-    def self.local
-      self.main.local
-    end
 
     def app
       File.expand_path(@params['app'])
-    end
-    def self.app
-      self.main.app
     end
 
     def scp
       @params['scp'].sub(/\/$/, '')
     end
-    def self.scp
-      self.main.scp
-    end
 
     def url
       @params['url'].sub(/\/$/, '')
     end
-    def self.url
-      self.main.url
-    end
 
     def randomize
       to_bool(@params['randomize'])
-    end
-    def self.randomize
-      self.main.randomize
     end
 
     def assignments
       self.assignments = @params['assignments'] || {} if not(@assignments)
       @assignments
     end
-    def self.assignments
-      self.main.assignments
-    end
 
     def assignments=(params)
       @assignments = Assignments.new(params)
-    end
-
-    def self.assignments=(params)
-      self.main.assignments = params
     end
 
     class Assignments
