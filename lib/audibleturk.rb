@@ -420,8 +420,6 @@ module Audibleturk
             result.to_cache
             page_results.push(result)
           end
-          #          page_results = RTurk::SearchHITs.create(:page_number => i).hits.collect{|hit| RTurk::Hit.new(hit.id, hit) }.collect{|hit| self.cached_or_new(hit, params) }
-          #          page_results.each{|result| result.to_cache}
           results.push(*page_results)
         end while page_results.length > 0
         results
@@ -705,8 +703,9 @@ puts "DEBUG re-fetching HIT to get question"
       end
 
       class FromSearchHITs
-        #Wrap RTurk::HITParser objects returned by RTurk::SearchHITs, which are pointlessly and stupidly and
-        #subtly different from RTurk::GetHITResponse objects
+        #Wrap RTurk::HITParser objects returned by RTurk::SearchHITs,
+        #which are pointlessly and stupidly and subtly different from
+        #RTurk::GetHITResponse objects
         attr_reader :annotation, :xml
         def initialize(rturk_hit, annotation, noko_xml)
           @rturk_hit = rturk_hit
