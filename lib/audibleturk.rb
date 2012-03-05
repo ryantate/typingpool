@@ -49,51 +49,58 @@ module Audibleturk
 
   class Config
     require 'yaml'
-    @@default_file = File.expand_path("~/.audibleturk")
+    @@default_file = "~/.audibleturk"
 
     def initialize(params)
-      @params = params
+      @param = params
     end
 
     def self.default_file
       @@default_file
     end
 
-    def self.file(path=nil)
-      path ||= default_file
+    def self.file(path=File.expand_path(default_file))
       self.new(YAML.load(IO.read((path))))
     end
 
+    def self.define_reader(*syms)
+      syms.each do |sym|
+        define_method(sym) do
+          value = param[sym.to_s]
+          yield(value)
+        end
+      end
+    end
+
+    def self.define_writer(*syms)
+      syms.each do |sym|
+        define_method("#{sym.to_s}=".to_sym) do |value|
+          param[sym.to_s] = yield(value)
+        end
+      end
+    end
+
+    def self.path_reader(*syms)
+      define_reader(*syms) do |value|
+        File.expand_path(value) if value
+      end
+    end
+
+    def self.never_ends_in_slash_reader(*syms)
+      define_reader(*syms) do |value|
+        value.sub(/\/$/, '') if value
+      end
+    end
+
+    path_reader :local, :app
+    never_ends_in_slash_reader :url, :scp
+
     def param
-      @params
+      @param
     end
-
-    def to_bool(string)
-      return if string.nil?
-      return if string.to_s.empty?
-      %w(false no 0).each{|falsy| return false if string.to_s.downcase.match(/\s*#{falsy}\s*/)}
-      return true
-    end
-
-    def local
-      File.expand_path(@params['local'])
-    end
-
-    def app
-      File.expand_path(@params['app'])
-    end
-
-    def scp
-      @params['scp'].sub(/\/$/, '')
-    end
-
-    def url
-      @params['url'].sub(/\/$/, '')
-    end
-
 
     def assignments
-      self.assignments = @params['assignments'] || {} if not(@assignments)
+      self.assignments = @param['assignments'] || {} if not(@assignments)
       @assignments
     end
 
@@ -101,27 +108,45 @@ module Audibleturk
       @assignments = Assignments.new(params)
     end
 
-    class Assignments
+    def equals_method?(meth)
+      match = meth.to_s.match(/([^=]+)=$/) or return
+      return match[1]
+    end
+
+    def method_missing(meth, *args)
+      equals_param = equals_method?(meth)
+      if equals_param
+        args.size == 1 or raise Audibleturk::Error::Argument, "Too many args"
+        value = args[0]
+        return param[equals_param] = value
+      end
+      args.empty? or raise Audibleturk::Error::Argument, "Too many args"
+      return param[meth.to_s]
+    end
+
+    class Assignments < Config
       require 'set'
-      def initialize(params)
-        @params = params
+
+      def self.time_accessor(*syms)
+        define_reader(*syms) do |value|
+          Utility.timespec_to_seconds(value) if value
+        end
+        define_writer(*syms) do |value|
+          Utility.timespec_to_seconds(value) or raise Audibeturk::Error::Argument::Format, "Can't convert '#{value}' to time"
+          value
+        end
       end
 
-      def param
-        @params
-      end
-
-      def templates
-        File.expand_path(@params['templates']) if @params['templates']
-      end
+      path_reader :templates
+      time_accessor :deadline, :approval, :lifetime
 
       def qualify
-        self.qualify = @params['qualify'] || [] if not(@qualify)
+        self.qualify = @param['qualify'] || [] if not(@qualify)
         @qualify
       end
 
       def qualify=(specs)
-        @qualify = specs.collect{|spec| Qualification.new(spec)}
+        @qualify = specs.map{|spec| Qualification.new(spec)}
       end
 
       def add_qualification(spec)
@@ -129,39 +154,11 @@ module Audibleturk
       end
 
       def keywords
-        @params['keywords'] ||= []
+        @param['keywords'] ||= []
       end
 
       def keywords=(array)
-        @params['keywords'] = array
-      end
-
-      def time_methods
-        Set.new(%w(deadline approval lifetime))
-      end
-
-      def time_method?(meth)
-        time_methods.include?(meth.to_s)
-      end
-
-      def equals_method?(meth)
-        match = meth.to_s.match(/([^=]+)=$/) or return
-        return match[1]
-      end
-
-      def method_missing(meth, *args)
-        equals_param = equals_method?(meth)
-        if equals_param
-          args.size == 1 or raise Audibleturk::Error::Argument, "Too many args"
-          value = args[0]
-          if time_method?(equals_param) && value
-            Utility.timespec_to_seconds(value) or raise Audibeturk::Error::Argument::Format, "Can't convert '#{timespec}' to time"
-          end
-          return param[equals_param] = value
-        end
-        args.empty? or raise Audibleturk::Error::Argument, "Too many args"
-        return Utility.timespec_to_seconds(param[meth.to_s]) if time_method?(meth) && param[meth.to_s]
-        return param[meth.to_s]
+        @param['keywords'] = array
       end
 
       class Qualification

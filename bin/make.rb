@@ -4,6 +4,7 @@ require 'optparse'
 require 'audibleturk'
 
 options = {
+  :config => Audibleturk::Config.file,
   :files => [],
   :voices => [],
   :unusual => [],
@@ -37,7 +38,9 @@ OptionParser.new do |opts|
   end
 
   opts.on('--config PATH', 'Default: ~/.audibleturk. A config file.') do |config|
-    options[:config] = config
+    path = File.expand_path(config)
+    File.exists?(path) && File.file?(path) or abort "No such file #{path}"
+    options[:config] = Audibleturk::Config.file(config)
   end
 
   opts.on('--bitrate KBPS', 'Default: Mirror input. Output bitrate in kb/s.') do |kbps|
@@ -63,7 +66,7 @@ options[:files].each do |file|
   File.exist?(file) or abort "There is no file '#{file}'"
 end
 
-config = Audibleturk::Config.file(options[:config])
+config = options[:config]
 %w(scp url app).each do |param|
   abort "Required param '#{param}' missing from config file '#{config.path}'" if config.param[param].to_s.empty?
 end
