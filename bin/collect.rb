@@ -11,7 +11,7 @@ options = {
 }
 
 OptionParser.new do |commands|
-  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} [--config='#{Audibleturk::Config.default_file}'] [--sandbox]\n [--url_at=#{options[:url_at]}] [--id_at=#{options[:id_at]}]\n"
+  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} [--config PATH] [--sandbox]\n [--url_at=#{options[:url_at]}] [--id_at=#{options[:id_at]}]\n"
   commands.on('--sandbox', "Collect from the Mechanical Turk test sandbox") do
     options[:sandbox] = true
   end
@@ -21,16 +21,30 @@ OptionParser.new do |commands|
   commands.on('--id_at=PARAM', "Default: #{options[:id_at]}.", " Name of the HTML form field for project IDs") do |id_at|
     options[:id_at] = id_at
   end
-  commands.on('--config=PATH', "Default: #{Audibleturk::Config.default_file}.", " A config file") do |config|
+  commands.on('--config=PATH', "Default: ~/.audibleturk", " A config file") do |config|
     path = File.expand_path(config)
     File.exists?(path) && File.file?(path) or abort "No such file #{path}"
     options[:config] = Audibleturk::Config.file(config)
+  end
+  commands.on('--fixture=PATH', "Optional. For testing purposes only.", "  A VCR ficture for running with mock data.") do |fixture|
+    options[:fixture] = fixture
   end
   commands.on('--help', "Display this screen") do
     $stderr.puts commands
     exit
   end
 end.parse!
+
+if options[:fixture]
+  require 'vcr'
+  VCR.configure do |c|
+    c.cassette_library_dir = File.dirname(options[:fixture])
+    c.hook_into :webmock 
+    c.filter_sensitive_data('<AWS_KEY>'){ options[:config].param['aws']['key'] }
+    c.filter_sensitive_data('<AWS_SECRET>'){ options[:config].param['aws']['secret'] }
+  end
+  VCR.insert_cassette(File.basename(options[:fixture], '.*'), :record => :new_episodes)
+end
 
 #Name of form field in Mechanical Turk assignment form
 # containing URL to audio file
@@ -47,10 +61,10 @@ projects = {}
 need = {}
 $stderr.puts "Looking for local project folders to receive results" unless results.empty?
 results.each do |result| 
-  key = result.transcription.project #project id
+  key = result.project_id
   if need[key]
     need[key].push(result)
-  elsif need[key] == false
+elsif need[key] == false
     next
   else
     need[key] = false
@@ -74,7 +88,7 @@ projects.each do |key, project|
     next if assignment['transcription']
     assignment['transcription'] = result.transcription.body
     assignment['worker'] = result.transcription.worker
-    assignment['hit_id'] result.hit_id
+    assignment['hit_id'] = result.hit_id
   end
   project.local.write_csv('assignment', assignments)
   transcription_chunks = project.local.read_csv('assignment').select{|assignment| assignment['transcription']}.collect do |assignment|
@@ -83,6 +97,7 @@ projects.each do |key, project|
     chunk.project = assignment['project_id']
     chunk.worker = assignment['worker']
     chunk.hit = assignment['hit_id']
+    chunk
   end
   transcription = Audibleturk::Transcription.new(project.name, transcription_chunks)
   transcription.subtitle = project.local.subtitle
@@ -102,3 +117,6 @@ projects.each do |key, project|
   end
 end
 
+if options[:fixture]
+  VCR.eject_cassette
+end

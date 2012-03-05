@@ -406,7 +406,6 @@ puts "DEBUG from_new"
           end 
           page_results.each{|result| result.to_cache }
           results.push(*filtered_results)
-          puts "DEBUG page results: #{page_results.size} filtered: #{filtered_results.size}"
         end while page_results.length > 0 
         results
       end
@@ -689,16 +688,11 @@ puts "DEBUG re-fetching HIT to get question"
           attr_reader :status, :worker_id
 
           def initialize(hit)
-            puts "DEBUG fetching assignment"
             if assignment = hit.assignments[0] #expensive!
               @status = assignment.status
-              puts "DEBUG assignment status #{@status}"
               @worker_id = assignment.worker_id
               if answers = assignment.answers
                 @answers = answers.to_hash
-                require 'pp'
-                print "DEBUG answers"
-                pp(@answers)
               end
             end
           end

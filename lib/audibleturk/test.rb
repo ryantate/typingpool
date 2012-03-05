@@ -1,19 +1,27 @@
 module Audibleturk
   require 'test/unit'
   class Test < ::Test::Unit::TestCase
+    class Error; end
+
     def MiniTest.filter_backtrace(bt)
       bt
     end
 
     def self.app_dir
-      File.join(File.dirname($0), '..')
+      File.dirname(File.dirname(File.dirname(__FILE__)))
     end
 
     def template_dir
       File.join(self.class.app_dir, 'templates', 'test')
     end
 
+    def fixtures_dir
+      File.join(self.class.app_dir, 'test', 'fixtures')
+    end
+
+
     class Script < Test 
+      #Yes, big fat integration tests written in Test::Unit. Get over it.
       require 'audibleturk'
       require 'tmpdir'
       require 'yaml'
@@ -37,26 +45,39 @@ module Audibleturk
         File.join(dir, project_default[:config_filename])   
       end
 
+      def config_from_dir(dir)
+        Audibleturk::Config.file(config_path(dir))
+      end
+
       def amazon_credentials?(config=self.config)
         config.param['aws'] && config.param['aws']['key'] && config.param['aws']['secret']
       end
 
-      def add_no_amazon_message(message)
-        add_goodbye_message("#{message} (No Amazon credentials in config file)")
+      def skip_if_no_amazon_credentials(skipping='', config=self.config)
+        skipping = " #{skipping}" if not(skipping.empty?)
+        if not (amazon_credentials?(config))
+          skip ("Skipping#{skipping}: No Amazon credentials") 
+        end
       end
 
-      def add_goodbye_message(msg)
-        at_exit do
-          STDERR.puts msg
-        end
+      def amazon_result_params
+        {:id_at => 'typingpool_project_id', :url_at => 'typingpool_url'}
+      end
+
+      def setup_amazon(dir)
+        Audibleturk::Amazon.setup(:sandbox => true, :config => config_from_dir(dir))
       end
 
       def in_temp_tp_dir
         Dir.mktmpdir('typingpool_') do |dir|
-          make_temp_tp_dir_config(dir)
-          FileUtils.cp_r(File.join(template_dir, 'projects'), dir)
+          setup_temp_tp_dir(dir)
           yield(dir)
         end
+      end
+
+      def setup_temp_tp_dir(dir)
+        make_temp_tp_dir_config(dir)
+        FileUtils.cp_r(File.join(template_dir, 'projects'), dir)
       end
 
       def make_temp_tp_dir_config(dir, config=self.config)
@@ -69,15 +90,12 @@ module Audibleturk
         end
       end
 
-      def project_default
-        Hash[
-             :config_filename => '.config',
-             :subtitle => 'Typingpool test interview transcription',
-             :title => 'TestTpInterview',
-             :chunks => '0:20',
-             :unusual => ['Hack Day', 'Sunnyvale', 'Chad D'],
-             :voice => ['Ryan', 'Havi, hacker'],
-            ]
+      def temp_tp_dir_project_dir(temp_tp_dir)
+        File.join(temp_tp_dir, 'projects', project_default[:title])
+      end
+
+      def temp_tp_dir_project(dir)
+        Audibleturk::Project.new(project_default[:title], config_from_dir(dir))
       end
 
       def working_url?(url, max_redirects=6)
@@ -110,6 +128,17 @@ module Audibleturk
         call_script(path_to_tp_make, *args)
       end
 
+      def project_default
+        Hash[
+             :config_filename => '.config',
+             :subtitle => 'Typingpool test interview transcription',
+             :title => 'TestTpInterview',
+             :chunks => '0:20',
+             :unusual => ['Hack Day', 'Sunnyvale', 'Chad D'],
+             :voice => ['Ryan', 'Havi, hacker'],
+            ]
+      end
+
       def tp_make(in_dir, audio_subdir='mp3')
         call_tp_make(
                      '--config', config_path(in_dir), 
@@ -136,6 +165,71 @@ module Audibleturk
       end
 
 
+      def path_to_tp_assign
+        File.join(self.class.app_dir, 'bin', 'assign.rb')
+      end
+
+      def call_tp_assign(*args)
+        call_script(path_to_tp_assign, '--sandbox', *args)
+      end
+
+      def assign_default
+        Hash[
+             :template => 'interview/phone/1minute',
+             :deadline => '5h',
+             :lifetime => '10h',
+             :approval => '10h',
+             :qualify => ['approval_rate >= 90', 'hits_approved > 10'],
+             :keyword => ['test', 'mp3', 'typingpooltest']
+            ]
+      end
+
+      def tp_assign(dir)
+        call_tp_assign(
+                       project_default[:title],
+                       assign_default[:template],
+                       '--config', config_path(dir),
+                       *[:deadline, :lifetime, :approval].map{|param| ["--#{param}", assign_default[param]] }.flatten,
+                       *[:qualify, :keyword].map{|param| assign_default[param].map{|value| ["--#{param}", value] } }.flatten
+                       )
+      end
+
+      def path_to_tp_collect
+        File.join(self.class.app_dir, 'bin', 'collect.rb')
+      end
+
+      def call_tp_collect(fixture_path, *args)
+        call_script(path_to_tp_collect, '--sandbox', '--fixture', fixture_path, *args)
+      end
+
+      def tp_collect_with_fixture(dir, fixture_path)
+        call_tp_collect(
+                        fixture_path,
+                        '--config', config_path(dir)
+                        )
+      end
+
+      def tp_collect_fixture_project_dir
+        File.join(fixtures_dir, 'tp_collect_project')
+      end
+
+      def make_tp_collect_fixture_project_dir
+        if File.exists? tp_collect_fixture_project_dir
+          raise Test::Error, "Fixture project already exists for tp-collect at #{tp_collect_fixture_project_dir}"
+        end
+        Dir.mkdir(tp_collect_fixture_project_dir)
+        tp_collect_fixture_project_dir
+      end
+
+      def tp_collect_fixture_gen_project_dir
+        if @dir.nil?
+          @dir = IO.read(File.join(fixtures_dir, '.tp_collect_meta'))
+          @dir or raise "Can't find the project dir created by make_tp_collect_fixture_1.rb."
+          File.exists?(@dir) or raise Test::Error, "The tp_collect fixture dir is missing (#{@dir})"
+          File.directory?(@dir) or raise Test::Error, "Not a dir (#{@dir})"
+        end
+        @dir
+      end
     end #Script
   end #Test
 end #Audibleturk
