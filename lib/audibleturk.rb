@@ -91,9 +91,6 @@ module Audibleturk
       @params['url'].sub(/\/$/, '')
     end
 
-    def randomize
-      to_bool(@params['randomize'])
-    end
 
     def assignments
       self.assignments = @params['assignments'] || {} if not(@assignments)
@@ -835,14 +832,14 @@ puts "DEBUG re-fetching HIT to get question"
       file.split(interval_as_min_dot_sec, @name)
     end
 
-    def upload_audio(files=local.audio_chunks, as=audio_chunks_for_online(files, @config.randomize), &progress)
+    def upload_audio(files=local.audio_chunks, as=audio_chunks_for_online(files), &progress)
       www.put(files, as){|file, as| progress.yield(file, as, www) if progress}
       local.audio_is_on_www = as.collect{|file| "#{@config.url}/#{file}"}.join("\n")
       return as
     end
 
-      def audio_chunks_for_online(files=local.audio_chunks, randomize=@config.randomize)
-        files.collect{|file| File.basename(file, '.*') + ((randomize == false) ? '' : ".#{psuedo_random_uppercase_string}") + File.extname(file) }
+      def audio_chunks_for_online(files=local.audio_chunks)
+        files.map{|file| File.basename(file, '.*') + ".#{psuedo_random_uppercase_string}" + File.extname(file) }
       end
 
     def updelete_audio(files=local.audio_chunks_online, &progress)
