@@ -7,11 +7,9 @@ require 'set'
 
 options = {
   :config => Audibleturk::Config.file,
-  :url_at => 'typingpool_url',
-  :id_at => 'typingpool_project_id',
 }
 OptionParser.new do |commands|
-  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT | --dead\n  [--sandbox]\n  [--config PATH]\n  [--url_at=#{options[:url_at]}] [--id_at=#{options[:id_at]}]\n"
+  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT | --dead\n  [--sandbox]\n  [--config PATH]\n"
   commands.on('--dead', "Remove ALL expired and rejected results, regardless of project.","  Use in leiu of PROJECT.", "  Removes only Mechanical Turk HITs, not remote audio files") do
     options[:dead] = true
   end
@@ -21,12 +19,6 @@ OptionParser.new do |commands|
   commands.on('--config=PATH', "Default: #{Audibleturk::Config.default_file}.", " A config file") do |path|
     File.exists?(File.expand_path(path)) && File.file?(File.expand_path(path)) or abort "No such file #{path}"
     options[:config] = Audibleturk::Config.file(path)
-  end
-  commands.on('--url_at=PARAM', "Default: #{options[:url_at]}.", " Name of the HTML form field for audio URLs") do |url_at|
-    options[:url_at] = url_at
-  end
-  commands.on('--id_at=PARAM', "Default: #{options[:id_at]}.", " Name of the HTML form field for project IDs") do |id_at|
-    options[:id_at] = id_at
   end
   commands.on('--help', 'Display this screen') do
     $stderr.puts commands 
@@ -60,11 +52,10 @@ $stderr.puts "Removing from Amazon"
 $stderr.puts "  Collecting all results"
 #Set up result set, depending on options
 results = nil
-result_options = {:url_at => options[:url_at], :id_at => options[:id_at]}
 if project
-  results = Audibleturk::Amazon::Result.all_for_project(project.local.id, result_options)
+  results = Audibleturk::Amazon::Result.all_for_project(project.local.id)
 elsif options[:dead]
-  results = Audibleturk::Amazon::Result.all(result_options).select do |result|
+  results = Audibleturk::Amazon::Result.all.select do |result|
     dead = ((result.hit.expired_and_overdue? || result.rejected?) && result.ours?)
     result.to_cache
     dead

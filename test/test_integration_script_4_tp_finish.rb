@@ -28,12 +28,12 @@ class TestTpFinish < Audibleturk::Test::Script
       tp_assign(dir)
       project = temp_tp_dir_project(dir)
       setup_amazon(dir)
-      results = Audibleturk::Amazon::Result.all_for_project(project.local.id, amazon_result_params)
+      results = Audibleturk::Amazon::Result.all_for_project(project.local.id)
       assert(not(results.empty?))
       assert_nothing_raised do
         tp_finish(dir)
       end
-      assert_empty(Audibleturk::Amazon::Result.all_for_project(project.local.id, amazon_result_params))
+      assert_empty(Audibleturk::Amazon::Result.all_for_project(project.local.id))
       results.each do |result|
         #The original HIT might be gone, or there and marked
         #'disposed', depending whether Amazon has swept the server for

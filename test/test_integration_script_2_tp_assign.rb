@@ -52,7 +52,7 @@ class TestTpAssign < Audibleturk::Test::Script
       assert_not_nil(project.local.amazon_hit_type_id)
       setup_amazon(dir)
       results = nil
-      assert_nothing_raised{ results = Audibleturk::Amazon::Result.all_for_project(project.local.id, amazon_result_params) }
+      assert_nothing_raised{ results = Audibleturk::Amazon::Result.all_for_project(project.local.id) }
       assert_equal(project.local.audio_chunks.size, results.size)
       assert_equal(Audibleturk::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].hit.assignments_duration.to_i)
       #These numbers will be apart due to clock differences and
@@ -61,7 +61,7 @@ class TestTpAssign < Audibleturk::Test::Script
       keywords = results[0].hit_at_amazon.keywords
       assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
       assert_nothing_raised{tp_finish(dir)}
-      assert_empty(Audibleturk::Amazon::Result.all_for_project(project.local.id, amazon_result_params))
+      assert_empty(Audibleturk::Amazon::Result.all_for_project(project.local.id))
     end # in_temp_tp_dir
   end
 end #TestTpAssign

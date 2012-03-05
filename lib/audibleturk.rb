@@ -332,41 +332,48 @@ module Audibleturk
       require 'nokogiri'
       require 'set'
 
-      def self.cached_or_new(hit, params)
-        #        self.from_cache(hit.id, params[:id_at], params[:url_at]) || self.new(hit, params)
+      def self.id_at
+        @@id_at ||= 'typingpool_project_id'
+      end
+
+      def self.url_at
+        @@url_at ||= 'typingpool_url'
+      end
+
+      def self.cached_or_new(hit, is_full_hit=false)
         r=nil
-        if r = self.from_cache(hit.id, params[:id_at], params[:url_at])
+        if r = self.from_cache(hit.id)
           puts "DEBUG from_cache"
         else
-          r = self.new(hit, params)
-puts "DEBUG from_new"
+          r = self.new(hit, is_full_hit)
+          puts "DEBUG from_new"
         end
         r
       end
 
-      def self.from_cache(hit_id, id_at, url_at)
+      def self.from_cache(hit_id, id_at=self.id_at, url_at=self.url_at)
         Amazon.cache.transaction do
           Amazon.cache[self.cache_key(hit_id, id_at, url_at)] 
         end
       end
 
-      def self.delete_cache(hit_id, id_at, url_at)
+      def self.delete_cache(hit_id, id_at=self.id_at, url_at=self.url_at)
         Amazon.cache.transaction do
           cached = Amazon.cache[self.cache_key(hit_id, id_at, url_at)]
           cached.delete unless cached.nil?
         end
       end
 
-      def self.cache_key(hit_id, id_at, url_at)
+      def self.cache_key(hit_id, id_at=self.id_at, url_at=self.url_at)
         "RESULT///#{hit_id}///#{url_at}///#{id_at}"
       end
 
-      def self.all_approved(params)
+      def self.all_approved
         results=[]
         i=0
         begin
           i += 1
-          page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }.collect{|hit| self.cached_or_new(hit, params) }
+          page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }.collect{|hit| self.cached_or_new(hit) }
           filtered_results = page_results.select do |result| 
             begin
               result.approved? && result.ours? 
@@ -381,22 +388,21 @@ puts "DEBUG from_new"
         results
       end
 
-      def self.all_for_project(id, params)
-        results = all(params)
+      def self.all_for_project(id)
+        results = all
         filtered = results.select{|result| result.ours? && result.project_id == id}
         results.each{|result| result.to_cache}
         filtered
       end
 
-      def self.all_for_hit_type_id(id, params)
-        results = all(params)
+      def self.all_for_hit_type_id(id)
+        results = all
         filtered = results.select{|result| result.hit.type_id == id}
         results.each{|result| result.to_cache}
         filtered
       end
 
-      def self.all(params)
-        params[:full_hit] = true
+      def self.all
         results = []
         i = 0
         begin
@@ -410,7 +416,7 @@ puts "DEBUG from_new"
             #renames some fields
             annotation = raw_hits[i].xpath('RequesterAnnotation').inner_text.strip
             wrapped_hit = Amazon::HIT::FromSearchHITs.new(hit, annotation, raw_hits[i])
-            result = self.cached_or_new(wrapped_hit, params)
+            result = self.cached_or_new(wrapped_hit, true)
             result.to_cache
             page_results.push(result)
           end
@@ -421,20 +427,18 @@ puts "DEBUG from_new"
         results
       end
 
-      attr_reader :url_at, :id_at, :hit_id
-      def initialize(hit, params)
-        @url_at = params[:url_at] or raise ":url_at param required"
-        @id_at = params[:id_at] or raise ":id_at param required"
+      attr_reader :hit_id
+      def initialize(hit, is_full_hit=false)
         @hit_id = hit.id
-        self.hit(hit) if params[:full_hit]
+        self.hit(hit) if is_full_hit
       end
 
       def url
-        @url ||= stashed_param(@url_at)
+        @url ||= stashed_param(self.class.url_at)
       end
 
       def project_id
-        @project_id ||= stashed_param(@id_at)
+        @project_id ||= stashed_param(self.class.id_at)
       end
 
       def stashed_param(param)
@@ -508,7 +512,7 @@ puts "DEBUG from_new"
         #not forget this (again)
         if cacheable?
           Amazon.cache.transaction do
-            Amazon.cache[self.class.cache_key(@hit_id, @id_at, @url_at)] = self 
+            Amazon.cache[self.class.cache_key(@hit_id)] = self 
           end
         end
       end

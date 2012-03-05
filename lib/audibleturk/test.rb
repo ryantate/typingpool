@@ -61,10 +61,6 @@ module Audibleturk
         end
       end
 
-      def amazon_result_params
-        {:id_at => 'typingpool_project_id', :url_at => 'typingpool_url'}
-      end
-
       def setup_amazon(dir)
         Audibleturk::Amazon.setup(:sandbox => true, :config => config_from_dir(dir))
       end

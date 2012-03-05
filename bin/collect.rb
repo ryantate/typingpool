@@ -5,21 +5,13 @@ require 'audibleturk'
 require 'optparse'
 
 options = {
-  :url_at => 'typingpool_url',
-  :id_at => 'typingpool_project_id',
   :config => Audibleturk::Config.file
 }
 
 OptionParser.new do |commands|
-  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} [--config PATH] [--sandbox]\n [--url_at=#{options[:url_at]}] [--id_at=#{options[:id_at]}]\n"
+  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} [--config PATH] [--sandbox]\n"
   commands.on('--sandbox', "Collect from the Mechanical Turk test sandbox") do
     options[:sandbox] = true
-  end
-  commands.on('--url_at=PARAM', "Default: #{options[:url_at]}.", " Name of the HTML form field for audio URLs") do |url_at|
-    options[:url_at] = url_at
-  end
-  commands.on('--id_at=PARAM', "Default: #{options[:id_at]}.", " Name of the HTML form field for project IDs") do |id_at|
-    options[:id_at] = id_at
   end
   commands.on('--config=PATH', "Default: ~/.audibleturk", " A config file") do |config|
     path = File.expand_path(config)
@@ -55,7 +47,7 @@ filename = {
 
 $stderr.puts "Collecting results from Amazon"
 Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
-results = Audibleturk::Amazon::Result.all_approved(:url_at => options[:url_at], :id_at => options[:id_at])
+results = Audibleturk::Amazon::Result.all_approved
 #Only pay attention to results that have a local folder waiting to receive them:
 projects = {}
 need = {}
