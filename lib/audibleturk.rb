@@ -23,9 +23,9 @@ module Audibleturk
         return out ? out.chomp : true
       else
         if err
-          raise Audibleturk::Error::Shell, err.chomp
+          raise Error::Shell, err.chomp
         else
-          raise Audibleturk::Error::Shell
+          raise Error::Shell
         end
       end
     end
@@ -40,12 +40,11 @@ module Audibleturk
         'M'=>60*60*24*30,
         'y'=>60*60*24*365
       }
-      match = timespec.to_s.match(/^\+?(\d+(\.\d+)?)\s*([#{suffix_to_time.keys.join}])?$/) or raise Audibleturk::Error::Argument::Format, "Can't convert '#{timespec}' to time"
+      match = timespec.to_s.match(/^\+?(\d+(\.\d+)?)\s*([#{suffix_to_time.keys.join}])?$/) or raise Error::Argument::Format, "Can't convert '#{timespec}' to time"
       suffix = match[3] || 's'
       return (match[1].to_f * suffix_to_time[suffix].to_i).to_i
     end
-
-  end #Audibleturk::Utility
+  end #Utility
 
   class Config
     require 'yaml'
@@ -116,11 +115,11 @@ module Audibleturk
     def method_missing(meth, *args)
       equals_param = equals_method?(meth)
       if equals_param
-        args.size == 1 or raise Audibleturk::Error::Argument, "Too many args"
+        args.size == 1 or raise Error::Argument, "Too many args"
         value = args[0]
         return param[equals_param] = value
       end
-      args.empty? or raise Audibleturk::Error::Argument, "Too many args"
+      args.empty? or raise Error::Argument, "Too many args"
       return param[meth.to_s]
     end
 
@@ -132,7 +131,7 @@ module Audibleturk
           Utility.timespec_to_seconds(value) if value
         end
         define_writer(*syms) do |value|
-          Utility.timespec_to_seconds(value) or raise Audibeturk::Error::Argument::Format, "Can't convert '#{value}' to time"
+          Utility.timespec_to_seconds(value) or raise Error::Argument::Format, "Can't convert '#{value}' to time"
           value
         end
       end
@@ -177,17 +176,17 @@ module Audibleturk
 
         def type
           type = @raw.split(/\s+/)[0].to_sym
-          RTurk::Qualification::TYPES[type] or raise Audibleturk::Error::Argument, "Unknown qualification type '#{type.to_s}'"
+          RTurk::Qualification::TYPES[type] or raise Error::Argument, "Unknown qualification type '#{type.to_s}'"
           type
         end
 
         def opts
           args = @raw.split(/\s+/)
           if (args.size > 3) || (args.size < 2)
-            raise Audibleturk::Error::Argument, "Unexpected number of qualification tokens: #{@raw}"
+            raise Error::Argument, "Unexpected number of qualification tokens: #{@raw}"
           end
           args.shift
-          comparator(args[0]) or raise Audibleturk::Error::Argument, "Unknown comparator '#{args[0]}' in qualification '#{@raw}'"
+          comparator(args[0]) or raise Error::Argument, "Unknown comparator '#{args[0]}' in qualification '#{@raw}'"
           value = 1
           value = args[1] if args.size == 2
           return {comparator(args[0]) => value}
@@ -205,9 +204,9 @@ module Audibleturk
                'exists' => :exists
               ][value]
         end
-      end #Config::Assignments::Qualification
-    end #Config::Assignments
-  end #Config class
+      end #Qualification
+    end #Assignments
+  end #Config
 
   class Amazon
     require 'rturk'
@@ -216,7 +215,7 @@ module Audibleturk
 
     def self.setup(args={})
       @@did_setup = true
-      args[:config] ||= Audibleturk::Config.file
+      args[:config] ||= Config.file
       args[:key] ||= args[:config].param['aws']['key']
       args[:secret] ||= args[:config].param['aws']['secret']
       args[:sandbox] = false if args[:sandbox].nil?
@@ -269,12 +268,12 @@ module Audibleturk
       def assign
         HIT.create(:title => title) do |hit|
           hit.description = description
-          hit.reward = @config.reward or raise Audibleturk::Error, "Missing reward config"
-          hit.assignments = @config.copies or raise Audibleturk::Error, "Missing copies config"
+          hit.reward = @config.reward or raise Error, "Missing reward config"
+          hit.assignments = @config.copies or raise Error, "Missing copies config"
           hit.question(question)
-          hit.lifetime = @config.lifetime or raise Audibleturk::Error, "Missing lifetime config"
-          hit.duration = @config.deadline or raise Audibleturk::Error, "Missing deadline config"
-          hit.auto_approval = @config.approval or raise Audibleturk::Error, "Missing approval config"
+          hit.lifetime = @config.lifetime or raise Error, "Missing lifetime config"
+          hit.duration = @config.deadline or raise Error, "Missing deadline config"
+          hit.auto_approval = @config.approval or raise Error, "Missing approval config"
           hit.keywords = @config.keywords if @config.keywords
           hit.currency = @config.currency if @config.currency
           @config.qualifications.each{|q| hit.qualifications.add(*q.to_arg)} if @config.qualifications
@@ -491,7 +490,7 @@ module Audibleturk
       end
 
       def transcription
-        transcript = Audibleturk::Transcription::Chunk.new(assignment.body)
+        transcript = Transcription::Chunk.new(assignment.body)
         transcript.url = url
         transcript.project = project_id
         transcript.worker = assignment.worker_id
@@ -526,7 +525,7 @@ module Audibleturk
       def remove_hit
         if hit.status == 'Reviewable'
           if assignment.status == 'Submitted'
-            raise Audibleturk::Error::Amazon::UnreviewedContent, "There is an unreviewed submission for #{url}"
+            raise Error::Amazon::UnreviewedContent, "There is an unreviewed submission for #{url}"
           end
           hit_at_amazon.dispose!
         else
@@ -677,14 +676,14 @@ puts "DEBUG re-fetching HIT to get question"
               @answers = {}
             end
 
-          end #Amazon::Result::Fields::FromAssignment::Empty
-        end #Amazon::Result::Fields::FromAssignment
-      end #Amazon::Result::Fields
-    end #Amazon::Result
+          end #Empty
+        end #FromAssignment
+      end #Fields
+    end #Result
 
     class HIT
       #Extend RTurk to handle external questions (see
-      #Audibleturk::CreateHIT and Audibleturk::Amazon::HIT::Question
+      #CreateHIT and Amazon::HIT::Question
       #class below)
       def self.create(*args, &blk)
         response = CreateHIT.create(*args, &blk)
@@ -723,13 +722,13 @@ puts "DEBUG re-fetching HIT to get question"
           self.completed_assignments
         end
 
-      end #Amazon::HIT::FromSearchHITs
+      end #FromSearchHITs
 
         class Question
           require 'nokogiri'
         def initialize(args)
-          @id = args[:id] or raise Audibleturk::Error::Argument, 'missing :id arg'
-          @question = args[:question] or raise Audibleturk::Error::Argument, 'missing :question arg'
+          @id = args[:id] or raise Error::Argument, 'missing :id arg'
+          @question = args[:question] or raise Error::Argument, 'missing :question arg'
           @title = args[:title]
           @overview = args[:overview]
         end
@@ -762,8 +761,8 @@ puts "DEBUG re-fetching HIT to get question"
             }
           end.doc.root.children.collect{|c| c.to_xml}.join
         end
-      end #Amazon::HIT::Question
-    end #Amazon::HIT
+      end #Question
+    end #HIT
   end #Amazon
 
   #RTurk only handles external questions, so we do some subclassing
@@ -780,26 +779,26 @@ puts "DEBUG re-fetching HIT to get question"
   class Project
     attr_reader :interval, :bitrate
     attr_accessor :name, :config
-    def initialize(name, config=Audibleturk::Config.file)
+    def initialize(name, config=Config.file)
       @name = name
       @config = config
     end
 
     def www(scp=@config.scp)
-      Audibleturk::Project::WWW.new(@name, scp)
+      WWW.new(@name, scp)
     end
 
     def local(dir=@config.local)
-      Audibleturk::Project::Local.named(@name, dir) 
+      Local.named(@name, dir) 
     end
 
     def create_local(basedir=@config.local)
-      Audibleturk::Project::Local.create(@name, basedir, "#{@config.app}/templates/project")
+      Local.create(@name, basedir, "#{@config.app}/templates/project")
     end
 
 
     def interval=(mmss)
-      formatted = mmss.match(/(\d+)$|((\d+:)?(\d+):(\d\d)(\.(\d+))?)/) or raise Audibleturk::Error::Argument::Format, "Interval does not match nnn or [nn:]nn:nn[.nn]"
+      formatted = mmss.match(/(\d+)$|((\d+:)?(\d+):(\d\d)(\.(\d+))?)/) or raise Error::Argument::Format, "Interval does not match nnn or [nn:]nn:nn[.nn]"
       @interval = formatted[1] || (formatted[3].to_i * 60 * 60) + (formatted[4].to_i * 60) + formatted[5].to_i + ("0.#{formatted[7].to_i}".to_f)
     end
 
@@ -809,7 +808,7 @@ puts "DEBUG re-fetching HIT to get question"
     end
 
     def bitrate=(kbps)
-      raise Audibleturk::Error::Argument::Format, 'bitrate must be an integer' if kbps.to_i == 0
+      raise Error::Argument::Format, 'bitrate must be an integer' if kbps.to_i == 0
       @bitrate = kbps
     end
 
@@ -883,7 +882,7 @@ puts "DEBUG re-fetching HIT to get question"
             sftp.loop
           end
         rescue Net::SSH::AuthenticationFailed
-          raise Audibleturk::Error::SFTP, "SFTP authentication failed: #{$?}"
+          raise Error::SFTP, "SFTP authentication failed: #{$?}"
         end
       end
 
@@ -908,7 +907,7 @@ puts "DEBUG re-fetching HIT to get question"
             sftp.upload(file, "#{@path}/#{dest}")
           end
         rescue Net::SFTP::StatusException => e
-          raise Audibleturk::Error::SFTP, "SFTP upload failed: #{e.description}"
+          raise Error::SFTP, "SFTP upload failed: #{e.description}"
         end
       end
 
@@ -920,10 +919,10 @@ puts "DEBUG re-fetching HIT to get question"
         failures = requests.reject{|request| request.response.ok?}
         if not(failures.empty?)
           summary = failures.collect{|request| request.response.to_s}.join('; ')
-          raise Audibleturk::Error::SFTP, "SFTP removal failed: #{summary}"
+          raise Error::SFTP, "SFTP removal failed: #{summary}"
         end
       end
-    end #Audibleturk::Project::WWW
+    end #WWW
 
     class Local
       require 'fileutils'
@@ -991,7 +990,6 @@ puts "DEBUG re-fetching HIT to get question"
         Dir.glob("#{final_audio_dir}/*.mp3").reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
       end
 
-
       def audio_chunks_online
         audio_urls.map{|url| File.basename(URI.parse(url).path)}
       end
@@ -1006,7 +1004,7 @@ puts "DEBUG re-fetching HIT to get question"
 
       def create_id
         if id 
-          raise Audibleturk::Error, "id already exists" 
+          raise Error, "id already exists" 
         end
         write_file(File.join('etc','id.txt'), SecureRandom.hex(16))
       end
@@ -1061,13 +1059,13 @@ puts "DEBUG re-fetching HIT to get question"
       def finder_open
         system('open', @path)
       end
-    end #Audibleturk::Project::Local
+    end #Local
 
     class Audio
       require 'fileutils'
 
       def self.merge(files, dest)
-        raise Audibleturk::Error::Argument, "No files to merge" if files.empty?
+        raise Error::Argument, "No files to merge" if files.empty?
         if files.size > 1
           Utility.system_quietly('mp3wrap', dest, *files.collect{|file| file.path})
           written = "#{::File.dirname(dest)}/#{::File.basename(dest, '.*')}_MP3WRAP.mp3"
@@ -1114,9 +1112,9 @@ puts "DEBUG re-fetching HIT to get question"
           end
           Dir.entries(dir).select{|entry| ::File.file?("#{dir}/#{entry}")}.reject{|file| file.match(/^\./)}.reject{|file| file.eql?(::File.basename(@path))}.collect{|file| self.class.new("#{dir}/#{file}")}
         end
-      end #Audibleturk::Project::Audio::File
-    end #Audibleturk::Project::Audio
-  end #Audibleturk::Project
+      end #File
+    end #Audio
+  end #Project
 
   class Transcription
     include Enumerable
@@ -1146,7 +1144,7 @@ puts "DEBUG re-fetching HIT to get question"
       transcription = self.new
       CSV.parse(csv_string) do |row|
         next if row[16] != 'Approved'                            
-        chunk = Audibleturk::Transcription::Chunk.from_csv(row)
+        chunk = Transcription::Chunk.from_csv(row)
         transcription.add_chunk(chunk)
         transcription.title = chunk.title unless transcription.title
       end
@@ -1229,4 +1227,4 @@ puts "DEBUG re-fetching HIT to get question"
       binding()
     end
   end #ErbBinding
-end #Audibleturk module
+end #Audibleturk
