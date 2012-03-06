@@ -6,7 +6,7 @@ require 'typingpool'
 require 'set'
 
 options = {
-  :config => Typingpool::Config.file,
+  :config => Typingpool::Config.file
 }
 OptionParser.new do |commands|
   options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT | --dead\n  [--sandbox]\n  [--config PATH]\n"
@@ -79,7 +79,6 @@ if not (fails.empty?)
   STDERR.puts "Removed " + (results.size - fails.size) + " HITs from Amazon"
   abort "#{fails.size} transcriptions are submitted but unprocessed (#{fails.join('; ')})"
 end
-
 #Remove the remote audio files associated with the results and update the assignment.csb associated with the project
 if project 
   assignments = project.local.read_csv('assignment')

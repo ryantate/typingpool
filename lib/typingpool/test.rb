@@ -88,17 +88,23 @@ module Typingpool
         config.param['cache'] = File.join(dir, '.cache')
         config.param['app'] = self.class.app_dir
         config.param['assignments']['reward'] = '0.02'
-        File.open(config_path(dir), 'w') do |out|
+        write_config(config, dir, project_default[:config_filename])   
+      end
+
+      def write_config(config, dir, filename)
+        path = File.join(dir, filename)
+        File.open(path, 'w') do |out|
           out << YAML.dump(config.param)
         end
+        path
       end
 
       def temp_tp_dir_project_dir(temp_tp_dir)
         File.join(temp_tp_dir, 'projects', project_default[:title])
       end
 
-      def temp_tp_dir_project(dir)
-        Project.new(project_default[:title], config_from_dir(dir))
+      def temp_tp_dir_project(dir, config=config_from_dir(dir))
+        Project.new(project_default[:title], config)
       end
 
       def working_url?(url, max_redirects=6)
@@ -109,7 +115,9 @@ module Typingpool
           break if seen.include? url.to_s
           break if seen.size > max_redirects
           seen.add(url.to_s)
-          response = Net::HTTP.new(url.host, url.port).request_head(url.path)
+          request = Net::HTTP.new(url.host, url.port)
+          request.use_ssl = true if url.scheme == 'https'
+          response = request.request_head(url.path)
           if response.kind_of?(Net::HTTPRedirection)
             url = response['location']
           else
@@ -142,9 +150,9 @@ module Typingpool
             ]
       end
 
-      def tp_make(in_dir, audio_subdir='mp3')
+      def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3')
         call_tp_make(
-                     '--config', config_path(in_dir), 
+                     '--config', config, 
                      '--chunks', project_default[:chunks],
                      *[:title, :subtitle].map{|param| ["--#{param}", project_default[param]] }.flatten,
                      *[:voice, :unusual].map{|param| project_default[param].map{|value| ["--#{param}", value] } }.flatten,
@@ -160,10 +168,10 @@ module Typingpool
         call_script(path_to_tp_finish, '--sandbox', *args)
       end
 
-      def tp_finish(dir)
+      def tp_finish(dir, config_path=self.config_path(dir))
         call_tp_finish(
                        project_default[:title],
-                       '--config', config_path(dir)
+                       '--config', config_path
                        )
       end
 

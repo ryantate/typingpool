@@ -4,16 +4,16 @@ module Typingpool
     class Argument < Error
       class Format < Argument; end
     end
-    class Remote
+    class Remote < Error
       class SFTP < Remote; end
       class S3 < Remote
-        class Credentials; end
-      end
-    end
+        class Credentials < S3; end
+      end #S3
+    end #Remote
     class Amazon < Error
       class UnreviewedContent < Amazon; end
-    end
-  end
+    end #Amazon
+  end #Error
 
   module Utility
     require 'open3'
@@ -844,7 +844,7 @@ puts "DEBUG re-fetching HIT to get question"
       end
 
     def updelete_audio(files=local.audio_chunks_online, &progress)
-      remote.remove(files){|file| progress.yield(file) if progress}
+      remote.remove(files)
       local.delete_audio_is_on_www
     end
 
@@ -877,6 +877,7 @@ puts "DEBUG re-fetching HIT to get question"
 
       class S3 < Remote
         require 'aws/s3'
+        require 'uri'
         attr_accessor :key, :secret, :bucket
         def initialize(name, aws_config)
           @name = name
@@ -892,6 +893,7 @@ puts "DEBUG re-fetching HIT to get question"
           AWS::S3::Base.establish_connection!(
                                               :access_key_id     => @key,
                                               :secret_access_key => @secret,
+                                              :persistent => false,
                                               :use_ssl => true
                                               )
         end
@@ -904,17 +906,26 @@ puts "DEBUG re-fetching HIT to get question"
           "https://#{@bucket}.s3.amazonaws.com"
         end
 
+        def host
+          URI.parse(@url).host
+        end
+
+        def path
+          URI.parse(@url).path
+        end
+
         def batch(files)
           results = []
           files.each_with_index do |file, i|
             connect if i == 0
             begin
               results.push(yield(file, i))
-            rescue AWS::S3::SignatureDoesNotMatch => e
-              raise Error::Remote::S3::Credentials, "S3 operation failed with a signature error. This likely means your AWS key or secret is wrong. Error: #{e}"
             rescue AWS::S3::S3Exception => e
-              raise Error::Remote::S3, "Your S3 operation failed with an Amazon error: #{e}"
-
+              if e.match(/AWS::S3::SignatureDoesNotMatch/)
+                raise Error::Remote::S3::Credentials, "S3 operation failed with a signature error. This likely means your AWS key or secret is wrong. Error: #{e}"
+              else
+                raise Error::Remote::S3, "Your S3 operation failed with an Amazon error: #{e}"
+              end #if    
             end #begin
           end #files.each
           results
@@ -935,10 +946,10 @@ puts "DEBUG re-fetching HIT to get question"
         end
 
         def remove(files)
-          batch(files) do |file|
+          batch(files) do |file, i|
             yield(file) if block_given?
             AWS::S3::S3Object.delete(file, @bucket)
-          end
+         end
         end
       end #S3
 

@@ -107,7 +107,6 @@ file = project.merge_audio(files)
 
 puts "Splitting audio into uniform bits"
 files = project.split_audio(file)
-
 remote_files = project.upload_audio(files) do |file, as, remote|
   puts "Uploading #{File.basename(file)} to #{remote.host}/#{remote.path} as #{as}"
 end
