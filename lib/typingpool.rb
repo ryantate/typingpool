@@ -1,4 +1,4 @@
-module Audibleturk
+module Typingpool
   class Error < StandardError 
     class Shell < Error; end
     class SFTP < Error; end
@@ -1227,4 +1227,4 @@ puts "DEBUG re-fetching HIT to get question"
       binding()
     end
   end #ErbBinding
-end #Audibleturk
+end #Typingpool

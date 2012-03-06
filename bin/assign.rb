@@ -2,11 +2,11 @@
 
 require 'optparse'
 require 'erb'
-require 'audibleturk'
+require 'typingpool'
 
 options = nil
 config = nil
-configs = [Audibleturk::Config.file]
+configs = [Typingpool::Config.file]
 
 #We need to incorporate command line options immediately into the
 #config object, since it checks incoming values for us (see rescue
@@ -57,7 +57,7 @@ configs = [Audibleturk::Config.file]
       opts.on("--#{param}=TIMESPEC", "Default: $config:assignments:#{param}.", "  #{meaning}.", "  N[.N]y|M(onths)|d|h|m(inutes)|s") do |timespec|
         begin
           config.assignments.send("#{param}=", timespec)
-        rescue Audibleturk::Error::Argument => e
+        rescue Typingpool::Error::Argument => e
           abort "Bad --#{param} '#{timespec}': #{e}"
         end
       end
@@ -70,7 +70,7 @@ configs = [Audibleturk::Config.file]
       end
       begin
         config.assignments.add_qualification(qualification)
-      rescue Audibleturk::Error::Argument => e
+      rescue Typingpool::Error::Argument => e
         abort "Bad --qualify '#{qualification}': #{e}"
       end
     end
@@ -84,7 +84,7 @@ configs = [Audibleturk::Config.file]
     opts.on('--config=PATH', 'Default: ~/.audibleturk') do |path|
       path = File.expand_path(path)
       File.exists?(path) && File.file?(path) or abort "No such file #{path}"
-      new_config = Audibleturk::Config.file(path)
+      new_config = Typingpool::Config.file(path)
       configs.push(new_config)
     end
     opts.on('--help', 'Display this screen') do
@@ -138,13 +138,13 @@ end
 abort "Template '#{options[:template]}' is not a file" if not(File.file?(options[:template]))
 abort "Project '#{options[:project]}' is not a directory" if not(File.directory?(options[:project]))
 
-project = Audibleturk::Project.new(File.basename(options[:project]), config)
+project = Typingpool::Project.new(File.basename(options[:project]), config)
 
 abort "Not a project directory at '#{options[:project]}'" if not(project.local)
 abort "No data in assignment CSV" if project.local.read_csv('assignment').empty?
 abort "No AWS key+secret in config" if not(config.param['aws'] && config.param['aws']['key'] && config.param['aws']['secret'])
 
-Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :config => config)
+Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 #we'll need to re-upload audio if we ran tp-finish on the project
 if not(project.local.audio_is_on_www)
@@ -166,8 +166,8 @@ assignments.each do |assignment|
       next
     end
   end
-  xhtmlf = ERB.new(template, nil, '<>').result(Audibleturk::ErbBinding.new(assignment).send(:get_binding))
-  amazon_assignment = Audibleturk::Amazon::Assignment.new(xhtmlf, config.assignments)
+  xhtmlf = ERB.new(template, nil, '<>').result(Typingpool::ErbBinding.new(assignment).send(:get_binding))
+  amazon_assignment = Typingpool::Amazon::Assignment.new(xhtmlf, config.assignments)
   begin
     hit = amazon_assignment.assign
   rescue  RTurk::RTurkError => e

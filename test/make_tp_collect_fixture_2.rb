@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
-require 'audibleturk/test'
+require 'typingpool/test'
 require 'fileutils'
 
-class CollectProjectFixtureGen2 < Audibleturk::Test::Script
+class CollectProjectFixtureGen2 < Typingpool::Test::Script
   def test_populate_fixture
     fixture_path = File.join(fixtures_dir, 'vcr', 'tp-collect-1')
     tp_collect(tp_collect_fixture_project_dir, fixture_path)

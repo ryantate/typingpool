@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'audibleturk'
-require 'audibleturk/test'
+require 'typingpool'
+require 'typingpool/test'
 require 'fileutils'
 
-class MakeAndAssignProject < Audibleturk::Test::Script
+class MakeAndAssignProject < Typingpool::Test::Script
   def test_prep_for_fixture
     dir = make_tp_collect_fixture_project_dir
     setup_temp_tp_dir(dir)

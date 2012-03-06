@@ -2,10 +2,10 @@
 
 $:.unshift File.join(File.dirname(File.dirname($0)), 'lib')
 
-require 'audibleturk'
-require 'audibleturk/test'
+require 'typingpool'
+require 'typingpool/test'
 
-class TestTpCollect < Audibleturk::Test::Script
+class TestTpCollect < Typingpool::Test::Script
   require 'nokogiri'
   require 'fileutils'
 

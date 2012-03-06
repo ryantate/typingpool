@@ -1,4 +1,4 @@
-module Audibleturk
+module Typingpool
   require 'test/unit'
   class Test < ::Test::Unit::TestCase
     class Error; end
@@ -22,7 +22,7 @@ module Audibleturk
 
     class Script < Test 
       #Yes, big fat integration tests written in Test::Unit. Get over it.
-      require 'audibleturk'
+      require 'typingpool'
       require 'tmpdir'
       require 'yaml'
       require 'set'
@@ -39,7 +39,7 @@ module Audibleturk
       end
 
       def config
-        Audibleturk::Config.file
+        Config.file
       end
 
       def config_path(dir)
@@ -47,7 +47,7 @@ module Audibleturk
       end
 
       def config_from_dir(dir)
-        Audibleturk::Config.file(config_path(dir))
+        Config.file(config_path(dir))
       end
 
       def amazon_credentials?(config=self.config)
@@ -62,7 +62,7 @@ module Audibleturk
       end
 
       def setup_amazon(dir)
-        Audibleturk::Amazon.setup(:sandbox => true, :config => config_from_dir(dir))
+        Amazon.setup(:sandbox => true, :config => config_from_dir(dir))
       end
 
       def add_goodbye_message(msg)
@@ -98,7 +98,7 @@ module Audibleturk
       end
 
       def temp_tp_dir_project(dir)
-        Audibleturk::Project.new(project_default[:title], config_from_dir(dir))
+        Project.new(project_default[:title], config_from_dir(dir))
       end
 
       def working_url?(url, max_redirects=6)
@@ -120,7 +120,7 @@ module Audibleturk
       end
 
       def call_script(*args)
-        Audibleturk::Utility.system_quietly(*args)
+        Utility.system_quietly(*args)
       end
 
       def path_to_tp_make
@@ -237,4 +237,4 @@ module Audibleturk
       end
     end #Script
   end #Test
-end #Audibleturk
+end #Typingpool

@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
 require 'erb'
-require 'audibleturk'
+require 'typingpool'
 require 'optparse'
 
 options = {
-  :config => Audibleturk::Config.file
+  :config => Typingpool::Config.file
 }
 
 OptionParser.new do |commands|
@@ -16,7 +16,7 @@ OptionParser.new do |commands|
   commands.on('--config=PATH', "Default: ~/.audibleturk", " A config file") do |config|
     path = File.expand_path(config)
     File.exists?(path) && File.file?(path) or abort "No such file #{path}"
-    options[:config] = Audibleturk::Config.file(config)
+    options[:config] = Typingpool::Config.file(config)
   end
   commands.on('--fixture=PATH', "Optional. For testing purposes only.", "  A VCR ficture for running with mock data.") do |fixture|
     options[:fixture] = fixture
@@ -46,8 +46,8 @@ filename = {
 }
 
 $stderr.puts "Collecting results from Amazon"
-Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
-results = Audibleturk::Amazon::Result.all_approved
+Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
+results = Typingpool::Amazon::Result.all_approved
 #Only pay attention to results that have a local folder waiting to receive them:
 projects = {}
 need = {}
@@ -60,7 +60,7 @@ elsif need[key] == false
     next
   else
     need[key] = false
-    project = Audibleturk::Project.new(result.transcription.title, options[:config])
+    project = Typingpool::Project.new(result.transcription.title, options[:config])
     #folder must exist
     project.local or next;
     #transcript must not be complete
@@ -84,14 +84,14 @@ projects.each do |key, project|
   end
   project.local.write_csv('assignment', assignments)
   transcription_chunks = project.local.read_csv('assignment').select{|assignment| assignment['transcription']}.collect do |assignment|
-    chunk = Audibleturk::Transcription::Chunk.new(assignment['transcription'])
+    chunk = Typingpool::Transcription::Chunk.new(assignment['transcription'])
     chunk.url = assignment['url']
     chunk.project = assignment['project_id']
     chunk.worker = assignment['worker']
     chunk.hit = assignment['hit_id']
     chunk
   end
-  transcription = Audibleturk::Transcription.new(project.name, transcription_chunks)
+  transcription = Typingpool::Transcription.new(project.name, transcription_chunks)
   transcription.subtitle = project.local.subtitle
   File.delete("#{project.local.path}/#{filename[:working]}") if File.exists?("#{project.local.path}/#{filename[:working]}")
   done = (transcription.to_a.length == project.local.audio_chunks.length)

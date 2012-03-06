@@ -2,11 +2,11 @@
 
 require 'optparse'
 require 'uri'
-require 'audibleturk'
+require 'typingpool'
 require 'set'
 
 options = {
-  :config => Audibleturk::Config.file,
+  :config => Typingpool::Config.file,
 }
 OptionParser.new do |commands|
   options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT | --dead\n  [--sandbox]\n  [--config PATH]\n"
@@ -16,9 +16,9 @@ OptionParser.new do |commands|
   commands.on('--sandbox', "Test in Mechanical Turk's sandbox") do
     options[:sandbox] = true
   end
-  commands.on('--config=PATH', "Default: #{Audibleturk::Config.default_file}.", " A config file") do |path|
+  commands.on('--config=PATH', "Default: #{Typingpool::Config.default_file}.", " A config file") do |path|
     File.exists?(File.expand_path(path)) && File.file?(File.expand_path(path)) or abort "No such file #{path}"
-    options[:config] = Audibleturk::Config.file(path)
+    options[:config] = Typingpool::Config.file(path)
   end
   commands.on('--help', 'Display this screen') do
     $stderr.puts commands 
@@ -42,20 +42,20 @@ if project_name_or_path
   else
     project_path = "#{options[:config].local}/#{project_name_or_path}"
   end
-  project = Audibleturk::Project.new(File.basename(project_path), options[:config])
+  project = Typingpool::Project.new(File.basename(project_path), options[:config])
   project.local or abort "No such project '#{project_name_or_path}'\n"
   project.local.id or abort "Can't find project id in #{project.local.path}"
 end
 
-Audibleturk::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
+Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
 $stderr.puts "Removing from Amazon"
 $stderr.puts "  Collecting all results"
 #Set up result set, depending on options
 results = nil
 if project
-  results = Audibleturk::Amazon::Result.all_for_project(project.local.id)
+  results = Typingpool::Amazon::Result.all_for_project(project.local.id)
 elsif options[:dead]
-  results = Audibleturk::Amazon::Result.all.select do |result|
+  results = Typingpool::Amazon::Result.all.select do |result|
     dead = ((result.hit.expired_and_overdue? || result.rejected?) && result.ours?)
     result.to_cache
     dead
@@ -68,11 +68,11 @@ results.each do |result|
   $stderr.puts "  Removing HIT #{result.hit_id} (#{result.hit.status})"
   begin
     result.remove_hit 
-  rescue Audibleturk::Error::Amazon::UnreviewedContent => e
+  rescue Typingpool::Error::Amazon::UnreviewedContent => e
     fails.push(e)
   else
     $stderr.puts "  Removing from local cache"
-    Audibleturk::Amazon::Result.delete_cache(result.hit_id, options[:url_at], options[:id_at])
+    Typingpool::Amazon::Result.delete_cache(result.hit_id, options[:url_at], options[:id_at])
   end
 end
 if not (fails.empty?)
@@ -94,7 +94,7 @@ if project
   $stderr.puts "Removing audio from #{project.www.host}"
   begin
     project.updelete_audio
-  rescue Audibleturk::Error::SFTP => e
+  rescue Typingpool::Error::SFTP => e
     if e.to_s.match(/no such file/)
       $stderr.puts "  No files to remove - may have been removed previously"
     else

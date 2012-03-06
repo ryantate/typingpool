@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require 'audibleturk'
+require 'typingpool'
 
 options = {
-  :config => Audibleturk::Config.file,
+  :config => Typingpool::Config.file,
   :files => [],
   :voices => [],
   :unusual => [],
@@ -40,7 +40,7 @@ OptionParser.new do |opts|
   opts.on('--config PATH', 'Default: ~/.audibleturk. A config file.') do |config|
     path = File.expand_path(config)
     File.exists?(path) && File.file?(path) or abort "No such file #{path}"
-    options[:config] = Audibleturk::Config.file(config)
+    options[:config] = Typingpool::Config.file(config)
   end
 
   opts.on('--bitrate KBPS', 'Default: Mirror input. Output bitrate in kb/s.') do |kbps|
@@ -80,15 +80,15 @@ options[:voices].collect! do |voice|
   }
 end
 
-project = Audibleturk::Project.new(options[:title], config)
+project = Typingpool::Project.new(options[:title], config)
 begin
   project.interval = options[:chunk] if options[:chunk]
-rescue Audibleturk::Error::Argument::Format
+rescue Typingpool::Error::Argument::Format
   abort "Could not make sense of chunk argument '#{options[:chunk]}'. Required format is SS, or MM:SS, or HH:MM:SS, with optional decimal values (e.g. MM:SS.ss)"
 end
 begin
   project.bitrate = options[:bitrate] if options[:bitrate]
-rescue Audibleturk::Error::Argument::Format
+rescue Typingpool::Error::Argument::Format
   abort "Could not make sense of bitrate argument '#{options[:bitrate]}'. Should be an integer corresponding to kb/s."
 end
 

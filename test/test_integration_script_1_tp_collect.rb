@@ -2,18 +2,18 @@
 
 $:.unshift File.join(File.dirname(File.dirname($0)), 'lib')
 
-require 'audibleturk'
-require 'audibleturk/test'
+require 'typingpool'
+require 'typingpool/test'
 
-class TestTpMake < Audibleturk::Test::Script                   
+class TestTpMake < Typingpool::Test::Script                   
   def test_abort_with_no_files
-    assert_raise(Audibleturk::Error::Shell) do
+    assert_raise(Typingpool::Error::Shell) do
       call_tp_make('--title', 'Foo', '--chunks', '0:20')
     end
   end
 
   def test_abort_with_no_title
-    assert_raise(Audibleturk::Error::Shell) do
+    assert_raise(Typingpool::Error::Shell) do
       call_tp_make('--file', audio_files[0])
     end
   end

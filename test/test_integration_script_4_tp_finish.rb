@@ -2,10 +2,10 @@
 
 $:.unshift File.join(File.dirname(File.dirname($0)), 'lib')
 
-require 'audibleturk'
-require 'audibleturk/test'
+require 'typingpool'
+require 'typingpool/test'
 
-class TestTpFinish < Audibleturk::Test::Script
+class TestTpFinish < Typingpool::Test::Script
   def test_tp_finish_on_audio_files
     skip_if_no_amazon_credentials('tp-collect audio test')
     in_temp_tp_dir do |dir|
@@ -28,12 +28,12 @@ class TestTpFinish < Audibleturk::Test::Script
       tp_assign(dir)
       project = temp_tp_dir_project(dir)
       setup_amazon(dir)
-      results = Audibleturk::Amazon::Result.all_for_project(project.local.id)
+      results = Typingpool::Amazon::Result.all_for_project(project.local.id)
       assert(not(results.empty?))
       assert_nothing_raised do
         tp_finish(dir)
       end
-      assert_empty(Audibleturk::Amazon::Result.all_for_project(project.local.id))
+      assert_empty(Typingpool::Amazon::Result.all_for_project(project.local.id))
       results.each do |result|
         #The original HIT might be gone, or there and marked
         #'disposed', depending whether Amazon has swept the server for
