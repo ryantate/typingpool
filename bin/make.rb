@@ -67,7 +67,7 @@ options[:files].each do |file|
 end
 
 config = options[:config]
-%w(scp url app).each do |param|
+%w(app).each do |param|
   abort "Required param '#{param}' missing from config file '#{config.path}'" if config.param[param].to_s.empty?
 end
 
@@ -108,8 +108,8 @@ file = project.merge_audio(files)
 puts "Splitting audio into uniform bits"
 files = project.split_audio(file)
 
-remote_files = project.upload_audio(files) do |file, as, www|
-  puts "Uploading #{File.basename(file)} to #{www.host}/#{www.path} as #{as}"
+remote_files = project.upload_audio(files) do |file, as, remote|
+  puts "Uploading #{File.basename(file)} to #{remote.host}/#{remote.path} as #{as}"
 end
 
 assignment_path = project.create_assignment_csv(remote_files, options[:unusual], options[:voices])

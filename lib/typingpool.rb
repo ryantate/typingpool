@@ -1,9 +1,14 @@
 module Typingpool
   class Error < StandardError 
     class Shell < Error; end
-    class SFTP < Error; end
     class Argument < Error
       class Format < Argument; end
+    end
+    class Remote
+      class SFTP < Remote; end
+      class S3 < Remote
+        class Credentials; end
+      end
     end
     class Amazon < Error
       class UnreviewedContent < Amazon; end
@@ -784,8 +789,8 @@ puts "DEBUG re-fetching HIT to get question"
       @config = config
     end
 
-    def www(scp=@config.scp)
-      WWW.new(@name, scp)
+    def remote(config=@config)
+      Remote.from_config(@name, config)
     end
 
     def local(dir=@config.local)
@@ -829,9 +834,9 @@ puts "DEBUG re-fetching HIT to get question"
     end
 
     def upload_audio(files=local.audio_chunks, as=audio_chunks_for_online(files), &progress)
-      www.put(files, as){|file, as| progress.yield(file, as, www) if progress}
-      local.audio_is_on_www = as.collect{|file| "#{@config.url}/#{file}"}.join("\n")
-      return as
+      urls = remote.put(files, as){|file, as| progress.yield(file, as, remote) if progress}
+      local.audio_is_on_www = urls.join("\n")
+      urls
     end
 
       def audio_chunks_for_online(files=local.audio_chunks)
@@ -839,7 +844,7 @@ puts "DEBUG re-fetching HIT to get question"
       end
 
     def updelete_audio(files=local.audio_chunks_online, &progress)
-      www.remove(files){|file| progress.yield(file) if progress}
+      remote.remove(files){|file| progress.yield(file) if progress}
       local.delete_audio_is_on_www
     end
 
@@ -848,7 +853,7 @@ puts "DEBUG re-fetching HIT to get question"
       CSV.open(assignment_path, 'wb') do |csv|
         csv << ['url', 'project_id', 'unusual', (1 .. voices.size).collect{|n| ["voice#{n}", "voice#{n}title"]}].flatten
         remote_files.each do |file|
-          csv << ["#{@config.url}/#{file}", local.id, unusual_words.join(', '), voices.collect{|v| [v[:name], v[:description]]}].flatten
+          csv << [file, local.id, unusual_words.join(', '), voices.collect{|v| [v[:name], v[:description]]}].flatten
         end
       end
       return assignment_path
@@ -858,71 +863,157 @@ puts "DEBUG re-fetching HIT to get question"
       (0...length).collect{(65 + rand(25)).chr}.join
     end
 
-    class WWW
-      require 'net/sftp'
-      attr_accessor :name, :host, :user, :path
-      def initialize(name, scp)
-        @name = name
-        connection = scp.match(/^(.+?)\@(.+?)(\:(.*))?$/) or raise "Could not extract server connection info from scp string '#{scp}'"
-        @user = connection[1]
-        @host = connection[2]
-        @path = connection[4]
-        if @path
-          @path = @path.sub(/\/$/,'')
-          @path = "#{@path}/"
+    class Remote
+      attr_accessor :name
+      def self.from_config(name, config)
+        if config.sftp
+          SFTP.new(name, config.sftp)
+        elsif config.aws && config.aws['bucket']
+          S3.new(name, config.aws)
         else
-          @path = ''
+          raise Error, "No valid upload params found in config file (SFTP or AWS info)"
         end
       end
 
-      def sftp
-        begin
-          Net::SFTP.start(@host, @user) do |sftp|
-            yield(sftp)
-            sftp.loop
+      class S3 < Remote
+        require 'aws/s3'
+        attr_accessor :key, :secret, :bucket
+        def initialize(name, aws_config)
+          @name = name
+          @config = aws_config
+          @key = @config['key'] or raise Error::Remote::S3, "Missing AWS key in config"
+          @secret = @config['secret'] or raise Error::Remote::S3, "Missing AWS secret in config"
+          @bucket = @config['bucket'] or raise Error::Remote::S3, "Missing AWS bucket in config"
+          @url = @config['url'] || default_url
+          @url.sub!(/\/$/, '')
+        end
+
+        def connect
+          AWS::S3::Base.establish_connection!(
+                                              :access_key_id     => @key,
+                                              :secret_access_key => @secret,
+                                              :use_ssl => true
+                                              )
+        end
+
+        def make_bucket
+          AWS::S3::Bucket.create(@bucket)
+        end
+
+        def default_url
+          "https://#{@bucket}.s3.amazonaws.com"
+        end
+
+        def batch(files)
+          results = []
+          files.each_with_index do |file, i|
+            connect if i == 0
+            begin
+              results.push(yield(file, i))
+            rescue AWS::S3::SignatureDoesNotMatch => e
+              raise Error::Remote::S3::Credentials, "S3 operation failed with a signature error. This likely means your AWS key or secret is wrong. Error: #{e}"
+            rescue AWS::S3::S3Exception => e
+              raise Error::Remote::S3, "Your S3 operation failed with an Amazon error: #{e}"
+
+            end #begin
+          end #files.each
+          results
+        end
+
+        def put(files, as=files.map{|file| File.basename(file)})
+          batch(files) do |orig, i|
+            new = as[i]
+            yield(orig, new) if block_given?
+            begin
+              AWS::S3::S3Object.store(new, open(orig), @bucket,  :access => :public_read)
+            rescue AWS::S3::NoSuchBucket
+              make_bucket
+              retry
+            end
+            "#{@url}/#{new}"
+          end #batch
+        end
+
+        def remove(files)
+          batch(files) do |file|
+            yield(file) if block_given?
+            AWS::S3::S3Object.delete(file, @bucket)
           end
-        rescue Net::SSH::AuthenticationFailed
-          raise Error::SFTP, "SFTP authentication failed: #{$?}"
         end
-      end
+      end #S3
 
-      def batch(files)
-        results = []
-        sftp do |sftp|
-          files.each do |file|
-            results.push(yield(file, sftp))
+      class SFTP < Remote
+        require 'net/sftp'
+        attr_accessor :host, :user, :path
+        def initialize(name, sftp_config)
+          @name = name
+          @config = sftp_config   
+          @user = @config['user'] or raise Error::Remote::SFTP, "No SFTP user specified in config"
+          @host = @config['host'] or raise Error::Remote::SFTP, "No SFTP host specified in config"
+          @url = @config['url'] or raise Error::Remote::SFTP, "No SFTP url specified in config"
+          @url.sub(/\/$/, '')
+          @path = @config['path']
+          if @path
+            @path = @path.sub(/\/$/,'')
+            @path = "#{@path}/"
+          else
+            @path = ''
           end
         end
-        return results
-      end
 
-      def put(files, as=nil)
-        as ||= files.collect{|file| File.basename(file)}
-        begin
-          i = 0
-          batch(files) do |file, sftp|
-            dest = as[i]
-            i += 1
-            yield(file, dest) if block_given?
-            sftp.upload(file, "#{@path}/#{dest}")
+        def connection
+          begin
+            Net::SFTP.start(@host, @user) do |connection|
+              yield(connection)
+              connection.loop
+            end
+          rescue Net::SSH::AuthenticationFailed
+            raise Error::Remote::SFTP, "SFTP authentication failed: #{$?}"
           end
-        rescue Net::SFTP::StatusException => e
-          raise Error::SFTP, "SFTP upload failed: #{e.description}"
         end
-      end
 
-      def remove(files)
-        requests = batch(files) do |file, sftp|
-          yield(file) if block_given?
-          sftp.remove("#{@path}#{file}")
+        def batch(files)
+          results = []
+          connection do |connection|
+            files.each do |file|
+              results.push(yield(file, connection))
+            end
+          end
+          return results
         end
-        failures = requests.reject{|request| request.response.ok?}
-        if not(failures.empty?)
-          summary = failures.collect{|request| request.response.to_s}.join('; ')
-          raise Error::SFTP, "SFTP removal failed: #{summary}"
+
+        def put(files, as=files.collect{|file| File.basename(file)})
+          begin
+            i = 0
+            batch(files) do |file, connection|
+              dest = as[i]
+              i += 1
+              yield(file, dest) if block_given?
+              connection.upload(file, "#{@path}/#{dest}")
+              file_to_url(dest)
+            end
+          rescue Net::SFTP::StatusException => e
+            raise Error::Remote::SFTP, "SFTP upload failed: #{e.description}"
+          end
         end
-      end
-    end #WWW
+
+        def file_to_url(file)
+          "#{@url}/#{file}"
+        end
+
+        def remove(files)
+          requests = batch(files) do |file, connection|
+            yield(file) if block_given?
+            connection.remove("#{@path}#{file}")
+          end
+          failures = requests.reject{|request| request.response.ok?}
+          if not(failures.empty?)
+            summary = failures.collect{|request| request.response.to_s}.join('; ')
+            raise Error::Remote::SFTP, "SFTP removal failed: #{summary}"
+          end
+        end
+      end #SFTP
+    end #Remote
 
     class Local
       require 'fileutils'

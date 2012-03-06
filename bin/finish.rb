@@ -21,7 +21,7 @@ OptionParser.new do |commands|
     options[:config] = Typingpool::Config.file(path)
   end
   commands.on('--help', 'Display this screen') do
-    $stderr.puts commands 
+    STDERR.puts commands 
     exit
   end
 end.parse!
@@ -48,8 +48,8 @@ if project_name_or_path
 end
 
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
-$stderr.puts "Removing from Amazon"
-$stderr.puts "  Collecting all results"
+STDERR.puts "Removing from Amazon"
+STDERR.puts "  Collecting all results"
 #Set up result set, depending on options
 results = nil
 if project
@@ -65,18 +65,18 @@ end
 #Remove the results from Mechanical Turk
 fails = []
 results.each do |result| 
-  $stderr.puts "  Removing HIT #{result.hit_id} (#{result.hit.status})"
+  STDERR.puts "  Removing HIT #{result.hit_id} (#{result.hit.status})"
   begin
     result.remove_hit 
   rescue Typingpool::Error::Amazon::UnreviewedContent => e
     fails.push(e)
   else
-    $stderr.puts "  Removing from local cache"
+    STDERR.puts "  Removing from local cache"
     Typingpool::Amazon::Result.delete_cache(result.hit_id, options[:url_at], options[:id_at])
   end
 end
 if not (fails.empty?)
-  $stderr.puts "Removed " + (results.size - fails.size) + " HITs from Amazon"
+  STDERR.puts "Removed " + (results.size - fails.size) + " HITs from Amazon"
   abort "#{fails.size} transcriptions are submitted but unprocessed (#{fails.join('; ')})"
 end
 
@@ -91,16 +91,16 @@ if project
     end
   end
   project.local.write_csv('assignment', assignments)
-  $stderr.puts "Removing audio from #{project.www.host}"
+  STDERR.puts "Removing audio from #{project.remote.host}"
   begin
     project.updelete_audio
-  rescue Typingpool::Error::SFTP => e
+  rescue Typingpool::Remote => e
     if e.to_s.match(/no such file/)
-      $stderr.puts "  No files to remove - may have been removed previously"
+      STDERR.puts "  No files to remove - may have been removed previously"
     else
       abort "Can't remove remote audio files: #{e}"
     end
   else
-    $stderr.puts "  Removed #{assignments.size} audio files from #{project.www.host}"
+    STDERR.puts "  Removed #{assignments.size} audio files from #{project.remote.host}"
   end
 end
