@@ -91,7 +91,7 @@ module Typingpool
         write_config(config, dir, project_default[:config_filename])   
       end
 
-      def write_config(config, dir, filename)
+      def write_config(config, dir, filename=project_default[:config_filename])
         path = File.join(dir, filename)
         File.open(path, 'w') do |out|
           out << YAML.dump(config.param)

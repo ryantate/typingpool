@@ -6,19 +6,33 @@ require 'typingpool'
 require 'typingpool/test'
 
 class TestTpFinish < Typingpool::Test::Script
-  def test_tp_finish_on_audio_files
+  def tp_finish_on_audio_files_with(dir, config_path)
     skip_if_no_amazon_credentials('tp-collect audio test')
-    in_temp_tp_dir do |dir|
-      tp_make(dir)
-      project = temp_tp_dir_project(dir)
+      tp_make(dir, config_path)
+      project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
       urls = project.local.read_csv('assignment').map{|assignment| assignment['url'] }
       assert(not(urls.empty?))
       assert_equal(urls.size, urls.select{|url| working_url? url}.size)
       assert_nothing_raised do
-        tp_finish(dir)
+        tp_finish(dir, config_path)
       end
       assert_empty(urls.select{|url| working_url? url })
-    end #in_temp_tp_dir
+  end
+
+  def test_tp_finish_on_audio_files
+    in_temp_tp_dir do |dir|
+      config_path = self.config_path(dir)
+      tp_finish_on_audio_files_with(dir, config_path)
+    end
+  end
+
+  def test_tp_finish_on_audio_files_with_s3
+    in_temp_tp_dir do |dir|
+      config = config_from_dir(dir)
+      config.param.delete('sftp')
+      config_path = write_config(config, dir)
+      tp_finish_on_audio_files_with(dir, config_path)
+    end
   end
 
   def test_tp_finish_on_amazon_hits
