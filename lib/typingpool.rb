@@ -84,7 +84,7 @@ module Typingpool
       end
     end
 
-    def self.path_reader(*syms)
+    def self.local_path_reader(*syms)
       define_reader(*syms) do |value|
         File.expand_path(value) if value
       end
@@ -96,8 +96,8 @@ module Typingpool
       end
     end
 
-    path_reader :local, :app
-    never_ends_in_slash_reader :url, :scp
+
+    local_path_reader :local, :app, :cache
 
     def param
       @param
@@ -111,6 +111,18 @@ module Typingpool
     def assignments=(params)
       @assignments = Assignments.new(params)
     end
+
+    def sftp
+      if not(@sftp) && @param['sftp']
+        self.sftp = @param['sftp']
+      end
+      @sftp
+    end
+
+    def sftp=(params)
+      @sftp = SFTP.new(params)
+    end
+
 
     def equals_method?(meth)
       match = meth.to_s.match(/([^=]+)=$/) or return
@@ -128,6 +140,10 @@ module Typingpool
       return param[meth.to_s]
     end
 
+    class SFTP < Config
+      never_ends_in_slash_reader :path, :url
+    end
+
     class Assignments < Config
       require 'set'
 
@@ -141,7 +157,8 @@ module Typingpool
         end
       end
 
-      path_reader :templates
+
+      local_path_reader :templates
       time_accessor :deadline, :approval, :lifetime
 
       def qualify
@@ -955,21 +972,15 @@ puts "DEBUG re-fetching HIT to get question"
 
       class SFTP < Remote
         require 'net/sftp'
-        attr_accessor :host, :user, :path
+        attr_reader :host, :user, :path, :url
         def initialize(name, sftp_config)
           @name = name
           @config = sftp_config   
-          @user = @config['user'] or raise Error::Remote::SFTP, "No SFTP user specified in config"
-          @host = @config['host'] or raise Error::Remote::SFTP, "No SFTP host specified in config"
-          @url = @config['url'] or raise Error::Remote::SFTP, "No SFTP url specified in config"
-          @url.sub(/\/$/, '')
-          @path = @config['path']
-          if @path
-            @path = @path.sub(/\/$/,'')
-            @path = "#{@path}/"
-          else
-            @path = ''
-          end
+          @user = @config.user or raise Error::Remote::SFTP, "No SFTP user specified in config"
+          @host = @config.host or raise Error::Remote::SFTP, "No SFTP host specified in config"
+          @url = @config.url or raise Error::Remote::SFTP, "No SFTP url specified in config"
+          @path = @config.path || ''
+          @path += '/' if @path
         end
 
         def connection
@@ -1000,7 +1011,7 @@ puts "DEBUG re-fetching HIT to get question"
               dest = as[i]
               i += 1
               yield(file, dest) if block_given?
-              connection.upload(file, "#{@path}/#{dest}")
+              connection.upload(file, "#{@path}#{dest}")
               file_to_url(dest)
             end
           rescue Net::SFTP::StatusException => e
