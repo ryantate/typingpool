@@ -53,6 +53,7 @@ module Typingpool
 
   class Config
     require 'yaml'
+    require 'set'
     @@default_file = "~/.audibleturk"
 
     def initialize(params)
@@ -84,6 +85,20 @@ module Typingpool
       end
     end
 
+    @@subklasses = {}
+    def self.inherited(subklass)
+      (basename = subklass.to_s.match(/(\w+)$/)) && basename[1] or raise Error, "Could not extract class basename from '#{subklass}'"
+      @@subklasses[basename[1].downcase] = subklass
+    end
+
+    def self.debug_subklasses
+      @@subklasses
+    end
+
+    def subklass(string)
+      @@subklasses[string.downcase]
+    end
+
     def self.local_path_reader(*syms)
       define_reader(*syms) do |value|
         File.expand_path(value) if value
@@ -112,18 +127,6 @@ module Typingpool
       @assignments = Assignments.new(params)
     end
 
-    def sftp
-      if not(@sftp) && @param['sftp']
-        self.sftp = @param['sftp']
-      end
-      @sftp
-    end
-
-    def sftp=(params)
-      @sftp = SFTP.new(params)
-    end
-
-
     def equals_method?(meth)
       match = meth.to_s.match(/([^=]+)=$/) or return
       return match[1]
@@ -133,11 +136,15 @@ module Typingpool
       equals_param = equals_method?(meth)
       if equals_param
         args.size == 1 or raise Error::Argument, "Too many args"
-        value = args[0]
-        return param[equals_param] = value
+        param[equals_param] = args[0]
+      else
+        args.empty? or raise Error::Argument, "Too many args"
       end
-      args.empty? or raise Error::Argument, "Too many args"
-      return param[meth.to_s]
+      value = param[meth.to_s]
+      if subklass(meth.to_s) && param[meth.to_s]
+        return subklass(meth.to_s).new(param[meth.to_s])
+      end
+      return value
     end
 
     class SFTP < Config
