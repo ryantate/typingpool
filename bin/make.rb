@@ -71,8 +71,8 @@ config = options[:config]
   abort "Required param '#{param}' missing from config file '#{config.path}'" if config.param[param].to_s.empty?
 end
 
-options[:unusual].collect!{|unusual| unusual.split(/\s*,\s*/)}.flatten!
-options[:voices].collect! do |voice| 
+options[:unusual].map!{|unusual| unusual.split(/\s*,\s*/)}.flatten!
+options[:voices].map! do |voice| 
   name, description = voice.split(/\s*,\s*/)
   {
     :name => name,

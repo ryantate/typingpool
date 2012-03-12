@@ -320,7 +320,7 @@ module Typingpool
       end
 
       def annotation
-          URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').collect{|e| [e['name'], e['value']]}.flatten])
+          URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').map{|e| [e['name'], e['value']]}.flatten])
       end
 
       def to_allowed_xhtml(htmlf)
@@ -388,7 +388,7 @@ module Typingpool
         i=0
         begin
           i += 1
-          page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.collect{|id| RTurk::Hit.new(id) }.collect{|hit| self.cached_or_new(hit) }
+          page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.map{|id| RTurk::Hit.new(id) }.map{|hit| self.cached_or_new(hit) }
           filtered_results = page_results.select do |result| 
             begin
               result.approved? && result.ours? 
@@ -781,7 +781,7 @@ puts "DEBUG re-fetching HIT to get question"
                 }
               }
             }
-          end.doc.root.children.collect{|c| c.to_xml}.join
+          end.doc.root.children.map{|c| c.to_xml}.join
         end
       end #Question
     end #HIT
@@ -835,7 +835,7 @@ puts "DEBUG re-fetching HIT to get question"
     end
 
     def convert_audio
-      local.original_audio.collect do |path|
+      local.original_audio.map do |path|
         audio = Audio::File.new(path)
         yield(path, bitrate) if block_given?
         File.extname(path).downcase.eql?('.mp3') ? audio : audio.to_mp3(local.tmp_dir, bitrate)
@@ -868,16 +868,16 @@ puts "DEBUG re-fetching HIT to get question"
     def create_assignment_csv(remote_files, unusual_words=[], voices=[])
       assignment_path = "#{local.path}/csv/assignment.csv"
       CSV.open(assignment_path, 'wb') do |csv|
-        csv << ['url', 'project_id', 'unusual', (1 .. voices.size).collect{|n| ["voice#{n}", "voice#{n}title"]}].flatten
+        csv << ['url', 'project_id', 'unusual', (1 .. voices.size).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
         remote_files.each do |file|
-          csv << [file, local.id, unusual_words.join(', '), voices.collect{|v| [v[:name], v[:description]]}].flatten
+          csv << [file, local.id, unusual_words.join(', '), voices.map{|v| [v[:name], v[:description]]}].flatten
         end
       end
       return assignment_path
     end
 
     def psuedo_random_uppercase_string(length=6)
-      (0...length).collect{(65 + rand(25)).chr}.join
+      (0...length).map{(65 + rand(25)).chr}.join
     end
 
     class Remote
@@ -1004,7 +1004,7 @@ puts "DEBUG re-fetching HIT to get question"
           return results
         end
 
-        def put(files, as=files.collect{|file| File.basename(file)})
+        def put(files, as=files.map{|file| File.basename(file)})
           begin
             i = 0
             batch(files) do |file, connection|
@@ -1030,7 +1030,7 @@ puts "DEBUG re-fetching HIT to get question"
           end
           failures = requests.reject{|request| request.response.ok?}
           if not(failures.empty?)
-            summary = failures.collect{|request| request.response.to_s}.join('; ')
+            summary = failures.map{|request| request.response.to_s}.join('; ')
             raise Error::Remote::SFTP, "SFTP removal failed: #{summary}"
           end
         end
@@ -1135,13 +1135,13 @@ puts "DEBUG re-fetching HIT to get question"
         csv = read_file("csv/#{base_name}.csv") or raise "No file #{base_name} in #{@path}/csv"
         arys = CSV.parse(csv)
         headers = arys.shift
-        arys.collect{|row| Hash[*headers.zip(row).flatten]}
+        arys.map{|row| Hash[*headers.zip(row).flatten]}
       end
 
       def write_csv(base_name, hashes, headers=hashes[0].keys)
         CSV.open("#{@path}/csv/#{base_name}.csv", 'wb') do |csv|
           csv << headers
-          hashes.each{|hash| csv << headers.collect{|header| hash[header] } }
+          hashes.each{|hash| csv << headers.map{|header| hash[header] } }
         end
       end
 
@@ -1180,7 +1180,7 @@ puts "DEBUG re-fetching HIT to get question"
       def self.merge(files, dest)
         raise Error::Argument, "No files to merge" if files.empty?
         if files.size > 1
-          Utility.system_quietly('mp3wrap', dest, *files.collect{|file| file.path})
+          Utility.system_quietly('mp3wrap', dest, *files.map{|file| file.path})
           written = "#{::File.dirname(dest)}/#{::File.basename(dest, '.*')}_MP3WRAP.mp3"
           FileUtils.mv(written, dest)
         else
@@ -1223,7 +1223,7 @@ puts "DEBUG re-fetching HIT to get question"
           Dir.chdir(dir) do
             Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{base_name}.@m.@s", ::File.basename(@path)) 
           end
-          Dir.entries(dir).select{|entry| ::File.file?("#{dir}/#{entry}")}.reject{|file| file.match(/^\./)}.reject{|file| file.eql?(::File.basename(@path))}.collect{|file| self.class.new("#{dir}/#{file}")}
+          Dir.entries(dir).select{|entry| ::File.file?("#{dir}/#{entry}")}.reject{|file| file.match(/^\./)}.reject{|file| file.eql?(::File.basename(@path))}.map{|file| self.class.new("#{dir}/#{file}")}
         end
       end #File
     end #Audio
@@ -1328,7 +1328,7 @@ puts "DEBUG re-fetching HIT to get question"
         text.gsub!('<br>', "\n<br>")
         text.gsub!(/\A\s+/, '')
         text.gsub!(/\s+\z/, '')
-        text = text.split("\n").collect {|line| wrap_text(line) }.join("\n") 
+        text = text.split("\n").map {|line| wrap_text(line) }.join("\n") 
         text.gsub!(/\n\n+/, "\n\n")
         text
       end

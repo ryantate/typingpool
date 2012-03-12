@@ -73,7 +73,7 @@ elsif need[key] == false
 end
 template = nil
 projects.each do |key, project|
-  results_by_url = Hash[ *need[key].collect{|result| [result.url, result] }.flatten ]
+  results_by_url = Hash[ *need[key].map{|result| [result.url, result] }.flatten ]
   assignments = project.local.read_csv('assignment')
   assignments.each do |assignment|
     result = results_by_url[assignment['url']] or next
@@ -83,7 +83,7 @@ projects.each do |key, project|
     assignment['hit_id'] = result.hit_id
   end
   project.local.write_csv('assignment', assignments)
-  transcription_chunks = project.local.read_csv('assignment').select{|assignment| assignment['transcription']}.collect do |assignment|
+  transcription_chunks = project.local.read_csv('assignment').select{|assignment| assignment['transcription']}.map do |assignment|
     chunk = Typingpool::Transcription::Chunk.new(assignment['transcription'])
     chunk.url = assignment['url']
     chunk.project = assignment['project_id']
