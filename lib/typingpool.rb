@@ -53,108 +53,51 @@ module Typingpool
 
   class Config
     require 'yaml'
-    require 'set'
     @@default_file = "~/.audibleturk"
 
     def initialize(params)
       @param = params
     end
 
-    def self.default_file
-      @@default_file
-    end
+    class << self
+      def default_file
+        @@default_file
+      end
 
-    def self.file(path=File.expand_path(default_file))
-      self.new(YAML.load(IO.read((path))))
-    end
+      def file(path=File.expand_path(default_file))
+        self.new(YAML.load(IO.read((path))))
+      end
 
-    def self.define_reader(*syms)
-      syms.each do |sym|
-        define_method(sym) do
-          value = param[sym.to_s]
-          yield(value)
+      def define_reader(*syms)
+        syms.each do |sym|
+          define_method(sym) do
+            value = @param[sym.to_s]
+            yield(value)
+          end
         end
       end
-    end
 
-    def self.define_writer(*syms)
-      syms.each do |sym|
-        define_method("#{sym.to_s}=".to_sym) do |value|
-          param[sym.to_s] = yield(value)
+      def define_writer(*syms)
+        syms.each do |sym|
+          define_method("#{sym.to_s}=".to_sym) do |value|
+            @param[sym.to_s] = yield(value)
+          end
         end
       end
-    end
 
-    @@subklasses = {}
-    def self.inherited(subklass)
-      (basename = subklass.to_s.match(/(\w+)$/)) && basename[1] or raise Error, "Could not extract class basename from '#{subklass}'"
-      @@subklasses[basename[1].downcase] = subklass
-    end
-
-    def self.debug_subklasses
-      @@subklasses
-    end
-
-    def subklass(string)
-      @@subklasses[string.downcase]
-    end
-
-    def self.local_path_reader(*syms)
-      define_reader(*syms) do |value|
-        File.expand_path(value) if value
+      def local_path_reader(*syms)
+        define_reader(*syms) do |value|
+          File.expand_path(value) if value
+        end
       end
-    end
 
-    def self.never_ends_in_slash_reader(*syms)
-      define_reader(*syms) do |value|
-        value.sub(/\/$/, '') if value
+      def never_ends_in_slash_reader(*syms)
+        define_reader(*syms) do |value|
+          value.sub(/\/$/, '') if value
+        end
       end
-    end
 
-
-    local_path_reader :local, :app, :cache
-
-    def param
-      @param
-    end
-
-    def assignments
-      self.assignments = @param['assignments'] || {} if not(@assignments)
-      @assignments
-    end
-
-    def assignments=(params)
-      @assignments = Assignments.new(params)
-    end
-
-    def equals_method?(meth)
-      match = meth.to_s.match(/([^=]+)=$/) or return
-      return match[1]
-    end
-
-    def method_missing(meth, *args)
-      equals_param = equals_method?(meth)
-      if equals_param
-        args.size == 1 or raise Error::Argument, "Too many args"
-        param[equals_param] = args[0]
-      else
-        args.empty? or raise Error::Argument, "Too many args"
-      end
-      value = param[meth.to_s]
-      if subklass(meth.to_s) && param[meth.to_s]
-        return subklass(meth.to_s).new(param[meth.to_s])
-      end
-      return value
-    end
-
-    class SFTP < Config
-      never_ends_in_slash_reader :path, :url
-    end
-
-    class Assignments < Config
-      require 'set'
-
-      def self.time_accessor(*syms)
+      def time_accessor(*syms)
         define_reader(*syms) do |value|
           Utility.timespec_to_seconds(value) if value
         end
@@ -164,6 +107,58 @@ module Typingpool
         end
       end
 
+      def inherited(subklass)
+        @@subklasses ||= {}
+        @@subklasses[subklass.name.downcase] = subklass
+      end
+
+      def subklass?(param)
+        @@subklasses["#{self.name.downcase}::#{param.downcase}"] 
+      end
+    end #class << self
+
+    local_path_reader :local, :app, :cache
+
+    def to_hash
+      @param
+    end
+
+    def [](key)
+      @param[key]
+    end
+
+    def []=(key, value)
+      @param[key] = value
+    end
+
+    def method_missing(meth, *args)
+      equals_param = equals_method?(meth)
+      if equals_param
+        args.size == 1 or raise Error::Argument, "Wrong number of args(#{args.size} for 1)"
+        return @param[equals_param] = args[0]
+      end
+      args.empty? or raise Error::Argument, "Too many args #{meth} #{args.join('|')}"
+      value = @param[meth.to_s]
+      if self.class.subklass?(meth.to_s) && value
+        return self.class.subklass?(meth.to_s).new(value)
+      end
+      value
+    end
+
+    def equals_method?(meth)
+      match = meth.to_s.match(/([^=]+)=$/) or return
+      return match[1]
+    end
+
+    class SFTP < Config
+      never_ends_in_slash_reader :path, :url
+    end
+
+    class AWS < Config
+      never_ends_in_slash_reader :url
+    end
+
+    class Assignments < Config
 
       local_path_reader :templates
       time_accessor :deadline, :approval, :lifetime
@@ -189,7 +184,7 @@ module Typingpool
         @param['keywords'] = array
       end
 
-      class Qualification
+      class Qualification < Config
         def initialize(spec)
           @raw = spec
           to_arg #make sure value parses
@@ -245,12 +240,12 @@ module Typingpool
     def self.setup(args={})
       @@did_setup = true
       args[:config] ||= Config.file
-      args[:key] ||= args[:config].param['aws']['key']
-      args[:secret] ||= args[:config].param['aws']['secret']
+      args[:key] ||= args[:config].aws.key
+      args[:secret] ||= args[:config].aws.secret
       args[:sandbox] = false if args[:sandbox].nil?
-      if args[:config].param['cache']
+      if args[:config].cache
         @@cache = nil
-        @@cache_file = args[:config].param['cache']
+        @@cache_file = args[:config].cache
       end
       RTurk.setup(args[:key], args[:secret], :sandbox => args[:sandbox])
     end
@@ -906,11 +901,10 @@ puts "DEBUG re-fetching HIT to get question"
         def initialize(name, aws_config)
           @name = name
           @config = aws_config
-          @key = @config['key'] or raise Error::Remote::S3, "Missing AWS key in config"
-          @secret = @config['secret'] or raise Error::Remote::S3, "Missing AWS secret in config"
-          @bucket = @config['bucket'] or raise Error::Remote::S3, "Missing AWS bucket in config"
-          @url = @config['url'] || default_url
-          @url.sub!(/\/$/, '')
+          @key = @config.key or raise Error::Remote::S3, "Missing AWS key in config"
+          @secret = @config.secret or raise Error::Remote::S3, "Missing AWS secret in config"
+          @bucket = @config.bucket or raise Error::Remote::S3, "Missing AWS bucket in config"
+          @url = @config.url || default_url
         end
 
         def connect

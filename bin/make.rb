@@ -68,7 +68,7 @@ end
 
 config = options[:config]
 %w(app).each do |param|
-  abort "Required param '#{param}' missing from config file '#{config.path}'" if config.param[param].to_s.empty?
+  abort "Required param '#{param}' missing from config file '#{config.path}'" if config.send(param.to_sym).to_s.empty?
 end
 
 options[:unusual].map!{|unusual| unusual.split(/\s*,\s*/)}.flatten!

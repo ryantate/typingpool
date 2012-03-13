@@ -51,7 +51,7 @@ module Typingpool
       end
 
       def amazon_credentials?(config=self.config)
-        config.param['aws'] && config.param['aws']['key'] && config.param['aws']['secret']
+        config.aws && config.aws.key && config.aws.secret
       end
 
       def skip_if_no_amazon_credentials(skipping='', config=self.config)
@@ -84,17 +84,17 @@ module Typingpool
       end
 
       def make_temp_tp_dir_config(dir, config=self.config)
-        config.param['local'] = File.join(dir, 'projects')
-        config.param['cache'] = File.join(dir, '.cache')
-        config.param['app'] = self.class.app_dir
-        config.param['assignments']['reward'] = '0.02'
+        config.local = File.join(dir, 'projects')
+        config.cache = File.join(dir, '.cache')
+        config.app = self.class.app_dir
+        config['assignments']['reward'] = '0.02'
         write_config(config, dir, project_default[:config_filename])   
       end
 
       def write_config(config, dir, filename=project_default[:config_filename])
         path = File.join(dir, filename)
         File.open(path, 'w') do |out|
-          out << YAML.dump(config.param)
+          out << YAML.dump(config.to_hash)
         end
         path
       end

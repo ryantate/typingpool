@@ -122,7 +122,7 @@ end
 abort "Unexpected argument(s): #{ARGV.join(';')}" if not(ARGV.empty?)
 
 if File.exists?(options[:project])
-  config.param['local'] = File.dirname(options[:project])
+  config.local = File.dirname(options[:project])
 else
   abort "Required param 'local' missing from config file '#{config.path}'" if config.local.to_s.empty?
   options[:project] = "#{config.local}/#{options[:project]}"
@@ -142,7 +142,7 @@ project = Typingpool::Project.new(File.basename(options[:project]), config)
 
 abort "Not a project directory at '#{options[:project]}'" if not(project.local)
 abort "No data in assignment CSV" if project.local.read_csv('assignment').empty?
-abort "No AWS key+secret in config" if not(config.param['aws'] && config.param['aws']['key'] && config.param['aws']['secret'])
+abort "No AWS key+secret in config" if not(config.aws && config.aws.key && config.aws.secret)
 
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 

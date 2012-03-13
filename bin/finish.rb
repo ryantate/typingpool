@@ -38,7 +38,7 @@ if project_name_or_path
   project_path = nil
   if File.exists?(project_name_or_path)
     project_path = project_name_or_path
-    options[:config].param['local'] = File.dirname(project_name_or_path)
+    options[:config].local = File.dirname(project_name_or_path)
   else
     project_path = "#{options[:config].local}/#{project_name_or_path}"
   end

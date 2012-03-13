@@ -32,8 +32,8 @@ if options[:fixture]
   VCR.configure do |c|
     c.cassette_library_dir = File.dirname(options[:fixture])
     c.hook_into :webmock 
-    c.filter_sensitive_data('<AWS_KEY>'){ options[:config].param['aws']['key'] }
-    c.filter_sensitive_data('<AWS_SECRET>'){ options[:config].param['aws']['secret'] }
+    c.filter_sensitive_data('<AWS_KEY>'){ options[:config].aws.key }
+    c.filter_sensitive_data('<AWS_SECRET>'){ options[:config].aws.secret }
   end
   VCR.insert_cassette(File.basename(options[:fixture], '.*'), :record => :new_episodes)
 end

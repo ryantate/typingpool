@@ -65,7 +65,7 @@ class TestTpMake < Typingpool::Test::Script
   def test_tp_make_s3
     in_temp_tp_dir do |dir|
       config = config_from_dir(dir)
-      config.param.delete('sftp')
+      config.to_hash.delete('sftp')
       config_path = write_config(config, dir, '.config_s3')
       tp_make_with(dir, config_path)
       tp_finish(dir, config_path)

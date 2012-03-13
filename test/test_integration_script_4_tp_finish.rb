@@ -29,7 +29,7 @@ class TestTpFinish < Typingpool::Test::Script
   def test_tp_finish_on_audio_files_with_s3
     in_temp_tp_dir do |dir|
       config = config_from_dir(dir)
-      config.param.delete('sftp')
+      config.to_hash.delete('sftp')
       config_path = write_config(config, dir)
       tp_finish_on_audio_files_with(dir, config_path)
     end
