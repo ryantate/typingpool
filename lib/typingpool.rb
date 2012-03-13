@@ -17,38 +17,39 @@ module Typingpool
 
   module Utility
     require 'open3'
-
-    #much like Kernel#system, except it doesn't spew STDERR and
-    #STDOUT all over your screen! (when called with multiple args,
-    #which with Kernel#systems kills the chance to do shell style
-    #stream redirects like 2>/dev/null)
-    def self.system_quietly(*cmd)
-      out, err, status = Open3.capture3(*cmd)
-      if status.success?
-        return out ? out.chomp : true
-      else
-        if err
-          raise Error::Shell, err.chomp
+    class << self
+      #much like Kernel#system, except it doesn't spew STDERR and
+      #STDOUT all over your screen! (when called with multiple args,
+      #which with Kernel#systems kills the chance to do shell style
+      #stream redirects like 2>/dev/null)
+      def system_quietly(*cmd)
+        out, err, status = Open3.capture3(*cmd)
+        if status.success?
+          return out ? out.chomp : true
         else
-          raise Error::Shell
+          if err
+            raise Error::Shell, err.chomp
+          else
+            raise Error::Shell
+          end
         end
       end
-    end
 
-    def self.timespec_to_seconds(timespec)
-      timespec or return
-      suffix_to_time = {
-        's'=>1,
-        'm'=>60,
-        'h'=>60*60,
-        'd'=>60*60*24,
-        'M'=>60*60*24*30,
-        'y'=>60*60*24*365
-      }
-      match = timespec.to_s.match(/^\+?(\d+(\.\d+)?)\s*([#{suffix_to_time.keys.join}])?$/) or raise Error::Argument::Format, "Can't convert '#{timespec}' to time"
-      suffix = match[3] || 's'
-      return (match[1].to_f * suffix_to_time[suffix].to_i).to_i
-    end
+      def timespec_to_seconds(timespec)
+        timespec or return
+        suffix_to_time = {
+          's'=>1,
+          'm'=>60,
+          'h'=>60*60,
+          'd'=>60*60*24,
+          'M'=>60*60*24*30,
+          'y'=>60*60*24*365
+        }
+        match = timespec.to_s.match(/^\+?(\d+(\.\d+)?)\s*([#{suffix_to_time.keys.join}])?$/) or raise Error::Argument::Format, "Can't convert '#{timespec}' to time"
+        suffix = match[3] || 's'
+        return (match[1].to_f * suffix_to_time[suffix].to_i).to_i
+      end
+    end #class << self
   end #Utility
 
   class Config
@@ -237,48 +238,50 @@ module Typingpool
     @@did_setup = false
     @@cache_file = '~/.audibleturk.cache'
 
-    def self.setup(args={})
-      @@did_setup = true
-      args[:config] ||= Config.file
-      args[:key] ||= args[:config].aws.key
-      args[:secret] ||= args[:config].aws.secret
-      args[:sandbox] = false if args[:sandbox].nil?
-      if args[:config].cache
-        @@cache = nil
-        @@cache_file = args[:config].cache
+    class << self
+      def setup(args={})
+        @@did_setup = true
+        args[:config] ||= Config.file
+        args[:key] ||= args[:config].aws.key
+        args[:secret] ||= args[:config].aws.secret
+        args[:sandbox] = false if args[:sandbox].nil?
+        if args[:config].cache
+          @@cache = nil
+          @@cache_file = args[:config].cache
+        end
+        RTurk.setup(args[:key], args[:secret], :sandbox => args[:sandbox])
       end
-      RTurk.setup(args[:key], args[:secret], :sandbox => args[:sandbox])
-    end
 
-    def self.setup?
-      @@did_setup
-    end
+      def setup?
+        @@did_setup
+      end
 
-    def self.cache_file
-      File.expand_path(@@cache_file)
-    end
+      def cache_file
+        File.expand_path(@@cache_file)
+      end
 
-    def self.cache
-      @@cache ||= PStore.new(cache_file)
-    end
+      def cache
+        @@cache ||= PStore.new(cache_file)
+      end
 
-    def self.to_cache(hash)
-      self.cache.transcation do
-        hash.each do |key, value|
-          self.cache[key] = value
+      def to_cache(hash)
+        cache.transcation do
+          hash.each do |key, value|
+            cache[key] = value
+          end
         end
       end
-    end
 
-    def self.from_cache(keys)
-      values = []
-      self.cache.transaction do
-        keys.each do |key|
-          values.push(self.cache[key])
+      def from_cache(keys)
+        values = []
+        cache.transaction do
+          keys.each do |key|
+            values.push(cache[key])
+          end
         end
+        values
       end
-      values
-    end
+    end #class << self
 
     class Assignment
       require 'nokogiri'
@@ -349,98 +352,100 @@ module Typingpool
       require 'nokogiri'
       require 'set'
 
-      def self.id_at
-        @@id_at ||= 'typingpool_project_id'
-      end
-
-      def self.url_at
-        @@url_at ||= 'typingpool_url'
-      end
-
-      def self.cached_or_new(hit, is_full_hit=false)
-        r=nil
-        if r = self.from_cache(hit.id)
-          puts "DEBUG from_cache"
-        else
-          r = self.new(hit, is_full_hit)
-          puts "DEBUG from_new"
+      class << self
+        def id_at
+          @@id_at ||= 'typingpool_project_id'
         end
-        r
-      end
 
-      def self.from_cache(hit_id, id_at=self.id_at, url_at=self.url_at)
-        Amazon.cache.transaction do
-          Amazon.cache[self.cache_key(hit_id, id_at, url_at)] 
+        def url_at
+          @@url_at ||= 'typingpool_url'
         end
-      end
 
-      def self.delete_cache(hit_id, id_at=self.id_at, url_at=self.url_at)
-        Amazon.cache.transaction do
-          cached = Amazon.cache[self.cache_key(hit_id, id_at, url_at)]
-          cached.delete unless cached.nil?
-        end
-      end
-
-      def self.cache_key(hit_id, id_at=self.id_at, url_at=self.url_at)
-        "RESULT///#{hit_id}///#{url_at}///#{id_at}"
-      end
-
-      def self.all_approved
-        results=[]
-        i=0
-        begin
-          i += 1
-          page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.map{|id| RTurk::Hit.new(id) }.map{|hit| self.cached_or_new(hit) }
-          filtered_results = page_results.select do |result| 
-            begin
-              result.approved? && result.ours? 
-            rescue RestClient::ServiceUnavailable => e
-              warn "Warning: Service unavailable error, skipped HIT #{result.hit_id}. (Error: #{e})"
-              false
-            end
-          end 
-          page_results.each{|result| result.to_cache }
-          results.push(*filtered_results)
-        end while page_results.length > 0 
-        results
-      end
-
-      def self.all_for_project(id)
-        results = all
-        filtered = results.select{|result| result.ours? && result.project_id == id}
-        results.each{|result| result.to_cache}
-        filtered
-      end
-
-      def self.all_for_hit_type_id(id)
-        results = all
-        filtered = results.select{|result| result.hit.type_id == id}
-        results.each{|result| result.to_cache}
-        filtered
-      end
-
-      def self.all
-        results = []
-        i = 0
-        begin
-          i += 1
-          page = RTurk::SearchHITs.create(:page_number => i)
-          raw_hits = page.xml.xpath('//HIT')
-          page_results=[]
-          page.hits.each_with_index do |hit, i|
-            #We have to jump through hoops because SearchHITs stupidly
-            #throws away annotation data (unlike GetHIT) and also
-            #renames some fields
-            annotation = raw_hits[i].xpath('RequesterAnnotation').inner_text.strip
-            wrapped_hit = Amazon::HIT::FromSearchHITs.new(hit, annotation, raw_hits[i])
-            result = self.cached_or_new(wrapped_hit, true)
-            result.to_cache
-            page_results.push(result)
+        def cached_or_new(hit, is_full_hit=false)
+          r=nil
+          if r = from_cache(hit.id)
+            puts "DEBUG from_cache"
+          else
+            r = new(hit, is_full_hit)
+            puts "DEBUG from_new"
           end
-          results.push(*page_results)
-        end while page_results.length > 0
-        results
-      end
+          r
+        end
+
+        def from_cache(hit_id, id_at=self.id_at, url_at=self.url_at)
+          Amazon.cache.transaction do
+            Amazon.cache[cache_key(hit_id, id_at, url_at)] 
+          end
+        end
+
+        def delete_cache(hit_id, id_at=self.id_at, url_at=self.url_at)
+          Amazon.cache.transaction do
+            cached = Amazon.cache[cache_key(hit_id, id_at, url_at)]
+            cached.delete unless cached.nil?
+          end
+        end
+
+        def cache_key(hit_id, id_at=self.id_at, url_at=self.url_at)
+          "RESULT///#{hit_id}///#{url_at}///#{id_at}"
+        end
+
+        def all_approved
+          results=[]
+          i=0
+          begin
+            i += 1
+            page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.map{|id| RTurk::Hit.new(id) }.map{|hit| cached_or_new(hit) }
+            filtered_results = page_results.select do |result| 
+              begin
+                result.approved? && result.ours? 
+              rescue RestClient::ServiceUnavailable => e
+                warn "Warning: Service unavailable error, skipped HIT #{result.hit_id}. (Error: #{e})"
+                false
+              end
+            end 
+            page_results.each{|result| result.to_cache }
+            results.push(*filtered_results)
+          end while page_results.length > 0 
+          results
+        end
+
+        def all_for_project(id)
+          results = all
+          filtered = results.select{|result| result.ours? && result.project_id == id}
+          results.each{|result| result.to_cache}
+          filtered
+        end
+
+        def all_for_hit_type_id(id)
+          results = all
+          filtered = results.select{|result| result.hit.type_id == id}
+          results.each{|result| result.to_cache}
+          filtered
+        end
+
+        def all
+          results = []
+          i = 0
+          begin
+            i += 1
+            page = RTurk::SearchHITs.create(:page_number => i)
+            raw_hits = page.xml.xpath('//HIT')
+            page_results=[]
+            page.hits.each_with_index do |hit, i|
+              #We have to jump through hoops because SearchHITs stupidly
+              #throws away annotation data (unlike GetHIT) and also
+              #renames some fields
+              annotation = raw_hits[i].xpath('RequesterAnnotation').inner_text.strip
+              wrapped_hit = Amazon::HIT::FromSearchHITs.new(hit, annotation, raw_hits[i])
+              result = cached_or_new(wrapped_hit, true)
+              result.to_cache
+              page_results.push(result)
+            end
+            results.push(*page_results)
+          end while page_results.length > 0
+          results
+        end
+      end #class << self
 
       attr_reader :hit_id
       def initialize(hit, is_full_hit=false)
@@ -706,19 +711,20 @@ puts "DEBUG re-fetching HIT to get question"
     end #Result
 
     class HIT
-      #Extend RTurk to handle external questions (see
-      #CreateHIT and Amazon::HIT::Question
-      #class below)
-      def self.create(*args, &blk)
-        response = CreateHIT.create(*args, &blk)
-        RTurk::Hit.new(response.hit_id, response)
-      end
+      class << self
+        #Extend RTurk to handle external questions (see
+        #CreateHIT and Amazon::HIT::Question
+        #class below)
+        def create(*args, &blk)
+          response = CreateHIT.create(*args, &blk)
+          RTurk::Hit.new(response.hit_id, response)
+        end
 
-      #Convenience method for new RTurk HITs that do what you want
-      def self.new_full(id)
-        RTurk::Hit.new(id, nil, :include_assignment_summary => true)
-      end
-
+        #Convenience method for new RTurk HITs that do what you want
+        def new_full(id)
+          RTurk::Hit.new(id, nil, :include_assignment_summary => true)
+        end
+      end #class << self
       class FromSearchHITs
         #Wrap RTurk::HITParser objects returned by RTurk::SearchHITs,
         #which are pointlessly and stupidly and subtly different from
@@ -1046,41 +1052,43 @@ puts "DEBUG re-fetching HIT to get question"
         @path = path
       end
 
-      def self.create(name, base_dir, template_dir)
-        base_dir.sub!(/\/$/, '')
-        template_dir.sub!(/\/$/, '')
-        dest = "#{base_dir}/#{name}"
-        FileUtils.mkdir(dest)
-        FileUtils.cp_r("#{template_dir}/.", dest)
-        local = self.new(dest)
-        local.create_id
-        local
-      end
+      class << self
+        def create(name, base_dir, template_dir)
+          base_dir.sub!(/\/$/, '')
+          template_dir.sub!(/\/$/, '')
+          dest = "#{base_dir}/#{name}"
+          FileUtils.mkdir(dest)
+          FileUtils.cp_r("#{template_dir}/.", dest)
+          local = new(dest)
+          local.create_id
+          local
+        end
 
-      def self.named(string, path)
-        match = Dir.glob("#{path}/*").select{|entry| File.basename(entry) == string }[0]
-        return unless (match && File.directory?(match) && self.ours?(match))
-        return self.new(match) 
-      end
+        def named(string, path)
+          match = Dir.glob("#{path}/*").select{|entry| File.basename(entry) == string }[0]
+          return unless (match && File.directory?(match) && ours?(match))
+          return new(match) 
+        end
 
-      def self.ours?(dir)
-        (Dir.exists?("#{dir}/audio") && Dir.exists?("#{dir}/originals"))
-      end
+        def ours?(dir)
+          (Dir.exists?("#{dir}/audio") && Dir.exists?("#{dir}/originals"))
+        end
 
 
-      def self.etc_file_accessor(*syms)
-        syms.each do |sym|
-          define_method(sym) do
-            read_file(File.join('etc',"#{sym.to_s}.txt"))
-          end
-          define_method("#{sym.to_s}=".to_sym) do |value|
-            write_file(File.join('etc',"#{sym.to_s}.txt"), value)
-          end
-          define_method("delete_#{sym.to_s}".to_sym) do
-            delete_file(File.join('etc',"#{sym.to_s}.txt"))
+        def etc_file_accessor(*syms)
+          syms.each do |sym|
+            define_method(sym) do
+              read_file(File.join('etc',"#{sym.to_s}.txt"))
+            end
+            define_method("#{sym.to_s}=".to_sym) do |value|
+              write_file(File.join('etc',"#{sym.to_s}.txt"), value)
+            end
+            define_method("delete_#{sym.to_s}".to_sym) do
+              delete_file(File.join('etc',"#{sym.to_s}.txt"))
+            end
           end
         end
-      end
+      end #class << self
 
       etc_file_accessor :subtitle, :amazon_hit_type_id, :audio_is_on_www
 
