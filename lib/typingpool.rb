@@ -66,7 +66,7 @@ module Typingpool
       end
 
       def file(path=File.expand_path(default_file))
-        self.new(YAML.load(IO.read((path))))
+        Root.new(YAML.load(IO.read((path))))
       end
 
       def define_reader(*syms)
@@ -118,8 +118,6 @@ module Typingpool
       end
     end #class << self
 
-    local_path_reader :local, :app, :cache
-
     def to_hash
       @param
     end
@@ -151,86 +149,90 @@ module Typingpool
       return match[1]
     end
 
-    class SFTP < Config
-      never_ends_in_slash_reader :path, :url
-    end
+    class Root < Config
+      local_path_reader :local, :app, :cache, :templates
 
-    class AWS < Config
-      never_ends_in_slash_reader :url
-    end
-
-    class Assignments < Config
-
-      local_path_reader :templates
-      time_accessor :deadline, :approval, :lifetime
-
-      def qualify
-        self.qualify = @param['qualify'] || [] if not(@qualify)
-        @qualify
+      class SFTP < Config
+        never_ends_in_slash_reader :path, :url
       end
 
-      def qualify=(specs)
-        @qualify = specs.map{|spec| Qualification.new(spec)}
+      class AWS < Config
+        never_ends_in_slash_reader :url
       end
 
-      def add_qualification(spec)
-        self.qualify.push(Qualification.new(spec))
-      end
+      class Assignments < Config
 
-      def keywords
-        @param['keywords'] ||= []
-      end
+        local_path_reader :templates
+        time_accessor :deadline, :approval, :lifetime
 
-      def keywords=(array)
-        @param['keywords'] = array
-      end
-
-      class Qualification < Config
-        def initialize(spec)
-          @raw = spec
-          to_arg #make sure value parses
+        def qualify
+          self.qualify = @param['qualify'] || [] if not(@qualify)
+          @qualify
         end
 
-        def to_s
-          @raw
+        def qualify=(specs)
+          @qualify = specs.map{|spec| Qualification.new(spec)}
         end
 
-        def to_arg
-          [type, opts]
+        def add_qualification(spec)
+          self.qualify.push(Qualification.new(spec))
         end
 
-        def type
-          type = @raw.split(/\s+/)[0].to_sym
-          RTurk::Qualification::TYPES[type] or raise Error::Argument, "Unknown qualification type '#{type.to_s}'"
-          type
+        def keywords
+          @param['keywords'] ||= []
         end
 
-        def opts
-          args = @raw.split(/\s+/)
-          if (args.size > 3) || (args.size < 2)
-            raise Error::Argument, "Unexpected number of qualification tokens: #{@raw}"
+        def keywords=(array)
+          @param['keywords'] = array
+        end
+
+        class Qualification < Config
+          def initialize(spec)
+            @raw = spec
+            to_arg #make sure value parses
           end
-          args.shift
-          comparator(args[0]) or raise Error::Argument, "Unknown comparator '#{args[0]}' in qualification '#{@raw}'"
-          value = 1
-          value = args[1] if args.size == 2
-          return {comparator(args[0]) => value}
-        end
 
-        def comparator(value)
-          Hash[
-               '>' => :gt,
-               '>=' => :gte,
-               '<' => :lt,
-               '<=' => :lte,
-               '==' => :eql,
-               '!=' => :not,
-               'true' => :eql,
-               'exists' => :exists
-              ][value]
-        end
-      end #Qualification
-    end #Assignments
+          def to_s
+            @raw
+          end
+
+          def to_arg
+            [type, opts]
+          end
+
+          def type
+            type = @raw.split(/\s+/)[0].to_sym
+            RTurk::Qualification::TYPES[type] or raise Error::Argument, "Unknown qualification type '#{type.to_s}'"
+            type
+          end
+
+          def opts
+            args = @raw.split(/\s+/)
+            if (args.size > 3) || (args.size < 2)
+              raise Error::Argument, "Unexpected number of qualification tokens: #{@raw}"
+            end
+            args.shift
+            comparator(args[0]) or raise Error::Argument, "Unknown comparator '#{args[0]}' in qualification '#{@raw}'"
+            value = 1
+            value = args[1] if args.size == 2
+            return {comparator(args[0]) => value}
+          end
+
+          def comparator(value)
+            Hash[
+                 '>' => :gt,
+                 '>=' => :gte,
+                 '<' => :lt,
+                 '<=' => :lte,
+                 '==' => :eql,
+                 '!=' => :not,
+                 'true' => :eql,
+                 'exists' => :exists
+                ][value]
+          end
+        end #Qualification
+      end #Assignments
+    end #Root
   end #Config
 
   class Amazon
@@ -1343,6 +1345,16 @@ puts "DEBUG re-fetching HIT to get question"
       end
     end #Transcription::Chunk 
   end #Transcription 
+  class Template
+    def initialize(rel_path, config=Config.file)
+      @rel_path = rel_path
+      @config = config
+    end
+    def path
+      look_in = [File.join(config.app, 'templates')]
+
+    end
+  end #Template
   require 'ostruct'
   class ErbBinding < OpenStruct
     def get_binding
