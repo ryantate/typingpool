@@ -127,15 +127,17 @@ else
   abort "Required param 'local' missing from config file '#{config.path}'" if config.local.to_s.empty?
   options[:project] = "#{config.local}/#{options[:project]}"
 end
-if not(File.exists?(options[:template]))
-  abort "Required param 'app' missing from config file '#{config.app}'" if config.app.to_s.empty?
-  options[:template] = "#{config.app}/templates/assignment/#{options[:template]}"
-  options[:template] += '.html.erb' if not(File.file?(options[:template]))
+abort "No template specified" if not(options[:template])
+begin
+  template = Typingpool::Template::Assignment.new(options[:template], config)
+rescue Typingpool::Error::File::NotExists => e
+  abort "Couldn't find the template dir in your config file: #{e}"
+rescue Typingpool::Error => e
+  abort "Couldn't find your template: #{e}"
 end
-%w(project template).each do |arg|
+%w(project).each do |arg|
   abort "No #{arg} at #{options[arg.to_sym]}" if not(File.exists?(options[arg.to_sym]))
 end
-abort "Template '#{options[:template]}' is not a file" if not(File.file?(options[:template]))
 abort "Project '#{options[:project]}' is not a directory" if not(File.directory?(options[:project]))
 
 project = Typingpool::Project.new(File.basename(options[:project]), config)
@@ -153,7 +155,6 @@ if not(project.local.audio_is_on_www)
   end
 end
 
-template = IO.read(options[:template])
 hits = []
 amazon_hit_type_id = nil
 $stderr.puts 'Assigning'
@@ -166,8 +167,7 @@ assignments.each do |assignment|
       next
     end
   end
-  xhtmlf = ERB.new(template, nil, '<>').result(Typingpool::ErbBinding.new(assignment).send(:get_binding))
-  amazon_assignment = Typingpool::Amazon::Assignment.new(xhtmlf, config.assignments)
+  amazon_assignment = Typingpool::Amazon::Assignment.new(template.render(assignment), config.assignments)
   begin
     hit = amazon_assignment.assign
   rescue  RTurk::RTurkError => e

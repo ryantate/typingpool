@@ -96,9 +96,15 @@ projects.each do |key, project|
   File.delete("#{project.local.path}/#{filename[:working]}") if File.exists?("#{project.local.path}/#{filename[:working]}")
   done = (transcription.to_a.length == project.local.audio_chunks.length)
   out_file = done ? filename[:done] : filename[:working]
-  template ||= IO.read("#{project.config.app}/templates/transcript.html.erb")
+  begin
+    template ||= Typingpool::Template.new('transcript', options[:config])
+  rescue Typingpool::Error::File::NotExists => e
+    abort "Couldn't find the template dir in your config file: #{e}"
+  rescue Typingpool::Error => e
+    abort "There was a fatal error with the transcript template: #{e}"
+  end
   File.open("#{project.local.path}/#{out_file}", 'w') do |out|
-    out << ERB.new(template, nil, '<>').result(binding())
+    out << template.render({:transcription => transcription})
   end
   $stderr.puts "Wrote #{out_file} to local folder #{project.name}."
   if not(project.local.amazon_hit_type_id)

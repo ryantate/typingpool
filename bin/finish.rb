@@ -93,7 +93,7 @@ if project
   STDERR.puts "Removing audio from #{project.remote.host}"
   begin
     project.updelete_audio
-  rescue Typingpool::Error::Remote => e
+  rescue Typingpool::Error::File::Remote => e
     if e.to_s.match(/no such file/)
       STDERR.puts "  No files to remove - may have been removed previously"
     else

@@ -4,12 +4,15 @@ module Typingpool
     class Argument < Error
       class Format < Argument; end
     end
-    class Remote < Error
-      class SFTP < Remote; end
-      class S3 < Remote
-        class Credentials < S3; end
-      end #S3
-    end #Remote
+    class File < Error
+      class NotExists < File; end
+      class Remote < File
+        class SFTP < Remote; end
+        class S3 < Remote
+          class Credentials < S3; end
+        end #S3
+      end #Remote
+    end #File
     class Amazon < Error
       class UnreviewedContent < Amazon; end
     end #Amazon
@@ -161,7 +164,6 @@ module Typingpool
       end
 
       class Assignments < Config
-
         local_path_reader :templates
         time_accessor :deadline, :approval, :lifetime
 
@@ -668,7 +670,6 @@ puts "DEBUG fetching external question"
           class WithoutQuestion < FromHIT
             def external_question_url
               unless @checked_question
-puts "DEBUG re-fetching HIT to get question"
                 self.external_question_url = at_amazon.xml
                 @checked_question = true
               end
@@ -909,9 +910,9 @@ puts "DEBUG re-fetching HIT to get question"
         def initialize(name, aws_config)
           @name = name
           @config = aws_config
-          @key = @config.key or raise Error::Remote::S3, "Missing AWS key in config"
-          @secret = @config.secret or raise Error::Remote::S3, "Missing AWS secret in config"
-          @bucket = @config.bucket or raise Error::Remote::S3, "Missing AWS bucket in config"
+          @key = @config.key or raise Error::File::Remote::S3, "Missing AWS key in config"
+          @secret = @config.secret or raise Error::File::Remote::S3, "Missing AWS secret in config"
+          @bucket = @config.bucket or raise Error::File::Remote::S3, "Missing AWS bucket in config"
           @url = @config.url || default_url
         end
 
@@ -948,9 +949,9 @@ puts "DEBUG re-fetching HIT to get question"
               results.push(yield(file, i))
             rescue AWS::S3::S3Exception => e
               if e.match(/AWS::S3::SignatureDoesNotMatch/)
-                raise Error::Remote::S3::Credentials, "S3 operation failed with a signature error. This likely means your AWS key or secret is wrong. Error: #{e}"
+                raise Error::File::Remote::S3::Credentials, "S3 operation failed with a signature error. This likely means your AWS key or secret is wrong. Error: #{e}"
               else
-                raise Error::Remote::S3, "Your S3 operation failed with an Amazon error: #{e}"
+                raise Error::File::Remote::S3, "Your S3 operation failed with an Amazon error: #{e}"
               end #if    
             end #begin
           end #files.each
@@ -985,9 +986,9 @@ puts "DEBUG re-fetching HIT to get question"
         def initialize(name, sftp_config)
           @name = name
           @config = sftp_config   
-          @user = @config.user or raise Error::Remote::SFTP, "No SFTP user specified in config"
-          @host = @config.host or raise Error::Remote::SFTP, "No SFTP host specified in config"
-          @url = @config.url or raise Error::Remote::SFTP, "No SFTP url specified in config"
+          @user = @config.user or raise Error::File::Remote::SFTP, "No SFTP user specified in config"
+          @host = @config.host or raise Error::File::Remote::SFTP, "No SFTP host specified in config"
+          @url = @config.url or raise Error::File::Remote::SFTP, "No SFTP url specified in config"
           @path = @config.path || ''
           @path += '/' if @path
         end
@@ -999,7 +1000,7 @@ puts "DEBUG re-fetching HIT to get question"
               connection.loop
             end
           rescue Net::SSH::AuthenticationFailed
-            raise Error::Remote::SFTP, "SFTP authentication failed: #{$?}"
+            raise Error::File::Remote::SFTP, "SFTP authentication failed: #{$?}"
           end
         end
 
@@ -1024,7 +1025,7 @@ puts "DEBUG re-fetching HIT to get question"
               file_to_url(dest)
             end
           rescue Net::SFTP::StatusException => e
-            raise Error::Remote::SFTP, "SFTP upload failed: #{e.description}"
+            raise Error::File::Remote::SFTP, "SFTP upload failed: #{e.description}"
           end
         end
 
@@ -1040,7 +1041,7 @@ puts "DEBUG re-fetching HIT to get question"
           failures = requests.reject{|request| request.response.ok?}
           if not(failures.empty?)
             summary = failures.map{|request| request.response.to_s}.join('; ')
-            raise Error::Remote::SFTP, "SFTP removal failed: #{summary}"
+            raise Error::File::Remote::SFTP, "SFTP removal failed: #{summary}"
           end
         end
       end #SFTP
@@ -1143,7 +1144,7 @@ puts "DEBUG re-fetching HIT to get question"
       end
 
       def read_csv(base_name)
-        csv = read_file("csv/#{base_name}.csv") or raise "No file #{base_name} in #{@path}/csv"
+        csv = read_file("csv/#{base_name}.csv") or raise Error::File::NotExists, "No file #{base_name} in #{@path}/csv"
         arys = CSV.parse(csv)
         headers = arys.shift
         arys.map{|row| Hash[*headers.zip(row).flatten]}
@@ -1203,7 +1204,7 @@ puts "DEBUG re-fetching HIT to get question"
       class File
         attr_reader :path
         def initialize(path)
-          raise "No single quotes allowed in file names" if path.match(/'/)
+          raise Error::File, "No single quotes allowed in file names" if path.match(/'/)
           @path = path
         end
 
@@ -1304,7 +1305,7 @@ puts "DEBUG re-fetching HIT to get question"
       def url=(url)
         #http://ryantate.com/transfer/Speech.01.00.mp3
         #OR, obfuscated: http://ryantate.com/transfer/Speech.01.00.ISEAOMB.mp3
-        matches = /.+\/(([\w\/\-]+)\.(\d+)\.(\d\d)(\.\w+)?\.[^\/\.]+)/.match(url) or raise "Unexpected format to url '#{url}'"
+        matches = /.+\/(([\w\/\-]+)\.(\d+)\.(\d\d)(\.\w+)?\.[^\/\.]+)/.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
         @url = matches[0]
         @filename = matches[1]
         @title = matches[2] unless @title
@@ -1346,19 +1347,59 @@ puts "DEBUG re-fetching HIT to get question"
     end #Transcription::Chunk 
   end #Transcription 
   class Template
-    def initialize(rel_path, config=Config.file)
-      @rel_path = rel_path
-      @config = config
-    end
-    def path
-      look_in = [File.join(config.app, 'templates')]
+    require 'erb'
+    require 'ostruct'
 
+    def initialize(path, config=Config.file)
+      @path = path
+      @config = config
+      validate_config
+      full_path or raise Error, "Could not find template path '#{path}' in #{look_in.join(',')}"
     end
+
+    def render(hash)
+      ERB.new(IO.read(full_path), nil, '<>').result(ErbBinding.new(hash).send(:get_binding))
+    end
+
+    def full_path
+      look_in.each do |dir|
+        extensions.each do |ext| 
+          path = File.join(dir, [@path, ext].join)
+         if File.exists?(path) && File.file?(path)
+            return path
+          end
+        end
+      end
+      return
+    end
+
+    def look_in
+      look_in = [File.join(@config.app, 'templates'), '']
+      look_in.unshift(@config.templates) if @config.templates
+      look_in
+    end
+
+    def extensions
+      ['.html.erb', '']
+    end
+
+    def validate_config
+      if @config.templates
+        File.exists?(@config.templates) or raise Error::File::NotExists, "No such templates dir: #{@config.templates}"
+        File.directory?(@config.templates) or raise Error::File::NotExists, "Templates dir not a directory: #{@config.templates}"
+      end
+    end
+
+    class Assignment < Template
+      def look_in
+        super.map{|dir| dir.empty? ? dir : File.join(dir, 'assignment')}
+      end
+    end #Assignment
+
+    class ErbBinding < OpenStruct
+      def get_binding
+        binding()
+      end
+    end #ErbBinding
   end #Template
-  require 'ostruct'
-  class ErbBinding < OpenStruct
-    def get_binding
-      binding()
-    end
-  end #ErbBinding
 end #Typingpool
