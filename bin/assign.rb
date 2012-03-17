@@ -88,7 +88,7 @@ configs = [Typingpool::Config.file]
       configs.push(new_config)
     end
     opts.on('--help', 'Display this screen') do
-      $stderr.puts opts
+      STDERR.puts opts
       exit
     end
   end
@@ -143,23 +143,22 @@ abort "Project '#{options[:project]}' is not a directory" if not(File.directory?
 project = Typingpool::Project.new(File.basename(options[:project]), config)
 
 abort "Not a project directory at '#{options[:project]}'" if not(project.local)
-abort "No data in assignment CSV" if project.local.read_csv('assignment').empty?
+assignments = project.local.read_csv('assignment')
+abort "No data in assignment CSV" if assignments.empty?
 abort "No AWS key+secret in config" if not(config.aws && config.aws.key && config.aws.secret)
 
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 #we'll need to re-upload audio if we ran tp-finish on the project
 if not(project.local.audio_is_on_www)
-  project.upload_audio(project.local.audio_chunks, project.local.audio_chunks_online) do |file, as, remote|
+  project.upload_audio(project.local.audio_chunks, project.local.audio_remote_names) do |file, as, remote|
     puts "Uploading #{File.basename(file)} to #{remote.host}/#{remote.path} as #{as}"
   end
 end
 
 hits = []
-amazon_hit_type_id = nil
-$stderr.puts 'Assigning'
-assignments = project.local.read_csv('assignment')
-assignments.each do |assignment|
+STDERR.puts 'Assigning'
+project.local.each_csv('assignment') do |assignment|
   next if assignment['transcription']
   if assignment['hit_expires_at'].to_s.match(/\S/) #has been assigned previously
     if ((Time.parse(assignment['hit_expires_at']) + assignment['hit_assignments_duration'].to_i) > Time.now)
@@ -171,25 +170,16 @@ assignments.each do |assignment|
   begin
     hit = amazon_assignment.assign
   rescue  RTurk::RTurkError => e
-    $stderr.puts "Mechanical Turk error: #{e}"
+    STDERR.puts "Mechanical Turk error: #{e}"
     unless hits.empty?
-      $stderr.puts "Rolling back assignments"
+      STDERR.puts "Rolling back assignments"
       hits.each{|hit| hit.disable!}
     end
     abort
   end
   hits.push(hit)
-  amazon_hit_type_id ||= hit.type_id
-  if not(hit.type_id == amazon_hit_type_id)
-    $stderr.puts "Error: amazon id mismatch (#{hit.type_id} vs. #{amazon_hit_type_id})"
-    $stderr.puts "Rolling back assignments"
-    hits.each{|hit| hit.disable!}
-    abort
-  end
   assignment['hit_id'] = hit.id
   assignment['hit_expires_at'] = hit.expires_at.to_s
   assignment['hit_assignments_duration'] = hit.assignments_duration.to_s
-  $stderr.puts "Assigned #{hits.size} / #{assignments.size}"
+  STDERR.puts "Assigned #{hits.size} / #{assignments.size}"
 end
-project.local.amazon_hit_type_id = amazon_hit_type_id
-project.local.write_csv('assignment', assignments)

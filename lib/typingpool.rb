@@ -239,6 +239,7 @@ module Typingpool
 
   class Amazon
     require 'rturk'
+    require 'pstore'
     @@did_setup = false
     @@cache_file = '~/.audibleturk.cache'
 
@@ -352,11 +353,25 @@ module Typingpool
 
 
     class Result
-      require 'pstore'
-      require 'nokogiri'
       require 'set'
 
       class << self
+        def create(question, config_assign)
+          RTurk::Hit.create(:title => config_assign.title || question.title) do |hit|
+            hit.description = config_assign.description || question.description
+            hit.question(question.url)
+            hit.note = question.annotation or raise Error, "Missing annotation from question"
+            hit.reward = config_assign.reward or raise Error, "Missing reward config"
+            hit.assignments = config_assign.copies or raise Error, "Missing copies config"
+            hit.lifetime = config_assign.lifetime or raise Error, "Missing lifetime config"
+            hit.duration = config_assign.deadline or raise Error, "Missing deadline config"
+            hit.auto_approval = config_assign.approval or raise Error, "Missing approval config"
+            hit.keywords = config_assign.keywords if config_assign.keywords
+            hit.currency = config_assign.currency if config_assign.currency
+            config_assign.qualifications.each{|q| hit.qualifications.add(*q.to_arg)} if config_assign.qualifications
+          end
+        end
+
         def id_at
           @@id_at ||= 'typingpool_project_id'
         end
@@ -796,6 +811,33 @@ puts "DEBUG fetching external question"
         end
       end #Question
     end #HIT
+    class Question
+      require 'nokogiri'
+      require 'uri'
+
+      attr_reader :url, :html
+
+      def initialize(url, html)
+        @url = url
+        @html = html
+      end
+
+      def annotation
+        URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').map{|e| [e['name'], e['value']]}.flatten])
+      end
+
+      def title
+        noko.css('title')[0].content
+      end
+
+      def description
+        noko.css('#description')[0].content
+      end
+
+      def noko(html=@html)
+        Nokogiri::HTML(html, nil, 'US-ASCII')
+      end
+    end #Question
   end #Amazon
 
   #RTurk only handles external questions, so we do some subclassing
@@ -810,6 +852,7 @@ puts "DEBUG fetching external question"
   end #CreateHIT
 
   class Project
+    require 'stringio'
     attr_reader :interval, :bitrate
     attr_accessor :name, :config
     def initialize(name, config=Config.file)
@@ -826,7 +869,7 @@ puts "DEBUG fetching external question"
     end
 
     def create_local(basedir=@config.local)
-      Local.create(@name, basedir, "#{@config.app}/templates/project")
+      Local.create(@name, basedir, File.join(@config.app, 'templates', 'project'))
     end
 
 
@@ -854,26 +897,52 @@ puts "DEBUG fetching external question"
     end
 
     def merge_audio(files=convert_audio)
-      Audio.merge(files, "#{local.final_audio_dir}/#{@name}.all.mp3")
+      Audio.merge(files, File.join(local.final_audio_dir, "#{@name}.all.mp3"))
     end
 
     def split_audio(file)
       file.split(interval_as_min_dot_sec, @name)
     end
 
-    def upload_audio(files=local.audio_chunks, as=audio_chunks_for_online(files), &progress)
-      urls = remote.put(files, as){|file, as| progress.yield(file, as, remote) if progress}
+    def upload_audio(files=local.audio_chunks, as=create_audio_remote_names(files), &progress)
+      urls = remote.put(files.map{|file| File.new(file.to_s) }, as){|file, as| progress.yield(file, as, remote) if progress}
       local.audio_is_on_www = urls.join("\n")
       urls
     end
 
-      def audio_chunks_for_online(files=local.audio_chunks)
-        files.map{|file| File.basename(file, '.*') + ".#{psuedo_random_uppercase_string}" + File.extname(file) }
-      end
+    def create_audio_remote_names(files=local.audio_chunks)
+      create_remote_file_basenames(files).map{|name| [name, '.mp3'].join }
+    end
 
-    def updelete_audio(files=local.audio_chunks_online, &progress)
+    def updelete_audio(files=local.audio_remote_names, &progress)
       remote.remove(files)
       local.delete_audio_is_on_www
+    end
+
+    def upload_assignments(template, assignments=local.read_csv('assignment'), as=create_assignment_remote_names)
+      urls = remote.put(assignments.map{|assignment| StringIO.new(template.render(assignment)) }, as) do |file, as|
+        yield(file, as, remote) if block_given?
+      end
+      local.each_csv('assignment'){|assignment, i| assignment['assignment_url'] = urls[i] }
+      urls
+    end
+
+    def updelete_assignments(files=local.assignment_remote_names)
+      remote.remove(files)
+    end
+
+    def create_assignment_remote_names(audio_files=local.audio_chunks)
+      create_remote_file_basenames(audio_files).map{|name| [name, '.html'].join }
+    end
+
+    def create_remote_file_basenames(from=local.audio_chunks)
+      from.map do |file|
+        [File.basename(file, '.*'), local.id, psuedo_random_uppercase_string].join('_')
+      end
+    end
+
+    def psuedo_random_uppercase_string(length=6)
+      (0...length).map{(65 + rand(25)).chr}.join
     end
 
     def create_assignment_csv(remote_files, unusual_words=[], voices=[])
@@ -886,17 +955,12 @@ puts "DEBUG fetching external question"
       end
       return assignment_path
     end
-
-    def psuedo_random_uppercase_string(length=6)
-      (0...length).map{(65 + rand(25)).chr}.join
-    end
-
     class Remote
       attr_accessor :name
       def self.from_config(name, config)
         if config.sftp
           SFTP.new(name, config.sftp)
-        elsif config.aws && config.aws['bucket']
+        elsif config.aws && config.aws.bucket
           S3.new(name, config.aws)
         else
           raise Error, "No valid upload params found in config file (SFTP or AWS info)"
@@ -918,11 +982,15 @@ puts "DEBUG fetching external question"
 
         def connect
           AWS::S3::Base.establish_connection!(
-                                              :access_key_id     => @key,
+                                              :access_key_id => @key,
                                               :secret_access_key => @secret,
                                               :persistent => false,
                                               :use_ssl => true
                                               )
+        end
+
+        def disconnect
+          AWS::S3::Base.disconnect
         end
 
         def make_bucket
@@ -941,12 +1009,12 @@ puts "DEBUG fetching external question"
           URI.parse(@url).path
         end
 
-        def batch(files)
+        def batch(io_streams)
           results = []
-          files.each_with_index do |file, i|
+          io_streams.each_with_index do |stream, i|
             connect if i == 0
             begin
-              results.push(yield(file, i))
+              results.push(yield(stream, i))
             rescue AWS::S3::S3Exception => e
               if e.match(/AWS::S3::SignatureDoesNotMatch/)
                 raise Error::File::Remote::S3::Credentials, "S3 operation failed with a signature error. This likely means your AWS key or secret is wrong. Error: #{e}"
@@ -955,20 +1023,21 @@ puts "DEBUG fetching external question"
               end #if    
             end #begin
           end #files.each
+          disconnect unless io_streams.empty?
           results
         end
 
-        def put(files, as=files.map{|file| File.basename(file)})
-          batch(files) do |orig, i|
-            new = as[i]
-            yield(orig, new) if block_given?
+        def put(io_streams, as=io_streams.map{|file| File.basename(file)})
+          batch(io_streams) do |stream, i|
+            dest = as[i]
+            yield(stream, dest) if block_given?
             begin
-              AWS::S3::S3Object.store(new, open(orig), @bucket,  :access => :public_read)
+              AWS::S3::S3Object.store(dest, stream, @bucket,  :access => :public_read)
             rescue AWS::S3::NoSuchBucket
               make_bucket
               retry
             end
-            "#{@url}/#{new}"
+            "#{@url}/#{dest}"
           end #batch
         end
 
@@ -1014,14 +1083,14 @@ puts "DEBUG fetching external question"
           return results
         end
 
-        def put(files, as=files.map{|file| File.basename(file)})
+        def put(io_streams, as=io_streams.map{|file| File.basename(file)})
           begin
             i = 0
-            batch(files) do |file, connection|
+            batch(io_streams) do |stream, connection|
               dest = as[i]
               i += 1
-              yield(file, dest) if block_given?
-              connection.upload(file, "#{@path}#{dest}")
+              yield(stream, dest) if block_given?
+              connection.upload(stream, "#{@path}#{dest}")
               file_to_url(dest)
             end
           rescue Net::SFTP::StatusException => e
@@ -1115,12 +1184,16 @@ puts "DEBUG fetching external question"
         Dir.glob("#{final_audio_dir}/*.mp3").reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
       end
 
-      def audio_chunks_online
-        audio_urls.map{|url| File.basename(URI.parse(url).path)}
+      def audio_remote_names
+        read_csv('assignment').map{|assignment| url_basename(assignment['url']) }
       end
 
-      def audio_urls
-        read_csv('assignment').map{|row_hash| row_hash['url'] }
+      def url_basename(url)
+        File.basename(URI.parse(url).path)
+      end
+
+      def assignment_remote_names
+        read_csv('assignment').map{|assignment| url_basename(assignment['assignment_url']) }
       end
 
        def id
@@ -1144,21 +1217,25 @@ puts "DEBUG fetching external question"
       end
 
       def read_csv(base_name)
-        csv = read_file("csv/#{base_name}.csv") or raise Error::File::NotExists, "No file #{base_name} in #{@path}/csv"
+        csv = read_file(File.join('csv', "#{base_name}.csv")) or raise Error::File::NotExists, "No file #{base_name} in #{@path}/csv"
         arys = CSV.parse(csv)
         headers = arys.shift
         arys.map{|row| Hash[*headers.zip(row).flatten]}
       end
 
       def write_csv(base_name, hashes, headers=hashes[0].keys)
-        CSV.open("#{@path}/csv/#{base_name}.csv", 'wb') do |csv|
+        CSV.open(File.join(@path, 'csv', "#{base_name}.csv"), 'wb') do |csv|
           csv << headers
           hashes.each{|hash| csv << headers.map{|header| hash[header] } }
         end
       end
 
+      def each_csv(base_name)
+        write_csv(base_name, read_csv(base_name).each_with_index{|hash,i | yield(hash, i)})
+      end
+
       def read_file(relative_path)
-        path = "#{@path}/#{relative_path}"
+        path = File.join(@path, relative_path)
         if File.exists?(path)
           return IO.read(path)
         else
@@ -1167,13 +1244,13 @@ puts "DEBUG fetching external question"
       end
 
       def write_file(relative_path, data)
-        File.open( "#{@path}/#{relative_path}", 'w') do |out|
+        File.open( File.join(@path, relative_path), 'w') do |out|
           out << data
         end
       end
 
       def delete_file(relative_path)
-        path = "#{@path}/#{relative_path}"
+        path = File.join(@path, relative_path)
         if File.exists?(path)
           File.delete(path)
         else
@@ -1236,6 +1313,11 @@ puts "DEBUG fetching external question"
             Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{base_name}.@m.@s", ::File.basename(@path)) 
           end
           Dir.entries(dir).select{|entry| ::File.file?("#{dir}/#{entry}")}.reject{|file| file.match(/^\./)}.reject{|file| file.eql?(::File.basename(@path))}.map{|file| self.class.new("#{dir}/#{file}")}
+        end
+
+        def offset
+          match = ::File.basename(@path).match(/\d+\.\d\d\b/)
+          return match[0] if match
         end
       end #File
     end #Audio

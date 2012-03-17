@@ -22,7 +22,7 @@ OptionParser.new do |commands|
     options[:fixture] = fixture
   end
   commands.on('--help', "Display this screen") do
-    $stderr.puts commands
+    STDERR.puts commands
     exit
   end
 end.parse!
@@ -45,13 +45,13 @@ filename = {
   :working => 'transcript_in_progress.html'
 }
 
-$stderr.puts "Collecting results from Amazon"
+STDERR.puts "Collecting results from Amazon"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
 results = Typingpool::Amazon::Result.all_approved
 #Only pay attention to results that have a local folder waiting to receive them:
 projects = {}
 need = {}
-$stderr.puts "Looking for local project folders to receive results" unless results.empty?
+STDERR.puts "Looking for local project folders to receive results" unless results.empty?
 results.each do |result| 
   key = result.project_id
   if need[key]
@@ -74,15 +74,13 @@ end
 template = nil
 projects.each do |key, project|
   results_by_url = Hash[ *need[key].map{|result| [result.url, result] }.flatten ]
-  assignments = project.local.read_csv('assignment')
-  assignments.each do |assignment|
+  project.local.each_csv('assignment') do |assignment|
     result = results_by_url[assignment['url']] or next
     next if assignment['transcription']
     assignment['transcription'] = result.transcription.body
     assignment['worker'] = result.transcription.worker
     assignment['hit_id'] = result.hit_id
   end
-  project.local.write_csv('assignment', assignments)
   transcription_chunks = project.local.read_csv('assignment').select{|assignment| assignment['transcription']}.map do |assignment|
     chunk = Typingpool::Transcription::Chunk.new(assignment['transcription'])
     chunk.url = assignment['url']
@@ -106,13 +104,7 @@ projects.each do |key, project|
   File.open("#{project.local.path}/#{out_file}", 'w') do |out|
     out << template.render({:transcription => transcription})
   end
-  $stderr.puts "Wrote #{out_file} to local folder #{project.name}."
-  if not(project.local.amazon_hit_type_id)
-    amazon_hit_type_id = need[key].first.hit.type_id
-    if need[key].select{|result| result.hit.type_id == amazon_hit_type_id}.size == need[key].size
-      project.local.amazon_hit_type_id = amazon_hit_type_id
-    end
-  end
+  STDERR.puts "Wrote #{out_file} to local folder #{project.name}."
 end
 
 if options[:fixture]

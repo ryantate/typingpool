@@ -49,7 +49,6 @@ class TestTpAssign < Typingpool::Test::Script
       assign_time = Time.now - assigning_started
       config = config_from_dir(dir)
       project = temp_tp_dir_project(dir)
-      assert_not_nil(project.local.amazon_hit_type_id)
       setup_amazon(dir)
       results = nil
       assert_nothing_raised{ results = Typingpool::Amazon::Result.all_for_project(project.local.id) }

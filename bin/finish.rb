@@ -81,15 +81,13 @@ if not (fails.empty?)
 end
 #Remove the remote audio files associated with the results and update the assignment.csb associated with the project
 if project 
-  assignments = project.local.read_csv('assignment')
-  assignments.each do |assignment|
+  assignments = project.local.each_csv('assignment') do |assignment|
     if assignment['hit_expires_at'].to_s.match(/\S/)
       #we don't delete the hit_id because we may need it when building
       #the transcript (if the HIT was approved)
       %w(hit_expires_at hit_assignments_duration).each{|key| assignment[key] = nil }
     end
   end
-  project.local.write_csv('assignment', assignments)
   STDERR.puts "Removing audio from #{project.remote.host}"
   begin
     project.updelete_audio
