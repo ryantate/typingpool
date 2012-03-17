@@ -323,14 +323,14 @@ module Typingpool
 
       def question
         Hash[
-         :id => 1, 
-         :overview => to_allowed_xhtml(noko.css('#overview')[0].inner_html),
-         :question => to_allowed_xhtml(noko.css('#question')[0].inner_html)
-        ]
+             :id => 1, 
+             :overview => to_allowed_xhtml(noko.css('#overview')[0].inner_html),
+             :question => to_allowed_xhtml(noko.css('#question')[0].inner_html)
+            ]
       end
 
       def annotation
-          URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').map{|e| [e['name'], e['value']]}.flatten])
+        URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').map{|e| [e['name'], e['value']]}.flatten])
       end
 
       def to_allowed_xhtml(htmlf)
@@ -354,6 +354,7 @@ module Typingpool
 
     class Result
       require 'set'
+      require 'uri'
 
       class << self
         def create(question, config_assign)
@@ -399,8 +400,9 @@ module Typingpool
 
         def delete_cache(hit_id, id_at=self.id_at, url_at=self.url_at)
           Amazon.cache.transaction do
-            cached = Amazon.cache[cache_key(hit_id, id_at, url_at)]
-            cached.delete unless cached.nil?
+            key = cache_key(hit_id, id_at, url_at)
+            cached = Amazon.cache[key]
+            Amazon.cache.delete(key) unless cached.nil?
           end
         end
 
@@ -478,6 +480,11 @@ module Typingpool
 
       def project_id
         @project_id ||= stashed_param(self.class.id_at)
+      end
+
+      def project_title_from_url(url=self.url)
+        matches = Project.remote_url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
+        URI.unescape(matches[2])
       end
 
       def stashed_param(param)
@@ -659,7 +666,7 @@ module Typingpool
             if @external_question.nil?
               if external_question_url && external_question_url.match(/^http/)
                 #expensive, obviously:
-puts "DEBUG fetching external question"
+                puts "DEBUG fetching external question"
                 @external_question = open(external_question_url).read
               end
             end
@@ -772,8 +779,8 @@ puts "DEBUG fetching external question"
 
       end #FromSearchHITs
 
-        class Question
-          require 'nokogiri'
+      class Question
+        require 'nokogiri'
         def initialize(args)
           @id = args[:id] or raise Error::Argument, 'missing :id arg'
           @question = args[:question] or raise Error::Argument, 'missing :question arg'
@@ -853,6 +860,7 @@ puts "DEBUG fetching external question"
 
   class Project
     require 'stringio'
+
     attr_reader :interval, :bitrate
     attr_accessor :name, :config
     def initialize(name, config=Config.file)
@@ -937,25 +945,31 @@ puts "DEBUG fetching external question"
 
     def create_remote_file_basenames(from=local.audio_chunks)
       from.map do |file|
-        [File.basename(file, '.*'), local.id, psuedo_random_uppercase_string].join('_')
+        [File.basename(file, '.*'), local.id, pseudo_random_uppercase_string].join('.')
       end
     end
 
-    def psuedo_random_uppercase_string(length=6)
+    def self.remote_url_regex
+      Regexp.new('.+\/((.+)\.(\d+)\.(\d\d)\.[a-fA-F0-9]{32}\.[A-Z]{6}(\.\w+))')
+    end
+
+    def pseudo_random_uppercase_string(length=6)
       (0...length).map{(65 + rand(25)).chr}.join
     end
 
     def create_assignment_csv(remote_files, unusual_words=[], voices=[])
       assignment_path = "#{local.path}/csv/assignment.csv"
       CSV.open(assignment_path, 'wb') do |csv|
-        csv << ['url', 'project_id', 'unusual', (1 .. voices.size).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
+        csv << ['audio_url', 'project_id', 'unusual', (1 .. voices.size).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
         remote_files.each do |file|
           csv << [file, local.id, unusual_words.join(', '), voices.map{|v| [v[:name], v[:description]]}].flatten
         end
       end
       return assignment_path
     end
+
     class Remote
+      require 'uri'
       attr_accessor :name
       def self.from_config(name, config)
         if config.sftp
@@ -969,7 +983,6 @@ puts "DEBUG fetching external question"
 
       class S3 < Remote
         require 'aws/s3'
-        require 'uri'
         attr_accessor :key, :secret, :bucket
         def initialize(name, aws_config)
           @name = name
@@ -1037,7 +1050,7 @@ puts "DEBUG fetching external question"
               make_bucket
               retry
             end
-            "#{@url}/#{dest}"
+            "#{@url}/#{URI.escape(dest)}"
           end #batch
         end
 
@@ -1045,7 +1058,7 @@ puts "DEBUG fetching external question"
           batch(files) do |file, i|
             yield(file) if block_given?
             AWS::S3::S3Object.delete(file, @bucket)
-         end
+          end
         end
       end #S3
 
@@ -1099,7 +1112,7 @@ puts "DEBUG fetching external question"
         end
 
         def file_to_url(file)
-          "#{@url}/#{file}"
+          "#{@url}/#{URI.escape(file)}"
         end
 
         def remove(files)
@@ -1185,7 +1198,7 @@ puts "DEBUG fetching external question"
       end
 
       def audio_remote_names
-        read_csv('assignment').map{|assignment| url_basename(assignment['url']) }
+        read_csv('assignment').map{|assignment| url_basename(assignment['audio_url']) }
       end
 
       def url_basename(url)
@@ -1196,9 +1209,9 @@ puts "DEBUG fetching external question"
         read_csv('assignment').map{|assignment| url_basename(assignment['assignment_url']) }
       end
 
-       def id
-         read_file(File.join('etc','id.txt'))
-       end
+      def id
+        read_file(File.join('etc','id.txt'))
+      end
 
       def create_id
         if id 
@@ -1223,7 +1236,7 @@ puts "DEBUG fetching external question"
         arys.map{|row| Hash[*headers.zip(row).flatten]}
       end
 
-      def write_csv(base_name, hashes, headers=hashes[0].keys)
+      def write_csv(base_name, hashes, headers=hashes.map{|h| h.keys}.flatten.uniq)
         CSV.open(File.join(@path, 'csv', "#{base_name}.csv"), 'wb') do |csv|
           csv << headers
           hashes.each{|hash| csv << headers.map{|header| hash[header] } }
@@ -1347,17 +1360,6 @@ puts "DEBUG fetching external question"
       @chunks.join("\n\n")
     end
     
-    def self.from_csv(csv_string)
-      transcription = self.new
-      CSV.parse(csv_string) do |row|
-        next if row[16] != 'Approved'                            
-        chunk = Transcription::Chunk.from_csv(row)
-        transcription.add_chunk(chunk)
-        transcription.title = chunk.title unless transcription.title
-      end
-      return transcription
-    end
-
     def add_chunk(chunk)
       @chunks.push(chunk)
     end
@@ -1366,43 +1368,31 @@ puts "DEBUG fetching external question"
       require 'text/format'
       require 'cgi'
 
-      attr_accessor :body, :worker, :title, :hit, :project
-      attr_reader :offset_start, :offset_start_seconds, :filename
+      attr_accessor :body, :worker, :hit, :project
+      attr_reader :offset, :offset_seconds, :filename, :filename_local
 
       def initialize(body)
         @body = body
       end
 
       def <=>(other)
-        self.offset_start_seconds <=> other.offset_start_seconds
-      end
-
-      def self.from_csv(row)
-        chunk = Chunk.new(row[26])
-        chunk.worker = row[15]
-        chunk.url = row[25]
-        return chunk
+        self.offset_seconds <=> other.offset_seconds
       end
 
       def url=(url)
-        #http://ryantate.com/transfer/Speech.01.00.mp3
-        #OR, obfuscated: http://ryantate.com/transfer/Speech.01.00.ISEAOMB.mp3
-        matches = /.+\/(([\w\/\-]+)\.(\d+)\.(\d\d)(\.\w+)?\.[^\/\.]+)/.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
+        #http://ryantate.com/transfer/Speech.01.00.ede9b0f2aed0d35a26cef7160bc9e35e.ISEAOM.mp3
+        matches = Project.remote_url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
         @url = matches[0]
         @filename = matches[1]
-        @title = matches[2] unless @title
-        @offset_start = "#{matches[3]}:#{matches[4]}"
-        @offset_start_seconds = (matches[3].to_i * 60) + matches[4].to_i
+        @filename_local = [matches[2..4].join('.'), matches[5]].join  #Remove web filename project_id and random string
+        @offset = "#{matches[3]}:#{matches[4]}"
+        @offset_seconds = (matches[3].to_i * 60) + matches[4].to_i
       end
 
       def url
         @url
       end
 
-      #Remove web filename randomization
-      def filename_local
-        @filename.sub(/(\.\d\d)\.[A-Z]{6}(\.\w+)$/,'\1\2')
-      end
 
       def wrap_text(text)
         formatter = Text::Format.new
@@ -1447,7 +1437,7 @@ puts "DEBUG fetching external question"
       look_in.each do |dir|
         extensions.each do |ext| 
           path = File.join(dir, [@path, ext].join)
-         if File.exists?(path) && File.file?(path)
+          if File.exists?(path) && File.file?(path)
             return path
           end
         end

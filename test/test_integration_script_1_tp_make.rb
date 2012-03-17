@@ -37,8 +37,8 @@ class TestTpMake < Typingpool::Test::Script
       end
       assert_equal(project.local.audio_chunks.size, assignments.size)
       assignments.each do |assignment|
-        assert_not_nil(assignment['url'])
-        assert(working_url? assignment['url'])
+        assert_not_nil(assignment['audio_url'])
+        assert(working_url? assignment['audio_url'])
         assert_equal(assignment['project_id'], project.local.id)
         assert_equal(assignment['unusual'].split(/\s*,\s*/), project_default[:unusual])
         project_default[:voice].each_with_index do |voice, i|

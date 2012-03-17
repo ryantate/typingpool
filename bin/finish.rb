@@ -72,7 +72,7 @@ results.each do |result|
     fails.push(e)
   else
     STDERR.puts "  Removing from local cache"
-    Typingpool::Amazon::Result.delete_cache(result.hit_id, options[:url_at], options[:id_at])
+    Typingpool::Amazon::Result.delete_cache(result.hit_id)
   end
 end
 if not (fails.empty?)

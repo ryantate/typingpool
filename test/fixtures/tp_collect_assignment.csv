@@ -1,8 +1,8 @@
-url,project_id,unusual,voice1,voice1title,voice2,voice2title,hit_id,hit_expires_at,hit_assignments_duration
-http://webmasher.com/mturk/TestTpInterview.00.00.UMONCO.mp3,2c3135b9674171b515519c754ed07f8d,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2YZRRLFQ0ONN9AYDWTF9HGRBC8FRI7,2012-03-03 07:05:41 UTC,18000
-http://webmasher.com/mturk/TestTpInterview.00.20.BXDWMF.mp3,2c3135b9674171b515519c754ed07f8d,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2AOYTWX4H3H23ULPLL7I9IJRG7XZ4T,2012-03-03 07:05:43 UTC,18000
-http://webmasher.com/mturk/TestTpInterview.00.40.ADKKCT.mp3,2c3135b9674171b515519c754ed07f8d,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,22GHVI44OS2KZDPPZQQSEAP5G3SZ5Y,2012-03-03 07:05:44 UTC,18000
-http://webmasher.com/mturk/TestTpInterview.01.00.MXCWAW.mp3,2c3135b9674171b515519c754ed07f8d,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2YDWAVKI62NJ4LIJEB09TH6BPN4RJJ,2012-03-03 07:05:46 UTC,18000
-http://webmasher.com/mturk/TestTpInterview.01.20.GRYUHO.mp3,2c3135b9674171b515519c754ed07f8d,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2YQ8MQU6L5OB9VZD39O4DIJFCIMWDD,2012-03-03 07:05:47 UTC,18000
-http://webmasher.com/mturk/TestTpInterview.01.40.APIWSY.mp3,2c3135b9674171b515519c754ed07f8d,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,26ZIT3HVWAVKWPJZV2T1A2Z9ES9ME5,2012-03-03 07:05:48 UTC,18000
-http://webmasher.com/mturk/TestTpInterview.02.00.LCAYNX.mp3,2c3135b9674171b515519c754ed07f8d,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2CIFK0COK2JEF5O1WW0LUW6O4C4RKI,2012-03-03 07:05:50 UTC,18000
+audio_url,project_id,unusual,voice1,voice1title,voice2,voice2title,hit_id,hit_expires_at,hit_assignments_duration
+http://webmasher.com/mturk/TestTpInterview.00.00.1888cc019a42d64d1059f0f0ade5d3b3.BSQOIH.mp3,1888cc019a42d64d1059f0f0ade5d3b3,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2LX0OHOVR14IB35EXLTHHCWAB4065T,2012-03-18 03:59:59 UTC,18000
+http://webmasher.com/mturk/TestTpInterview.00.20.1888cc019a42d64d1059f0f0ade5d3b3.VGBIFM.mp3,1888cc019a42d64d1059f0f0ade5d3b3,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,23H9O9Z6KW4Z0TGTT3ILIQ0OSUSD4N,2012-03-18 04:00:01 UTC,18000
+http://webmasher.com/mturk/TestTpInterview.00.40.1888cc019a42d64d1059f0f0ade5d3b3.QWPOYW.mp3,1888cc019a42d64d1059f0f0ade5d3b3,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2V9SQV66RLPHWCKT781VNI62SQND5S,2012-03-18 04:00:02 UTC,18000
+http://webmasher.com/mturk/TestTpInterview.01.00.1888cc019a42d64d1059f0f0ade5d3b3.UQUCDV.mp3,1888cc019a42d64d1059f0f0ade5d3b3,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2DG2AOO2GMMEU75S243M9IAA7ZB669,2012-03-18 04:00:05 UTC,18000
+http://webmasher.com/mturk/TestTpInterview.01.20.1888cc019a42d64d1059f0f0ade5d3b3.MTYPYI.mp3,1888cc019a42d64d1059f0f0ade5d3b3,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,244HGYQ4J3NAPPSRYR6O1YIT60GBOO,2012-03-18 04:00:06 UTC,18000
+http://webmasher.com/mturk/TestTpInterview.01.40.1888cc019a42d64d1059f0f0ade5d3b3.TJKQRU.mp3,1888cc019a42d64d1059f0f0ade5d3b3,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2WAVGULF395SAP4SDRJ3QYNJG5CBP5,2012-03-18 04:00:08 UTC,18000
+http://webmasher.com/mturk/TestTpInterview.02.00.1888cc019a42d64d1059f0f0ade5d3b3.CBDQTN.mp3,1888cc019a42d64d1059f0f0ade5d3b3,"Hack Day, Sunnyvale, Chad D",Ryan,"",Havi,hacker,2PWR9Y8TNKIMDB3HWR8S5OM0UNS8VO,2012-03-18 04:00:10 UTC,18000

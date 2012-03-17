@@ -56,11 +56,11 @@ results.each do |result|
   key = result.project_id
   if need[key]
     need[key].push(result)
-elsif need[key] == false
+  elsif need[key] == false
     next
   else
     need[key] = false
-    project = Typingpool::Project.new(result.transcription.title, options[:config])
+    project = Typingpool::Project.new(result.project_title_from_url, options[:config])
     #folder must exist
     project.local or next;
     #transcript must not be complete
@@ -75,7 +75,7 @@ template = nil
 projects.each do |key, project|
   results_by_url = Hash[ *need[key].map{|result| [result.url, result] }.flatten ]
   project.local.each_csv('assignment') do |assignment|
-    result = results_by_url[assignment['url']] or next
+    result = results_by_url[assignment['audio_url']] or next
     next if assignment['transcription']
     assignment['transcription'] = result.transcription.body
     assignment['worker'] = result.transcription.worker
@@ -83,7 +83,7 @@ projects.each do |key, project|
   end
   transcription_chunks = project.local.read_csv('assignment').select{|assignment| assignment['transcription']}.map do |assignment|
     chunk = Typingpool::Transcription::Chunk.new(assignment['transcription'])
-    chunk.url = assignment['url']
+    chunk.url = assignment['audio_url']
     chunk.project = assignment['project_id']
     chunk.worker = assignment['worker']
     chunk.hit = assignment['hit_id']
