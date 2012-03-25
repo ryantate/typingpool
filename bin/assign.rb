@@ -129,7 +129,7 @@ else
 end
 abort "No template specified" if not(options[:template])
 begin
-  template = Typingpool::Template::Assignment.new(options[:template], config)
+  template = Typingpool::Template::Assignment.from_config(options[:template], config)
 rescue Typingpool::Error::File::NotExists => e
   abort "Couldn't find the template dir in your config file: #{e}"
 rescue Typingpool::Error => e
@@ -147,6 +147,44 @@ assignments = project.local.read_csv('assignment')
 abort "No data in assignment CSV" if assignments.empty?
 abort "No AWS key+secret in config" if not(config.aws && config.aws.key && config.aws.secret)
 
+
+#always upload assignment html (can't re-use old ones because params
+#may have changed, affecting html output) 
+#
+#TO DO merge in params with assignments from csv before passing to
+#template
+
+STDERR.puts "Figuring out what needs to be assigned"
+needed_assignments = {}
+unneeded_assignments = {
+  :complete => 0,
+  :outstanding => 0
+}
+assignments.each do |assignment|
+  if assignment['transcription']
+    unneeded_assignments[:complete] += 1
+    next
+  end
+  if assignment['hit_expires_at'].to_s.match(/\S/) #has been assigned previously
+    if ((Time.parse(assignment['hit_expires_at']) + assignment['hit_assignments_duration'].to_i) > Time.now)
+      #unexpired active HIT - do not reassign
+      unneeded_assignments[:outstanding] += 1
+      next
+    end
+  end
+  needed_assignments[assignment['audio_url']] = assignment
+end
+
+STDERR.puts "#{assignments.size} assignments total"
+STDERR.puts "#{unneeded_assignments[:complete]} assignments completed" if unneeded_assignments[:complete] > 0
+STDERR.puts "#{unneeded_assignments[:outstanding]} assignments outstanding" if unneeded_assignments[:outstanding] > 0
+if needed_assignments.empty?
+  STDERR.puts "Nothing to assign"
+  exit
+else
+  STDERR.puts "#{needed_assignments.size} assignments to assign"
+end
+
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 #we'll need to re-upload audio if we ran tp-finish on the project
@@ -156,19 +194,30 @@ if not(project.local.audio_is_on_www)
   end
 end
 
-hits = []
+#Delete old assignment html for assignments to be re-assigned. We
+#can't re-use old assignment HTML because new params (e.g. reward)
+#might cause the new HTML to be different
+updeleting = needed_assignments.select{|audio_url, assignment| assignment['assignment_url'] }.map{|audio_url, assignment| assignment['assignment_url'] }
+if not(updeleting.empty?)
+  STDERR.puts "Deleting old assignment HTML from #{project.remote.host}"
+  project.updelete_assignments(updeleting)
+end
+
+STDERR.puts "Uploading assignment HTML to #{project.remote.host}"
+needed_assignments_values = needed_assignments.values
+project.upload_assignments(template, needed_assignments_values).each_with_index do |assignment_url, i|
+  needed_assignments_values[i]['assignment_url'] = assignment_url
+end
+
 STDERR.puts 'Assigning'
+hits = []
 project.local.each_csv('assignment') do |assignment|
-  next if assignment['transcription']
-  if assignment['hit_expires_at'].to_s.match(/\S/) #has been assigned previously
-    if ((Time.parse(assignment['hit_expires_at']) + assignment['hit_assignments_duration'].to_i) > Time.now)
-      #unexpired active HIT - do not reassign
-      next
-    end
-  end
-  amazon_assignment = Typingpool::Amazon::Assignment.new(template.render(assignment), config.assignments)
+  needed = needed_assignments[assignment['audio_url']]
+  next if not(needed)
+  assignment['assignment_url'] = needed['assignment_url']
+  question = Typingpool::Amazon::Question.new(assignment['assignment_url'], template.render(assignment))
   begin
-    hit = amazon_assignment.assign
+    hit = Typingpool::Amazon::Result.create(question, config.assignments)
   rescue  RTurk::RTurkError => e
     STDERR.puts "Mechanical Turk error: #{e}"
     unless hits.empty?
@@ -179,7 +228,7 @@ project.local.each_csv('assignment') do |assignment|
   end
   hits.push(hit)
   assignment['hit_id'] = hit.id
-  assignment['hit_expires_at'] = hit.expires_at.to_s
-  assignment['hit_assignments_duration'] = hit.assignments_duration.to_s
-  STDERR.puts "Assigned #{hits.size} / #{assignments.size}"
+  assignment['hit_expires_at'] = hit.full.expires_at.to_s
+  assignment['hit_assignments_duration'] = hit.full.assignments_duration.to_s
+  STDERR.puts "Assigned #{hits.size} / #{needed_assignments_values.size}"
 end

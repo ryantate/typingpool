@@ -76,28 +76,38 @@ results.each do |result|
   end
 end
 if not (fails.empty?)
-  STDERR.puts "Removed " + (results.size - fails.size) + " HITs from Amazon"
+  STDERR.puts "  Removed " + (results.size - fails.size) + " HITs from Amazon"
   abort "#{fails.size} transcriptions are submitted but unprocessed (#{fails.join('; ')})"
 end
 #Remove the remote audio files associated with the results and update the assignment.csb associated with the project
 if project 
-  assignments = project.local.each_csv('assignment') do |assignment|
+  assignments = project.local.read_csv('assignment')
+  deleting = assignments.select{|assignment| assignment['assignment_url'] }
+  if not(deleting.empty?)
+    STDERR.puts "Removing assignment HTML from #{project.remote.host}"
+    project.updelete_assignments(deleting)
+    STDERR.puts "  Removed #{deleting.size} HTML files from #{project.remote.host}"
+  end
+  project.local.each_csv('assignment') do |assignment|
+    assignment.delete('assignment_url')
     if assignment['hit_expires_at'].to_s.match(/\S/)
       #we don't delete the hit_id because we may need it when building
       #the transcript (if the HIT was approved)
-      %w(hit_expires_at hit_assignments_duration).each{|key| assignment[key] = nil }
+      %w(hit_expires_at hit_assignments_duration).each{|key| assignment.delete(key) }
     end
   end
-  STDERR.puts "Removing audio from #{project.remote.host}"
-  begin
-    project.updelete_audio
-  rescue Typingpool::Error::File::Remote => e
-    if e.to_s.match(/no such file/)
-      STDERR.puts "  No files to remove - may have been removed previously"
+  if project.local.audio_is_on_www
+    STDERR.puts "Removing audio from #{project.remote.host}"
+    begin
+      project.updelete_audio
+    rescue Typingpool::Error::File::Remote => e
+      if e.to_s.match(/no such file/)
+        STDERR.puts "  No files to remove - may have been removed previously"
+      else
+        abort "Can't remove remote audio files: #{e}"
+      end
     else
-      abort "Can't remove remote audio files: #{e}"
-    end
-  else
-    STDERR.puts "  Removed #{assignments.size} audio files from #{project.remote.host}"
-  end
-end
+      STDERR.puts "  Removed #{assignments.size} audio files from #{project.remote.host}"
+    end #begin
+  end #if project.local.audio_is_on_www
+end #if project

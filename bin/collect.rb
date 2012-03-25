@@ -95,7 +95,7 @@ projects.each do |key, project|
   done = (transcription.to_a.length == project.local.audio_chunks.length)
   out_file = done ? filename[:done] : filename[:working]
   begin
-    template ||= Typingpool::Template.new('transcript', options[:config])
+    template ||= Typingpool::Template.from_config('transcript', options[:config])
   rescue Typingpool::Error::File::NotExists => e
     abort "Couldn't find the template dir in your config file: #{e}"
   rescue Typingpool::Error => e

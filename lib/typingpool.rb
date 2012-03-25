@@ -358,7 +358,7 @@ module Typingpool
 
       class << self
         def create(question, config_assign)
-          RTurk::Hit.create(:title => config_assign.title || question.title) do |hit|
+          new(RTurk::Hit.create(:title => config_assign.title || question.title) do |hit|
             hit.description = config_assign.description || question.description
             hit.question(question.url)
             hit.note = question.annotation or raise Error, "Missing annotation from question"
@@ -370,7 +370,7 @@ module Typingpool
             hit.keywords = config_assign.keywords if config_assign.keywords
             hit.currency = config_assign.currency if config_assign.currency
             config_assign.qualifications.each{|q| hit.qualifications.add(*q.to_arg)} if config_assign.qualifications
-          end
+          end)
         end
 
         def id_at
@@ -437,13 +437,6 @@ module Typingpool
           filtered
         end
 
-        def all_for_hit_type_id(id)
-          results = all
-          filtered = results.select{|result| result.hit.type_id == id}
-          results.each{|result| result.to_cache}
-          filtered
-        end
-
         def all
           results = []
           i = 0
@@ -474,6 +467,10 @@ module Typingpool
         self.hit(hit) if is_full_hit
       end
 
+      def id
+        @hit_id
+      end
+
       def url
         @url ||= stashed_param(self.class.url_at)
       end
@@ -483,7 +480,7 @@ module Typingpool
       end
 
       def project_title_from_url(url=self.url)
-        matches = Project.remote_url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
+        matches = Project.url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
         URI.unescape(matches[2])
       end
 
@@ -606,6 +603,7 @@ module Typingpool
         end
         @from_hit
       end
+      alias :full :hit
 
       #assignment fields segregated because accessing any one of
       #them is expensive (but after fetching one all are cheap)
@@ -927,19 +925,19 @@ module Typingpool
       local.delete_audio_is_on_www
     end
 
-    def upload_assignments(template, assignments=local.read_csv('assignment'), as=create_assignment_remote_names)
+    def upload_assignments(template, assignments=local.read_csv('assignment'), as=create_assignment_remote_names(assignments))
       urls = remote.put(assignments.map{|assignment| StringIO.new(template.render(assignment)) }, as) do |file, as|
         yield(file, as, remote) if block_given?
       end
-      local.each_csv('assignment'){|assignment, i| assignment['assignment_url'] = urls[i] }
       urls
     end
 
-    def updelete_assignments(files=local.assignment_remote_names)
-      remote.remove(files)
+    def updelete_assignments(assignments=local.read_csv('assignment'))
+      remote.remove(local.assignment_remote_names(assignments))
     end
 
-    def create_assignment_remote_names(audio_files=local.audio_chunks)
+    def create_assignment_remote_names(assignments)
+      audio_files = assignments.map{|assignment| assignment['audio_url']}.map{|url| Project.local_basename_from_url(url) }
       create_remote_file_basenames(audio_files).map{|name| [name, '.html'].join }
     end
 
@@ -949,8 +947,13 @@ module Typingpool
       end
     end
 
-    def self.remote_url_regex
+    def self.url_regex
       Regexp.new('.+\/((.+)\.(\d+)\.(\d\d)\.[a-fA-F0-9]{32}\.[A-Z]{6}(\.\w+))')
+    end
+
+    def self.local_basename_from_url(url)
+      matches = Project.url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
+      [matches[2..4].join('.'), matches[5]].join
     end
 
     def pseudo_random_uppercase_string(length=6)
@@ -1175,7 +1178,7 @@ module Typingpool
         end
       end #class << self
 
-      etc_file_accessor :subtitle, :amazon_hit_type_id, :audio_is_on_www
+      etc_file_accessor :subtitle, :audio_is_on_www
 
       def tmp_dir
         File.join(path, 'etc', 'tmp')
@@ -1197,16 +1200,17 @@ module Typingpool
         Dir.glob("#{final_audio_dir}/*.mp3").reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
       end
 
-      def audio_remote_names
-        read_csv('assignment').map{|assignment| url_basename(assignment['audio_url']) }
+      def audio_remote_names(assignments=read_csv('assignment'))
+        assignments.map{|assignment| url_basename(assignment['audio_url']) }
+      end
+
+
+      def assignment_remote_names(assignments=read_csv('assignment'))
+        assignments.map{|assignment| url_basename(assignment['assignment_url']) }
       end
 
       def url_basename(url)
         File.basename(URI.parse(url).path)
-      end
-
-      def assignment_remote_names
-        read_csv('assignment').map{|assignment| url_basename(assignment['assignment_url']) }
       end
 
       def id
@@ -1381,10 +1385,10 @@ module Typingpool
 
       def url=(url)
         #http://ryantate.com/transfer/Speech.01.00.ede9b0f2aed0d35a26cef7160bc9e35e.ISEAOM.mp3
-        matches = Project.remote_url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
+        matches = Project.url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
         @url = matches[0]
         @filename = matches[1]
-        @filename_local = [matches[2..4].join('.'), matches[5]].join  #Remove web filename project_id and random string
+        @filename_local = Project.local_basename_from_url(@url)
         @offset = "#{matches[3]}:#{matches[4]}"
         @offset_seconds = (matches[3].to_i * 60) + matches[4].to_i
       end
@@ -1420,17 +1424,39 @@ module Typingpool
   end #Transcription 
   class Template
     require 'erb'
-    require 'ostruct'
+    class << self
+      def from_config(path, config=Config.file)
+        validate_config(config)
+        new(path, look_in_from_config(config))
+      end
 
-    def initialize(path, config=Config.file)
+      def look_in_from_config(config)
+        look_in =  [File.join(config.app, 'templates'), '']
+        look_in.unshift(config.templates) if config.templates
+        look_in
+      end
+
+      def validate_config(config)
+        if config.templates
+          File.exists?(config.templates) or raise Error::File::NotExists, "No such templates dir: #{config.templates}"
+          File.directory?(config.templates) or raise Error::File::NotExists, "Templates dir not a directory: #{config.templates}"
+        end
+      end
+    end #class << self
+
+    attr_reader :look_in
+    def initialize(path, look_in)
       @path = path
-      @config = config
-      validate_config
+      @look_in = look_in
       full_path or raise Error, "Could not find template path '#{path}' in #{look_in.join(',')}"
     end
 
     def render(hash)
-      ERB.new(IO.read(full_path), nil, '<>').result(ErbBinding.new(hash).send(:get_binding))
+      ERB.new(read, nil, '<>').result(Env.new(hash, self).get_binding)
+    end
+
+    def read
+      IO.read(full_path)
     end
 
     def full_path
@@ -1445,33 +1471,51 @@ module Typingpool
       return
     end
 
-    def look_in
-      look_in = [File.join(@config.app, 'templates'), '']
-      look_in.unshift(@config.templates) if @config.templates
-      look_in
-    end
-
     def extensions
       ['.html.erb', '']
     end
 
-    def validate_config
-      if @config.templates
-        File.exists?(@config.templates) or raise Error::File::NotExists, "No such templates dir: #{@config.templates}"
-        File.directory?(@config.templates) or raise Error::File::NotExists, "Templates dir not a directory: #{@config.templates}"
-      end
-    end
 
     class Assignment < Template
-      def look_in
-        super.map{|dir| dir.empty? ? dir : File.join(dir, 'assignment')}
+      def self.look_in_from_config(*args)
+        look_in = super(*args)
+        look_in.unshift(look_in.reject{|dir| dir.empty? }.map{|dir| File.join(dir, 'assignment') })
+        look_in.flatten
       end
     end #Assignment
 
-    class ErbBinding < OpenStruct
+    class Env
+      require 'ostruct'
+      def initialize(hash, template)
+        @hash = hash
+        @template = template
+        @ostruct = OpenStruct.new(@hash)
+      end
+
       def get_binding
         binding()
       end
-    end #ErbBinding
+
+      def read(path)
+        @template.class.new(path, localized_look_in).read
+      end
+
+      def render(path, hash={})
+        @template.class.new(path, localized_look_in).render(@hash.merge(hash))
+      end
+
+      def localized_look_in
+        look_in = []
+        path = @template.full_path
+        until @template.look_in.include? path = File.dirname(path)
+          look_in.push(path)
+        end
+        look_in.push(path, (@template.look_in - [path])).flatten
+      end
+
+      def method_missing(meth)
+        @ostruct.send(meth)
+      end
+    end #Env
   end #Template
 end #Typingpool

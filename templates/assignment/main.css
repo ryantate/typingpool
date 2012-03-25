@@ -1,0 +1,18 @@
+body {
+  color: black;
+  background: white;    
+  font-family: Georgia, Times, "Times New Roman", serif;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+p {
+  line-height: 140%;
+}
+
+.disabled_message {
+  color: gray;
+  font-size: small;
+}
