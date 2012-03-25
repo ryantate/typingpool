@@ -1,10 +1,11 @@
+
 body {
   color: black;
   background: white;    
   font-family: Georgia, Times, "Times New Roman", serif;
 }
 
-h1, h2, h3, h4, h5 {
+h1, h2, h3, h4, h5, .disabled_message {
   font-family: Helvetica, Arial, sans-serif;
 }
 
@@ -16,3 +17,4 @@ p {
   color: gray;
   font-size: small;
 }
+
