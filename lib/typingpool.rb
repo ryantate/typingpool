@@ -52,6 +52,11 @@ module Typingpool
         suffix = match[3] || 's'
         return (match[1].to_f * suffix_to_time[suffix].to_i).to_i
       end
+
+      def array_to_hash(array, headers)
+        Hash[*headers.zip(array).flatten] 
+      end
+
     end #class << self
   end #Utility
 
@@ -878,7 +883,6 @@ module Typingpool
       Local.create(@name, basedir, File.join(@config.app, 'templates', 'project'))
     end
 
-
     def interval=(mmss)
       formatted = mmss.match(/(\d+)$|((\d+:)?(\d+):(\d\d)(\.(\d+))?)/) or raise Error::Argument::Format, "Interval does not match nnn or [nn:]nn:nn[.nn]"
       @interval = formatted[1] || (formatted[3].to_i * 60 * 60) + (formatted[4].to_i * 60) + formatted[5].to_i + ("0.#{formatted[7].to_i}".to_f)
@@ -925,14 +929,14 @@ module Typingpool
       local.delete_audio_is_on_www
     end
 
-    def upload_assignments(template, assignments=local.read_csv('assignment'), as=create_assignment_remote_names(assignments))
+    def upload_assignments(template, assignments=local.csv('csv/assignment.csv').read, as=create_assignment_remote_names(assignments))
       urls = remote.put(assignments.map{|assignment| StringIO.new(template.render(assignment)) }, as) do |file, as|
         yield(file, as, remote) if block_given?
       end
       urls
     end
 
-    def updelete_assignments(assignments=local.read_csv('assignment'))
+    def updelete_assignments(assignments=local.csv('csv/assignment.csv').read)
       remote.remove(local.assignment_remote_names(assignments))
     end
 
@@ -961,14 +965,13 @@ module Typingpool
     end
 
     def create_assignment_csv(remote_files, unusual_words=[], voices=[])
-      assignment_path = File.join(local.path, 'csv', 'assignment.csv')
-      CSV.open(assignment_path, 'wb') do |csv|
-        csv << ['audio_url', 'project_id', 'unusual', (1 .. voices.size).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
-        remote_files.each do |file|
-          csv << [file, local.id, unusual_words.join(', '), voices.map{|v| [v[:name], v[:description]]}].flatten
-        end
+      headers = ['audio_url', 'project_id', 'unusual', (1 .. voices.size).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
+      csv = []
+      remote_files.each do |file|
+        csv << [file, local.id, unusual_words.join(', '), voices.map{|v| [v[:name], v[:description]]}].flatten
       end
-      return assignment_path
+      local.csv('csv', 'assignment.csv').write_arrays!(csv, headers)
+      local.file_path('csv', 'assignment.csv')
     end
 
     class Remote
@@ -1142,35 +1145,35 @@ module Typingpool
 
       class << self
         def create(name, base_dir, template_dir)
-          dest = File.join(base_dir, name)
+          dest = ::File.join(base_dir, name)
           FileUtils.mkdir(dest)
-          FileUtils.cp_r(File.join(template_dir, '.'), dest)
+          FileUtils.cp_r(::File.join(template_dir, '.'), dest)
           local = new(dest)
           local.create_id
           local
         end
 
         def named(string, path)
-          match = Dir.glob(File.join(path, '*')).select{|entry| File.basename(entry) == string }[0]
-          return unless (match && File.directory?(match) && ours?(match))
+          match = Dir.glob(::File.join(path, '*')).select{|entry| ::File.basename(entry) == string }[0]
+          return unless (match && ::File.directory?(match) && ours?(match))
           return new(match) 
         end
 
         def ours?(dir)
-          (Dir.exists?(File.join(dir, 'audio')) && Dir.exists?(File.join(dir, 'originals')))
+          (Dir.exists?(::File.join(dir, 'audio')) && Dir.exists?(::File.join(dir, 'originals')))
         end
 
 
         def etc_file_accessor(*syms)
           syms.each do |sym|
             define_method(sym) do
-              read_file(File.join('etc',"#{sym.to_s}.txt"))
+              file('etc',"#{sym.to_s}.txt").read
             end
             define_method("#{sym.to_s}=".to_sym) do |value|
-              write_file(File.join('etc',"#{sym.to_s}.txt"), value)
+              file('etc',"#{sym.to_s}.txt").write!(value)
             end
             define_method("delete_#{sym.to_s}".to_sym) do
-              delete_file(File.join('etc',"#{sym.to_s}.txt"))
+              file('etc',"#{sym.to_s}.txt").delete!
             end
           end
         end
@@ -1179,7 +1182,7 @@ module Typingpool
       etc_file_accessor :subtitle, :audio_is_on_www
 
       def tmp_dir
-        File.join(path, 'etc', 'tmp')
+        ::File.join(path, 'etc', 'tmp')
       end
 
       def rm_tmp_dir
@@ -1187,92 +1190,124 @@ module Typingpool
       end
 
       def audio_chunks
-        Dir.glob(File.join(path, 'audio', '*.mp3')).reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
+        Dir.glob(::File.join(path, 'audio', '*.mp3')).reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
       end
 
-      def audio_remote_names(assignments=read_csv('assignment'))
+      def audio_remote_names(assignments=csv('csv/assignment.csv').read)
         assignments.map{|assignment| url_basename(assignment['audio_url']) }
       end
 
 
-      def assignment_remote_names(assignments=read_csv('assignment'))
+      def assignment_remote_names(assignments=csv('csv/assignment.csv').read)
         assignments.map{|assignment| url_basename(assignment['assignment_url']) }
       end
 
       def url_basename(url)
-        File.basename(URI.parse(url).path)
+        ::File.basename(URI.parse(url).path)
       end
 
       def id
-        read_file(File.join('etc','id.txt'))
+        file('etc','id.txt').read
       end
 
       def create_id
         if id 
           raise Error, "id already exists" 
         end
-        write_file(File.join('etc','id.txt'), SecureRandom.hex(16))
+        file('etc','id.txt').write!(SecureRandom.hex(16))
       end
 
       def original_audio
-        dir = File.join(path, 'originals')
-        Dir.entries(dir).map{|entry| File.join(dir, entry) }.select do |path| 
-          File.file?(path) &&
-            not(File.extname(path).downcase.eql?('html')) &&
-            not(File.basename(path).match(/^\./))
+        dir = ::File.join(path, 'originals')
+        Dir.entries(dir).map{|entry| ::File.join(dir, entry) }.select do |path| 
+          ::File.file?(path) &&
+            not(::File.extname(path).downcase.eql?('html')) &&
+            not(::File.basename(path).match(/^\./))
         end
       end
 
       def add_audio(paths, move=false)
         action = move ? 'mv' : 'cp'
-        paths.each{|path| FileUtils.send(action, path, File.join(self.path, 'originals')) }
-      end
-
-      def read_csv(base_name)
-        csv = read_file(File.join('csv', "#{base_name}.csv")) or raise Error::File::NotExists, "No file #{base_name} in #{@path}/csv"
-        arys = CSV.parse(csv)
-        headers = arys.shift
-        arys.map{|row| Hash[*headers.zip(row).flatten]}
-      end
-
-      def write_csv(base_name, hashes, headers=hashes.map{|h| h.keys}.flatten.uniq)
-        CSV.open(File.join(@path, 'csv', "#{base_name}.csv"), 'wb') do |csv|
-          csv << headers
-          hashes.each{|hash| csv << headers.map{|header| hash[header] } }
-        end
-      end
-
-      def each_csv(base_name)
-        write_csv(base_name, read_csv(base_name).each_with_index{|hash,i | yield(hash, i)})
-      end
-
-      def read_file(relative_path)
-        path = File.join(@path, relative_path)
-        if File.exists?(path)
-          return IO.read(path)
-        else
-          return nil
-        end
-      end
-
-      def write_file(relative_path, data)
-        File.open( File.join(@path, relative_path), 'w') do |out|
-          out << data
-        end
-      end
-
-      def delete_file(relative_path)
-        path = File.join(@path, relative_path)
-        if File.exists?(path)
-          File.delete(path)
-        else
-          return nil
-        end
+        paths.each{|path| FileUtils.send(action, path, ::File.join(self.path, 'originals')) }
       end
 
       def finder_open
         system('open', @path)
       end
+
+      def file(*relative_path)
+        File.new(file_path(*relative_path))
+      end
+
+      def csv(*relative_path)
+        File::CSV.new(file_path(*relative_path))
+      end
+
+      def file_path(*relative_path)
+        ::File.join(@path, *relative_path)
+      end
+
+      class File
+        def initialize(path)
+          @path = path
+        end
+
+        def read
+          if exists?
+            IO.read(@path)
+          end
+        end
+
+        def write!(data, mode='w')
+          ::File.open(@path, mode) do |out|
+            out << data
+          end
+        end
+
+        def delete!
+          if exists?
+            ::File.delete(@path)
+          end
+        end
+
+        def exists?
+          ::File.exists?(@path)
+        end
+
+        class CSV < File
+          include Enumerable
+          require 'csv'
+
+          def read
+            rows = ::CSV.parse(super.to_s)
+            headers = rows.shift or raise Error::File, "No CSV at #{@path}"
+            rows.map{|row| Utility.array_to_hash(row, headers) }
+          end
+
+          def write!(hashes, headers=hashes.map{|h| h.keys}.flatten.uniq)
+            super(::CSV.generate_line(headers) + hashes.map{|hash| ::CSV.generate_line(headers.map{|header| hash[header] }) }.join )
+          end
+
+          def write_arrays!(arrays, headers)
+            write!(arrays.map{|array| Utility.array_to_hash(array, headers) }, headers)
+          end
+
+          def each
+            read.each do |row|
+              yield row
+            end
+          end
+
+          def each!
+            #each_with_index doesn't return the array, so we have to use each
+            i = 0
+            write!(each do |hash| 
+                     yield(hash, i)
+                     i += 1 
+                   end)
+          end
+        end #CSV
+      end #File
     end #Local
 
     class Audio
@@ -1307,7 +1342,7 @@ module Typingpool
 
         def to_mp3(dir=::File.dirname(@path), bitrate=nil)
           bitrate ||= self.bitrate || 192
-          dest =  "#{dir}/#{::File.basename(@path, '.*')}.mp3"
+          dest =  ::File.join(dir, "#{::File.basename(@path, '.*')}.mp3")
           Utility.system_quietly('ffmpeg', '-i', @path, '-acodec', 'libmp3lame', '-ab', "#{bitrate}k", '-ac', '2', dest)
           return self.class.new(dest)
         end
@@ -1318,8 +1353,9 @@ module Typingpool
         end
 
         def split(interval_in_min_dot_seconds, base_name=::File.basename(@path, '.*'))
-          #We have to cd into the wrapfile directory and do everything there because
-          #mp3splt is absolutely retarded at handling absolute directory paths
+          #We have to cd into the wrapfile directory and do everything
+          #there because old/packaged versions of mp3splt were
+          #retarded at handling absolute directory paths
           dir = ::File.dirname(@path)
           Dir.chdir(dir) do
             Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{base_name}.@m.@s", ::File.basename(@path)) 

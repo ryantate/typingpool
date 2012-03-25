@@ -81,14 +81,14 @@ if not (fails.empty?)
 end
 #Remove the remote audio files associated with the results and update the assignment.csb associated with the project
 if project 
-  assignments = project.local.read_csv('assignment')
+  assignments = project.local.csv('csv/assignment.csv').read
   deleting = assignments.select{|assignment| assignment['assignment_url'] }
   if not(deleting.empty?)
     STDERR.puts "Removing assignment HTML from #{project.remote.host}"
     project.updelete_assignments(deleting)
     STDERR.puts "  Removed #{deleting.size} HTML files from #{project.remote.host}"
   end
-  project.local.each_csv('assignment') do |assignment|
+  project.local.csv('csv/assignment.csv').each! do |assignment|
     assignment.delete('assignment_url')
     if assignment['hit_expires_at'].to_s.match(/\S/)
       #we don't delete the hit_id because we may need it when building

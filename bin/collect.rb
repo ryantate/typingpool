@@ -74,14 +74,14 @@ end
 template = nil
 projects.each do |key, project|
   results_by_url = Hash[ *need[key].map{|result| [result.url, result] }.flatten ]
-  project.local.each_csv('assignment') do |assignment|
+  project.local.csv('csv/assignment.csv').each! do |assignment|
     result = results_by_url[assignment['audio_url']] or next
     next if assignment['transcription']
     assignment['transcription'] = result.transcription.body
     assignment['worker'] = result.transcription.worker
     assignment['hit_id'] = result.hit_id
   end
-  transcription_chunks = project.local.read_csv('assignment').select{|assignment| assignment['transcription']}.map do |assignment|
+  transcription_chunks = project.local.csv('csv/assignment.csv').select{|assignment| assignment['transcription']}.map do |assignment|
     chunk = Typingpool::Transcription::Chunk.new(assignment['transcription'])
     chunk.url = assignment['audio_url']
     chunk.project = assignment['project_id']
@@ -91,7 +91,7 @@ projects.each do |key, project|
   end
   transcription = Typingpool::Transcription.new(project.name, transcription_chunks)
   transcription.subtitle = project.local.subtitle
-  File.delete("#{project.local.path}/#{filename[:working]}") if File.exists?("#{project.local.path}/#{filename[:working]}")
+  File.delete(File.join(project.local.path, filename[:working])) if File.exists?(File.join(project.local.path, filename[:working]))
   done = (transcription.to_a.length == project.local.audio_chunks.length)
   out_file = done ? filename[:done] : filename[:working]
   begin
@@ -101,7 +101,7 @@ projects.each do |key, project|
   rescue Typingpool::Error => e
     abort "There was a fatal error with the transcript template: #{e}"
   end
-  File.open("#{project.local.path}/#{out_file}", 'w') do |out|
+  File.open(File.join(project.local.path, out_file), 'w') do |out|
     out << template.render({:transcription => transcription})
   end
   STDERR.puts "Wrote #{out_file} to local folder #{project.name}."
