@@ -903,7 +903,7 @@ module Typingpool
     end
 
     def merge_audio(files=convert_audio)
-      Audio.merge(files, File.join(local.final_audio_dir, "#{@name}.all.mp3"))
+      Audio.merge(files, File.join(local.path, 'audio', "#{@name}.all.mp3"))
     end
 
     def split_audio(file)
@@ -1142,8 +1142,6 @@ module Typingpool
 
       class << self
         def create(name, base_dir, template_dir)
-          base_dir.sub!(/\/$/, '')
-          template_dir.sub!(/\/$/, '')
           dest = File.join(base_dir, name)
           FileUtils.mkdir(dest)
           FileUtils.cp_r(File.join(template_dir, '.'), dest)
@@ -1188,16 +1186,8 @@ module Typingpool
         FileUtils.rm_r(tmp_dir)
       end
 
-      def original_audio_dir
-        File.join(path, 'originals')
-      end
-
-      def final_audio_dir
-        File.join(path, 'audio')
-      end
-
       def audio_chunks
-        Dir.glob(File.join(final_audio_dir, '*.mp3')).reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
+        Dir.glob(File.join(path, 'audio', '*.mp3')).reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
       end
 
       def audio_remote_names(assignments=read_csv('assignment'))
@@ -1225,12 +1215,17 @@ module Typingpool
       end
 
       def original_audio
-        Dir.entries(original_audio_dir).select{|entry| File.file?(File.join(original_audio_dir, entry)) }.reject{|entry| File.extname(entry).downcase.eql?('html')}.reject{|entry| entry.match(/^\./) }.map{|entry| File.join(original_audio_dir, entry) }
+        dir = File.join(path, 'originals')
+        Dir.entries(dir).map{|entry| File.join(dir, entry) }.select do |path| 
+          File.file?(path) &&
+            not(File.extname(path).downcase.eql?('html')) &&
+            not(File.basename(path).match(/^\./))
+        end
       end
 
       def add_audio(paths, move=false)
         action = move ? 'mv' : 'cp'
-        paths.each{|path| FileUtils.send(action, path, original_audio_dir)}
+        paths.each{|path| FileUtils.send(action, path, File.join(self.path, 'originals')) }
       end
 
       def read_csv(base_name)
