@@ -961,7 +961,7 @@ module Typingpool
     end
 
     def create_assignment_csv(remote_files, unusual_words=[], voices=[])
-      assignment_path = "#{local.path}/csv/assignment.csv"
+      assignment_path = File.join(local.path, 'csv', 'assignment.csv')
       CSV.open(assignment_path, 'wb') do |csv|
         csv << ['audio_url', 'project_id', 'unusual', (1 .. voices.size).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
         remote_files.each do |file|
@@ -1144,22 +1144,22 @@ module Typingpool
         def create(name, base_dir, template_dir)
           base_dir.sub!(/\/$/, '')
           template_dir.sub!(/\/$/, '')
-          dest = "#{base_dir}/#{name}"
+          dest = File.join(base_dir, name)
           FileUtils.mkdir(dest)
-          FileUtils.cp_r("#{template_dir}/.", dest)
+          FileUtils.cp_r(File.join(template_dir, '.'), dest)
           local = new(dest)
           local.create_id
           local
         end
 
         def named(string, path)
-          match = Dir.glob("#{path}/*").select{|entry| File.basename(entry) == string }[0]
+          match = Dir.glob(File.join(path, '*')).select{|entry| File.basename(entry) == string }[0]
           return unless (match && File.directory?(match) && ours?(match))
           return new(match) 
         end
 
         def ours?(dir)
-          (Dir.exists?("#{dir}/audio") && Dir.exists?("#{dir}/originals"))
+          (Dir.exists?(File.join(dir, 'audio')) && Dir.exists?(File.join(dir, 'originals')))
         end
 
 
@@ -1197,7 +1197,7 @@ module Typingpool
       end
 
       def audio_chunks
-        Dir.glob("#{final_audio_dir}/*.mp3").reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
+        Dir.glob(File.join(final_audio_dir, '*.mp3')).reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
       end
 
       def audio_remote_names(assignments=read_csv('assignment'))
