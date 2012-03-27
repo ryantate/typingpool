@@ -1,7 +1,8 @@
 module Typingpool
-  require 'test/unit'
-  class Test < ::Test::Unit::TestCase
-    class Error; end
+require 'test/unit' 
+
+class Test < ::Test::Unit::TestCase 
+class Error; end
 
     def MiniTest.filter_backtrace(bt)
       bt
@@ -51,7 +52,7 @@ module Typingpool
       end
 
       def amazon_credentials?(config=self.config)
-        config.aws && config.aws.key && config.aws.secret
+        config.amazon && config.amazon.key && config.amazon.secret
       end
 
       def skip_if_no_amazon_credentials(skipping='', config=self.config)
@@ -84,10 +85,10 @@ module Typingpool
       end
 
       def make_temp_tp_dir_config(dir, config=self.config)
-        config.local = File.join(dir, 'projects')
+        config.transcripts = File.join(dir, 'projects')
         config.cache = File.join(dir, '.cache')
         config.app = self.class.app_dir
-        config['assignments']['reward'] = '0.02'
+        config['assign']['reward'] = '0.02'
         write_config(config, dir, project_default[:config_filename])   
       end
 

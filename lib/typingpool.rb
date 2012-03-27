@@ -158,17 +158,17 @@ module Typingpool
     end
 
     class Root < Config
-      local_path_reader :local, :app, :cache, :templates
+      local_path_reader :transcripts, :app, :cache, :templates
 
       class SFTP < Config
         never_ends_in_slash_reader :path, :url
       end
 
-      class AWS < Config
+      class Amazon < Config
         never_ends_in_slash_reader :url
       end
 
-      class Assignments < Config
+      class Assign < Config
         local_path_reader :templates
         time_accessor :deadline, :approval, :lifetime
 
@@ -238,7 +238,7 @@ module Typingpool
                 ][value]
           end
         end #Qualification
-      end #Assignments
+      end #Assign
     end #Root
   end #Config
 
@@ -252,8 +252,8 @@ module Typingpool
       def setup(args={})
         @@did_setup = true
         args[:config] ||= Config.file
-        args[:key] ||= args[:config].aws.key
-        args[:secret] ||= args[:config].aws.secret
+        args[:key] ||= args[:config].amazon.key
+        args[:secret] ||= args[:config].amazon.secret
         args[:sandbox] = false if args[:sandbox].nil?
         if args[:config].cache
           @@cache = nil
@@ -368,7 +368,7 @@ module Typingpool
             hit.question(question.url)
             hit.note = question.annotation or raise Error, "Missing annotation from question"
             hit.reward = config_assign.reward or raise Error, "Missing reward config"
-            hit.assignments = config_assign.copies or raise Error, "Missing copies config"
+            hit.assignments = 1
             hit.lifetime = config_assign.lifetime or raise Error, "Missing lifetime config"
             hit.duration = config_assign.deadline or raise Error, "Missing deadline config"
             hit.auto_approval = config_assign.approval or raise Error, "Missing approval config"
@@ -875,11 +875,11 @@ module Typingpool
       Remote.from_config(@name, config)
     end
 
-    def local(dir=@config.local)
+    def local(dir=@config.transcripts)
       Local.named(@name, dir) 
     end
 
-    def create_local(basedir=@config.local)
+    def create_local(basedir=@config.transcripts)
       Local.create(@name, basedir, File.join(@config.app, 'templates', 'project'))
     end
 
@@ -980,22 +980,22 @@ module Typingpool
       def self.from_config(name, config)
         if config.sftp
           SFTP.new(name, config.sftp)
-        elsif config.aws && config.aws.bucket
-          S3.new(name, config.aws)
+        elsif config.amazon && config.amazon.bucket
+          S3.new(name, config.amazon)
         else
-          raise Error, "No valid upload params found in config file (SFTP or AWS info)"
+          raise Error, "No valid upload params found in config file (SFTP or Amazon info)"
         end
       end
 
       class S3 < Remote
         require 'aws/s3'
         attr_accessor :key, :secret, :bucket
-        def initialize(name, aws_config)
+        def initialize(name, amazon_config)
           @name = name
-          @config = aws_config
-          @key = @config.key or raise Error::File::Remote::S3, "Missing AWS key in config"
-          @secret = @config.secret or raise Error::File::Remote::S3, "Missing AWS secret in config"
-          @bucket = @config.bucket or raise Error::File::Remote::S3, "Missing AWS bucket in config"
+          @config = amazon_config
+          @key = @config.key or raise Error::File::Remote::S3, "Missing Amazon key in config"
+          @secret = @config.secret or raise Error::File::Remote::S3, "Missing Amazon secret in config"
+          @bucket = @config.bucket or raise Error::File::Remote::S3, "Missing Amazon bucket in config"
           @url = @config.url || default_url
         end
 

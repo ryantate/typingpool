@@ -27,59 +27,55 @@ configs = [Typingpool::Config.file]
   options = {}
   yet = {}
   option_parser = OptionParser.new do |opts|
-    options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n  [--keyword transcription --keyword mp3...] [--deadline 3h] [--lifetime 2d]\n  [--approval 1d] [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n  [--sandbox] [--copies 2] [--currency USD] [--config PATH]\n"
-    opts.on('--project=PROJECT', "Required. Path or name within $config:local.", "  Also accepted via STDIN") do |project|
+    options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n  [--keyword transcription --keyword mp3...] [--deadline 3h] [--lifetime 2d]\n  [--approval 1d] [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n  [--sandbox] [--currency USD] [--config PATH]\n"
+    opts.on('--project=PROJECT', "Required. Path or name within $config:transcripts.", "  Also accepted via STDIN") do |project|
       options[:project] = project
     end
-    opts.on('--template=TEMPLATE', "Required. Path or relative path in", "  $config:app/templates/assignment") do |template|
+    opts.on('--template=TEMPLATE', "Required. Path or relative path in", "  $config:app/templates/assign") do |template|
       options[:template] = template
     end
-    opts.on('--reward=DOLLARS', "Default: $config:assignments:reward.", "  Per chunk. Format N.NN") do |reward|
+    opts.on('--reward=DOLLARS', "Default: $config:assign:reward.", "  Per chunk. Format N.NN") do |reward|
       reward.match(/(\d+(\.\d+)?)|(\d*\.\d+)/) or abort "Bad --reward format '#{reward}'"
-      config.assignments.reward = reward
+      config.assign.reward = reward
     end
-    opts.on('--currency=TYPE', "Default: $config:assignments:currency") do |currency|
-      config.assignments.currency = currency
+    opts.on('--currency=TYPE', "Default: $config:assign:currency") do |currency|
+      config.assign.currency = currency
     end
-    opts.on('--keyword=WORD', "Default: $config:assignments:keywords.", "  Repeatable") do |keyword|
+    opts.on('--keyword=WORD', "Default: $config:assign:keywords.", "  Repeatable") do |keyword|
       unless yet[:keyword]
         yet[:keyword] = true
         #We ignore keywords from the conf file if the user specified any.
-        config.assignments.keywords = []
+        config.assign.keywords = []
       end
-      config.assignments.keywords.push(keyword)
+      config.assign.keywords.push(keyword)
     end
     Hash[
          'deadline' => 'Worker time to transcribe',
          'lifetime' => 'Assignment time to expire',
          'approval' => 'Submission time to auto approve'
         ].each do |param, meaning|
-      opts.on("--#{param}=TIMESPEC", "Default: $config:assignments:#{param}.", "  #{meaning}.", "  N[.N]y|M(onths)|d|h|m(inutes)|s") do |timespec|
+      opts.on("--#{param}=TIMESPEC", "Default: $config:assign:#{param}.", "  #{meaning}.", "  N[.N]y|M(onths)|d|h|m(inutes)|s") do |timespec|
         begin
-          config.assignments.send("#{param}=", timespec)
+          config.assign.send("#{param}=", timespec)
         rescue Typingpool::Error::Argument => e
           abort "Bad --#{param} '#{timespec}': #{e}"
         end
       end
     end
-    opts.on('--qualify=QUALIFICATION', "Default: $config:assignments:qualify.","  Repeatable.", "  An RTurk::Qualifications::TYPES +", "  >|<|==|!=|true|exists|>=|<=", "  [+ INT]") do |qualification|
+    opts.on('--qualify=QUALIFICATION', "Default: $config:assign:qualify.","  Repeatable.", "  An RTurk::Qualifications::TYPES +", "  >|<|==|!=|true|exists|>=|<=", "  [+ INT]") do |qualification|
       unless yet[:qualify]
         yet[:qualify] = true
         #We ignore qualifications from the conf file if the user specified any.
-        config.assignments.qualify = []
+        config.assign.qualify = []
       end
       begin
-        config.assignments.add_qualification(qualification)
+        config.assign.add_qualification(qualification)
       rescue Typingpool::Error::Argument => e
         abort "Bad --qualify '#{qualification}': #{e}"
       end
     end
     opts.on('--sandbox', "Test in Mechanical Turk's sandbox") do
       options[:sandbox] = true
-    end
-    opts.on('--copies=INT', "Default: $config:assignments:copies.", "  How many times to assign each chunk.", "  Currently, related scripts only handle 1 copy") do |copies|
-      copies.match(/^\d+$/) or abort "--copies must be an integer"
-      config.assignments.copies = copies
     end
     opts.on('--config=PATH', 'Default: ~/.audibleturk') do |path|
       path = File.expand_path(path)
@@ -122,10 +118,10 @@ end
 abort "Unexpected argument(s): #{ARGV.join(';')}" if not(ARGV.empty?)
 
 if File.exists?(options[:project])
-  config.local = File.dirname(options[:project])
+  config.transcripts = File.dirname(options[:project])
 else
-  abort "Required param 'local' missing from config file '#{config.path}'" if config.local.to_s.empty?
-  options[:project] = "#{config.local}/#{options[:project]}"
+  abort "Required param 'transcripts' missing from config file '#{config.path}'" if config.transcripts.to_s.empty?
+  options[:project] = "#{config.transcripts}/#{options[:project]}"
 end
 abort "No template specified" if not(options[:template])
 begin
@@ -145,7 +141,7 @@ project = Typingpool::Project.new(File.basename(options[:project]), config)
 abort "Not a project directory at '#{options[:project]}'" if not(project.local)
 assignments = project.local.csv('csv/assignment.csv').read
 abort "No data in assignment CSV" if assignments.empty?
-abort "No AWS key+secret in config" if not(config.aws && config.aws.key && config.aws.secret)
+abort "No Amazon key+secret in config" if not(config.amazon && config.amazon.key && config.amazon.secret)
 
 
 #always upload assignment html (can't re-use old ones because params
@@ -217,7 +213,7 @@ project.local.csv('csv/assignment.csv').each! do |assignment|
   assignment['assignment_url'] = needed['assignment_url']
   question = Typingpool::Amazon::Question.new(assignment['assignment_url'], template.render(assignment))
   begin
-    hit = Typingpool::Amazon::Result.create(question, config.assignments)
+    hit = Typingpool::Amazon::Result.create(question, config.assign)
   rescue  RTurk::RTurkError => e
     STDERR.puts "Mechanical Turk error: #{e}"
     unless hits.empty?

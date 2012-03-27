@@ -38,9 +38,9 @@ if project_name_or_path
   project_path = nil
   if File.exists?(project_name_or_path)
     project_path = project_name_or_path
-    options[:config].local = File.dirname(project_name_or_path)
+    options[:config].transcripts = File.dirname(project_name_or_path)
   else
-    project_path = "#{options[:config].local}/#{project_name_or_path}"
+    project_path = "#{options[:config].transcripts}/#{project_name_or_path}"
   end
   project = Typingpool::Project.new(File.basename(project_path), options[:config])
   project.local or abort "No such project '#{project_name_or_path}'\n"
