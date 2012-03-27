@@ -37,7 +37,7 @@ OptionParser.new do |opts|
     options[:unusual].push(word)
   end
 
-  opts.on('--config PATH', 'Default: ~/.audibleturk. A config file.') do |config|
+  opts.on('--config PATH', 'Default: ~/.typingpool. A config file.') do |config|
     path = File.expand_path(config)
     File.exists?(path) && File.file?(path) or abort "No such file #{path}"
     options[:config] = Typingpool::Config.file(config)

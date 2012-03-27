@@ -77,7 +77,7 @@ configs = [Typingpool::Config.file]
     opts.on('--sandbox', "Test in Mechanical Turk's sandbox") do
       options[:sandbox] = true
     end
-    opts.on('--config=PATH', 'Default: ~/.audibleturk') do |path|
+    opts.on('--config=PATH', 'Default: ~/.typingpool') do |path|
       path = File.expand_path(path)
       File.exists?(path) && File.file?(path) or abort "No such file #{path}"
       new_config = Typingpool::Config.file(path)

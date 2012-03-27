@@ -9,7 +9,7 @@ function audioCompat() {
 	for (var i = 0; i < audioTags.length; i++) {
 	    var tag = audioTags[i];
 	    if (! tag.id){
-		tag.id = '_audibleturk_audio_' + i;
+		tag.id = '_typingpool_audio_' + i;
 	    }
 	    audioTagMeta.push({'id':tag.id, 'src':tag.src});
 	}

@@ -13,7 +13,7 @@ OptionParser.new do |commands|
   commands.on('--sandbox', "Collect from the Mechanical Turk test sandbox") do
     options[:sandbox] = true
   end
-  commands.on('--config=PATH', "Default: ~/.audibleturk", " A config file") do |config|
+  commands.on('--config=PATH', "Default: ~/.typingpool", " A config file") do |config|
     path = File.expand_path(config)
     File.exists?(path) && File.file?(path) or abort "No such file #{path}"
     options[:config] = Typingpool::Config.file(config)

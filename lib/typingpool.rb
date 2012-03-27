@@ -62,7 +62,7 @@ module Typingpool
 
   class Config
     require 'yaml'
-    @@default_file = "~/.audibleturk"
+    @@default_file = "~/.typingpool"
 
     def initialize(params)
       @param = params
@@ -246,7 +246,7 @@ module Typingpool
     require 'rturk'
     require 'pstore'
     @@did_setup = false
-    @@cache_file = '~/.audibleturk.cache'
+    @@cache_file = '~/.typingpool.cache'
 
     class << self
       def setup(args={})
