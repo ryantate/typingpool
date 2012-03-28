@@ -9,15 +9,15 @@ class Error; end
     end
 
     def self.app_dir
-      File.dirname(File.dirname(File.dirname(__FILE__)))
+      ::File.dirname(::File.dirname(::File.dirname(__FILE__)))
     end
 
     def template_dir
-      File.join(self.class.app_dir, 'templates', 'test')
+      ::File.join(self.class.app_dir, 'templates', 'test')
     end
 
     def fixtures_dir
-      File.join(self.class.app_dir, 'test', 'fixtures')
+      ::File.join(self.class.app_dir, 'test', 'fixtures')
     end
 
 
@@ -31,12 +31,12 @@ class Error; end
       require 'fileutils'
 
       def audio_dir
-        File.join(template_dir, 'audio')
+        ::File.join(template_dir, 'audio')
       end
 
       def audio_files(subdir='mp3')
-        dir = File.join(audio_dir, subdir)
-        Dir.entries(dir).reject{|entry| entry.match(/^\./) }.map{|entry| File.join(dir, entry)}.select{|path| File.file?(path) }
+        dir = ::File.join(audio_dir, subdir)
+        ::Dir.entries(dir).reject{|entry| entry.match(/^\./) }.map{|entry| ::File.join(dir, entry)}.select{|path| ::File.file?(path) }
       end
 
       def config
@@ -44,7 +44,7 @@ class Error; end
       end
 
       def config_path(dir)
-        File.join(dir, project_default[:config_filename])   
+        ::File.join(dir, project_default[:config_filename])   
       end
 
       def config_from_dir(dir)
@@ -73,7 +73,7 @@ class Error; end
       end
 
       def in_temp_tp_dir
-        Dir.mktmpdir('typingpool_') do |dir|
+        ::Dir.mktmpdir('typingpool_') do |dir|
           setup_temp_tp_dir(dir)
           yield(dir)
         end
@@ -81,27 +81,27 @@ class Error; end
 
       def setup_temp_tp_dir(dir)
         make_temp_tp_dir_config(dir)
-        FileUtils.cp_r(File.join(template_dir, 'projects'), dir)
+        FileUtils.cp_r(::File.join(template_dir, 'projects'), dir)
       end
 
       def make_temp_tp_dir_config(dir, config=self.config)
-        config.transcripts = File.join(dir, 'projects')
-        config.cache = File.join(dir, '.cache')
+        config.transcripts = ::File.join(dir, 'projects')
+        config.cache = ::File.join(dir, '.cache')
         config.app = self.class.app_dir
         config['assign']['reward'] = '0.02'
         write_config(config, dir, project_default[:config_filename])   
       end
 
       def write_config(config, dir, filename=project_default[:config_filename])
-        path = File.join(dir, filename)
-        File.open(path, 'w') do |out|
+        path = ::File.join(dir, filename)
+        ::File.open(path, 'w') do |out|
           out << YAML.dump(config.to_hash)
         end
         path
       end
 
       def temp_tp_dir_project_dir(temp_tp_dir)
-        File.join(temp_tp_dir, 'projects', project_default[:title])
+        ::File.join(temp_tp_dir, 'projects', project_default[:title])
       end
 
       def temp_tp_dir_project(dir, config=config_from_dir(dir))
@@ -133,7 +133,7 @@ class Error; end
       end
 
       def path_to_tp_make
-        File.join(self.class.app_dir, 'bin', 'make.rb')
+        ::File.join(self.class.app_dir, 'bin', 'make.rb')
       end
 
       def call_tp_make(*args)
@@ -162,7 +162,7 @@ class Error; end
       end
 
       def path_to_tp_finish
-        File.join(self.class.app_dir, 'bin', 'finish.rb')
+        ::File.join(self.class.app_dir, 'bin', 'finish.rb')
       end
 
       def call_tp_finish(*args)
@@ -229,7 +229,7 @@ class Error; end
         if File.exists? tp_collect_fixture_project_dir
           raise Test::Error, "Fixture project already exists for tp-collect at #{tp_collect_fixture_project_dir}"
         end
-        Dir.mkdir(tp_collect_fixture_project_dir)
+        ::Dir.mkdir(tp_collect_fixture_project_dir)
         tp_collect_fixture_project_dir
       end
 
@@ -239,8 +239,8 @@ class Error; end
 
       def with_tp_collect_fixtures_in_temp_tp_dir(dir)
         [['etc', 'id.txt'],['csv','assignment.csv']].each do |path_elems|
-          project_path = File.join(temp_tp_dir_project_dir(dir), *path_elems)
-          fixture_path = File.join(fixtures_dir, "tp_collect_#{path_elems.last}")
+          project_path = ::File.join(temp_tp_dir_project_dir(dir), *path_elems)
+          fixture_path = ::File.join(fixtures_dir, "tp_collect_#{path_elems.last}")
           yield(fixture_path, project_path)
         end
       end

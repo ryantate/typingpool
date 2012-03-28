@@ -242,6 +242,220 @@ module Typingpool
     end #Root
   end #Config
 
+  class Filer
+    require 'fileutils'
+    attr_reader :path
+    def initialize(path)
+      @path = path
+    end
+
+    def read
+      if File.exists? @path
+        IO.read(@path)
+      end
+    end
+
+    def write!(data, mode='w')
+      File.open(@path, mode) do |out|
+        out << data
+      end
+    end
+
+    def delete!
+      if File.exists? @path
+        File.delete(@path)
+      end
+    end
+
+    def mv!(to)
+      FileUtils.mv(@path, to)
+      if File.directory? to
+        to = File.join(to, File.basename(path))
+      end
+      @path = to
+    end
+
+    def to_s
+      @path
+    end
+    alias :to_str :to_s
+
+    def dir
+      Filer::Dir.new(File.dirname(@path))
+    end
+
+    class CSV < Filer
+      include Enumerable
+      require 'csv'
+
+      def read
+        rows = ::CSV.parse(super.to_s)
+        headers = rows.shift or raise Error::File, "No CSV at #{@path}"
+        rows.map{|row| Utility.array_to_hash(row, headers) }
+      end
+
+      def write!(hashes, headers=hashes.map{|h| h.keys}.flatten.uniq)
+        super(::CSV.generate_line(headers) + hashes.map{|hash| ::CSV.generate_line(headers.map{|header| hash[header] }) }.join )
+      end
+
+      def write_arrays!(arrays, headers)
+        write!(arrays.map{|array| Utility.array_to_hash(array, headers) }, headers)
+      end
+
+      def each
+        read.each do |row|
+          yield row
+        end
+      end
+
+      def each!
+        #each_with_index doesn't return the array, so we have to use each
+        i = 0
+        write!(each do |hash| 
+                 yield(hash, i)
+                 i += 1 
+               end)
+      end
+    end #CSV
+
+    class Audio < Filer
+      def initialize(*args)
+        super
+        raise Error::File, "No single quotes allowed in file names" if @path.match(/'/)
+      end
+
+      def create_by_merging(files)
+        raise Error::Argument, "No files to merge" if files.empty?
+        if files.size > 1
+          Utility.system_quietly('mp3wrap', path, *files)
+          written = File.join(dir, "#{File.basename(@path, '.*') }_MP3WRAP.mp3")
+          FileUtils.mv(written, path)
+        else
+          FileUtils.cp(files[0], path)
+        end
+        self
+      end
+
+      def mp3?
+        File.extname(@path).downcase.eql?('.mp3')
+      end
+
+      def to_mp3(dest=self.dir.file("#{File.basename(@path, '.*') }.mp3"), bitrate=nil)
+        bitrate ||= self.bitrate || 192
+        Utility.system_quietly('ffmpeg', '-i', @path, '-acodec', 'libmp3lame', '-ab', "#{bitrate}k", '-ac', '2', dest)
+        File.exists?(dest) or raise Error::Shell, "Could not found output from `ffmpeg` on #{path}"
+        self.class.new(dest.path)
+      end
+
+      def bitrate
+        info = `ffmpeg -i '#{@path}' 2>&1`.match(/(\d+) kb\/s/)
+        return info ? info[1] : nil
+      end
+
+      def split(interval_in_min_dot_seconds, dest=dir)
+        #We have to cd into the wrapfile directory and do everything
+        #there because old/packaged versions of mp3splt were
+        #retarded at handling absolute directory paths
+        ::Dir.chdir(dir.path) do
+          Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{File.basename(path, '.*') }.@m.@s", File.basename(path)) 
+        end
+        files = dir.files_as(self.class).select{|file| File.basename(file.path).match(/^#{Regexp.escape(File.basename(path, '.*')) }\.\d+\.\d+\.mp3$/) }
+        if files.empty?
+          raise Error::Shell, "Could not find output from `mp3splt` on #{path}"
+        end
+        if dest.path != dir.path
+          files.map!{|file| file.mv!(dest) }
+        end
+        files
+      end
+
+      def offset
+        match = name.match(/\d+\.\d\d\b/)
+        return match[0] if match
+      end
+    end #Audio
+
+    class Files
+      include Enumerable
+      require 'fileutils'
+      attr_reader :files
+      def initialize(files)
+        @files = files
+      end
+
+      def each
+        files.each do |file|
+          yield file
+        end
+      end
+
+      def mv!(to)
+        files.each{|file| file.mv! to }
+      end
+
+      def files_as(const)
+        files.map{|file| const.new(file.path) }
+      end
+    end #Files
+
+    class Dir < Files
+      attr_reader :path
+      def initialize(path)
+        @path = path
+      end
+
+      class << self
+        def create(path)
+          FileUtils.mkdir(path)
+          new(path)
+        end
+
+        def named(name, in_dir)
+          match = ::Dir.entries(in_dir).map{|entry| File.join(in_dir, entry) }.select do |entry| 
+            (File.basename(entry) == name)  &&
+              (File.directory? entry)
+          end
+          if match.first
+            new(match.first)
+          end
+        end
+      end #class << self
+
+      def to_s
+        @path
+      end
+      alias :to_str :to_s
+
+      def file(*relative_path)
+        Filer.new(file_path(*relative_path))
+      end
+
+      def csv(*relative_path)
+        Filer::CSV.new(file_path(*relative_path))
+      end
+
+      def audio(*relative_path)
+        Filer::Audio.new(file_path(*relative_path))
+      end
+
+      def file_path(*relative_path)
+        File.join(@path, *relative_path)
+      end
+
+      def files
+        ::Dir.entries(@path).select{|entry| File.file? file_path(entry) }.reject{|entry| entry.match(/^\./) }.map{|entry| self.file(entry) }
+      end
+
+      def subdir(*relative_path)
+        self.class.new(file_path(*relative_path))
+      end
+
+      def finder_open
+        system('open', @path)
+      end
+    end #Dir
+  end #Filer
+
   class Amazon
     require 'rturk'
     require 'pstore'
@@ -364,18 +578,18 @@ module Typingpool
       class << self
         def create(question, config_assign)
           new(RTurk::Hit.create(:title => config_assign.title || question.title) do |hit|
-            hit.description = config_assign.description || question.description
-            hit.question(question.url)
-            hit.note = question.annotation or raise Error, "Missing annotation from question"
-            hit.reward = config_assign.reward or raise Error, "Missing reward config"
-            hit.assignments = 1
-            hit.lifetime = config_assign.lifetime or raise Error, "Missing lifetime config"
-            hit.duration = config_assign.deadline or raise Error, "Missing deadline config"
-            hit.auto_approval = config_assign.approval or raise Error, "Missing approval config"
-            hit.keywords = config_assign.keywords if config_assign.keywords
-            hit.currency = config_assign.currency if config_assign.currency
-            config_assign.qualifications.each{|q| hit.qualifications.add(*q.to_arg)} if config_assign.qualifications
-          end)
+                hit.description = config_assign.description || question.description
+                hit.question(question.url)
+                hit.note = question.annotation or raise Error, "Missing annotation from question"
+                hit.reward = config_assign.reward or raise Error, "Missing reward config"
+                hit.assignments = 1
+                hit.lifetime = config_assign.lifetime or raise Error, "Missing lifetime config"
+                hit.duration = config_assign.deadline or raise Error, "Missing deadline config"
+                hit.auto_approval = config_assign.approval or raise Error, "Missing approval config"
+                hit.keywords = config_assign.keywords if config_assign.keywords
+                hit.currency = config_assign.currency if config_assign.currency
+                config_assign.qualifications.each{|q| hit.qualifications.add(*q.to_arg)} if config_assign.qualifications
+              end)
         end
 
         def id_at
@@ -899,12 +1113,12 @@ module Typingpool
     end
 
     def convert_audio(files=local.subdir('originals'))
-      files.map{|file| Local::File::Audio.new(file.path) }.map do |audio|
+      files.map{|file| Filer::Audio.new(file.path) }.map do |audio|
         if audio.mp3?
           audio
         else
           yield(audio, bitrate) if block_given?
-          audio.to_mp3(local.file('etc','tmp', "#{audio.basename}.mp3"))
+          audio.to_mp3(local.file('etc','tmp', "#{File.basename(audio.path, '.*') }.mp3"))
         end
       end
     end
@@ -914,7 +1128,7 @@ module Typingpool
     end
 
     def split_audio(file=merge_audio)
-      file.kind_of? Local::File::Audio or raise "File must be a Typingpool::Local::File::Audio"
+      file.kind_of? Filer::Audio or raise "File must be a Typingpool::Filer::Audio"
       file.split(interval_as_min_dot_sec)
     end
 
@@ -1139,33 +1353,29 @@ module Typingpool
       end #SFTP
     end #Remote
 
-    class Local
-      include Enumerable
+    class Local < Filer::Dir
       require 'fileutils'
       require 'securerandom'
       attr_reader :path
-      def initialize(path)
-        @path = path
-      end
 
       class << self
         def create(name, base_dir, template_dir)
-          dest = ::File.join(base_dir, name)
-          FileUtils.mkdir(dest)
-          FileUtils.cp_r(::File.join(template_dir, '.'), dest)
-          local = new(dest)
+          local = super(File.join(base_dir, name))
+          FileUtils.cp_r(File.join(template_dir, '.'), local)
           local.create_id
           local
         end
 
         def named(string, path)
-          match = Dir.glob(::File.join(path, '*')).select{|entry| ::File.basename(entry) == string }[0]
-          return unless (match && ::File.directory?(match) && ours?(match))
-          return new(match) 
+          match = super
+          if match && ours?(match)
+            return match
+          end
+          return
         end
 
         def ours?(dir)
-          (Dir.exists?(::File.join(dir, 'audio')) && Dir.exists?(::File.join(dir, 'originals')))
+          File.exists?(dir.subdir('audio')) && File.exists?(dir.subdir('originals'))
         end
 
 
@@ -1187,7 +1397,7 @@ module Typingpool
       etc_file_accessor :subtitle, :audio_is_on_www
 
       def audio_chunks
-        subdir('audio').files_as(File::Audio).reject{|file| file.path.match(/\.all\.mp3$/)}
+        subdir('audio').files_as(Filer::Audio).reject{|file| file.path.match(/\.all\.mp3$/)}
       end
 
       def audio_remote_names(assignments=csv('csv/assignment.csv').read)
@@ -1200,7 +1410,7 @@ module Typingpool
       end
 
       def url_basename(url)
-        ::File.basename(URI.parse(url).path)
+        File.basename(URI.parse(url).path)
       end
 
       def id
@@ -1216,212 +1426,9 @@ module Typingpool
 
       def original_audio
         subdir('originals').reject do |file| 
-          file.extname.downcase == 'html'
+          File.extname(file.path).downcase == 'html'
         end
       end
-
-      def finder_open
-        system('open', @path)
-      end
-
-      def file(*relative_path)
-        File.new(file_path(*relative_path))
-      end
-
-      def csv(*relative_path)
-        File::CSV.new(file_path(*relative_path))
-      end
-
-      def audio(*relative_path)
-        File::Audio.new(file_path(*relative_path))
-      end
-
-      def file_path(*relative_path)
-        ::File.join(@path, *relative_path)
-      end
-
-      def files
-        Dir.entries(@path).select{|entry| ::File.file? file_path(entry) }.reject{|entry| entry.match(/^\./) }.map{|entry| self.file(entry) }
-      end
-
-      def subdir(*relative_path)
-        Subdir.new(file_path(*relative_path))
-      end
-
-      def each
-        files.each do |file|
-          yield file
-        end
-      end
-
-      class File
-        attr_reader :path
-        def initialize(path)
-          @path = path
-        end
-
-        def read
-          if exists?
-            IO.read(@path)
-          end
-        end
-
-        def write!(data, mode='w')
-          ::File.open(@path, mode) do |out|
-            out << data
-          end
-        end
-
-        def delete!
-          if exists?
-            ::File.delete(@path)
-          end
-        end
-
-        def mv!(to)
-          FileUtils.mv(@path, to)
-          if ::File.directory? to
-            to = ::File.join(to, self.name)
-          end
-          @path = to
-        end
-
-        def to_s
-          @path
-        end
-        alias :to_str :to_s
-
-        def exists?
-          ::File.exists?(@path)
-        end
-
-        def dir
-          Subdir.new(::File.dirname(@path))
-        end
-
-        def name
-          ::File.basename(@path)
-        end
-
-        def basename
-          ::File.basename(@path, '.*')
-        end
-
-        def extname
-          ::File.extname(@path)
-        end
-
-        class CSV < File
-          include Enumerable
-          require 'csv'
-
-          def read
-            rows = ::CSV.parse(super.to_s)
-            headers = rows.shift or raise Error::File, "No CSV at #{@path}"
-            rows.map{|row| Utility.array_to_hash(row, headers) }
-          end
-
-          def write!(hashes, headers=hashes.map{|h| h.keys}.flatten.uniq)
-            super(::CSV.generate_line(headers) + hashes.map{|hash| ::CSV.generate_line(headers.map{|header| hash[header] }) }.join )
-          end
-
-          def write_arrays!(arrays, headers)
-            write!(arrays.map{|array| Utility.array_to_hash(array, headers) }, headers)
-          end
-
-          def each
-            read.each do |row|
-              yield row
-            end
-          end
-
-          def each!
-            #each_with_index doesn't return the array, so we have to use each
-            i = 0
-            write!(each do |hash| 
-                     yield(hash, i)
-                     i += 1 
-                   end)
-          end
-        end #CSV
-
-        class Audio < File
-          def initialize(*args)
-            super
-            raise Error::File, "No single quotes allowed in file names" if @path.match(/'/)
-          end
-
-          def create_by_merging(files)
-            raise Error::Argument, "No files to merge" if files.empty?
-            if files.size > 1
-              Utility.system_quietly('mp3wrap', path, *files)
-              written = ::File.join(dir, "#{basename}_MP3WRAP.mp3")
-              FileUtils.mv(written, path)
-            else
-              FileUtils.cp(files[0], path)
-            end
-            self
-          end
-
-          def mp3?
-            extname.downcase.eql?('.mp3')
-          end
-
-          def to_mp3(dest=self.dir.file("#{basename}.mp3"), bitrate=nil)
-            bitrate ||= self.bitrate || 192
-            Utility.system_quietly('ffmpeg', '-i', @path, '-acodec', 'libmp3lame', '-ab', "#{bitrate}k", '-ac', '2', dest)
-            dest.exists? or raise Error::Shell, "Could not found output from `ffmpeg` on #{path}"
-            self.class.new(dest.path)
-          end
-
-          def bitrate
-            info = `ffmpeg -i '#{@path}' 2>&1`.match(/(\d+) kb\/s/)
-            return info ? info[1] : nil
-          end
-
-          def split(interval_in_min_dot_seconds, dest=dir)
-            #We have to cd into the wrapfile directory and do everything
-            #there because old/packaged versions of mp3splt were
-            #retarded at handling absolute directory paths
-            Dir.chdir(dir.path) do
-              Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{basename}.@m.@s", name) 
-            end
-            files = dir.files_as(self.class).select{|file|  file.name.match(/^#{Regexp.escape(basename)}\.\d+\.\d+\.mp3$/) }
-            if files.empty?
-              raise Error::Shell, "Could not find output from `mp3splt` on #{path}"
-            end
-            if dest.path != dir.path
-              files.map!{|file| file.mv!(dest) }
-            end
-            files
-          end
-
-          def offset
-            match = name.match(/\d+\.\d\d\b/)
-            return match[0] if match
-          end
-        end #Audio
-      end #File
-
-      class Subdir < Local
-        def ours?
-          true
-        end
-
-        def to_s
-          @path
-        end
-        alias :to_str :to_s
-
-        def files_as(const)
-          files.map{|file| const.new(file.path) }
-        end
-
-        def rm!
-          FileUtils.rm_r(@path)
-        end
-
-      end #Subdir
     end #Local
   end #Project
 
@@ -1507,6 +1514,7 @@ module Typingpool
       end
     end #Transcription::Chunk 
   end #Transcription 
+
   class Template
     require 'erb'
     class << self
@@ -1603,4 +1611,5 @@ module Typingpool
       end
     end #Env
   end #Template
+
 end #Typingpool

@@ -2,6 +2,7 @@
 
 require 'optparse'
 require 'typingpool'
+require 'fileutils'
 
 options = {
   :config => Typingpool::Config.file,
@@ -101,7 +102,7 @@ end
 project.local.subtitle = options[:subtitle] if options[:subtitle]
 options[:files].each{|path| FileUtils.cp(path, project.local.subdir('originals')) }
 
-files = project.convert_audio(project.local.subdir('originals')){|file, kbps| puts "Converting #{file.name} to mp3" }
+files = project.convert_audio(project.local.subdir('originals')){|file, kbps| puts "Converting #{File.basename(file) } to mp3" }
 
 puts "Merging audio" if files.length > 1
 file = project.merge_audio(files)
@@ -122,6 +123,6 @@ if STDOUT.tty?
 end
 
 puts "Deleting temp files"
-project.local.subdir('etc', 'tmp').rm!
+FileUtils.rm_r(project.local.subdir('etc', 'tmp'))
 
 puts "Done"
