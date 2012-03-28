@@ -1419,12 +1419,6 @@ module Typingpool
         end
         file('data','id.txt').write!(SecureRandom.hex(16))
       end
-
-      def original_audio
-        subdir('audio', 'originals').reject do |file| 
-          File.extname(file.path).downcase == 'html'
-        end
-      end
     end #Local
   end #Project
 
