@@ -1379,22 +1379,22 @@ module Typingpool
         end
 
 
-        def etc_file_accessor(*syms)
+        def data_file_accessor(*syms)
           syms.each do |sym|
             define_method(sym) do
-              file('etc',"#{sym.to_s}.txt").read
+              file('data',"#{sym.to_s}.txt").read
             end
             define_method("#{sym.to_s}=".to_sym) do |value|
-              file('etc',"#{sym.to_s}.txt").write!(value)
+              file('data',"#{sym.to_s}.txt").write!(value)
             end
             define_method("delete_#{sym.to_s}".to_sym) do
-              file('etc',"#{sym.to_s}.txt").delete!
+              file('data',"#{sym.to_s}.txt").delete!
             end
           end
         end
       end #class << self
 
-      etc_file_accessor :subtitle, :audio_is_on_www
+      data_file_accessor :subtitle, :audio_is_on_www
 
       def audio_chunks
         subdir('audio').files_as(Filer::Audio).reject{|file| file.path.match(/\.all\.mp3$/)}
@@ -1414,14 +1414,14 @@ module Typingpool
       end
 
       def id
-        file('etc','id.txt').read
+        file('data','id.txt').read
       end
 
       def create_id
         if id 
           raise Error, "id already exists" 
         end
-        file('etc','id.txt').write!(SecureRandom.hex(16))
+        file('data','id.txt').write!(SecureRandom.hex(16))
       end
 
       def original_audio
