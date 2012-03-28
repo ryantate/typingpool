@@ -1132,13 +1132,13 @@ module Typingpool
       file.split(interval_as_min_dot_sec, dest)
     end
 
-    def upload_audio(files=local.audio_chunks, as=create_audio_remote_names(files), &progress)
+    def upload_audio(files=local.subdir('audio', 'chunks').files_as(Filer::Audio), as=create_audio_remote_names(files), &progress)
       urls = remote.put(files.map{|file| File.new(file.to_s) }, as){|file, as| progress.yield(file, as, remote) if progress}
       local.audio_is_on_www = urls.join("\n")
       urls
     end
 
-    def create_audio_remote_names(files=local.audio_chunks)
+    def create_audio_remote_names(files=local.subdir('audio', 'chunks').files_as(Filer::Audio))
       create_remote_file_basenames(files).map{|name| [name, '.mp3'].join }
     end
 
@@ -1163,7 +1163,7 @@ module Typingpool
       create_remote_file_basenames(audio_files).map{|name| [name, '.html'].join }
     end
 
-    def create_remote_file_basenames(from=local.audio_chunks)
+    def create_remote_file_basenames(from=local.subdir('audio','chunks').files_as(Filer::Audio))
       from.map do |file|
         [File.basename(file, '.*'), local.id, pseudo_random_uppercase_string].join('.')
       end
@@ -1395,10 +1395,6 @@ module Typingpool
       end #class << self
 
       data_file_accessor :subtitle, :audio_is_on_www
-
-      def audio_chunks
-        subdir('audio', 'chunks').files_as(Filer::Audio)
-      end
 
       def audio_remote_names(assignments=csv('data', 'assignment.csv').read)
         assignments.map{|assignment| url_basename(assignment['audio_url']) }

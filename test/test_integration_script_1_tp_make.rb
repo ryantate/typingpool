@@ -28,13 +28,13 @@ class TestTpMake < Typingpool::Test::Script
       end
       assert_not_nil(project.local)
       assert_not_nil(project.local.id)
-      assert_equal(7, project.local.audio_chunks.size)
+      assert_equal(7, project.local.subdir('audio','chunks').to_a.size)
       assert_equal(project_default[:subtitle], project.local.subtitle)
       assignments = nil
       assert_nothing_raised do 
         assignments = project.local.csv('data', 'assignment.csv').read
       end
-      assert_equal(project.local.audio_chunks.size, assignments.size)
+      assert_equal(project.local.subdir('audio','chunks').to_a.size, assignments.size)
       assignments.each do |assignment|
         assert_not_nil(assignment['audio_url'])
         assert(working_url? assignment['audio_url'])

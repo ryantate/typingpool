@@ -92,7 +92,7 @@ projects.each do |key, project|
   transcription = Typingpool::Transcription.new(project.name, transcription_chunks)
   transcription.subtitle = project.local.subtitle
   File.delete(File.join(project.local.path, filename[:working])) if File.exists?(File.join(project.local.path, filename[:working]))
-  done = (transcription.to_a.length == project.local.audio_chunks.length)
+  done = (transcription.to_a.length == project.local.subdir('audio', 'chunks').to_a.size)
   out_file = done ? filename[:done] : filename[:working]
   begin
     template ||= Typingpool::Template.from_config('transcript', options[:config])

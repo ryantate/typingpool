@@ -52,7 +52,7 @@ class TestTpAssign < Typingpool::Test::Script
       setup_amazon(dir)
       results = nil
       assert_nothing_raised{ results = Typingpool::Amazon::Result.all_for_project(project.local.id) }
-      assert_equal(project.local.audio_chunks.size, results.size)
+      assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
       assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].hit.assignments_duration.to_i)
       #These numbers will be apart due to clock differences and
       #timing vagaries of the assignment.
