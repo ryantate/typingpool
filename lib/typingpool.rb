@@ -1123,7 +1123,7 @@ module Typingpool
           audio
         else
           yield(audio, bitrate) if block_given?
-          audio.to_mp3(local.file('etc','tmp', "#{File.basename(audio.path, '.*') }.mp3", bitrate))
+          audio.to_mp3(local.file('etc','tmp', "#{File.basename(audio.path, '.*') }.mp3"), bitrate)
         end
       end
     end
@@ -1145,11 +1145,6 @@ module Typingpool
 
     def create_audio_remote_names(files=local.subdir('audio', 'chunks').files_as(Filer::Audio))
       create_remote_file_basenames(files).map{|name| [name, '.mp3'].join }
-    end
-
-    def updelete_audio(remote_audio_basenames=local.csv('data', 'assignment.csv').read.map{|assignment| Utility.url_basename(assignment['audio_url']) }, &progress)
-      remote.remove(remote_audio_basenames)
-      local.delete_audio_is_on_www
     end
 
     def upload_assignments(template, assignments=local.csv('data', 'assignment.csv').read, as=create_assignment_remote_names(assignments))
@@ -1206,9 +1201,17 @@ module Typingpool
         end
       end
 
+      def remove_urls(urls)
+        basenames = urls.map do |url| 
+          url.split("#{self.url}/").last or raise Error "Could not find base url '#{self.url}' within longer url #{url}"
+        end
+        remove(basenames){|file| yield(file) if block_given? }
+      end
+
       class S3 < Remote
         require 'aws/s3'
         attr_accessor :key, :secret, :bucket
+        attr_reader :url
         def initialize(name, amazon_config)
           @name = name
           @config = amazon_config

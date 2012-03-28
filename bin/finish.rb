@@ -82,12 +82,22 @@ end
 #Remove the remote audio files associated with the results and update the assignment.csb associated with the project
 if project 
   assignments = project.local.csv('data', 'assignment.csv').read
-  deleting = assignments.select{|assignment| assignment['assignment_url'] }
-  if not(deleting.empty?)
-    STDERR.puts "Removing assignment HTML from #{project.remote.host}"
-    project.remote.remove(deleting.map{|assignment| Typingpool::Utility.url_basename(assignment['assignment_url']) })
-    STDERR.puts "  Removed #{deleting.size} HTML files from #{project.remote.host}"
+  deleting = assignments.map{|assignment| assignment['assignment_url'] }.select{|url| url }
+  if project.local.audio_is_on_www
+    deleting << assignments.map{|assignment| assignment['audio_url'] }
   end
+  if not(deleting.empty?)
+    STDERR.puts "Removing mp3s and assignment HTML from #{project.remote.host}"
+    begin
+      project.remote.remove_urls(deleting.flatten)
+    rescue Typingpool::Error::File::Remote => e
+      abort "Can't remove remote audio files: #{e}"
+    end #begin
+    STDERR.puts "  Removed #{deleting.size}  files from #{project.remote.host}"
+    if project.local.audio_is_on_www
+      project.local.delete_audio_is_on_www
+    end
+  end #if not(deleting.empty?)
   project.local.csv('data', 'assignment.csv').each! do |assignment|
     assignment.delete('assignment_url')
     if assignment['hit_expires_at'].to_s.match(/\S/)
@@ -96,18 +106,4 @@ if project
       %w(hit_expires_at hit_assignments_duration).each{|key| assignment.delete(key) }
     end
   end
-  if project.local.audio_is_on_www
-    STDERR.puts "Removing audio from #{project.remote.host}"
-    begin
-      project.updelete_audio
-    rescue Typingpool::Error::File::Remote => e
-      if e.to_s.match(/no such file/)
-        STDERR.puts "  No files to remove - may have been removed previously"
-      else
-        abort "Can't remove remote audio files: #{e}"
-      end
-    else
-      STDERR.puts "  Removed #{assignments.size} audio files from #{project.remote.host}"
-    end #begin
-  end #if project.local.audio_is_on_www
 end #if project
