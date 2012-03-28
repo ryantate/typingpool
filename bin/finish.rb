@@ -85,7 +85,7 @@ if project
   deleting = assignments.select{|assignment| assignment['assignment_url'] }
   if not(deleting.empty?)
     STDERR.puts "Removing assignment HTML from #{project.remote.host}"
-    project.updelete_assignments(deleting)
+    project.remote.remove(deleting.map{|assignment| Typingpool::Utility.url_basename(assignment['assignment_url']) })
     STDERR.puts "  Removed #{deleting.size} HTML files from #{project.remote.host}"
   end
   project.local.csv('data', 'assignment.csv').each! do |assignment|

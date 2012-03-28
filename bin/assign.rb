@@ -193,10 +193,10 @@ end
 #Delete old assignment html for assignments to be re-assigned. We
 #can't re-use old assignment HTML because new params (e.g. reward)
 #might cause the new HTML to be different
-updeleting = needed_assignments.select{|audio_url, assignment| assignment['assignment_url'] }.map{|audio_url, assignment| assignment['assignment_url'] }
+updeleting = needed_assignments.map{|audio_url, assignment| assignment }.select{|assignment| assignment['assignment_url'] }
 if not(updeleting.empty?)
   STDERR.puts "Deleting old assignment HTML from #{project.remote.host}"
-  project.updelete_assignments(updeleting)
+  project.remote.remove(updeleting.map{|assignment| Typingpool::Utility.url_basename(assignment['assignment_url']) })
 end
 
 STDERR.puts "Uploading assignment HTML to #{project.remote.host}"

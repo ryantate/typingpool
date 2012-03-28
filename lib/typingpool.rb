@@ -20,6 +20,7 @@ module Typingpool
 
   module Utility
     require 'open3'
+    require 'uri'
     class << self
       #much like Kernel#system, except it doesn't spew STDERR and
       #STDOUT all over your screen! (when called with multiple args,
@@ -55,6 +56,10 @@ module Typingpool
 
       def array_to_hash(array, headers)
         Hash[*headers.zip(array).flatten] 
+      end
+
+      def url_basename(url)
+        File.basename(URI.parse(url).path)
       end
 
     end #class << self
@@ -1142,8 +1147,8 @@ module Typingpool
       create_remote_file_basenames(files).map{|name| [name, '.mp3'].join }
     end
 
-    def updelete_audio(files=local.audio_remote_names, &progress)
-      remote.remove(files)
+    def updelete_audio(remote_audio_basenames=local.csv('data', 'assignment.csv').read.map{|assignment| Utility.url_basename(assignment['audio_url']) }, &progress)
+      remote.remove(remote_audio_basenames)
       local.delete_audio_is_on_www
     end
 
@@ -1152,10 +1157,6 @@ module Typingpool
         yield(file, as, remote) if block_given?
       end
       urls
-    end
-
-    def updelete_assignments(assignments=local.csv('data', 'assignment.csv').read)
-      remote.remove(local.assignment_remote_names(assignments))
     end
 
     def create_assignment_remote_names(assignments)
@@ -1396,19 +1397,6 @@ module Typingpool
 
       data_file_accessor :subtitle, :audio_is_on_www
 
-      def audio_remote_names(assignments=csv('data', 'assignment.csv').read)
-        assignments.map{|assignment| url_basename(assignment['audio_url']) }
-      end
-
-
-      def assignment_remote_names(assignments=csv('data', 'assignment.csv').read)
-        assignments.map{|assignment| url_basename(assignment['assignment_url']) }
-      end
-
-      def url_basename(url)
-        File.basename(URI.parse(url).path)
-      end
-
       def id
         file('data','id.txt').read
       end
@@ -1478,7 +1466,6 @@ module Typingpool
       def url
         @url
       end
-
 
       def wrap_text(text)
         formatter = Text::Format.new
