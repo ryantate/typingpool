@@ -357,14 +357,14 @@ module Typingpool
         return info ? info[1] : nil
       end
 
-      def split(interval_in_min_dot_seconds, dest=dir)
+      def split(interval_in_min_dot_seconds, basename=File.basename(path, '.*'), dest=dir)
         #We have to cd into the wrapfile directory and do everything
         #there because old/packaged versions of mp3splt were
         #retarded at handling absolute directory paths
         ::Dir.chdir(dir.path) do
-          Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{File.basename(path, '.*') }.@m.@s", File.basename(path)) 
+          Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{basename}.@m.@s", File.basename(path)) 
         end
-        files = dir.files_as(self.class).select{|file| File.basename(file.path).match(/^#{Regexp.escape(File.basename(path, '.*')) }\.\d+\.\d+\.mp3$/) }
+        files = dir.files_as(self.class).select{|file| File.basename(file.path).match(/^#{Regexp.escape(basename) }\.\d+\.\d+\.mp3$/) }
         if files.empty?
           raise Error::Shell, "Could not find output from `mp3splt` on #{path}"
         end
@@ -1117,51 +1117,44 @@ module Typingpool
       @bitrate = kbps
     end
 
-    def convert_audio(files=local.subdir('audio', 'originals'))
-      files.map{|file| Filer::Audio.new(file.path) }.map do |audio|
+    def convert_audio(files, into_dir)
+      files.map do |audio|
         if audio.mp3?
           audio
         else
           yield(audio, bitrate) if block_given?
-          audio.to_mp3(local.file('etc','tmp', "#{File.basename(audio.path, '.*') }.mp3"), bitrate)
+          audio.to_mp3(into_dir.file("#{File.basename(audio.path, '.*') }.mp3"), bitrate)
         end
       end
     end
 
-    def merge_audio(files=convert_audio)
+    def merge_audio(files)
       local.audio('audio', "#{@name}.all.mp3").create_by_merging(files)
     end
 
-    def split_audio(file=merge_audio, dest=local.subdir('audio','chunks'))
+    def split_audio(file, dest_dir)
       file.kind_of? Filer::Audio or raise "File must be a Typingpool::Filer::Audio"
-      file.split(interval_as_min_dot_sec, dest)
+      file.split(interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), dest_dir)
     end
 
-    def upload_audio(files=local.subdir('audio', 'chunks').files_as(Filer::Audio), as=create_audio_remote_names(files), &progress)
-      urls = remote.put(files.map{|file| File.new(file.to_s) }, as){|file, as| progress.yield(file, as, remote) if progress}
+    def upload_audio(files, as=create_remote_names(files))
+      urls = remote.put(files, as){|file, as| yield(file, as, remote) if block_given? }
       local.audio_is_on_www = urls.join("\n")
       urls
     end
 
-    def create_audio_remote_names(files=local.subdir('audio', 'chunks').files_as(Filer::Audio))
-      create_remote_file_basenames(files).map{|name| [name, '.mp3'].join }
-    end
-
-    def upload_assignments(template, assignments=local.csv('data', 'assignment.csv').read, as=create_assignment_remote_names(assignments))
+    def upload_assignments(template, assignments, as=create_remote_names(assignments.map{|assignment| File.basename(self.class.local_basename_from_url(assignment['audio_url']), '.*') + '.html' }))
       urls = remote.put(assignments.map{|assignment| StringIO.new(template.render(assignment)) }, as) do |file, as|
         yield(file, as, remote) if block_given?
       end
       urls
     end
 
-    def create_assignment_remote_names(assignments)
-      audio_files = assignments.map{|assignment| assignment['audio_url']}.map{|url| Project.local_basename_from_url(url) }
-      create_remote_file_basenames(audio_files).map{|name| [name, '.html'].join }
-    end
-
-    def create_remote_file_basenames(from=local.subdir('audio','chunks').files_as(Filer::Audio))
-      from.map do |file|
-        [File.basename(file, '.*'), local.id, pseudo_random_uppercase_string].join('.')
+    def create_remote_names(files)
+      files.map do |file|
+        name = [File.basename(file, '.*'), local.id, pseudo_random_uppercase_string].join('.')
+        name += File.extname(file) if not(File.extname(file).to_s.empty?)
+        name
       end
     end
 
@@ -1381,7 +1374,6 @@ module Typingpool
         def ours?(dir)
           File.exists?(dir.subdir('audio')) && File.exists?(dir.subdir('audio', 'originals'))
         end
-
 
         def data_file_accessor(*syms)
           syms.each do |sym|

@@ -102,13 +102,13 @@ end
 project.local.subtitle = options[:subtitle] if options[:subtitle]
 options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }
 
-files = project.convert_audio(project.local.subdir('audio', 'originals')){|file, kbps| puts "Converting #{File.basename(file) } to mp3" }
+files = project.convert_audio(project.local.subdir('audio', 'originals').files_as(Typingpool::Filer::Audio), project.local.subdir('etc','tmp')){|file, kbps| puts "Converting #{File.basename(file) } to mp3" }
 
 puts "Merging audio" if files.length > 1
 file = project.merge_audio(files)
 
 puts "Splitting audio into uniform bits"
-files = project.split_audio(file)
+files = project.split_audio(file, project.local.subdir('audio','chunks'))
 
 remote_files = project.upload_audio(files) do |file, as, remote|
   puts "Uploading #{File.basename(file)} to #{remote.host}/#{remote.path} as #{as}"

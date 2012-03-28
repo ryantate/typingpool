@@ -144,7 +144,7 @@ class Error; end
         Hash[
              :config_filename => '.config',
              :subtitle => 'Typingpool test interview transcription',
-             :title => 'TestTpInterview',
+             :title => 'TestTpInterview5',
              :chunks => '0:20',
              :unusual => ['Hack Day', 'Sunnyvale', 'Chad D'],
              :voice => ['Ryan', 'Havi, hacker'],
