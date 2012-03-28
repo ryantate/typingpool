@@ -97,16 +97,18 @@ begin
 rescue Errno::EEXIST
   abort "The name #{options[:title]} is taken"
 end
-project.local.subtitle = options[:subtitle] if options[:subtitle]
-project.local.add_audio(options[:files], options[:moveorig])
 
-files = project.convert_audio{|file, kbps| puts "Converting #{File.basename(file)} to mp3"}
+project.local.subtitle = options[:subtitle] if options[:subtitle]
+options[:files].each{|path| FileUtils.cp(path, project.local.subdir('originals')) }
+
+files = project.convert_audio(project.local.subdir('originals')){|file, kbps| puts "Converting #{file.name} to mp3" }
 
 puts "Merging audio" if files.length > 1
 file = project.merge_audio(files)
 
 puts "Splitting audio into uniform bits"
 files = project.split_audio(file)
+
 remote_files = project.upload_audio(files) do |file, as, remote|
   puts "Uploading #{File.basename(file)} to #{remote.host}/#{remote.path} as #{as}"
 end
@@ -114,10 +116,12 @@ end
 assignment_path = project.create_assignment_csv(remote_files, options[:unusual], options[:voices])
 puts "Wrote #{assignment_path}"
 
-puts "Opening project folder #{project.local.path}"
-project.local.finder_open if STDOUT.tty?
+if STDOUT.tty?
+  puts "Opening project folder #{project.local.path}"
+  project.local.finder_open 
+end
 
 puts "Deleting temp files"
-project.local.rm_tmp_dir
+project.local.subdir('etc', 'tmp').rm!
 
 puts "Done"

@@ -28,8 +28,7 @@ class TestTpMake < Typingpool::Test::Script
       end
       assert_not_nil(project.local)
       assert_not_nil(project.local.id)
-      assert(project.local.audio_chunks.size >= 6)
-      assert(project.local.audio_chunks.size <= 7)
+      assert_equal(7, project.local.audio_chunks.size)
       assert_equal(project_default[:subtitle], project.local.subtitle)
       assignments = nil
       assert_nothing_raised do 

@@ -898,20 +898,24 @@ module Typingpool
       @bitrate = kbps
     end
 
-    def convert_audio
-      local.original_audio.map do |path|
-        audio = Audio::File.new(path)
-        yield(path, bitrate) if block_given?
-        File.extname(path).downcase.eql?('.mp3') ? audio : audio.to_mp3(local.tmp_dir, bitrate)
+    def convert_audio(files=local.subdir('originals'))
+      files.map{|file| Local::File::Audio.new(file.path) }.map do |audio|
+        if audio.mp3?
+          audio
+        else
+          yield(audio, bitrate) if block_given?
+          audio.to_mp3(local.file('etc','tmp', "#{audio.basename}.mp3"))
+        end
       end
     end
 
     def merge_audio(files=convert_audio)
-      Audio.merge(files, File.join(local.path, 'audio', "#{@name}.all.mp3"))
+      local.audio('audio', "#{@name}.all.mp3").create_by_merging(files)
     end
 
-    def split_audio(file)
-      file.split(interval_as_min_dot_sec, @name)
+    def split_audio(file=merge_audio)
+      file.kind_of? Local::File::Audio or raise "File must be a Typingpool::Local::File::Audio"
+      file.split(interval_as_min_dot_sec)
     end
 
     def upload_audio(files=local.audio_chunks, as=create_audio_remote_names(files), &progress)
@@ -1136,6 +1140,7 @@ module Typingpool
     end #Remote
 
     class Local
+      include Enumerable
       require 'fileutils'
       require 'securerandom'
       attr_reader :path
@@ -1181,16 +1186,8 @@ module Typingpool
 
       etc_file_accessor :subtitle, :audio_is_on_www
 
-      def tmp_dir
-        ::File.join(path, 'etc', 'tmp')
-      end
-
-      def rm_tmp_dir
-        FileUtils.rm_r(tmp_dir)
-      end
-
       def audio_chunks
-        Dir.glob(::File.join(path, 'audio', '*.mp3')).reject{|file| file.match(/\.all\.mp3$/)}.map{|path| Audio::File.new(path)}
+        subdir('audio').files_as(File::Audio).reject{|file| file.path.match(/\.all\.mp3$/)}
       end
 
       def audio_remote_names(assignments=csv('csv/assignment.csv').read)
@@ -1218,17 +1215,9 @@ module Typingpool
       end
 
       def original_audio
-        dir = ::File.join(path, 'originals')
-        Dir.entries(dir).map{|entry| ::File.join(dir, entry) }.select do |path| 
-          ::File.file?(path) &&
-            not(::File.extname(path).downcase.eql?('html')) &&
-            not(::File.basename(path).match(/^\./))
+        subdir('originals').reject do |file| 
+          file.extname.downcase == 'html'
         end
-      end
-
-      def add_audio(paths, move=false)
-        action = move ? 'mv' : 'cp'
-        paths.each{|path| FileUtils.send(action, path, ::File.join(self.path, 'originals')) }
       end
 
       def finder_open
@@ -1243,11 +1232,30 @@ module Typingpool
         File::CSV.new(file_path(*relative_path))
       end
 
+      def audio(*relative_path)
+        File::Audio.new(file_path(*relative_path))
+      end
+
       def file_path(*relative_path)
         ::File.join(@path, *relative_path)
       end
 
+      def files
+        Dir.entries(@path).select{|entry| ::File.file? file_path(entry) }.reject{|entry| entry.match(/^\./) }.map{|entry| self.file(entry) }
+      end
+
+      def subdir(*relative_path)
+        Subdir.new(file_path(*relative_path))
+      end
+
+      def each
+        files.each do |file|
+          yield file
+        end
+      end
+
       class File
+        attr_reader :path
         def initialize(path)
           @path = path
         end
@@ -1270,8 +1278,37 @@ module Typingpool
           end
         end
 
+        def mv!(to)
+          FileUtils.mv(@path, to)
+          if ::File.directory? to
+            to = ::File.join(to, self.name)
+          end
+          @path = to
+        end
+
+        def to_s
+          @path
+        end
+        alias :to_str :to_s
+
         def exists?
           ::File.exists?(@path)
+        end
+
+        def dir
+          Subdir.new(::File.dirname(@path))
+        end
+
+        def name
+          ::File.basename(@path)
+        end
+
+        def basename
+          ::File.basename(@path, '.*')
+        end
+
+        def extname
+          ::File.extname(@path)
         end
 
         class CSV < File
@@ -1307,68 +1344,85 @@ module Typingpool
                    end)
           end
         end #CSV
+
+        class Audio < File
+          def initialize(*args)
+            super
+            raise Error::File, "No single quotes allowed in file names" if @path.match(/'/)
+          end
+
+          def create_by_merging(files)
+            raise Error::Argument, "No files to merge" if files.empty?
+            if files.size > 1
+              Utility.system_quietly('mp3wrap', path, *files)
+              written = ::File.join(dir, "#{basename}_MP3WRAP.mp3")
+              FileUtils.mv(written, path)
+            else
+              FileUtils.cp(files[0], path)
+            end
+            self
+          end
+
+          def mp3?
+            extname.downcase.eql?('.mp3')
+          end
+
+          def to_mp3(dest=self.dir.file("#{basename}.mp3"), bitrate=nil)
+            bitrate ||= self.bitrate || 192
+            Utility.system_quietly('ffmpeg', '-i', @path, '-acodec', 'libmp3lame', '-ab', "#{bitrate}k", '-ac', '2', dest)
+            dest.exists? or raise Error::Shell, "Could not found output from `ffmpeg` on #{path}"
+            self.class.new(dest.path)
+          end
+
+          def bitrate
+            info = `ffmpeg -i '#{@path}' 2>&1`.match(/(\d+) kb\/s/)
+            return info ? info[1] : nil
+          end
+
+          def split(interval_in_min_dot_seconds, dest=dir)
+            #We have to cd into the wrapfile directory and do everything
+            #there because old/packaged versions of mp3splt were
+            #retarded at handling absolute directory paths
+            Dir.chdir(dir.path) do
+              Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{basename}.@m.@s", name) 
+            end
+            files = dir.files_as(self.class).select{|file|  file.name.match(/^#{Regexp.escape(basename)}\.\d+\.\d+\.mp3$/) }
+            if files.empty?
+              raise Error::Shell, "Could not find output from `mp3splt` on #{path}"
+            end
+            if dest.path != dir.path
+              files.map!{|file| file.mv!(dest) }
+            end
+            files
+          end
+
+          def offset
+            match = name.match(/\d+\.\d\d\b/)
+            return match[0] if match
+          end
+        end #Audio
       end #File
-    end #Local
 
-    class Audio
-      require 'fileutils'
-
-      def self.merge(files, dest)
-        raise Error::Argument, "No files to merge" if files.empty?
-        if files.size > 1
-          Utility.system_quietly('mp3wrap', dest, *files.map{|file| file.path})
-          written = "#{::File.dirname(dest)}/#{::File.basename(dest, '.*')}_MP3WRAP.mp3"
-          FileUtils.mv(written, dest)
-        else
-          FileUtils.cp(files[0].path, dest)
-        end
-        File.new(dest)
-      end
-
-      class File
-        attr_reader :path
-        def initialize(path)
-          raise Error::File, "No single quotes allowed in file names" if path.match(/'/)
-          @path = path
+      class Subdir < Local
+        def ours?
+          true
         end
 
         def to_s
           @path
         end
+        alias :to_str :to_s
 
-        def to_str
-          to_s
+        def files_as(const)
+          files.map{|file| const.new(file.path) }
         end
 
-        def to_mp3(dir=::File.dirname(@path), bitrate=nil)
-          bitrate ||= self.bitrate || 192
-          dest =  ::File.join(dir, "#{::File.basename(@path, '.*')}.mp3")
-          Utility.system_quietly('ffmpeg', '-i', @path, '-acodec', 'libmp3lame', '-ab', "#{bitrate}k", '-ac', '2', dest)
-          return self.class.new(dest)
+        def rm!
+          FileUtils.rm_r(@path)
         end
 
-        def bitrate
-          info = `ffmpeg -i '#{@path}' 2>&1`.match(/(\d+) kb\/s/)
-          return info ? info[1] : nil
-        end
-
-        def split(interval_in_min_dot_seconds, base_name=::File.basename(@path, '.*'))
-          #We have to cd into the wrapfile directory and do everything
-          #there because old/packaged versions of mp3splt were
-          #retarded at handling absolute directory paths
-          dir = ::File.dirname(@path)
-          Dir.chdir(dir) do
-            Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{base_name}.@m.@s", ::File.basename(@path)) 
-          end
-          Dir.entries(dir).select{|entry| ::File.file?("#{dir}/#{entry}")}.reject{|file| file.match(/^\./)}.reject{|file| file.eql?(::File.basename(@path))}.map{|file| self.class.new("#{dir}/#{file}")}
-        end
-
-        def offset
-          match = ::File.basename(@path).match(/\d+\.\d\d\b/)
-          return match[0] if match
-        end
-      end #File
-    end #Audio
+      end #Subdir
+    end #Local
   end #Project
 
   class Transcription
