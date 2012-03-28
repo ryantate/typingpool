@@ -18,33 +18,33 @@ OptionParser.new do |opts|
     options[:files].push(file)
   end
 
-  opts.on('--title TITLE', 'Required. For file names and transcript.') do |title|
+  opts.on('--title TITLE', 'Required. For file names and transcript') do |title|
     options[:title] = title
   end
 
-  opts.on('--subtitle SUBTITLE', 'For transcript.') do |subtitle|
+  opts.on('--subtitle SUBTITLE', 'For transcript') do |subtitle|
     options[:subtitle] = subtitle
   end
 
-  opts.on('--chunks MM:SS', 'Default: 1:00. Audio divided thusly for transcribing. Try also HH:MM:SS.ss and SSS.') do |chunk|
+  opts.on('--chunks MM:SS', 'Default: 1:00. Audio divided thusly for transcribing.', '  Try also HH:MM:SS.ss and SSS') do |chunk|
     options[:chunk] = chunk
   end
 
-  opts.on('--voice "NAME[, DESCR]"', 'Name, optional description of recorded person, to aid transcriber. Repeatable.') do |voice|
+  opts.on('--voice "NAME[, DESCR]"', 'Name, optional description of recorded person, to aid transcriber.', '  Repeatable') do |voice|
     options[:voices].push(voice)
   end
 
-  opts.on('--unusual WORD[,WORD,]', 'Unusual word within recording, to aid transcriber. Commas for multiple. Repeatable.') do |word|
+  opts.on('--unusual WORD[,WORD,]', 'Unusual word within recording, to aid transcriber.', '  Commas for multiple. Repeatable') do |word|
     options[:unusual].push(word)
   end
 
-  opts.on('--config PATH', 'Default: ~/.typingpool. A config file.') do |config|
+  opts.on('--config PATH', 'Default: ~/.typingpool. A config file') do |config|
     path = File.expand_path(config)
     File.exists?(path) && File.file?(path) or abort "No such file #{path}"
     options[:config] = Typingpool::Config.file(config)
   end
 
-  opts.on('--bitrate KBPS', 'Default: Mirror input. Output bitrate in kb/s.') do |kbps|
+  opts.on('--bitrate KBPS', 'Default: Mirror input. Output bitrate in kb/s.', '  Only applies if/when converting to MP3') do |kbps|
     options[:bitrate] = kbps
   end
 

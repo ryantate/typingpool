@@ -1123,7 +1123,7 @@ module Typingpool
           audio
         else
           yield(audio, bitrate) if block_given?
-          audio.to_mp3(local.file('etc','tmp', "#{File.basename(audio.path, '.*') }.mp3"))
+          audio.to_mp3(local.file('etc','tmp', "#{File.basename(audio.path, '.*') }.mp3", bitrate))
         end
       end
     end
