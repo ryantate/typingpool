@@ -1127,9 +1127,9 @@ module Typingpool
       local.audio('audio', "#{@name}.all.mp3").create_by_merging(files)
     end
 
-    def split_audio(file=merge_audio)
+    def split_audio(file=merge_audio, dest=local.subdir('audio','chunks'))
       file.kind_of? Filer::Audio or raise "File must be a Typingpool::Filer::Audio"
-      file.split(interval_as_min_dot_sec)
+      file.split(interval_as_min_dot_sec, dest)
     end
 
     def upload_audio(files=local.audio_chunks, as=create_audio_remote_names(files), &progress)
@@ -1397,7 +1397,7 @@ module Typingpool
       data_file_accessor :subtitle, :audio_is_on_www
 
       def audio_chunks
-        subdir('audio').files_as(Filer::Audio).reject{|file| file.path.match(/\.all\.mp3$/)}
+        subdir('audio', 'chunks').files_as(Filer::Audio)
       end
 
       def audio_remote_names(assignments=csv('data', 'assignment.csv').read)

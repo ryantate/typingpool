@@ -15,7 +15,7 @@
 <% transcription.sort.each do |chunk| %>
 
 <h3><%= chunk.offset %></h3>
-<h3><audio src="audio/<%= chunk.filename_local %>" preload="none" controls></audio></h3>
+<h3><audio src="audio/chunks/<%= chunk.filename_local %>" preload="none" controls></audio></h3>
 <h4><a href="https://requester.mturk.com/bulk/workers/<%= chunk.worker %>">Worker</a> | <a href="https://requester.mturk.com/mturk/manageHIT?HITId=<%= chunk.hit %>&amp;viewableEditPane=manageHIT_downloadResults">HIT</a></h4>
 
 <p><%= chunk.body_as_html %>
