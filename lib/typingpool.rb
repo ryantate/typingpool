@@ -1112,7 +1112,7 @@ module Typingpool
       @bitrate = kbps
     end
 
-    def convert_audio(files=local.subdir('originals'))
+    def convert_audio(files=local.subdir('audio', 'originals'))
       files.map{|file| Filer::Audio.new(file.path) }.map do |audio|
         if audio.mp3?
           audio
@@ -1375,7 +1375,7 @@ module Typingpool
         end
 
         def ours?(dir)
-          File.exists?(dir.subdir('audio')) && File.exists?(dir.subdir('originals'))
+          File.exists?(dir.subdir('audio')) && File.exists?(dir.subdir('audio', 'originals'))
         end
 
 
@@ -1425,7 +1425,7 @@ module Typingpool
       end
 
       def original_audio
-        subdir('originals').reject do |file| 
+        subdir('audio', 'originals').reject do |file| 
           File.extname(file.path).downcase == 'html'
         end
       end

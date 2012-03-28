@@ -100,9 +100,9 @@ rescue Errno::EEXIST
 end
 
 project.local.subtitle = options[:subtitle] if options[:subtitle]
-options[:files].each{|path| FileUtils.cp(path, project.local.subdir('originals')) }
+options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }
 
-files = project.convert_audio(project.local.subdir('originals')){|file, kbps| puts "Converting #{File.basename(file) } to mp3" }
+files = project.convert_audio(project.local.subdir('audio', 'originals')){|file, kbps| puts "Converting #{File.basename(file) } to mp3" }
 
 puts "Merging audio" if files.length > 1
 file = project.merge_audio(files)
