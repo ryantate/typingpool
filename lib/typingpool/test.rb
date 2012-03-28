@@ -238,7 +238,7 @@ class Error; end
       end
 
       def with_tp_collect_fixtures_in_temp_tp_dir(dir)
-        [['etc', 'id.txt'],['csv','assignment.csv']].each do |path_elems|
+        [['etc', 'id.txt'],['data','assignment.csv']].each do |path_elems|
           project_path = ::File.join(temp_tp_dir_project_dir(dir), *path_elems)
           fixture_path = ::File.join(fixtures_dir, "tp_collect_#{path_elems.last}")
           yield(fixture_path, project_path)

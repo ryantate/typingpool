@@ -52,7 +52,7 @@ class TestTpCollect < Typingpool::Test::Script
   end
 
   def assert_assignment_csv_has_transcription_count(count, project)
-    assert_equal(count, project.local.csv('csv/assignment.csv').reject{|assignment| assignment['transcription'].to_s.empty?}.size)
+    assert_equal(count, project.local.csv('data', 'assignment.csv').reject{|assignment| assignment['transcription'].to_s.empty?}.size)
   end
 
   def assert_html_has_audio_count(count, html)

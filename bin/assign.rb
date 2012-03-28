@@ -139,7 +139,7 @@ abort "Project '#{options[:project]}' is not a directory" if not(File.directory?
 project = Typingpool::Project.new(File.basename(options[:project]), config)
 
 abort "Not a project directory at '#{options[:project]}'" if not(project.local)
-assignments = project.local.csv('csv/assignment.csv').read
+assignments = project.local.csv('data', 'assignment.csv').read
 abort "No data in assignment CSV" if assignments.empty?
 abort "No Amazon key+secret in config" if not(config.amazon && config.amazon.key && config.amazon.secret)
 
@@ -207,7 +207,7 @@ end
 
 STDERR.puts 'Assigning'
 hits = []
-project.local.csv('csv/assignment.csv').each! do |assignment|
+project.local.csv('data', 'assignment.csv').each! do |assignment|
   needed = needed_assignments[assignment['audio_url']]
   next if not(needed)
   assignment['assignment_url'] = needed['assignment_url']

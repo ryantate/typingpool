@@ -74,14 +74,14 @@ end
 template = nil
 projects.each do |key, project|
   results_by_url = Hash[ *need[key].map{|result| [result.url, result] }.flatten ]
-  project.local.csv('csv/assignment.csv').each! do |assignment|
+  project.local.csv('data', 'assignment.csv').each! do |assignment|
     result = results_by_url[assignment['audio_url']] or next
     next if assignment['transcription']
     assignment['transcription'] = result.transcription.body
     assignment['worker'] = result.transcription.worker
     assignment['hit_id'] = result.hit_id
   end
-  transcription_chunks = project.local.csv('csv/assignment.csv').select{|assignment| assignment['transcription']}.map do |assignment|
+  transcription_chunks = project.local.csv('data', 'assignment.csv').select{|assignment| assignment['transcription']}.map do |assignment|
     chunk = Typingpool::Transcription::Chunk.new(assignment['transcription'])
     chunk.url = assignment['audio_url']
     chunk.project = assignment['project_id']

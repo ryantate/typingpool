@@ -1147,14 +1147,14 @@ module Typingpool
       local.delete_audio_is_on_www
     end
 
-    def upload_assignments(template, assignments=local.csv('csv/assignment.csv').read, as=create_assignment_remote_names(assignments))
+    def upload_assignments(template, assignments=local.csv('data', 'assignment.csv').read, as=create_assignment_remote_names(assignments))
       urls = remote.put(assignments.map{|assignment| StringIO.new(template.render(assignment)) }, as) do |file, as|
         yield(file, as, remote) if block_given?
       end
       urls
     end
 
-    def updelete_assignments(assignments=local.csv('csv/assignment.csv').read)
+    def updelete_assignments(assignments=local.csv('data', 'assignment.csv').read)
       remote.remove(local.assignment_remote_names(assignments))
     end
 
@@ -1188,8 +1188,8 @@ module Typingpool
       remote_files.each do |file|
         csv << [file, local.id, unusual_words.join(', '), voices.map{|v| [v[:name], v[:description]]}].flatten
       end
-      local.csv('csv', 'assignment.csv').write_arrays!(csv, headers)
-      local.file_path('csv', 'assignment.csv')
+      local.csv('data', 'assignment.csv').write_arrays!(csv, headers)
+      local.file_path('data', 'assignment.csv')
     end
 
     class Remote
@@ -1400,12 +1400,12 @@ module Typingpool
         subdir('audio').files_as(Filer::Audio).reject{|file| file.path.match(/\.all\.mp3$/)}
       end
 
-      def audio_remote_names(assignments=csv('csv/assignment.csv').read)
+      def audio_remote_names(assignments=csv('data', 'assignment.csv').read)
         assignments.map{|assignment| url_basename(assignment['audio_url']) }
       end
 
 
-      def assignment_remote_names(assignments=csv('csv/assignment.csv').read)
+      def assignment_remote_names(assignments=csv('data', 'assignment.csv').read)
         assignments.map{|assignment| url_basename(assignment['assignment_url']) }
       end
 

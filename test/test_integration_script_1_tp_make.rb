@@ -32,7 +32,7 @@ class TestTpMake < Typingpool::Test::Script
       assert_equal(project_default[:subtitle], project.local.subtitle)
       assignments = nil
       assert_nothing_raised do 
-        assignments = project.local.csv('csv/assignment.csv').read
+        assignments = project.local.csv('data', 'assignment.csv').read
       end
       assert_equal(project.local.audio_chunks.size, assignments.size)
       assignments.each do |assignment|

@@ -10,7 +10,7 @@ class TestTpFinish < Typingpool::Test::Script
     skip_if_no_amazon_credentials('tp-collect audio test')
       tp_make(dir, config_path)
       project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
-      urls = project.local.csv('csv/assignment.csv').map{|assignment| assignment['audio_url'] }
+      urls = project.local.csv('data', 'assignment.csv').map{|assignment| assignment['audio_url'] }
       assert(not(urls.empty?))
       assert_equal(urls.size, urls.select{|url| working_url? url}.size)
       assert_nothing_raised do
