@@ -114,7 +114,7 @@ class Error; end
         loop do
           url = URI.parse(url)
           break if seen.include? url.to_s
-          break if seen.size > max_redirects
+          break if seen.count > max_redirects
           seen.add(url.to_s)
           request = Net::HTTP.new(url.host, url.port)
           request.use_ssl = true if url.scheme == 'https'
@@ -144,7 +144,7 @@ class Error; end
         Hash[
              :config_filename => '.config',
              :subtitle => 'Typingpool test interview transcription',
-             :title => 'TestTpInterview5',
+             :title => 'TestTpInterview',
              :chunks => '0:20',
              :unusual => ['Hack Day', 'Sunnyvale', 'Chad D'],
              :voice => ['Ryan', 'Havi, hacker'],

@@ -146,7 +146,7 @@ module Typingpool
     def method_missing(meth, *args)
       equals_param = equals_method?(meth)
       if equals_param
-        args.size == 1 or raise Error::Argument, "Wrong number of args(#{args.size} for 1)"
+        args.count == 1 or raise Error::Argument, "Wrong number of args(#{args.count} for 1)"
         return @param[equals_param] = args[0]
       end
       args.empty? or raise Error::Argument, "Too many args #{meth} #{args.join('|')}"
@@ -220,13 +220,13 @@ module Typingpool
 
           def opts
             args = @raw.split(/\s+/)
-            if (args.size > 3) || (args.size < 2)
+            if (args.count > 3) || (args.count < 2)
               raise Error::Argument, "Unexpected number of qualification tokens: #{@raw}"
             end
             args.shift
             comparator(args[0]) or raise Error::Argument, "Unknown comparator '#{args[0]}' in qualification '#{@raw}'"
             value = 1
-            value = args[1] if args.size == 2
+            value = args[1] if args.count == 2
             return {comparator(args[0]) => value}
           end
 
@@ -329,18 +329,6 @@ module Typingpool
         raise Error::File, "No single quotes allowed in file names" if @path.match(/'/)
       end
 
-      def create_by_merging(files)
-        raise Error::Argument, "No files to merge" if files.empty?
-        if files.size > 1
-          Utility.system_quietly('mp3wrap', path, *files)
-          written = File.join(dir, "#{File.basename(@path, '.*') }_MP3WRAP.mp3")
-          FileUtils.mv(written, path)
-        else
-          FileUtils.cp(files[0], path)
-        end
-        self
-      end
-
       def mp3?
         File.extname(@path).downcase.eql?('.mp3')
       end
@@ -398,9 +386,47 @@ module Typingpool
         files.each{|file| file.mv! to }
       end
 
+      def as(sym)
+        self.class.const_get(sym.to_s.capitalize).new(files)
+      end
+
       def files_as(const)
         files.map{|file| const.new(file.path) }
       end
+
+      class Audio < Files
+        def file(path)
+          Filer::Audio.new(path)
+        end
+
+        def files
+          super.map{|file| self.file(file.path) }
+        end
+
+        def to_mp3(dest_dir, bitrate=nil)
+          mp3s = self.map do |file|
+            if file.mp3?
+              file
+            else
+              yield(file) if block_given?
+              file.to_mp3(dest_dir.file("#{File.basename(file.path, '.*') }.mp3"), bitrate)
+            end
+          end
+          self.class.new(mp3s)
+        end
+
+        def merge(into_file)
+          raise Error::Argument, "No files to merge" if self.to_a.empty?
+          if self.count > 1
+            Utility.system_quietly('mp3wrap', into_file, *self.to_a)
+            written = File.join(into_file.dir, "#{File.basename(into_file.path, '.*') }_MP3WRAP.mp3")
+            FileUtils.mv(written, into_file)
+          else
+            FileUtils.cp(self.first, into_file)
+          end
+          self.file(into_file.path)
+        end
+      end #Audio
     end #Files
 
     class Dir < Files
@@ -1117,39 +1143,6 @@ module Typingpool
       @bitrate = kbps
     end
 
-    def convert_audio(files, into_dir)
-      files.map do |audio|
-        if audio.mp3?
-          audio
-        else
-          yield(audio, bitrate) if block_given?
-          audio.to_mp3(into_dir.file("#{File.basename(audio.path, '.*') }.mp3"), bitrate)
-        end
-      end
-    end
-
-    def merge_audio(files)
-      local.audio('audio', "#{@name}.all.mp3").create_by_merging(files)
-    end
-
-    def split_audio(file, dest_dir)
-      file.kind_of? Filer::Audio or raise "File must be a Typingpool::Filer::Audio"
-      file.split(interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), dest_dir)
-    end
-
-    def upload_audio(files, as=create_remote_names(files))
-      urls = remote.put(files, as){|file, as| yield(file, as, remote) if block_given? }
-      local.audio_is_on_www = urls.join("\n")
-      urls
-    end
-
-    def upload_assignments(template, assignments, as=create_remote_names(assignments.map{|assignment| File.basename(self.class.local_basename_from_url(assignment['audio_url']), '.*') + '.html' }))
-      urls = remote.put(assignments.map{|assignment| StringIO.new(template.render(assignment)) }, as) do |file, as|
-        yield(file, as, remote) if block_given?
-      end
-      urls
-    end
-
     def create_remote_names(files)
       files.map do |file|
         name = [File.basename(file, '.*'), local.id, pseudo_random_uppercase_string].join('.')
@@ -1171,14 +1164,14 @@ module Typingpool
       (0...length).map{(65 + rand(25)).chr}.join
     end
 
-    def create_assignment_csv(remote_files, unusual_words=[], voices=[])
-      headers = ['audio_url', 'project_id', 'unusual', (1 .. voices.size).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
+    def create_assignment_csv(relative_path, remote_files, unusual_words=[], voices=[])
+      headers = ['audio_url', 'project_id', 'unusual', (1 .. voices.count).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
       csv = []
       remote_files.each do |file|
         csv << [file, local.id, unusual_words.join(', '), voices.map{|v| [v[:name], v[:description]]}].flatten
       end
-      local.csv('data', 'assignment.csv').write_arrays!(csv, headers)
-      local.file_path('data', 'assignment.csv')
+      local.csv(*relative_path).write_arrays!(csv, headers)
+      local.file_path(*relative_path)
     end
 
     class Remote
@@ -1195,10 +1188,12 @@ module Typingpool
       end
 
       def remove_urls(urls)
-        basenames = urls.map do |url| 
-          url.split("#{self.url}/").last or raise Error "Could not find base url '#{self.url}' within longer url #{url}"
-        end
+        basenames = urls.map{|url| url_basename(url) } 
         remove(basenames){|file| yield(file) if block_given? }
+      end
+
+      def url_basename(url)
+        url.split("#{self.url}/").last or raise Error "Could not find base url '#{self.url}' within longer url #{url}"
       end
 
       class S3 < Remote

@@ -1,0 +1,8 @@
+Deleting any files in this folder, in the data folder, or in the
+audio/chunks folder will make it impossible for typingpool to function
+properly.
+
+You may safely delete files in the audio/originals folder, as well as
+the "all.mp3" file in the audio folder.
+
+You may safely edit transcript.html and etc/transcript.css.

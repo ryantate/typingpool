@@ -9,7 +9,7 @@ options = {
   :files => [],
   :voices => [],
   :unusual => [],
-  :chunk => '1:00'
+  :chunk => '1:00',
 }
 OptionParser.new do |opts|
   options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} --title Foo --file foo.mp3 [--file bar.mp3...]\n  [--chunks 1:00] [--subtitle 'Hack Day interview']\n  [--voice 'John' --voice 'Pat Foo, British female'...]\n  [--unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson'...]\n  [--bitrate 256][--moveorig] [--config PATH]\n"
@@ -58,7 +58,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 options[:banner] += "`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
-abort "Unfamiliar argument '#{ARGV[0]}'" if ARGV.size > 0
+abort "Unfamiliar argument '#{ARGV[0]}'" if ARGV.count > 0
 abort "No files specified\n#{options[:banner]}" if options[:files].empty?
 abort "No title specified\n#{options[:banner]}" if options[:title].to_s.empty?
 options[:files].sort!
@@ -102,19 +102,22 @@ end
 project.local.subtitle = options[:subtitle] if options[:subtitle]
 options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }
 
-files = project.convert_audio(project.local.subdir('audio', 'originals').files_as(Typingpool::Filer::Audio), project.local.subdir('etc','tmp')){|file, kbps| puts "Converting #{File.basename(file) } to mp3" }
-
-puts "Merging audio" if files.length > 1
-file = project.merge_audio(files)
-
-puts "Splitting audio into uniform bits"
-files = project.split_audio(file, project.local.subdir('audio','chunks'))
-
-remote_files = project.upload_audio(files) do |file, as, remote|
-  puts "Uploading #{File.basename(file)} to #{remote.host}/#{remote.path} as #{as}"
+files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(project.local.subdir('etc','tmp'), project.bitrate) do |file| 
+  puts "Converting #{File.basename(file) } to mp3" 
 end
 
-assignment_path = project.create_assignment_csv(remote_files, options[:unusual], options[:voices])
+puts "Merging audio" if files.count > 1
+file = files.merge(project.local.audio('audio', "#{project.name}.all.mp3"))
+
+puts "Splitting audio into uniform bits"
+files = file.split(project.interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), project.local.subdir('audio','chunks'))
+
+remote_files = project.remote.put(files, project.create_remote_names(files)) do |file, as|
+  puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
+end
+project.local.audio_is_on_www = remote_files.join("\n")
+
+assignment_path = project.create_assignment_csv(['data', 'assignment.csv'],remote_files, options[:unusual], options[:voices])
 puts "Wrote #{assignment_path}"
 
 if STDOUT.tty?

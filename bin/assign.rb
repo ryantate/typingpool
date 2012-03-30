@@ -185,9 +185,10 @@ Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 #we'll need to re-upload audio if we ran tp-finish on the project
 if not(project.local.audio_is_on_www)
-  project.upload_audio(project.local.subdir('audio','chunks').files_as(Filer::Audio), project.local.audio_remote_names) do |file, as, remote|
-    puts "Uploading #{File.basename(file)} to #{remote.host}/#{remote.path} as #{as}"
+  urls = project.remote.put(project.local.subdir('audio','chunks').files_as(Filer::Audio), assignments.map{|assignment| project.remote.url_basename(assignment['audio_url']) }) do |file, as|
+    puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
   end
+  project.local.audio_is_on_www = urls.join("\n")
 end
 
 #Delete old assignment html for assignments to be re-assigned. We
@@ -200,9 +201,11 @@ if not(updeleting.empty?)
 end
 
 STDERR.puts "Uploading assignment HTML to #{project.remote.host}"
-needed_assignments_values = needed_assignments.values
-project.upload_assignments(template, needed_assignments_values).each_with_index do |assignment_url, i|
-  needed_assignments_values[i]['assignment_url'] = assignment_url
+needed_assignments_sorted = needed_assignments.values
+ios = needed_assignments_sorted.map{|assignment| StringIO.new(template.render(assignment)) }
+remote_names = project.create_remote_names(needed_assignments_sorted.map{|assignment| project.class.local_basename_from_url(assignment['audio_url']) + '.html' })
+project.remote.put(ios, remote_names).each_with_index do |assignment_url, i|
+  needed_assignments_sorted[i]['assignment_url'] = assignment_url
 end
 
 STDERR.puts 'Assigning'
@@ -226,5 +229,5 @@ project.local.csv('data', 'assignment.csv').each! do |assignment|
   assignment['hit_id'] = hit.id
   assignment['hit_expires_at'] = hit.full.expires_at.to_s
   assignment['hit_assignments_duration'] = hit.full.assignments_duration.to_s
-  STDERR.puts "Assigned #{hits.size} / #{needed_assignments_values.size}"
+  STDERR.puts "Assigned #{hits.size} / #{needed_assignments.values.size}"
 end
