@@ -185,7 +185,7 @@ Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 #we'll need to re-upload audio if we ran tp-finish on the project
 if not(project.local.audio_is_on_www)
-  urls = project.remote.put(project.local.subdir('audio','chunks').files_as(Filer::Audio), assignments.map{|assignment| project.remote.url_basename(assignment['audio_url']) }) do |file, as|
+  urls = project.remote.put(project.local.subdir('audio','chunks').as(:audio).to_streams, assignments.map{|assignment| project.remote.url_basename(assignment['audio_url']) }) do |file, as|
     puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
   end
   project.local.audio_is_on_www = urls.join("\n")

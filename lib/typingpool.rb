@@ -285,6 +285,10 @@ module Typingpool
     end
     alias :to_str :to_s
 
+    def to_stream(mode='r')
+      File.new(@path, mode)
+    end
+
     def dir
       Filer::Dir.new(File.dirname(@path))
     end
@@ -352,12 +356,12 @@ module Typingpool
         ::Dir.chdir(dir.path) do
           Utility.system_quietly('mp3splt', '-t', interval_in_min_dot_seconds, '-o', "#{basename}.@m.@s", File.basename(path)) 
         end
-        files = dir.files_as(self.class).select{|file| File.basename(file.path).match(/^#{Regexp.escape(basename) }\.\d+\.\d+\.mp3$/) }
-        if files.empty?
+        files = Filer::Files::Audio.new(dir.select{|file| File.basename(file.path).match(/^#{Regexp.escape(basename) }\.\d+\.\d+\.mp3$/) })
+        if files.to_a.empty?
           raise Error::Shell, "Could not find output from `mp3splt` on #{path}"
         end
         if dest.path != dir.path
-          files.map!{|file| file.mv!(dest) }
+          files.mv!(dest)
         end
         files
       end
@@ -382,25 +386,25 @@ module Typingpool
         end
       end
 
-      def mv!(to)
-        files.each{|file| file.mv! to }
-      end
-
       def as(sym)
         self.class.const_get(sym.to_s.capitalize).new(files)
       end
 
-      def files_as(const)
-        files.map{|file| const.new(file.path) }
+      def to_streams
+        self.map{|file| file.to_stream }
+      end
+
+      def mv!(to)
+        files.map{|file| file.mv! to }
       end
 
       class Audio < Files
-        def file(path)
-          Filer::Audio.new(path)
+        def initialize(files)
+          @files = files.map{|file| self.file(file.path) }
         end
 
-        def files
-          super.map{|file| self.file(file.path) }
+        def file(path)
+          Filer::Audio.new(path)
         end
 
         def to_mp3(dest_dir, bitrate=nil)

@@ -112,7 +112,7 @@ file = files.merge(project.local.audio('audio', "#{project.name}.all.mp3"))
 puts "Splitting audio into uniform bits"
 files = file.split(project.interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), project.local.subdir('audio','chunks'))
 
-remote_files = project.remote.put(files, project.create_remote_names(files)) do |file, as|
+remote_files = project.remote.put(files.to_streams, project.create_remote_names(files)) do |file, as|
   puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
 end
 project.local.audio_is_on_www = remote_files.join("\n")
