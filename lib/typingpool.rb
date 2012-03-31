@@ -260,15 +260,9 @@ module Typingpool
       end
     end
 
-    def write!(data, mode='w')
+    def write(data, mode='w')
       File.open(@path, mode) do |out|
         out << data
-      end
-    end
-
-    def delete!
-      if File.exists? @path
-        File.delete(@path)
       end
     end
 
@@ -303,12 +297,12 @@ module Typingpool
         rows.map{|row| Utility.array_to_hash(row, headers) }
       end
 
-      def write!(hashes, headers=hashes.map{|h| h.keys}.flatten.uniq)
+      def write(hashes, headers=hashes.map{|h| h.keys}.flatten.uniq)
         super(::CSV.generate_line(headers) + hashes.map{|hash| ::CSV.generate_line(headers.map{|header| hash[header] }) }.join )
       end
 
-      def write_arrays!(arrays, headers)
-        write!(arrays.map{|array| Utility.array_to_hash(array, headers) }, headers)
+      def write_arrays(arrays, headers)
+        write(arrays.map{|array| Utility.array_to_hash(array, headers) }, headers)
       end
 
       def each
@@ -320,7 +314,7 @@ module Typingpool
       def each!
         #each_with_index doesn't return the array, so we have to use each
         i = 0
-        write!(each do |hash| 
+        write(each do |hash| 
                  yield(hash, i)
                  i += 1 
                end)
@@ -1174,7 +1168,7 @@ module Typingpool
       remote_files.each do |file|
         csv << [file, local.id, unusual_words.join(', '), voices.map{|v| [v[:name], v[:description]]}].flatten
       end
-      local.csv(*relative_path).write_arrays!(csv, headers)
+      local.csv(*relative_path).write_arrays(csv, headers)
       local.file_path(*relative_path)
     end
 
@@ -1380,10 +1374,12 @@ module Typingpool
               file('data',"#{sym.to_s}.txt").read
             end
             define_method("#{sym.to_s}=".to_sym) do |value|
-              file('data',"#{sym.to_s}.txt").write!(value)
+              file('data',"#{sym.to_s}.txt").write(value)
             end
             define_method("delete_#{sym.to_s}".to_sym) do
-              file('data',"#{sym.to_s}.txt").delete!
+              if File.exists? file('data',"#{sym.to_s}.txt")
+                File.delete(file('data',"#{sym.to_s}.txt"))
+              end
             end
           end
         end
@@ -1399,7 +1395,7 @@ module Typingpool
         if id 
           raise Error, "id already exists" 
         end
-        file('data','id.txt').write!(SecureRandom.hex(16))
+        file('data','id.txt').write(SecureRandom.hex(16))
       end
     end #Local
   end #Project
@@ -1582,5 +1578,4 @@ module Typingpool
       end
     end #Env
   end #Template
-
 end #Typingpool
