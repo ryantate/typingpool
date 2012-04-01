@@ -216,7 +216,7 @@ project.local.csv('data', 'assignment.csv').each! do |assignment|
   assignment['assignment_url'] = needed['assignment_url']
   question = Typingpool::Amazon::Question.new(assignment['assignment_url'], template.render(assignment))
   begin
-    hit = Typingpool::Amazon::Result.create(question, config.assign)
+    hit = Typingpool::Amazon::HIT.create(question, config.assign)
   rescue  RTurk::RTurkError => e
     STDERR.puts "Mechanical Turk error: #{e}"
     unless hits.empty?

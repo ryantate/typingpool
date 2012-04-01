@@ -509,6 +509,10 @@ module Typingpool
         @@did_setup
       end
 
+      def rturk_hit_full(id)
+        RTurk::Hit.new(id, nil, :include_assignment_summary => true)
+      end
+
       def cache_file
         File.expand_path(@@cache_file)
       end
@@ -536,71 +540,7 @@ module Typingpool
       end
     end #class << self
 
-    class Assignment
-      require 'nokogiri'
-      require 'uri'
-
-      def initialize(htmlf, config_assignment)
-        @htmlf = htmlf
-        @config = config_assignment
-      end
-
-      def assign
-        HIT.create(:title => title) do |hit|
-          hit.description = description
-          hit.reward = @config.reward or raise Error, "Missing reward config"
-          hit.assignments = @config.copies or raise Error, "Missing copies config"
-          hit.question(question)
-          hit.lifetime = @config.lifetime or raise Error, "Missing lifetime config"
-          hit.duration = @config.deadline or raise Error, "Missing deadline config"
-          hit.auto_approval = @config.approval or raise Error, "Missing approval config"
-          hit.keywords = @config.keywords if @config.keywords
-          hit.currency = @config.currency if @config.currency
-          @config.qualifications.each{|q| hit.qualifications.add(*q.to_arg)} if @config.qualifications
-          hit.note = annotation if annotation
-        end
-      end
-
-      def title
-        noko.css('#title')[0].content
-      end
-
-      def description
-        noko.css('#description')[0].content
-      end
-
-      def question
-        Hash[
-             :id => 1, 
-             :overview => to_allowed_xhtml(noko.css('#overview')[0].inner_html),
-             :question => to_allowed_xhtml(noko.css('#question')[0].inner_html)
-            ]
-      end
-
-      def annotation
-        URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').map{|e| [e['name'], e['value']]}.flatten])
-      end
-
-      def to_allowed_xhtml(htmlf)
-        h = noko(htmlf)
-        %w(id class style).each do |attribute| 
-          h.css("[#{attribute}]").each do |element|
-            element.remove_attribute(attribute)
-          end
-        end
-        %w(input div span).each do |name| 
-          h.css(name).each{|e| e.remove}
-        end
-        h.css('body').inner_html
-      end
-
-      def noko(html=@htmlf)
-        Nokogiri::HTML(html, nil, 'US-ASCII')
-      end
-    end #Amazon::Assignment
-
-
-    class Result
+    class HIT
       require 'set'
       require 'uri'
 
@@ -629,12 +569,12 @@ module Typingpool
           @@url_at ||= 'typingpool_url'
         end
 
-        def cached_or_new(hit, is_full_hit=false)
+        def cached_or_new(rturk_hit, is_full_hit=false)
           r=nil
-          if r = from_cache(hit.id)
+          if r = from_cache(rturk_hit.id)
             puts "DEBUG from_cache"
           else
-            r = new(hit, is_full_hit)
+            r = new(rturk_hit, is_full_hit)
             puts "DEBUG from_new"
           end
           r
@@ -698,8 +638,8 @@ module Typingpool
               #throws away annotation data (unlike GetHIT) and also
               #renames some fields
               annotation = raw_hits[i].xpath('RequesterAnnotation').inner_text.strip
-              wrapped_hit = Amazon::HIT::FromSearchHITs.new(hit, annotation, raw_hits[i])
-              result = cached_or_new(wrapped_hit, true)
+              hit = Amazon::HIT::Full::FromSearchHITs.new(hit, annotation)
+              result = cached_or_new(hit, true)
               result.to_cache
               page_results.push(result)
             end
@@ -709,14 +649,10 @@ module Typingpool
         end
       end #class << self
 
-      attr_reader :hit_id
-      def initialize(hit, is_full_hit=false)
-        @hit_id = hit.id
-        self.hit(hit) if is_full_hit
-      end
-
-      def id
-        @hit_id
+      attr_reader :id
+      def initialize(rturk_hit, is_full_hit=false)
+        @id = rturk_hit.id
+        self.full(rturk_hit) if is_full_hit
       end
 
       def url
@@ -733,9 +669,9 @@ module Typingpool
       end
 
       def stashed_param(param)
-        if @from_assignment && assignment.answers[param]
+        if @assignment && assignment.answers[param]
           return assignment.answers[param]
-        elsif hit.annotation[param]
+        elsif full.annotation[param]
           #A question assigned through this software. May be
           #expensive: May result in HTTP request to fetch HIT
           #fields. We choose to fetch (sometimes) the HIT rather than
@@ -744,8 +680,8 @@ module Typingpool
           #HITs assigned through the RUI (and thus lacking in an
           #annotation from this software and thus rendering the HTTP
           #request to fetch the HIT fields pointless).
-          return hit.annotation[param]
-        elsif hit.assignments_completed.to_i >= 1
+          return full.annotation[param]
+        elsif full.assignments_completed.to_i >= 1
           #A question assigned through Amazon's RUI, with an answer
           #submitted. If the HIT belongs to this software, this
           #assignment's answers will include our param.  We prefer
@@ -763,7 +699,7 @@ module Typingpool
           #A question assigned via Amazon's RUI, with no answer
           #submitted.  Expensive: Results in HTTP request to fetch
           #external question.
-          return hit.external_question_param(param)
+          return full.external_question_param(param)
         end
       end
 
@@ -776,9 +712,9 @@ module Typingpool
       end
 
       def assignment_status_match?(status)
-        if @from_hit
-          return false if hit.assignments_completed == 0
-          return false if hit.status != 'Reviewable'
+        if @full
+          return false if full.assignments_completed == 0
+          return false if full.status != 'Reviewable'
         end
         assignment.status == status
       end
@@ -794,7 +730,7 @@ module Typingpool
         transcript.url = url
         transcript.project = project_id
         transcript.worker = assignment.worker_id
-        transcript.hit = hit_id
+        transcript.hit = @id
         transcript
       end
 
@@ -803,7 +739,7 @@ module Typingpool
         #not forget this (again)
         if cacheable?
           Amazon.cache.transaction do
-            Amazon.cache[self.class.cache_key(@hit_id)] = self 
+            Amazon.cache[self.class.cache_key(@id)] = self 
           end
         end
       end
@@ -813,261 +749,181 @@ module Typingpool
         if @ours == false
           return true
         end
-        if @from_hit
-          return true if hit.expired_and_overdue?
+        if @full
+          return true if full.expired_and_overdue?
         end
-        if @from_assignment && assignment.status
+        if @assignment && assignment.status
           return true if @@cacheable_assignment_status.include?(assignment.status)
         end
         return false
       end
 
-      def remove_hit
-        if hit.status == 'Reviewable'
+      def remove_from_amazon
+        if full.status == 'Reviewable'
           if assignment.status == 'Submitted'
             raise Error::Amazon::UnreviewedContent, "There is an unreviewed submission for #{url}"
           end
-          hit_at_amazon.dispose!
+          at_amazon.dispose!
         else
-          hit_at_amazon.disable!
+          at_amazon.disable!
         end
       end
 
-      def hit_at_amazon
-        Amazon::HIT.new_full(@hit_id)
+      def at_amazon
+        Amazon.rturk_hit_full(@id)
       end
       
       #hit fields segregated because accessing any one of them is
       #expensive if we only have a hit id (but after fetching one all
       #are cheap)
-      def hit(hit=nil)
-        if @from_hit.nil?
-          if hit
-            #If the hit was supplied, it was from SearchHIT and lacks a question element
-            @from_hit = Fields::FromHIT::WithoutQuestion.new(hit)
-          else
-            @from_hit = Fields::FromHIT.new(hit_at_amazon)
-          end
+      def full(rturk_hit=nil)
+        if @full.nil?
+          @full = rturk_hit || Full.new(at_amazon)
         end
-        @from_hit
+        @full
       end
-      alias :full :hit
 
       #assignment fields segregated because accessing any one of
       #them is expensive (but after fetching one all are cheap)
       def assignment
-        if @from_assignment.nil?
-          if @from_hit && hit.assignments_completed == 0
-            @from_assignment = Fields::FromAssignment::Empty.new
+        if @assignment.nil?
+          if @full && full.assignments_completed == 0
+            @assignment = Assignment::Empty.new
           else
-            @from_assignment = Fields::FromAssignment.new(hit_at_amazon) #expensive
+            @assignment = Assignment.new(at_amazon) #expensive
           end
         end
-        @from_assignment
+        @assignment
       end
 
-      class Fields
-        class FromHIT
-          require 'uri'
-          require 'open-uri'
-          require 'nokogiri'
-          attr_reader :type_id, :status, :external_question_url, :assignments_completed, :assignments_pending, :expires_at, :assignments_duration
-          def initialize(hit)
-            @id = hit.id
-            @type_id = hit.type_id
-            @status = hit.status
-            @expires_at = hit.expires_at
-            @assignments_duration = hit.assignments_duration
-            @assignments_completed = hit.assignments_completed_count
-            @assignments_pending = hit.assignments_pending_count
-            self.annotation = hit
-            self.external_question_url = hit.xml
-          end
-
-          def annotation=(hit)
-            begin
-              @annotation = hit.annotation  || ''
-              @annotation = URI.decode_www_form(@annotation) 
-              @annotation = Hash[*@annotation.flatten]
-            rescue ArgumentError
-              #Handle annotations like Department:Transcription (from
-              #the Amazon RUI), which make URI.decode_www_form barf
-              @annotation = {}
-            end
-          end
-
-          def annotation
-            @annotation ||= {}
-          end
-
-          def external_question_url=(noko_xml)
-            if question_node = noko_xml.css('HIT Question')[0] #escaped XML
-              if url_node = Nokogiri::XML::Document.parse(question_node.inner_text).css('ExternalQuestion ExternalURL')[0]
-                @external_question_url = url_node.inner_text
-              end
-            end
-          end
-
-          def external_question
-            if @external_question.nil?
-              if external_question_url && external_question_url.match(/^http/)
-                #expensive, obviously:
-                puts "DEBUG fetching external question"
-                @external_question = open(external_question_url).read
-              end
-            end
-            @external_question
-          end
-
-          def external_question_param(param)
-            if external_question
-              if input = Nokogiri::HTML::Document.parse(external_question).css("input[name=#{param}]")[0]
-                return input['value']
-              end
-            end
-          end
-
-          def expired?
-            expires_at < Time.now
-          end
-
-          def expired_and_overdue?
-            (expires_at + assignments_duration) < Time.now
-          end
-
-          class WithoutQuestion < FromHIT
-            def external_question_url
-              unless @checked_question
-                self.external_question_url = at_amazon.xml
-                @checked_question = true
-              end
-              @external_question_url
-            end
-
-            def at_amazon
-              Amazon::HIT.new_full(@id)
-            end
-          end #Amazon::Result::Fields::FromHIT::WithoutQuestion
-        end #Amazon::Result::Fields::FromHIT
-
-        class FromAssignment
-          attr_reader :status, :worker_id
-
-          def initialize(hit)
-            if assignment = hit.assignments[0] #expensive!
-              @status = assignment.status
-              @worker_id = assignment.worker_id
-              if answers = assignment.answers
-                @answers = answers.to_hash
-              end
-            end
-          end
-
-          def answers
-            @answers ||= {}
-          end
-
-          def body
-            (answers['transcription'] || answers['1']).to_s
-          end
-          
-          class Empty < FromAssignment
-            def initialize
-              @answers = {}
-            end
-
-          end #Empty
-        end #FromAssignment
-      end #Fields
-    end #Result
-
-    class HIT
-      class << self
-        #Extend RTurk to handle external questions (see
-        #CreateHIT and Amazon::HIT::Question
-        #class below)
-        def create(*args, &blk)
-          response = CreateHIT.create(*args, &blk)
-          RTurk::Hit.new(response.hit_id, response)
-        end
-
-        #Convenience method for new RTurk HITs that do what you want
-        def new_full(id)
-          RTurk::Hit.new(id, nil, :include_assignment_summary => true)
-        end
-      end #class << self
-      class FromSearchHITs
-        #Wrap RTurk::HITParser objects returned by RTurk::SearchHITs,
-        #which are pointlessly and stupidly and subtly different from
-        #RTurk::GetHITResponse objects
-        attr_reader :annotation, :xml
-        def initialize(rturk_hit, annotation, noko_xml)
-          @rturk_hit = rturk_hit
-          @annotation = annotation
-          @xml = noko_xml
-        end
-
-        def method_missing(meth, *args)
-          @rturk_hit.send(meth, *args)
-        end
-
-        def assignments_pending_count
-          self.pending_assignments
-        end
-
-        def assignments_available_count
-          self.available_assignments
-        end
-
-        def assignments_completed_count
-          self.completed_assignments
-        end
-
-      end #FromSearchHITs
-
-      class Question
+      class Full
+        require 'uri'
+        require 'open-uri'
         require 'nokogiri'
-        def initialize(args)
-          @id = args[:id] or raise Error::Argument, 'missing :id arg'
-          @question = args[:question] or raise Error::Argument, 'missing :question arg'
-          @title = args[:title]
-          @overview = args[:overview]
+        attr_reader :id, :type_id, :status, :external_question_url, :assignments_completed, :assignments_pending, :expires_at, :assignments_duration
+        def initialize(rturk_hit)
+          import_standard_attrs_from_rturk_hit(rturk_hit)
+          @assignments_completed = rturk_hit.assignments_completed_count
+          @assignments_pending = rturk_hit.assignments_pending_count
+          self.annotation = rturk_hit.annotation
+          self.external_question_url = rturk_hit.xml
         end
 
-        def to_params
-          Nokogiri::XML::Builder.new do |xml|
-            xml.root{
-              xml.QuestionForm(:xmlns => 'http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionForm.xsd'){
-                xml.Overview{
-                  xml.Title @title if @title
-                  if @overview
-                    xml.FormattedContent{
-                      xml.cdata @overview
-                    }
-                  end
-                }  
-                xml.Question{
-                  xml.QuestionIdentifier @id
-                  xml.IsRequired 'true'
-                  xml.QuestionContent{
-                    xml.FormattedContent{
-                      xml.cdata @question
-                    }
-                  }
-                  xml.AnswerSpecification{
-                    xml.FreeTextAnswer()
-                  }
-                }
-              }
-            }
-          end.doc.root.children.map{|c| c.to_xml}.join
+        def import_standard_attrs_from_rturk_hit(hit)
+          %w(id type_id status expires_at assignments_duration).each do |attr|
+            instance_variable_set("@#{attr}", hit.send(attr))
+          end
         end
-      end #Question
+
+        def annotation=(encoded)
+          begin
+            @annotation = encoded.to_s
+            @annotation = URI.decode_www_form(@annotation) 
+            @annotation = Hash[*@annotation.flatten]
+          rescue ArgumentError
+            #Handle annotations like Department:Transcription (from
+            #the Amazon RUI), which make URI.decode_www_form barf
+            @annotation = {}
+          end
+        end
+
+        def annotation
+          @annotation ||= {}
+        end
+
+        def external_question_url=(noko_xml)
+          if question_node = noko_xml.css('HIT Question')[0] #escaped XML
+            if url_node = Nokogiri::XML::Document.parse(question_node.inner_text).css('ExternalQuestion ExternalURL')[0]
+              @external_question_url = url_node.inner_text
+            end
+          end
+        end
+
+        def external_question
+          if @external_question.nil?
+            if external_question_url && external_question_url.match(/^http/)
+              #expensive, obviously:
+              puts "DEBUG fetching external question"
+              @external_question = open(external_question_url).read
+            end
+          end
+          @external_question
+        end
+
+        def external_question_param(param)
+          if external_question
+            if input = Nokogiri::HTML::Document.parse(external_question).css("input[name=#{param}]")[0]
+              return input['value']
+            end
+          end
+        end
+
+        def expired?
+          expires_at < Time.now
+        end
+
+        def expired_and_overdue?
+          (expires_at + assignments_duration) < Time.now
+        end
+
+        class FromSearchHITs < Full
+          #RTurk::HITParser objects returned by RTurk::SearchHITs are
+          #pointlessly and subtly different from RTurk::GetHITResponse
+          #objects. (I need to submit a patch to RTurk.)
+          def initialize(rturk_hit, annotation)
+            import_standard_attrs_from_rturk_hit(rturk_hit)
+            @assignments_completed = rturk_hit.completed_assignments
+            @assignments_pending = rturk_hit.pending_assignments
+            self.annotation = annotation
+          end
+
+          def external_question_url
+            unless @checked_question
+              self.external_question_url = at_amazon.xml
+              @checked_question = true
+            end
+            @external_question_url
+          end
+
+          def at_amazon
+            Amazon.rturk_hit_full(@id)
+          end
+        end #Amazon::HIT::Full::FromSearchHITs
+      end #Amazon::HIT::Full
+
+      class Assignment
+        attr_reader :status, :worker_id
+
+        def initialize(rturk_hit)
+          if assignment = rturk_hit.assignments[0] #expensive!
+            @status = assignment.status
+            @worker_id = assignment.worker_id
+            if answers = assignment.answers
+              @answers = answers.to_hash
+            end
+          end
+        end
+
+        def answers
+          @answers ||= {}
+        end
+
+        def body
+          (answers['transcription'] || answers['1']).to_s
+        end
+        
+        class Empty < Assignment
+          def initialize
+            @answers = {}
+          end
+
+        end #Empty
+      end #Assignment
     end #HIT
+
     class Question
       require 'nokogiri'
       require 'uri'
-
       attr_reader :url, :html
 
       def initialize(url, html)
@@ -1093,20 +949,8 @@ module Typingpool
     end #Question
   end #Amazon
 
-  #RTurk only handles external questions, so we do some subclassing
-  class CreateHIT < RTurk::CreateHIT
-    def question(*args)
-      if args.empty?
-        @question
-      else
-        @question ||= Amazon::HIT::Question.new(*args)
-      end
-    end
-  end #CreateHIT
-
   class Project
     require 'stringio'
-
     attr_reader :interval, :bitrate
     attr_accessor :name, :config
     def initialize(name, config=Config.file)

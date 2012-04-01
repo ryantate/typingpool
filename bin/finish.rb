@@ -53,10 +53,10 @@ STDERR.puts "  Collecting all results"
 #Set up result set, depending on options
 results = nil
 if project
-  results = Typingpool::Amazon::Result.all_for_project(project.local.id)
+  results = Typingpool::Amazon::HIT.all_for_project(project.local.id)
 elsif options[:dead]
-  results = Typingpool::Amazon::Result.all.select do |result|
-    dead = ((result.hit.expired_and_overdue? || result.rejected?) && result.ours?)
+  results = Typingpool::Amazon::HIT.all.select do |result|
+    dead = ((result.full.expired_and_overdue? || result.rejected?) && result.ours?)
     result.to_cache
     dead
   end
@@ -65,14 +65,14 @@ end
 #Remove the results from Mechanical Turk
 fails = []
 results.each do |result| 
-  STDERR.puts "  Removing HIT #{result.hit_id} (#{result.hit.status})"
+  STDERR.puts "  Removing HIT #{result.id} (#{result.full.status})"
   begin
-    result.remove_hit 
+    result.remove_from_amazon 
   rescue Typingpool::Error::Amazon::UnreviewedContent => e
     fails.push(e)
   else
     STDERR.puts "  Removing from local cache"
-    Typingpool::Amazon::Result.delete_cache(result.hit_id)
+    Typingpool::Amazon::HIT.delete_cache(result.id)
   end
 end
 if not (fails.empty?)

@@ -47,7 +47,7 @@ filename = {
 
 STDERR.puts "Collecting results from Amazon"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
-results = Typingpool::Amazon::Result.all_approved
+results = Typingpool::Amazon::HIT.all_approved
 #Only pay attention to results that have a local folder waiting to receive them:
 projects = {}
 need = {}
@@ -79,7 +79,7 @@ projects.each do |key, project|
     next if assignment['transcription']
     assignment['transcription'] = result.transcription.body
     assignment['worker'] = result.transcription.worker
-    assignment['hit_id'] = result.hit_id
+    assignment['hit_id'] = result.id
   end
   transcription_chunks = project.local.csv('data', 'assignment.csv').select{|assignment| assignment['transcription']}.map do |assignment|
     chunk = Typingpool::Transcription::Chunk.new(assignment['transcription'])

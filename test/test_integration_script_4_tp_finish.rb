@@ -42,18 +42,18 @@ class TestTpFinish < Typingpool::Test::Script
       tp_assign(dir)
       project = temp_tp_dir_project(dir)
       setup_amazon(dir)
-      results = Typingpool::Amazon::Result.all_for_project(project.local.id)
+      results = Typingpool::Amazon::HIT.all_for_project(project.local.id)
       assert(not(results.empty?))
       assert_nothing_raised do
         tp_finish(dir)
       end
-      assert_empty(Typingpool::Amazon::Result.all_for_project(project.local.id))
+      assert_empty(Typingpool::Amazon::HIT.all_for_project(project.local.id))
       results.each do |result|
         #The original HIT might be gone, or there and marked
         #'disposed', depending whether Amazon has swept the server for
         #dead HITs yet
         begin 
-          hit = RTurk::Hit.find(result.hit_id)
+          hit = RTurk::Hit.find(result.id)
           assert_match(hit.status, /^dispos/i)
         rescue RTurk::InvalidRequest => exception
           assert_match(exception.message, /HITDoesNotExist/i)
