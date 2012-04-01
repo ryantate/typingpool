@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'highline/import'
+require "highline/system_extensions"
+include HighLine::SystemExtensions
+
+choices = %w(approve reject skip)
+formatted = choices.map{|c| HighLine.color('(', :reverse) + HighLine.color(c.slice(0).upcase, :bold, :reverse) + HighLine.color(")#{c.slice(1, c.size)}", :reverse) }
+formatted << HighLine.color('[', :reverse) + formatted.pop + HighLine.color(']', :reverse)
+say(formatted.join(HighLine.color(', ', :reverse)) + HighLine.color('? ', :reverse))
+choice = get_character.chr
+if choice.to_s.match(/^\s*$/)
+  choice = choices.last
+else
+  choice = choices.detect{|possible| possible[0] == choice.downcase }
+end
+puts "Will #{HighLine::BOLD}#{choice}#{HighLine::CLEAR}." if choice
