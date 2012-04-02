@@ -720,6 +720,10 @@ module Typingpool
         assignment_status_match?('Rejected')
       end
 
+      def submitted?
+        assignment_status_match?('Submitted')
+      end
+
       def assignment_status_match?(status)
         if @full
           return false if full.assignments_completed == 0
@@ -901,12 +905,13 @@ module Typingpool
       end #Amazon::HIT::Full
 
       class Assignment
-        attr_reader :status, :worker_id
+        attr_reader :status, :worker_id, :submitted_at
 
         def initialize(rturk_hit)
           if assignment = rturk_hit.assignments[0] #expensive!
             @status = assignment.status
             @worker_id = assignment.worker_id
+            @submitted_at = assignment.submitted_at
             if answers = assignment.answers
               @answers = answers.to_hash
             end

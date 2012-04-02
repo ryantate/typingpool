@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'typingpool'
+require 'text/format'
 require 'highline/import'
 require "highline/system_extensions"
 include HighLine::SystemExtensions
@@ -59,22 +60,49 @@ if options[:project]
   end
 end
 
+hits = Typingpool::Amazon::HIT.all_reviewable{|hit| hit.submitted? && hit.ours? }
+if options[:project]
+  hits.select!{|hit| hit.project_id == options[:project].local.id }
+end
+hits.sort!{|a, b| a.url <=> b.url }
 
+formatter = Text::Format.new
+formatter.first_indent = 2
+formatter.body_indent = 2
+choices = %w(approve reject quit skip)
+hits.each do |hit|
+  say(HighLine.color("Transcript for #{hit.url}#", :reverse))
+  say(HighLine.color("Submitted at #{hit.assignment.submitted_at} by #{hit.assignment.worker_id}", :bold))
+  say(formatter.format(hit.assignment.body))
+  prompt = choices.map{|c| HighLine.color('(', :reverse) + HighLine.color(c.slice(0).upcase, :bold, :reverse) + HighLine.color(")#{c.slice(1, c.size)}", :reverse) }
+  prompt << HighLine.color('[', :reverse) + formatted.pop + HighLine.color(']', :reverse)
+  prompt = prompt.join(HighLine.color(', ', :reverse)) + HighLine.color('? ', :reverse)
+  say(prompt)
 
-choices = %w(approve reject skip)
-formatted = choices.map{|c| HighLine.color('(', :reverse) + HighLine.color(c.slice(0).upcase, :bold, :reverse) + HighLine.color(")#{c.slice(1, c.size)}", :reverse) }
-formatted << HighLine.color('[', :reverse) + formatted.pop + HighLine.color(']', :reverse)
-prompt = formatted.join(HighLine.color(', ', :reverse)) + HighLine.color('? ', :reverse)
-say(prompt)
-choice=nil
-until choice
-  input = get_character.chr
-  if input.to_s.match(/^\s*$/)
-    choice = choices.last
-  elsif not(choice = choices.detect{|possible| possible[0] == input.downcase })
-    say("Invalid selection '#{input}'.")
-    say(prompt)
+  choice=nil
+  until choice
+    input = get_character.chr
+    if input.to_s.match(/^\s*$/)
+      choice = choices.last
+    elsif not(choice = choices.detect{|possible| possible[0] == input.downcase })
+      say("Invalid selection '#{input}'.")
+      say(prompt)
+    end
+  end #until choice
+
+  case choice
+  when 'approve'
+    hit.assignment.approve!
+    say(HighLine.color("Approved", :bold))
+  when 'reject'
+    reason=nil
+    until reason.match(/\S/)
+      reason = ask("Rejection reason, for worker: ")
+    end
+    hit.assignment.reject!(reason)
+  when 'quit'
+    exit
+  when 'skip'
+    next
   end
 end
-puts "Will #{HighLine::BOLD}#{choice}#{HighLine::CLEAR}." if choice
-
