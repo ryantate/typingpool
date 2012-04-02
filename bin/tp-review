@@ -1,17 +1,80 @@
 #!/usr/bin/env ruby
 
+require 'typingpool'
 require 'highline/import'
 require "highline/system_extensions"
 include HighLine::SystemExtensions
 
+options = {
+  :config => Typingpool::Config.file
+}
+
+OptionParser.new do |commands|
+  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME) } PROJECT|--all\n  [--config PATH] [--sandbox]\n"
+  commands.on('--project=PROJECT', 'Path or name within dir $config_file:transcripts.', '  Also accepted as first argument to script.', '  Either PROJECT or --all must be specified') do |project|
+    options[:project] = project
+  end
+  commands.on('--all', 'Review pending results for ANY project') do |all|
+    options[:all] = true
+  end
+  commands.on('--config=PATH', 'Default: ~/.typingpool') do |path|
+    path = File.expand_path(path)
+    File.exists?(path) && File.file?(path) or abort "No such file #{path}"
+    options[:config] = Typingpool::Config.file(path)
+  end
+  commands.on('--sandbox', 'Test in Mechanical Turk\'s sandbox') do |sandbox|
+    options[:sandbox] = true
+  end
+  commands.on('--help', "Display this screen") do
+    STDERR.puts commands
+    exit
+  end
+end.parse!
+
+options[:banner] += "`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
+
+if ARGV[0]
+  if options[:project]
+    abort "Duplicate project values ('#{ARGV[0]}' and '#{options[:project]}')"
+  end
+  options[:project] = ARGV[0]
+elsif not (options[:project] || options[:all])
+  abort "Neither a project nor --all specified\n#{options[:banner]}"
+end
+
+if options[:project]
+  if File.exists? options[:project]
+    options[:config].transcripts = File.dirname(options[:project])
+  else
+    if not(options[:config].transcripts)
+      abort "No 'transcripts' dir specified in your config file and #{options[:project]} is not a valid path"
+    end
+    options[:project] = File.join(options[:config].transcripts, options[:project])
+    if not(File.exists? options[:project])
+      abort "No such project #{File.basename(options[:project])} in dir #{File.dirname(options[:project])}"
+    end
+  end
+  if not(File.directory? options[:project])
+    abort "Project is not a directory at #{options[:project]}"
+  end
+end
+
+
+
 choices = %w(approve reject skip)
 formatted = choices.map{|c| HighLine.color('(', :reverse) + HighLine.color(c.slice(0).upcase, :bold, :reverse) + HighLine.color(")#{c.slice(1, c.size)}", :reverse) }
 formatted << HighLine.color('[', :reverse) + formatted.pop + HighLine.color(']', :reverse)
-say(formatted.join(HighLine.color(', ', :reverse)) + HighLine.color('? ', :reverse))
-choice = get_character.chr
-if choice.to_s.match(/^\s*$/)
-  choice = choices.last
-else
-  choice = choices.detect{|possible| possible[0] == choice.downcase }
+prompt = formatted.join(HighLine.color(', ', :reverse)) + HighLine.color('? ', :reverse)
+say(prompt)
+choice=nil
+until choice
+  input = get_character.chr
+  if input.to_s.match(/^\s*$/)
+    choice = choices.last
+  elsif not(choice = choices.detect{|possible| possible[0] == input.downcase })
+    say("Invalid selection '#{input}'.")
+    say(prompt)
+  end
 end
 puts "Will #{HighLine::BOLD}#{choice}#{HighLine::CLEAR}." if choice
+

@@ -30,9 +30,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetReviewableHITsResponse><OperationRequest><RequestId>6984426c-f3ad-45f2-a4c4-0b20e5a44dbc</RequestId></OperationRequest><GetReviewableHITsResult><Request><IsValid>True</IsValid></Request><NumResults>54</NumResults><TotalNumResults>54</TotalNumResults><PageNumber>1</PageNumber><HIT><HITId>2ETNVP3TVOK58Y0HDAYQHOZF3XP41O</HITId></HIT><HIT><HITId>27D66RLPHIT3VEDM7W965NJQ7848GZ</HITId></HIT><HIT><HITId>2QH6KW4ZMAZHVA8XR2ROQNVRM8H8HY</HITId></HIT><HIT><HITId>2UHKPFE4EGDHR5JHXK99QZW6MLW8IR</HITId></HIT><HIT><HITId>2UVP8PJWKUDDMG3NF2U920B6Z0L8J3</HITId></HIT><HIT><HITId>25KGMMEGOOGQ6V3IUM12VEIUZ1XBBK</HITId></HIT><HIT><HITId>20DCNHMVHVKCXJIDWEY4M79KV33425</HITId></HIT><HIT><HITId>2W151Y7QEOZFC99DO4KMRFXRIZ1DGA</HITId></HIT><HIT><HITId>2GKMIKMN9U8PNHKK58NXL3SU3PJBSL</HITId></HIT><HIT><HITId>2F55F3Q0JG5TC54O8A24CF9SXZEDH9</HITId></HIT><HIT><HITId>26EZ9RNDWIOVFBO4ZF4TJU133KWFUN</HITId></HIT><HIT><HITId>2J5JKM05BMJT80F8ESKPCRA7XCTDI2</HITId></HIT><HIT><HITId>2RB2D5NQYN5FH9HVSHKYPNCW3I16AZ</HITId></HIT><HIT><HITId>2SST2D5NQYN5TM7CVSWT1MNC158957</HITId></HIT><HIT><HITId>2KBVOK5UFJ51CQ7Q0B6YTS1CX0J96N</HITId></HIT><HIT><HITId>2JJO3W5XH0JP3BZEWA5POSP7ARIDJE</HITId></HIT><HIT><HITId>2RIRYNJ92NJK0JMNYVKUKYW2L0M6BU</HITId></HIT><HIT><HITId>2Y7CGJ2D21O3AOETCVGPVI2K3LM6C1</HITId></HIT><HIT><HITId>2HY5R98D8J3VSQD445EYFG3MHR5FVC</HITId></HIT><HIT><HITId>2CFX2Q45UUKQ2HXZU8SNV8OG58XBTA</HITId></HIT><HIT><HITId>2NSUC26DG67DFGK7CRB0FOK2OLY6D1</HITId></HIT><HIT><HITId>23DHVKCJ011KGQLVJLBQZ618SB397M</HITId></HIT><HIT><HITId>2MJY7QEOZFYQ6KT45YFF0RDS9PAFIG</HITId></HIT><HIT><HITId>2MX3Q0JG5TYM1VDANG0FCSSSM4ZFJS</HITId></HIT><HIT><HITId>202M05BMJTUHCFJS510RD7S51TZFKR</HITId></HIT><HIT><HITId>2I0NMHGYQ4J31TSINRDFIOYYN0ZM9B</HITId></HIT><HIT><HITId>23WC1PC6SK9RXRM0BUQEKMAAUTMP11</HITId></HIT><HIT><HITId>2P0UB2YU98JH6C2NFXRFEJ9ITIHMAQ</HITId></HIT><HIT><HITId>2NA8SV7WGKCC942FOMU3PHAPVBAR1V</HITId></HIT><HIT><HITId>2YGW2GTP9RA76ODYDI0YVOF75QKPU1</HITId></HIT><HIT><HITId>2GOKW4ZMAZHH5A2R2CFNQVRH6RFI9R</HITId></HIT><HIT><HITId>2TRKSSZVXX2QIOB6W2FYJNIW6UQN5L</HITId></HIT><HIT><HITId>2CIFK0COK2JEF5O1WW0LUW6O4HARKY</HITId></HIT><HIT><HITId>2LAMEZZ2MIKM1SBK1LP3BTWW2P1N61</HITId></HIT><HIT><HITId>2902KYEPLSP7J32YI8A3RAHQJXTPVQ</HITId></HIT><HIT><HITId>2H1PPSI2KYEPZB6JHWCM9WJ3THFRL1</HITId></HIT><HIT><HITId>20CNU8LZ6R70UO8LKPZJ6VE71ZR5L2</HITId></HIT><HIT><HITId>28R8D8J3VE7W6BAZAO73PCK8F00YIW</HITId></HIT><HIT><HITId>285DWIOV1S7S1MU5S6S31DZ8SFPYJ8</HITId></HIT><HIT><HITId>2E924SMEZZ2MW33ZL6ZPCY38Y3V3K7</HITId></HIT><HIT><HITId>2AG24E6AUBXHABYJRX09YBZWIYK0W5</HITId></HIT><HIT><HITId>2JSC9KSSZVXXG9LH66BQRYGNN303LA</HITId></HIT><HIT><HITId>26E1INMHGYQ4XM4MNI2FPFFO35H7KG</HITId></HIT><HIT><HITId>26OAUC26DG67RKEF7C6K3COK7TSC5E</HITId></HIT><HIT><HITId>21MF0OHOVR14WG10EX02KECWFGB54U</HITId></HIT><HIT><HITId>2TEY2AOO2GMMSZ50S2JCP6IAFC655Z</HITId></HIT><HIT><HITId>2UZDM25L8I9NDFNTQBXOH4QWC3MHR6</HITId></HIT><HIT><HITId>2UV8XMB3Q39ZEUN650XT7EVSY55HSU</HITId></HIT><HIT><HITId>2IKA1QP6AUC2KWXIJPSX6V0FPAQ70V</HITId></HIT><HIT><HITId>2Y7CGJ2D21O3AOETCVGPVI2K3O3C6U</HITId></HIT><HIT><HITId>21ICOK2JE1M7331LX3N6RZAC5GXNUR</HITId></HIT><HIT><HITId>24BL0XULRGNTP2KYYPO5IP7NBEWQ4U</HITId></HIT><HIT><HITId>2C2I62NJQ217GIQL2TXBNLCVJN6NVG</HITId></HIT><HIT><HITId>2W80ONNVRH1KV7QQS3279NV9QW8NWQ</HITId></HIT></GetReviewableHITsResult></GetReviewableHITsResponse>
+      string: &id001 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetReviewableHITsResponse><OperationRequest><RequestId>6984426c-f3ad-45f2-a4c4-0b20e5a44dbc</RequestId></OperationRequest><GetReviewableHITsResult><Request><IsValid>True</IsValid></Request><NumResults>54</NumResults><TotalNumResults>54</TotalNumResults><PageNumber>1</PageNumber><HIT><HITId>2ETNVP3TVOK58Y0HDAYQHOZF3XP41O</HITId></HIT><HIT><HITId>27D66RLPHIT3VEDM7W965NJQ7848GZ</HITId></HIT><HIT><HITId>2QH6KW4ZMAZHVA8XR2ROQNVRM8H8HY</HITId></HIT><HIT><HITId>2UHKPFE4EGDHR5JHXK99QZW6MLW8IR</HITId></HIT><HIT><HITId>2UVP8PJWKUDDMG3NF2U920B6Z0L8J3</HITId></HIT><HIT><HITId>25KGMMEGOOGQ6V3IUM12VEIUZ1XBBK</HITId></HIT><HIT><HITId>20DCNHMVHVKCXJIDWEY4M79KV33425</HITId></HIT><HIT><HITId>2W151Y7QEOZFC99DO4KMRFXRIZ1DGA</HITId></HIT><HIT><HITId>2GKMIKMN9U8PNHKK58NXL3SU3PJBSL</HITId></HIT><HIT><HITId>2F55F3Q0JG5TC54O8A24CF9SXZEDH9</HITId></HIT><HIT><HITId>26EZ9RNDWIOVFBO4ZF4TJU133KWFUN</HITId></HIT><HIT><HITId>2J5JKM05BMJT80F8ESKPCRA7XCTDI2</HITId></HIT><HIT><HITId>2RB2D5NQYN5FH9HVSHKYPNCW3I16AZ</HITId></HIT><HIT><HITId>2SST2D5NQYN5TM7CVSWT1MNC158957</HITId></HIT><HIT><HITId>2KBVOK5UFJ51CQ7Q0B6YTS1CX0J96N</HITId></HIT><HIT><HITId>2JJO3W5XH0JP3BZEWA5POSP7ARIDJE</HITId></HIT><HIT><HITId>2RIRYNJ92NJK0JMNYVKUKYW2L0M6BU</HITId></HIT><HIT><HITId>2Y7CGJ2D21O3AOETCVGPVI2K3LM6C1</HITId></HIT><HIT><HITId>2HY5R98D8J3VSQD445EYFG3MHR5FVC</HITId></HIT><HIT><HITId>2CFX2Q45UUKQ2HXZU8SNV8OG58XBTA</HITId></HIT><HIT><HITId>2NSUC26DG67DFGK7CRB0FOK2OLY6D1</HITId></HIT><HIT><HITId>23DHVKCJ011KGQLVJLBQZ618SB397M</HITId></HIT><HIT><HITId>2MJY7QEOZFYQ6KT45YFF0RDS9PAFIG</HITId></HIT><HIT><HITId>2MX3Q0JG5TYM1VDANG0FCSSSM4ZFJS</HITId></HIT><HIT><HITId>202M05BMJTUHCFJS510RD7S51TZFKR</HITId></HIT><HIT><HITId>2I0NMHGYQ4J31TSINRDFIOYYN0ZM9B</HITId></HIT><HIT><HITId>23WC1PC6SK9RXRM0BUQEKMAAUTMP11</HITId></HIT><HIT><HITId>2P0UB2YU98JH6C2NFXRFEJ9ITIHMAQ</HITId></HIT><HIT><HITId>2NA8SV7WGKCC942FOMU3PHAPVBAR1V</HITId></HIT><HIT><HITId>2YGW2GTP9RA76ODYDI0YVOF75QKPU1</HITId></HIT><HIT><HITId>2GOKW4ZMAZHH5A2R2CFNQVRH6RFI9R</HITId></HIT><HIT><HITId>2TRKSSZVXX2QIOB6W2FYJNIW6UQN5L</HITId></HIT><HIT><HITId>2CIFK0COK2JEF5O1WW0LUW6O4HARKY</HITId></HIT><HIT><HITId>2LAMEZZ2MIKM1SBK1LP3BTWW2P1N61</HITId></HIT><HIT><HITId>2902KYEPLSP7J32YI8A3RAHQJXTPVQ</HITId></HIT><HIT><HITId>2H1PPSI2KYEPZB6JHWCM9WJ3THFRL1</HITId></HIT><HIT><HITId>20CNU8LZ6R70UO8LKPZJ6VE71ZR5L2</HITId></HIT><HIT><HITId>28R8D8J3VE7W6BAZAO73PCK8F00YIW</HITId></HIT><HIT><HITId>285DWIOV1S7S1MU5S6S31DZ8SFPYJ8</HITId></HIT><HIT><HITId>2E924SMEZZ2MW33ZL6ZPCY38Y3V3K7</HITId></HIT><HIT><HITId>2AG24E6AUBXHABYJRX09YBZWIYK0W5</HITId></HIT><HIT><HITId>2JSC9KSSZVXXG9LH66BQRYGNN303LA</HITId></HIT><HIT><HITId>26E1INMHGYQ4XM4MNI2FPFFO35H7KG</HITId></HIT><HIT><HITId>26OAUC26DG67RKEF7C6K3COK7TSC5E</HITId></HIT><HIT><HITId>21MF0OHOVR14WG10EX02KECWFGB54U</HITId></HIT><HIT><HITId>2TEY2AOO2GMMSZ50S2JCP6IAFC655Z</HITId></HIT><HIT><HITId>2UZDM25L8I9NDFNTQBXOH4QWC3MHR6</HITId></HIT><HIT><HITId>2UV8XMB3Q39ZEUN650XT7EVSY55HSU</HITId></HIT><HIT><HITId>2IKA1QP6AUC2KWXIJPSX6V0FPAQ70V</HITId></HIT><HIT><HITId>2Y7CGJ2D21O3AOETCVGPVI2K3O3C6U</HITId></HIT><HIT><HITId>21ICOK2JE1M7331LX3N6RZAC5GXNUR</HITId></HIT><HIT><HITId>24BL0XULRGNTP2KYYPO5IP7NBEWQ4U</HITId></HIT><HIT><HITId>2C2I62NJQ217GIQL2TXBNLCVJN6NVG</HITId></HIT><HIT><HITId>2W80ONNVRH1KV7QQS3279NV9QW8NWQ</HITId></HIT></GetReviewableHITsResult></GetReviewableHITsResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: PageSize=100&PageNumber=1&Operation=GetReviewableHITs&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yj1CRo62QoeMx6c7lFUMXm%2F0swo%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id001
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:20 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:20 GMT
 - request: 
@@ -65,9 +89,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>96502c87-c448-4a6f-950e-b4a6e326efdf</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id002 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>96502c87-c448-4a6f-950e-b4a6e326efdf</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: PageSize=100&PageNumber=2&Operation=GetReviewableHITs&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yj1CRo62QoeMx6c7lFUMXm%2F0swo%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id002
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:21 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:21 GMT
 - request: 
@@ -100,9 +148,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>86955edf-4642-44e6-8e5c-8564f3278e84</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id003 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>86955edf-4642-44e6-8e5c-8564f3278e84</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2ETNVP3TVOK58Y0HDAYQHOZF3XP41O&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id003
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:21 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:21 GMT
 - request: 
@@ -135,9 +207,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>9b6d9195-da98-4683-8724-644cbfc1cafb</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id004 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>9b6d9195-da98-4683-8724-644cbfc1cafb</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2W151Y7QEOZFC99DO4KMRFXRIZ1DGA&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id004
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:22 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:22 GMT
 - request: 
@@ -170,9 +266,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>51c0a6af-52f5-4494-ba44-54f24e50e950</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id005 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>51c0a6af-52f5-4494-ba44-54f24e50e950</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2GKMIKMN9U8PNHKK58NXL3SU3PJBSL&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id005
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:22 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:22 GMT
 - request: 
@@ -205,9 +325,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>08179549-773f-414d-99cb-a41139bb60b6</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id006 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>08179549-773f-414d-99cb-a41139bb60b6</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2F55F3Q0JG5TC54O8A24CF9SXZEDH9&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id006
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:22 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:23 GMT
 - request: 
@@ -240,9 +384,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>d4fcb989-9909-4f4a-97b1-c396f3452fb1</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id007 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>d4fcb989-9909-4f4a-97b1-c396f3452fb1</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=26EZ9RNDWIOVFBO4ZF4TJU133KWFUN&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id007
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:23 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:23 GMT
 - request: 
@@ -275,9 +443,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>01a243b2-3de4-47ca-9824-5b3ea586dbcc</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id008 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>01a243b2-3de4-47ca-9824-5b3ea586dbcc</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2J5JKM05BMJT80F8ESKPCRA7XCTDI2&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id008
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:23 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:24 GMT
 - request: 
@@ -310,9 +502,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>4dde5dd3-7a60-4ed6-8c10-a7ed1dba72b2</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id009 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>4dde5dd3-7a60-4ed6-8c10-a7ed1dba72b2</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2RB2D5NQYN5FH9HVSHKYPNCW3I16AZ&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id009
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:24 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:25 GMT
 - request: 
@@ -345,9 +561,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>fee11860-39fd-4fe2-ae73-cb14c00ed0ce</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id010 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>fee11860-39fd-4fe2-ae73-cb14c00ed0ce</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2SST2D5NQYN5TM7CVSWT1MNC158957&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id010
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:25 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:25 GMT
 - request: 
@@ -380,9 +620,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>d8169999-8977-40b7-952e-f6cb9aa5f1c7</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id011 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>d8169999-8977-40b7-952e-f6cb9aa5f1c7</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2KBVOK5UFJ51CQ7Q0B6YTS1CX0J96N&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id011
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:25 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:26 GMT
 - request: 
@@ -415,9 +679,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>9cda2e80-90aa-4d5b-aa95-2b84ca2f0791</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id012 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>9cda2e80-90aa-4d5b-aa95-2b84ca2f0791</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2JJO3W5XH0JP3BZEWA5POSP7ARIDJE&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id012
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:26 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:26 GMT
 - request: 
@@ -450,9 +738,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>f76a16f2-f6ce-4b0c-8589-7eae5684c33c</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id013 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>f76a16f2-f6ce-4b0c-8589-7eae5684c33c</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2RIRYNJ92NJK0JMNYVKUKYW2L0M6BU&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id013
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:26 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:27 GMT
 - request: 
@@ -485,9 +797,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>25e92430-2f01-4e9c-abd0-50ce9da5d984</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id014 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>25e92430-2f01-4e9c-abd0-50ce9da5d984</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2Y7CGJ2D21O3AOETCVGPVI2K3LM6C1&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id014
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:27 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:27 GMT
 - request: 
@@ -520,9 +856,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>b827b6fa-182d-492d-aedc-5d913db8af72</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id015 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>b827b6fa-182d-492d-aedc-5d913db8af72</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2HY5R98D8J3VSQD445EYFG3MHR5FVC&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id015
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:28 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:28 GMT
 - request: 
@@ -555,9 +915,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>91269ca0-8d08-420a-a9bb-73381f91bb45</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id016 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>91269ca0-8d08-420a-a9bb-73381f91bb45</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2CFX2Q45UUKQ2HXZU8SNV8OG58XBTA&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id016
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:28 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:28 GMT
 - request: 
@@ -590,9 +974,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>583e7671-6202-42df-9bea-bb9bee40e6b1</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id017 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>583e7671-6202-42df-9bea-bb9bee40e6b1</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2NSUC26DG67DFGK7CRB0FOK2OLY6D1&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id017
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:28 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:29 GMT
 - request: 
@@ -625,9 +1033,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>a1448bf9-616a-42b1-a1d4-f8b7a6b2dafb</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id018 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>a1448bf9-616a-42b1-a1d4-f8b7a6b2dafb</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=23DHVKCJ011KGQLVJLBQZ618SB397M&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id018
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:29 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:29 GMT
 - request: 
@@ -660,9 +1092,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>4b0e1c89-9b71-4e12-96be-0a8889dd6115</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id019 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>4b0e1c89-9b71-4e12-96be-0a8889dd6115</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2MJY7QEOZFYQ6KT45YFF0RDS9PAFIG&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id019
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:30 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:30 GMT
 - request: 
@@ -695,9 +1151,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>5246f4b7-9bca-4212-a686-9d33ea71c380</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id020 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>5246f4b7-9bca-4212-a686-9d33ea71c380</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2MX3Q0JG5TYM1VDANG0FCSSSM4ZFJS&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id020
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:30 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:31 GMT
 - request: 
@@ -730,9 +1210,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>ebad59b0-0ac6-4478-a371-7c0d06ee139b</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id021 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>ebad59b0-0ac6-4478-a371-7c0d06ee139b</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=202M05BMJTUHCFJS510RD7S51TZFKR&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id021
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:31 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:31 GMT
 - request: 
@@ -765,9 +1269,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>08ae5f31-948e-45ab-8021-cbe71c02f65c</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id022 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>08ae5f31-948e-45ab-8021-cbe71c02f65c</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2I0NMHGYQ4J31TSINRDFIOYYN0ZM9B&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id022
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:32 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:32 GMT
 - request: 
@@ -800,9 +1328,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>d931ead2-b2cf-42a2-878c-f545e2a647d2</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id023 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>d931ead2-b2cf-42a2-878c-f545e2a647d2</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=23WC1PC6SK9RXRM0BUQEKMAAUTMP11&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id023
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:32 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:32 GMT
 - request: 
@@ -835,9 +1387,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>8b6fb47c-7212-441c-bf0a-bc0a580d24e5</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id024 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>8b6fb47c-7212-441c-bf0a-bc0a580d24e5</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2P0UB2YU98JH6C2NFXRFEJ9ITIHMAQ&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id024
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:33 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:33 GMT
 - request: 
@@ -870,9 +1446,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>5d33a77f-8228-4c16-8a7c-38ec3cc518b4</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id025 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>5d33a77f-8228-4c16-8a7c-38ec3cc518b4</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2NA8SV7WGKCC942FOMU3PHAPVBAR1V&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id025
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:32 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:33 GMT
 - request: 
@@ -905,9 +1505,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>9958b543-da5e-476f-b2b9-e413fa3398f8</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id026 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>9958b543-da5e-476f-b2b9-e413fa3398f8</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2YGW2GTP9RA76ODYDI0YVOF75QKPU1&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id026
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:33 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:34 GMT
 - request: 
@@ -940,9 +1564,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>cedeed97-76e3-45eb-ace7-d72f85f88624</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id027 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>cedeed97-76e3-45eb-ace7-d72f85f88624</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2GOKW4ZMAZHH5A2R2CFNQVRH6RFI9R&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id027
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:33 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:34 GMT
 - request: 
@@ -975,9 +1623,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>36011426-8369-4a3f-aa21-91dad5798219</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id028 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>36011426-8369-4a3f-aa21-91dad5798219</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2TRKSSZVXX2QIOB6W2FYJNIW6UQN5L&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id028
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:35 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:35 GMT
 - request: 
@@ -1010,9 +1682,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>50b4b036-4700-49b3-bbad-b8378c05e982</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id029 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>50b4b036-4700-49b3-bbad-b8378c05e982</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2CIFK0COK2JEF5O1WW0LUW6O4HARKY&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id029
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:35 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:35 GMT
 - request: 
@@ -1045,9 +1741,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>f42b5a35-1d0c-443f-8c6d-95327167a25f</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id030 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>f42b5a35-1d0c-443f-8c6d-95327167a25f</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2LAMEZZ2MIKM1SBK1LP3BTWW2P1N61&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id030
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:36 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:36 GMT
 - request: 
@@ -1080,9 +1800,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>04e86277-8584-4ef6-8a14-837775b6b9e8</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id031 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>04e86277-8584-4ef6-8a14-837775b6b9e8</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2902KYEPLSP7J32YI8A3RAHQJXTPVQ&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id031
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:36 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:37 GMT
 - request: 
@@ -1115,9 +1859,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>edaab7a1-0cb4-4c0e-9e33-d1e911cdd0b3</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id032 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>edaab7a1-0cb4-4c0e-9e33-d1e911cdd0b3</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2H1PPSI2KYEPZB6JHWCM9WJ3THFRL1&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A56-07%3A00&Version=2008-08-02&Signature=yo97BtbE8P47D7tNgSFO5hn1qlE%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id032
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:37 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:37 GMT
 - request: 
@@ -1150,9 +1918,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>fb0d4ca7-eaeb-4ade-842e-a484ee722131</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id033 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>fb0d4ca7-eaeb-4ade-842e-a484ee722131</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=28R8D8J3VE7W6BAZAO73PCK8F00YIW&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id033
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:37 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:38 GMT
 - request: 
@@ -1185,9 +1977,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>ec66fa68-c5fa-4df4-a2e6-c7365344ac70</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id034 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>ec66fa68-c5fa-4df4-a2e6-c7365344ac70</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=285DWIOV1S7S1MU5S6S31DZ8SFPYJ8&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id034
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:38 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:38 GMT
 - request: 
@@ -1220,9 +2036,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>4a7409aa-def2-4986-95b4-b991d4d02a84</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id035 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>4a7409aa-def2-4986-95b4-b991d4d02a84</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2E924SMEZZ2MW33ZL6ZPCY38Y3V3K7&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id035
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:38 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:39 GMT
 - request: 
@@ -1255,9 +2095,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>290e19d0-dd78-41b2-8ce8-ac05b49d5e4f</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id036 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>290e19d0-dd78-41b2-8ce8-ac05b49d5e4f</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2AG24E6AUBXHABYJRX09YBZWIYK0W5&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id036
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:38 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:39 GMT
 - request: 
@@ -1290,9 +2154,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>a107113c-f99a-440c-994c-6a84cb6d3b81</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id037 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>a107113c-f99a-440c-994c-6a84cb6d3b81</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2JSC9KSSZVXXG9LH66BQRYGNN303LA&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id037
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:39 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:40 GMT
 - request: 
@@ -1325,9 +2213,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>9f8009cc-5ef6-43b8-8900-1b6516c7b3b1</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id038 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>9f8009cc-5ef6-43b8-8900-1b6516c7b3b1</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=26E1INMHGYQ4XM4MNI2FPFFO35H7KG&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id038
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:39 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:40 GMT
 - request: 
@@ -1360,9 +2272,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>fe3480bb-337f-4218-b157-2f1d6150b7bf</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id039 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>fe3480bb-337f-4218-b157-2f1d6150b7bf</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=26OAUC26DG67RKEF7C6K3COK7TSC5E&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id039
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:40 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:41 GMT
 - request: 
@@ -1395,9 +2331,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>7d6c1d82-bbe3-4873-adfa-e4121ec1717b</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id040 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>7d6c1d82-bbe3-4873-adfa-e4121ec1717b</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=21MF0OHOVR14WG10EX02KECWFGB54U&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id040
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:41 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:41 GMT
 - request: 
@@ -1430,9 +2390,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>ef4ad493-f982-44e1-b424-49b4e9fa10e4</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id041 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>ef4ad493-f982-44e1-b424-49b4e9fa10e4</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2TEY2AOO2GMMSZ50S2JCP6IAFC655Z&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id041
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:41 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:42 GMT
 - request: 
@@ -1465,9 +2449,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>c9a332db-ecfe-4ff7-ae7e-db87065e22cc</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id042 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>c9a332db-ecfe-4ff7-ae7e-db87065e22cc</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2UZDM25L8I9NDFNTQBXOH4QWC3MHR6&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id042
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:42 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:42 GMT
 - request: 
@@ -1500,9 +2508,33 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>c7be6ec7-bb1f-457f-a18f-4d2a4371a7a0</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id043 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>c7be6ec7-bb1f-457f-a18f-4d2a4371a7a0</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2UV8XMB3Q39ZEUN650XT7EVSY55HSU&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id043
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:43 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:43 GMT
 - request: 
@@ -1535,26 +2567,50 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>a94a2e19-0139-4ed0-81a0-a4b24c92c80c</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2GGQ1SNQQ7Q6LJMD2W3NU12TQU58S3</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>21ICOK2JE1M7331LX3N6RZAC5GXNUR</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2012-04-01T06:39:24Z</AutoApprovalTime><AcceptTime>2012-03-31T20:39:11Z</AcceptTime><SubmitTime>2012-03-31T20:39:24Z</SubmitTime><ApprovalTime>2012-03-31T20:40:11Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-        &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
-        &lt;Answer&gt;
-        &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;http://webmasher.com/mturk/TestTpInterview.00.00.453a77d32ba473ce33895bb8a2caf92a.CHDMKA.mp3&lt;/FreeText&gt;
-        &lt;/Answer&gt;
-        &lt;Answer&gt;
-        &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;453a77d32ba473ce33895bb8a2caf92a&lt;/FreeText&gt;
-        &lt;/Answer&gt;
-        &lt;Answer&gt;
-        &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;Ryan: This is probably a dumb question but in Grand Rapids -- are you guys connected to the auto industry or are you  too far from Detroit to be...&amp;#13;
-        &amp;#13;
-        Havi: We are. We're connected to the buyers for the auto industry in Detroit and Flint. It's kind of a - it's a statewide business here but....&lt;/FreeText&gt;
-        &lt;/Answer&gt;
-        &lt;/QuestionFormAnswers&gt;
-        </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id044 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>a94a2e19-0139-4ed0-81a0-a4b24c92c80c</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2GGQ1SNQQ7Q6LJMD2W3NU12TQU58S3</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>21ICOK2JE1M7331LX3N6RZAC5GXNUR</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2012-04-01T06:39:24Z</AutoApprovalTime><AcceptTime>2012-03-31T20:39:11Z</AcceptTime><SubmitTime>2012-03-31T20:39:24Z</SubmitTime><ApprovalTime>2012-03-31T20:40:11Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+          &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
+          &lt;Answer&gt;
+          &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
+          &lt;FreeText&gt;http://webmasher.com/mturk/TestTpInterview.00.00.453a77d32ba473ce33895bb8a2caf92a.CHDMKA.mp3&lt;/FreeText&gt;
+          &lt;/Answer&gt;
+          &lt;Answer&gt;
+          &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
+          &lt;FreeText&gt;453a77d32ba473ce33895bb8a2caf92a&lt;/FreeText&gt;
+          &lt;/Answer&gt;
+          &lt;Answer&gt;
+          &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
+          &lt;FreeText&gt;Ryan: This is probably a dumb question but in Grand Rapids -- are you guys connected to the auto industry or are you  too far from Detroit to be...&amp;#13;
+          &amp;#13;
+          Havi: We are. We're connected to the buyers for the auto industry in Detroit and Flint. It's kind of a - it's a statewide business here but....&lt;/FreeText&gt;
+          &lt;/Answer&gt;
+          &lt;/QuestionFormAnswers&gt;
+          </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2IKA1QP6AUC2KWXIJPSX6V0FPAQ70V&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id044
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:43 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:44 GMT
 - request: 
@@ -1587,24 +2643,48 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>d6218743-e5be-454b-879f-dc74abe03a17</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2GKVQ8H88MQUK4M0N73I4RXX4SM8RF</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>2W80ONNVRH1KV7QQS3279NV9QW8NWQ</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2012-04-01T06:39:08Z</AutoApprovalTime><AcceptTime>2012-03-31T20:38:34Z</AcceptTime><SubmitTime>2012-03-31T20:39:08Z</SubmitTime><ApprovalTime>2012-03-31T20:40:04Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-        &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
-        &lt;Answer&gt;
-        &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;453a77d32ba473ce33895bb8a2caf92a&lt;/FreeText&gt;
-        &lt;/Answer&gt;
-        &lt;Answer&gt;
-        &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;http://webmasher.com/mturk/TestTpInterview.02.00.453a77d32ba473ce33895bb8a2caf92a.MUIOLD.mp3&lt;/FreeText&gt;
-        &lt;/Answer&gt;
-        &lt;Answer&gt;
-        &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;-blank-&lt;/FreeText&gt;
-        &lt;/Answer&gt;
-        &lt;/QuestionFormAnswers&gt;
-        </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+      string: &id045 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetAssignmentsForHITResponse><OperationRequest><RequestId>d6218743-e5be-454b-879f-dc74abe03a17</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2GKVQ8H88MQUK4M0N73I4RXX4SM8RF</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>2W80ONNVRH1KV7QQS3279NV9QW8NWQ</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2012-04-01T06:39:08Z</AutoApprovalTime><AcceptTime>2012-03-31T20:38:34Z</AcceptTime><SubmitTime>2012-03-31T20:39:08Z</SubmitTime><ApprovalTime>2012-03-31T20:40:04Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+          &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
+          &lt;Answer&gt;
+          &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
+          &lt;FreeText&gt;453a77d32ba473ce33895bb8a2caf92a&lt;/FreeText&gt;
+          &lt;/Answer&gt;
+          &lt;Answer&gt;
+          &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
+          &lt;FreeText&gt;http://webmasher.com/mturk/TestTpInterview.02.00.453a77d32ba473ce33895bb8a2caf92a.MUIOLD.mp3&lt;/FreeText&gt;
+          &lt;/Answer&gt;
+          &lt;Answer&gt;
+          &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
+          &lt;FreeText&gt;-blank-&lt;/FreeText&gt;
+          &lt;/Answer&gt;
+          &lt;/QuestionFormAnswers&gt;
+          </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=2Y7CGJ2D21O3AOETCVGPVI2K3O3C6U&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id045
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:44 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:44 GMT
 - request: 
@@ -1637,9 +2717,83 @@ http_interactions:
       - MTurk
     body: 
       encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetReviewableHITsResponse><OperationRequest><RequestId>9c2459ea-7954-441c-95af-65b7e313e1fd</RequestId></OperationRequest><GetReviewableHITsResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>54</TotalNumResults><PageNumber>2</PageNumber></GetReviewableHITsResult></GetReviewableHITsResponse>
+      string: &id046 !str 
+        str: |-
+          <?xml version="1.0"?>
+          <GetReviewableHITsResponse><OperationRequest><RequestId>9c2459ea-7954-441c-95af-65b7e313e1fd</RequestId></OperationRequest><GetReviewableHITsResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>54</TotalNumResults><PageNumber>2</PageNumber></GetReviewableHITsResult></GetReviewableHITsResponse>
+        :@args: 
+          :method: :post
+          :url: https://mechanicalturk.sandbox.amazonaws.com/
+          :payload: HITId=21ICOK2JE1M7331LX3N6RZAC5GXNUR&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=AKIAIADF6XL2KMK6JFCQ&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+          :headers: {}
+
+        :@code: 200
+        :@net_http_res: !ruby/object:Net::HTTPOK 
+          __read_body_previously_called: true
+          body: *id046
+          code: "200"
+          header: 
+            content-type: 
+            - text/xml
+            transfer-encoding: 
+            - chunked
+            date: 
+            - Sat, 31 Mar 2012 20:40:44 GMT
+            server: 
+            - MTurk
+          http_version: "1.0"
+          message: OK
+          read: true
     http_version: 
   recorded_at: Sat, 31 Mar 2012 20:40:45 GMT
+- request: 
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body: 
+      encoding: US-ASCII
+      string: HITId=2W80ONNVRH1KV7QQS3279NV9QW8NWQ&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-04-01T12%3A53%3A57-07%3A00&Version=2008-08-02&Signature=IUw2nSC8yT4lUaVHrbTU6V%2BqvoY%3D
+    headers: 
+      Accept: 
+      - "*/*; q=0.5, application/xml"
+      Accept-Encoding: 
+      - gzip, deflate
+      Content-Length: 
+      - "255"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Content-Type: 
+      - text/xml
+      Transfer-Encoding: 
+      - chunked
+      Date: 
+      - Sun, 01 Apr 2012 19:53:57 GMT
+      Server: 
+      - MTurk
+    body: 
+      encoding: US-ASCII
+      string: |-
+        <?xml version="1.0"?>
+        <GetAssignmentsForHITResponse><OperationRequest><RequestId>9187b679-25d1-4622-8f22-b8c74ea0ced8</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2GKVQ8H88MQUK4M0N73I4RXX4SM8RF</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>2W80ONNVRH1KV7QQS3279NV9QW8NWQ</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2012-04-01T06:39:08Z</AutoApprovalTime><AcceptTime>2012-03-31T20:38:34Z</AcceptTime><SubmitTime>2012-03-31T20:39:08Z</SubmitTime><ApprovalTime>2012-03-31T20:40:04Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;453a77d32ba473ce33895bb8a2caf92a&lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;http://webmasher.com/mturk/TestTpInterview.02.00.453a77d32ba473ce33895bb8a2caf92a.MUIOLD.mp3&lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;-blank-&lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;/QuestionFormAnswers&gt;
+        </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+    http_version: 
+  recorded_at: Sun, 01 Apr 2012 19:53:57 GMT
 recorded_with: VCR 2.0.0.rc2

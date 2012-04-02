@@ -28,20 +28,20 @@ configs = [Typingpool::Config.file]
   yet = {}
   option_parser = OptionParser.new do |opts|
     options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n  [--keyword transcription --keyword mp3...] [--deadline 3h] [--lifetime 2d]\n  [--approval 1d] [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n  [--sandbox] [--currency USD] [--config PATH]\n"
-    opts.on('--project=PROJECT', "Required. Path or name within $config:transcripts.", "  Also accepted via STDIN") do |project|
+    opts.on('--project=PROJECT', "Required. Path or name within $config_file:transcripts.", "  Also accepted as first argument to script or via STDIN") do |project|
       options[:project] = project
     end
-    opts.on('--template=TEMPLATE', "Required. Path or relative path in", "  $config:app/templates/assign") do |template|
+    opts.on('--template=TEMPLATE', "Required. Path or name within dir", "  $config_file:app/templates/assign. Also accepted as first argument to script") do |template|
       options[:template] = template
     end
-    opts.on('--reward=DOLLARS', "Default: $config:assign:reward.", "  Per chunk. Format N.NN") do |reward|
+    opts.on('--reward=DOLLARS', "Default: $config_file:assign:reward.", "  Per chunk. Format N.NN") do |reward|
       reward.match(/(\d+(\.\d+)?)|(\d*\.\d+)/) or abort "Bad --reward format '#{reward}'"
       config.assign.reward = reward
     end
-    opts.on('--currency=TYPE', "Default: $config:assign:currency") do |currency|
+    opts.on('--currency=TYPE', "Default: $config_file:assign:currency") do |currency|
       config.assign.currency = currency
     end
-    opts.on('--keyword=WORD', "Default: $config:assign:keywords.", "  Repeatable") do |keyword|
+    opts.on('--keyword=WORD', "Default: $config_file:assign:keywords.", "  Repeatable") do |keyword|
       unless yet[:keyword]
         yet[:keyword] = true
         #We ignore keywords from the conf file if the user specified any.
@@ -120,8 +120,10 @@ abort "Unexpected argument(s): #{ARGV.join(';')}" if not(ARGV.empty?)
 if File.exists?(options[:project])
   config.transcripts = File.dirname(options[:project])
 else
-  abort "Required param 'transcripts' missing from config file '#{config.path}'" if config.transcripts.to_s.empty?
-  options[:project] = "#{config.transcripts}/#{options[:project]}"
+  if config.transcripts.to_s.empty?
+    abort "Required param 'transcripts' missing from config file '#{config.path}'" 
+  end
+  options[:project] = File.join(config.transcripts, options[:project])
 end
 abort "No template specified" if not(options[:template])
 begin

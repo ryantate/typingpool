@@ -599,53 +599,62 @@ module Typingpool
         end
 
         def all_approved
-          results=[]
-          i=0
-          begin
-            i += 1
-            page_results = RTurk.GetReviewableHITs(:page_number => i).hit_ids.map{|id| RTurk::Hit.new(id) }.map{|hit| cached_or_new(hit) }
-            filtered_results = page_results.select do |result| 
-              begin
-                result.approved? && result.ours? 
-              rescue RestClient::ServiceUnavailable => e
-                warn "Warning: Service unavailable error, skipped HIT #{result.hit_id}. (Error: #{e})"
-                false
-              end
-            end 
-            page_results.each{|result| result.to_cache }
-            results.push(*filtered_results)
-          end while page_results.length > 0 
-          results
+          hits = all_reviewable do |hit|
+            begin
+              #optimization: we assume it is more common to have an
+              #unapproved HIT than an approved HIT that does not
+              #belong to this app
+              hit.approved? && hit.ours? 
+            rescue RestClient::ServiceUnavailable => e
+              warn "Warning: Service unavailable error, skipped HIT #{hit.id}. (Error: #{e})"
+              false
+            end
+          end
+          hits
+        end
+
+        def all_reviewable(&filter)
+          hits = each_page do |page_number|
+            RTurk.GetReviewableHITs(:page_number => page_number).hit_ids.map{|id| RTurk::Hit.new(id) }.map{|hit| cached_or_new(hit) }
+          end
+          filter_ours(hits, &filter)
         end
 
         def all_for_project(id)
-          results = all
-          filtered = results.select{|result| result.ours? && result.project_id == id}
-          results.each{|result| result.to_cache}
-          filtered
+          all{|hit| hit.ours? && hit.project_id == id}
         end
 
-        def all
-          results = []
-          i = 0
-          begin
-            i += 1
-            page = RTurk::SearchHITs.create(:page_number => i)
+        def all(&filter)
+          hits = each_page do |page_number|
+            page = RTurk::SearchHITs.create(:page_number => page_number)
             raw_hits = page.xml.xpath('//HIT')
-            page_results=[]
-            page.hits.each_with_index do |hit, i|
-              #We have to jump through hoops because SearchHITs stupidly
-              #throws away annotation data (unlike GetHIT) and also
-              #renames some fields
-              annotation = raw_hits[i].xpath('RequesterAnnotation').inner_text.strip
-              hit = Amazon::HIT::Full::FromSearchHITs.new(hit, annotation)
-              result = cached_or_new(hit, true)
-              result.to_cache
-              page_results.push(result)
+            page.hits.map do |rturk_hit|
+              annotation = raw_hits.shift.xpath('RequesterAnnotation').inner_text.strip
+              full = Amazon::HIT::Full::FromSearchHITs.new(rturk_hit, annotation)
+              cached_or_new(full, true)
             end
-            results.push(*page_results)
-          end while page_results.length > 0
+          end
+          filter_ours(hits, &filter)
+        end
+
+        def each_page
+          results = []
+          page = 0
+          begin
+            page += 1
+            new_results = yield(page)
+            results.push(*new_results)
+          end while new_results.count > 0
           results
+        end
+
+        def filter_ours(hits, &filter)
+          filter ||= lambda{|hit| hit.ours? }
+          hits.select do |hit| 
+            selected = filter.call(hit)
+            hit.to_cache
+            selected
+          end
         end
       end #class << self
 
