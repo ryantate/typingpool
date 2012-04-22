@@ -3,20 +3,15 @@
 require 'typingpool'
 require 'text/format'
 require 'highline/import'
-require "highline/system_extensions"
-include HighLine::SystemExtensions
 
 options = {
   :config => Typingpool::Config.file
 }
 
 OptionParser.new do |commands|
-  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME) } PROJECT|--all\n  [--config PATH] [--sandbox]\n"
-  commands.on('--project=PROJECT', 'Path or name within dir $config_file:transcripts.', '  Also accepted as first argument to script.', '  Either PROJECT or --all must be specified') do |project|
+  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME) } [PROJECT]\n  [--config PATH] [--sandbox]\n"
+  commands.on('--project=PROJECT', 'Path or name within dir $config_file:transcripts.', '  Also accepted as first argument to script.', '  If not specified, reviews pending results', '  for ALL projects') do |project|
     options[:project] = project
-  end
-  commands.on('--all', 'Review pending results for ANY project') do |all|
-    options[:all] = true
   end
   commands.on('--config=PATH', 'Default: ~/.typingpool') do |path|
     path = File.expand_path(path)
@@ -25,6 +20,9 @@ OptionParser.new do |commands|
   end
   commands.on('--sandbox', 'Test in Mechanical Turk\'s sandbox') do |sandbox|
     options[:sandbox] = true
+  end
+  commands.on('--fixture=PATH', "Optional. For testing purposes only.", "  A VCR ficture for running with mock data") do |fixture|
+    options[:fixture] = fixture
   end
   commands.on('--help', "Display this screen") do
     STDERR.puts commands
@@ -39,8 +37,6 @@ if ARGV[0]
     abort "Duplicate project values ('#{ARGV[0]}' and '#{options[:project]}')"
   end
   options[:project] = ARGV[0]
-elsif not (options[:project] || options[:all])
-  abort "Neither a project nor --all specified\n#{options[:banner]}"
 end
 
 if options[:project]
@@ -58,51 +54,84 @@ if options[:project]
   if not(File.directory? options[:project])
     abort "Project is not a directory at #{options[:project]}"
   end
+  options[:project] = Typingpool::Project.new(File.basename(options[:project]), options[:config])
 end
 
-hits = Typingpool::Amazon::HIT.all_reviewable{|hit| hit.submitted? && hit.ours? }
-if options[:project]
-  hits.select!{|hit| hit.project_id == options[:project].local.id }
+if options[:fixture]
+  Typingpool::App.vcr_record(options[:fixture], options[:config])
 end
-hits.sort!{|a, b| a.url <=> b.url }
 
-formatter = Text::Format.new
-formatter.first_indent = 2
-formatter.body_indent = 2
-choices = %w(approve reject quit skip)
-hits.each do |hit|
-  say(HighLine.color("Transcript for #{hit.url}#", :reverse))
-  say(HighLine.color("Submitted at #{hit.assignment.submitted_at} by #{hit.assignment.worker_id}", :bold))
-  say(formatter.format(hit.assignment.body))
-  prompt = choices.map{|c| HighLine.color('(', :reverse) + HighLine.color(c.slice(0).upcase, :bold, :reverse) + HighLine.color(")#{c.slice(1, c.size)}", :reverse) }
-  prompt << HighLine.color('[', :reverse) + formatted.pop + HighLine.color(']', :reverse)
-  prompt = prompt.join(HighLine.color(', ', :reverse)) + HighLine.color('? ', :reverse)
-  say(prompt)
+Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
 
-  choice=nil
-  until choice
-    input = get_character.chr
-    if input.to_s.match(/^\s*$/)
-      choice = choices.last
-    elsif not(choice = choices.detect{|possible| possible[0] == input.downcase })
-      say("Invalid selection '#{input}'.")
-      say(prompt)
-    end
-  end #until choice
-
-  case choice
-  when 'approve'
-    hit.assignment.approve!
-    say(HighLine.color("Approved", :bold))
-  when 'reject'
-    reason=nil
-    until reason.match(/\S/)
-      reason = ask("Rejection reason, for worker: ")
-    end
-    hit.assignment.reject!(reason)
-  when 'quit'
-    exit
-  when 'skip'
-    next
+hits = []
+if options[:project] && not((hit_ids = options[:project].local.csv('data', 'assignment.csv').map{|assignment| assignment['hit_id'] }.select{|hit_id| hit_id }).empty?)
+  hits = Typingpool::Amazon::HIT.with_ids(hit_ids).select{|hit| hit.submitted? }
+else
+  hits = Typingpool::Amazon::HIT.all_reviewable{|hit| hit.submitted? && hit.ours? }
+  if options[:project]
+    #code path for projects assigned through RUI
+    hits.select!{|hit| hit.project_id == options[:project].local.id }
   end
+end
+
+choices = %w(approve reject quit skip)
+catch :quitting do
+  Typingpool::App.find_projects_waiting_for_hits(hits, options[:config]) do |project, hits|
+    hits.sort!{|a, b| a.url <=> b.url }
+    hits.each do |hit|
+      say(HighLine.color("Transcript for: ", :bold) + hit.url)
+      project_info = HighLine.color("Project: ", :bold) + project.name
+      if project.local.subtitle
+        project_info += ": #{project.local.subtitle}"
+      end
+      say(project_info)
+      say(HighLine.color("Submitted at: ", :bold) + hit.assignment.submitted_at.localtime.to_s + HighLine.color(" by ", :bold) + hit.assignment.worker_id)
+      say(hit.transcript.body_as_text do |formatter|
+            formatter.first_indent = 2
+            formatter.body_indent = 2
+          end)
+      prompt = choices.map{|c| HighLine.color('(', :reverse) + HighLine.color(c.slice(0).upcase, :bold, :reverse) + HighLine.color(")#{c.slice(1, c.size)}", :reverse) }
+      prompt << HighLine.color('[', :reverse) + prompt.pop + HighLine.color(']', :reverse)
+      prompt = prompt.join(HighLine.color(', ', :reverse)) 
+      prompt += HighLine.color('? ', :reverse)
+
+      choice=nil
+      until choice
+        input = ask(prompt)
+        if input.to_s.match(/^\s*$/)
+          choice = choices.last
+        elsif not(choice = choices.detect{|possible| possible[0] == input.downcase[0] })
+          say("Invalid selection '#{input}'.")
+        end
+      end #until choice
+
+      case choice
+      when 'approve'
+        hit.assignment.at_amazon.approve!
+        Typingpool::App.record_approved_hits_in_project(project, [hit])
+        Typingpool::App.create_transcript(project)
+        say(HighLine.color("Approved. ", :bold) + "#{project.name} transcript updated.")
+      when 'reject'
+        reason=nil
+        until reason.to_s.match(/\S/)
+          reason = ask("Rejection reason, for worker: ")
+        end
+        hit.assignment.at_amazon.reject!(reason)
+        hit.at_amazon.dispose!
+        Typingpool::App.unrecord_hits_in_project(project, [hit])
+        say(HighLine.color("Rejected", :bold))
+      when 'quit'
+        say(HighLine.color("Quitting", :bold))
+        throw :quitting
+      when 'skip'
+        say(HighLine.color("Skipping", :bold))
+        next
+      end #case choice
+    end #hits.each
+
+  end #find_projects_waiting_for(...) do
+end #catch :quitting do
+project = options[:project]
+if options[:fixture]
+  Typingpool::App.vcr_stop
 end

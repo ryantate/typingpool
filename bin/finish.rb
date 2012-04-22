@@ -98,12 +98,5 @@ if project
       project.local.delete_audio_is_on_www
     end
   end #if not(deleting.empty?)
-  project.local.csv('data', 'assignment.csv').each! do |assignment|
-    assignment.delete('assignment_url')
-    if assignment['hit_expires_at'].to_s.match(/\S/)
-      #we don't delete the hit_id because we may need it when building
-      #the transcript (if the HIT was approved)
-      %w(hit_expires_at hit_assignments_duration).each{|key| assignment.delete(key) }
-    end
-  end
+  Typingpool::App.unrecord_hits_details_in_project(project)  
 end #if project

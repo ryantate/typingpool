@@ -1,8 +1,8 @@
 module Typingpool
-require 'test/unit' 
+  require 'test/unit' 
 
-class Test < ::Test::Unit::TestCase 
-class Error; end
+  class Test < ::Test::Unit::TestCase 
+    require 'nokogiri'
 
     def MiniTest.filter_backtrace(bt)
       bt
@@ -29,6 +29,7 @@ class Error; end
       require 'set'
       require 'net/http'
       require 'fileutils'
+      require 'open3'
 
       def audio_dir
         ::File.join(template_dir, 'audio')
@@ -221,29 +222,98 @@ class Error; end
                         )
       end
 
-      def tp_collect_fixture_project_dir
-        File.join(fixtures_dir, 'tp_collect_project_temp')
+
+      def path_to_tp_review
+        File.join(self.class.app_dir, 'bin', 'tp-review')
       end
 
-      def make_tp_collect_fixture_project_dir
-        if File.exists? tp_collect_fixture_project_dir
-          raise Test::Error, "Fixture project already exists for tp-collect at #{tp_collect_fixture_project_dir}"
+      def tp_review_with_fixture(dir, fixture_path, choices)
+        output = {}
+        Open3.popen3(path_to_tp_review, '--sandbox', '--fixture', fixture_path, '--config', config_path(dir), project_default[:title]) do |stdin, stdout, stderr, wait_thr|
+          choices.each do |choice|
+            stdin.puts(choice)
+            if choice.strip.match(/^r/i)
+              stdin.puts("No reason - this is a test")
+            end
+          end
+          output[:out] = stdout.gets(nil)
+          output[:err] = stderr.gets(nil)
+          [stdin, stdout, stderr].each{|stream| stream.close }
+          output[:status] = wait_thr.value
         end
-        ::Dir.mkdir(tp_collect_fixture_project_dir)
-        tp_collect_fixture_project_dir
+        output
       end
 
-      def remove_tp_collect_fixture_project_dir
-        FileUtils.remove_entry_secure(tp_collect_fixture_project_dir, :secure => true)
+      def fixture_project_dir(name)
+        File.join(fixtures_dir, name)
       end
 
-      def with_tp_collect_fixtures_in_temp_tp_dir(dir)
+      def make_fixture_project_dir(name)
+        dir = fixture_project_dir(name)
+        if File.exists? dir
+          raise Error::Test, "Fixture project already exists for #{name} at #{dir}"
+        end
+        ::Dir.mkdir(dir)
+        dir
+      end
+
+      def remove_fixture_project_dir(name)
+        FileUtils.remove_entry_secure(fixture_project_dir(name), :secure => true)
+      end
+
+      def with_fixtures_in_temp_tp_dir(dir, fixture_prefix)
         [['data', 'id.txt'],['data','assignment.csv']].each do |path_elems|
-          project_path = ::File.join(temp_tp_dir_project_dir(dir), *path_elems)
-          fixture_path = ::File.join(fixtures_dir, "tp_collect_#{path_elems.last}")
+          project_path = File.join(temp_tp_dir_project_dir(dir), *path_elems)
+          fixture_path = File.join(fixtures_dir, [fixture_prefix, path_elems.last].join )
           yield(fixture_path, project_path)
         end
       end
+
+      def copy_fixtures_to_temp_tp_dir(dir, fixture_prefix)
+        with_fixtures_in_temp_tp_dir(dir, fixture_prefix) do |fixture_path, project_path|
+          FileUtils.mv(project_path, File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}"))
+          FileUtils.cp(fixture_path, project_path)
+        end
+      end
+
+      def rm_fixtures_from_temp_tp_dir(dir, fixture_prefix)
+        with_fixtures_in_temp_tp_dir(dir, fixture_prefix) do |fixture_path, project_path|
+          path_to_orig = File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}")
+          File.exists?(path_to_orig) or raise Error::Test, "Couldn't find original file '#{path_to_orig}' when trying to restore it to original location"
+          FileUtils.rm(project_path)
+          FileUtils.mv(path_to_orig, project_path)
+        end
+      end
+
+      def assert_has_transcript(dir, transcript_file='transcript.html')
+        transcript_path = File.join(temp_tp_dir_project_dir(dir), transcript_file)
+        assert(File.exists?(transcript_path))
+        assert(not((transcript = IO.read(transcript_path)).empty?))
+        transcript
+      end
+
+      def assert_has_partial_transcript(dir)
+        assert_has_transcript(dir, 'transcript_in_progress.html')
+      end
+
+      def assert_assignment_csv_has_transcription_count(count, project)
+        assert_equal(count, project.local.csv('data', 'assignment.csv').reject{|assignment| assignment['transcription'].to_s.empty?}.size)
+      end
+
+      def assert_html_has_audio_count(count, html)
+        assert_equal(count, noko(html).css('audio').size)
+      end
+
+  def noko(html)
+    Nokogiri::HTML(html) 
+  end
+
+
+  def vcr_dir
+    File.join(fixtures_dir, 'vcr')
+  end
+
+
     end #Script
   end #Test
 end #Typingpool

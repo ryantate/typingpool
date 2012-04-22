@@ -101,7 +101,7 @@ options[:banner] = "\n#{options[:banner]}"
 positional = %w(project template)
 #Anything waiting on STDIN?
 if STDIN.fcntl(Fcntl::F_GETFL, 0) == 0
-  project = $stdin.gets
+  project = STDIN.gets
   if project
     project.chomp!
     abort "Duplicate project values (STDIN and --project)" if options[:project]
@@ -212,10 +212,7 @@ end
 
 STDERR.puts 'Assigning'
 hits = []
-project.local.csv('data', 'assignment.csv').each! do |assignment|
-  needed = needed_assignments[assignment['audio_url']]
-  next if not(needed)
-  assignment['assignment_url'] = needed['assignment_url']
+needed_assignments_sorted.each do |assignment|
   question = Typingpool::Amazon::Question.new(assignment['assignment_url'], template.render(assignment))
   begin
     hit = Typingpool::Amazon::HIT.create(question, config.assign)
@@ -223,13 +220,11 @@ project.local.csv('data', 'assignment.csv').each! do |assignment|
     STDERR.puts "Mechanical Turk error: #{e}"
     unless hits.empty?
       STDERR.puts "Rolling back assignments"
-      hits.each{|hit| hit.disable!}
+      hits.each{|hit| hit.remove_from_amazon }
     end
     abort
   end
   hits.push(hit)
-  assignment['hit_id'] = hit.id
-  assignment['hit_expires_at'] = hit.full.expires_at.to_s
-  assignment['hit_assignments_duration'] = hit.full.assignments_duration.to_s
   STDERR.puts "Assigned #{hits.size} / #{needed_assignments.values.size}"
 end
+Typingpool::App.record_assigned_hits_in_project(project, hits, needed_assignments_sorted.map{|assignment| assignment['assignment_url'] })

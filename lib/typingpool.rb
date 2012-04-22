@@ -1,5 +1,6 @@
 module Typingpool
   class Error < StandardError 
+    class Test < Error; end
     class Shell < Error; end
     class Argument < Error
       class Format < Argument; end
@@ -22,10 +23,20 @@ module Typingpool
     require 'open3'
     require 'uri'
     class << self
-      #much like Kernel#system, except it doesn't spew STDERR and
-      #STDOUT all over your screen! (when called with multiple args,
+      #Much like Kernel#system, except it doesn't spew STDERR and
+      #STDOUT all over your screen (when called with multiple args,
       #which with Kernel#systems kills the chance to do shell style
-      #stream redirects like 2>/dev/null)
+      #stream redirects like 2>/dev/null). Even more like
+      #Open3.capture3, except it raises an exception on unsuccesful
+      #exit status.
+      #
+      # ==== Params
+      #[cmd] Commands to send to the shell, just as with Kernel#system.
+      #
+      # ==== Returns
+      #On success: STDOUT, or true if STDOUT is empty
+      #On failure: Raises Typingpool::Error::Shell, with STDERR as
+      #error text if available.
       def system_quietly(*cmd)
         out, err, status = Open3.capture3(*cmd)
         if status.success?
@@ -39,6 +50,14 @@ module Typingpool
         end
       end
 
+      #Convert config entries like '30s','2d','10h'. etc into number of seconds.
+      #
+      # ==== Params
+      #[timespec] string conforming to format outlined at
+      #http://search.cpan.org/~markstos/CGI-Session-4.48/lib/CGI/Session.pm#expire($param,_$time)
+      # ==== Returns
+      #Number of whole seconds corresponding to the timespec. Raises
+      #Typingpool::Error::Argument::Format on bad input.
       def timespec_to_seconds(timespec)
         timespec or return
         suffix_to_time = {
@@ -54,14 +73,46 @@ module Typingpool
         return (match[1].to_f * suffix_to_time[suffix].to_i).to_i
       end
 
+      # ==== Returns
+      #Single hash, with keys corresponding to Headers and values
+      #corresponding to respective entries in Array.
       def array_to_hash(array, headers)
         Hash[*headers.zip(array).flatten] 
       end
 
+      #The base file at the root of the URL path.
+      # ==== Params
+      #[url] string url 
+      # ==== Returns
+      #File name
       def url_basename(url)
         File.basename(URI.parse(url).path)
       end
 
+      #Converts standard linefeed combos - CRLF, CR, LF - to whatever
+      #the system newline is, aka "\n".
+      # ==== Returns
+      #String with normalized newlines
+      def normalize_newlines(text)
+        text.gsub!("\r\n", "\n")
+        text.gsub!("\r", "\n")
+        text.gsub!("\f", "\n")
+        text
+      end
+
+      #Does a natural-feeling conversion between plain text linebreaks
+      #and HTML P and BR tags, as typical with most web comment forms.
+      # ==== Returns
+      #Text with double newlines converted to P tags, single
+      #newlines converted to BR tags, and the original newlines
+      #restored.
+      def newlines_to_html(text)
+        text.gsub!(/\n\n+/, '<p>')
+        text.gsub!(/\n/, '<br>')
+        text.gsub!(/<p>/, "\n\n<p>")
+        text.gsub!(/<br>/, "\n<br>")
+        text
+      end
     end #class << self
   end #Utility
 
@@ -74,13 +125,23 @@ module Typingpool
     end
 
     class << self
+
+      #Will always return ~/.typingpool unless you subclass. Will be
+      #handed to File.expand_path before use.
       def default_file
         @@default_file
       end
 
+      #Create a new Config objection by reading a YAML file.
+      # ==== Params
+      #Path to file (fully expanded - no tilde etc.)
+      # ==== Returns
+      #Config
       def file(path=File.expand_path(default_file))
         Root.new(YAML.load(IO.read((path))))
       end
+
+      ###protected
 
       def define_reader(*syms)
         syms.each do |sym|
@@ -569,15 +630,27 @@ module Typingpool
           @@url_at ||= 'typingpool_url'
         end
 
-        def cached_or_new(rturk_hit, is_full_hit=false)
-          r=nil
-          if r = from_cache(rturk_hit.id)
+        def cached_or_new(rturk_hit)
+          typingpool_hit=nil
+          if typingpool_hit = from_cache(rturk_hit.id)
             puts "DEBUG from_cache"
           else
-            r = new(rturk_hit, is_full_hit)
+            typingpool_hit = new(rturk_hit)
             puts "DEBUG from_new"
           end
-          r
+          typingpool_hit
+        end
+
+        def cached_or_new_from_searchhits(rturk_hit, annotation)
+          typingpool_hit=nil
+          if typingpool_hit = from_cache(rturk_hit.id)
+            puts "DEBUG from_cache"
+          else
+            typingpool_hit = new(rturk_hit)
+            typingpool_hit.full(Amazon::HIT::Full::FromSearchHITs.new(rturk_hit, annotation))
+            puts "DEBUG from_new"
+          end
+          typingpool_hit
         end
 
         def from_cache(hit_id, id_at=self.id_at, url_at=self.url_at)
@@ -596,6 +669,10 @@ module Typingpool
 
         def cache_key(hit_id, id_at=self.id_at, url_at=self.url_at)
           "RESULT///#{hit_id}///#{url_at}///#{id_at}"
+        end
+
+        def with_ids(ids)
+          ids.map{|id| cached_or_new(RTurk::Hit.new(id)) }
         end
 
         def all_approved
@@ -631,7 +708,7 @@ module Typingpool
             page.hits.map do |rturk_hit|
               annotation = raw_hits.shift.xpath('RequesterAnnotation').inner_text.strip
               full = Amazon::HIT::Full::FromSearchHITs.new(rturk_hit, annotation)
-              cached_or_new(full, true)
+              cached_or_new_from_searchhits(rturk_hit, annotation)
             end
           end
           filter_ours(hits, &filter)
@@ -659,9 +736,8 @@ module Typingpool
       end #class << self
 
       attr_reader :id
-      def initialize(rturk_hit, is_full_hit=false)
+      def initialize(rturk_hit)
         @id = rturk_hit.id
-        self.full(rturk_hit) if is_full_hit
       end
 
       def url
@@ -746,6 +822,8 @@ module Typingpool
         transcript.hit = @id
         transcript
       end
+    alias :transcript :transcription
+
 
       def to_cache
         #any obj containing a Nokogiri object cannot be stored in pstore - do
@@ -789,9 +867,9 @@ module Typingpool
       #hit fields segregated because accessing any one of them is
       #expensive if we only have a hit id (but after fetching one all
       #are cheap)
-      def full(rturk_hit=nil)
+      def full(full_hit=nil)
         if @full.nil?
-          @full = rturk_hit || Full.new(at_amazon)
+          @full = full_hit || Full.new(at_amazon)
         end
         @full
       end
@@ -905,10 +983,11 @@ module Typingpool
       end #Amazon::HIT::Full
 
       class Assignment
-        attr_reader :status, :worker_id, :submitted_at
+        attr_reader :id, :status, :worker_id, :submitted_at
 
         def initialize(rturk_hit)
           if assignment = rturk_hit.assignments[0] #expensive!
+            @id = assignment.id
             @status = assignment.status
             @worker_id = assignment.worker_id
             @submitted_at = assignment.submitted_at
@@ -926,6 +1005,10 @@ module Typingpool
           (answers['transcription'] || answers['1']).to_s
         end
         
+        def at_amazon
+          RTurk::Assignment.new(@id)
+        end
+
         class Empty < Assignment
           def initialize
             @answers = {}
@@ -971,6 +1054,24 @@ module Typingpool
       @name = name
       @config = config
     end
+
+class << self
+    def local(*args)
+      project = new(*args)
+      if project.local
+        return project
+      end
+    end
+
+    def local_with_id(*args)
+      id = args.pop
+      if project = local(*args)
+        if project.local.id == id
+          return project
+        end
+      end
+    end
+  end #class << self
 
     def remote(config=@config)
       Remote.from_config(@name, config)
@@ -1287,8 +1388,8 @@ module Typingpool
     end
 
     class Chunk
-      require 'text/format'
       require 'cgi'
+      require 'text/format'
 
       attr_accessor :body, :worker, :hit, :project
       attr_reader :offset, :offset_seconds, :filename, :filename_local
@@ -1317,24 +1418,28 @@ module Typingpool
 
       def wrap_text(text)
         formatter = Text::Format.new
-        formatter.first_indent = 0
+        yield(formatter) if block_given?
         formatter.format(text)
       end
 
-      def body_as_html
+      def body_as_text
         text = self.body
-        text = CGI::escapeHTML(text)
-        text.gsub!("\r\n", "\n")
-        text.gsub!("\r", "\n")
-        text.gsub!("\f", "\n")
-        text.gsub!(/\n\n+/, '<p>')
-        text.gsub!("\n", '<br>')
-        text.gsub!('<p>', "\n\n<p>")
-        text.gsub!('<br>', "\n<br>")
-        text.gsub!(/\A\s+/, '')
-        text.gsub!(/\s+\z/, '')
-        text = text.split("\n").map {|line| wrap_text(line) }.join("\n") 
+        text = Utility.normalize_newlines(text)
         text.gsub!(/\n\n+/, "\n\n")
+        text = text.split("\n").map{|line| line.strip }.join("\n")
+        if block_given?
+          text = text.split("\n\n").map{|line| wrap_text(line){|formatter| yield(formatter) }.chomp }.join("\n\n")
+        end
+        text
+      end
+
+      def body_as_html
+        text = body_as_text
+        text = CGI::escapeHTML(text)
+        text = Utility.newlines_to_html(text)
+        text = text.split("\n").map do |line| 
+          wrap_text(line){|formatter| formatter.first_indent = 0 }.chomp
+        end.join("\n") 
         text
       end
     end #Transcription::Chunk 
@@ -1393,7 +1498,6 @@ module Typingpool
       ['.html.erb', '']
     end
 
-
     class Assignment < Template
       def self.look_in_from_config(*args)
         look_in = super(*args)
@@ -1436,4 +1540,133 @@ module Typingpool
       end
     end #Env
   end #Template
+
+  class App
+    require 'vcr'
+    class << self
+      def vcr_record(fixture_path, config)
+        VCR.configure do |c|
+          c.cassette_library_dir = File.dirname(fixture_path)
+          c.hook_into :webmock 
+          c.filter_sensitive_data('<AWS_KEY>'){ config.amazon.key }
+          c.filter_sensitive_data('<AWS_SECRET>'){ config.amazon.secret }
+        end
+        VCR.insert_cassette(File.basename(fixture_path, '.*'), :record => :new_episodes)
+      end
+
+      def vcr_stop
+        VCR.eject_cassette
+      end
+
+      def transcript_filename
+        {
+          :done => 'transcript.html',
+          :working => 'transcript_in_progress.html'
+        }
+      end
+
+      def find_projects_waiting_for_hits(hits, config)
+        need = {}
+        by_project_id = {}
+        hits.each do |hit| 
+          if need[hit.project_id]
+            by_project_id[hit.project_id][:hits].push(hit)
+          elsif need[hit.project_id] == false
+            next
+          else
+            need[hit.project_id] = false
+            project = Typingpool::Project.local_with_id(hit.project_title_from_url, config, hit.transcription.project) or next
+            #transcript must not be complete
+            next if File.exists?(File.join(project.local.path, transcript_filename[:done]))
+            by_project_id[hit.project_id] = {
+              :project => project,
+              :hits => [hit]
+            }
+            need[hit.project_id] = true
+          end
+        end
+        if block_given?
+          by_project_id.values.each{|hash| yield(hash[:project], hash[:hits]) }
+        end
+        by_project_id
+      end
+
+      def record_hits_in_project(project, hits=nil)
+        hits_by_url = self.hits_by_url(hits) if hits
+        project.local.csv('data', 'assignment.csv').each! do |csv_row|
+          if hits
+            hit = hits_by_url[csv_row['audio_url']] or next
+          end
+          yield(hit, csv_row)
+        end
+      end
+
+      def record_approved_hits_in_project(project, hits)
+        record_hits_in_project(project, hits) do |hit, csv_row|
+          next if csv_row['transcription']
+          csv_row['transcription'] = hit.transcription.body
+          csv_row['worker'] = hit.transcription.worker
+          csv_row['hit_id'] = hit.id
+        end
+      end
+
+      def record_assigned_hits_in_project(project, hits, assignment_urls)
+        record_hits_in_project(project, hits) do |hit, csv_row|
+          csv_row['hit_id'] = hit.id
+          csv_row['hit_expires_at'] = hit.full.expires_at.to_s
+          csv_row['hit_assignments_duration'] = hit.full.assignments_duration.to_s
+          csv_row['assignment_url'] = assignment_urls.shift
+        end
+      end
+
+      def unrecord_hits_details_in_project(project, hits=nil)
+        record_hits_in_project(project, hits) do |hit, csv_row|
+          unrecord_hit_details_in_csv_row(hit, csv_row)
+        end
+      end
+
+      def unrecord_hit_details_in_csv_row(hit, csv_row)
+        %w(hit_expires_at hit_assignments_duration assignment_url).each{|key| csv_row.delete(key) }
+
+      end
+
+      def unrecord_hits_in_project(project, hits)
+        record_hits_in_project(project, hits) do |hit, csv_row|
+          unrecord_hit_details_in_csv_row(hit, csv_row)
+          csv_row.delete('hit_id')
+        end
+      end
+
+      def hits_by_url(hits)
+        Hash[ *hits.map{|hit| [hit.url, hit] }.flatten ]
+      end
+
+      def create_transcript(project, config=project.config)
+        transcription_chunks = project.local.csv('data', 'assignment.csv').select{|assignment| assignment['transcription']}.map do |assignment|
+          chunk = Typingpool::Transcription::Chunk.new(assignment['transcription'])
+          chunk.url = assignment['audio_url']
+          chunk.project = assignment['project_id']
+          chunk.worker = assignment['worker']
+          chunk.hit = assignment['hit_id']
+          chunk
+        end
+        transcription = Typingpool::Transcription.new(project.name, transcription_chunks)
+        transcription.subtitle = project.local.subtitle
+        File.delete(File.join(project.local.path, transcript_filename[:working])) if File.exists?(File.join(project.local.path, transcript_filename[:working]))
+        done = (transcription.to_a.length == project.local.subdir('audio', 'chunks').to_a.size)
+        out_file = done ? transcript_filename[:done] : transcript_filename[:working]
+        begin
+          template ||= Template.from_config('transcript', config)
+        rescue Error::File::NotExists => e
+          abort "Couldn't find the template dir in your config file: #{e}"
+        rescue Error => e
+          abort "There was a fatal error with the transcript template: #{e}"
+        end
+        File.open(File.join(project.local.path, out_file), 'w') do |out|
+          out << template.render({:transcription => transcription})
+        end
+        out_file
+      end
+    end #class << self
+  end #App
 end #Typingpool
