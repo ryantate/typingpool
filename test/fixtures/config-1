@@ -1,0 +1,20 @@
+amazon:
+  key: test1010101010
+  secret: test10101010101
+  bucket: test-typingpool-1
+transcripts: ~/Documents/Transcripts/
+cache: ~/.typingpool.cache3
+app: ~/Documents/Software/dist/ruby/typingpool
+templates: ~/Documents/Transcripts/templates
+assign:
+  reward: 0.75
+  deadline: 3h
+  approval: 1d
+  lifetime: 2d
+  qualify:
+    - approval_rate >= 95
+  keywords:
+    - transcription
+    - audio
+    - mp3
+

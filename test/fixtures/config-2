@@ -1,0 +1,25 @@
+amazon:
+  key: 1010101010
+  secret: 010101010101
+sftp:
+  user: ryan
+  host: example.com
+  path: public_html/transfer/
+  url: http://example.com/mturk/
+transcripts: ~/Documents/Transcripts/
+cache: ~/.typingpool.cache3
+app: ~/Documents/Software/dist/ruby/typingpool
+templates: ~/Documents/Transcripts/templates
+assign:
+  reward: 0.02
+  deadline: 3z
+  approval: 1M
+  lifetime: 90m
+  qualify:
+    - made_up == this
+    - approval_rate >>>> 95
+  keywords:
+    - transcription
+    - audio
+    - mp3
+
