@@ -122,7 +122,7 @@ module Typingpool
         @@default_file
       end
 
-      ###protected
+###      protected
 
       #Define a field in a Config subclass as a local path. Reads on
       #that field will be filtered through File.expand_path.
@@ -181,7 +181,7 @@ module Typingpool
       end
     end #class << self
 
-    ###public
+###   public
 
     #All fields as raw key-value pairs. For nested subclasses, the
     #value is another hash.
@@ -213,7 +213,7 @@ module Typingpool
       value
     end
 
-###protected
+###    protected
 
     def equals_method?(meth)
       match = meth.to_s.match(/([^=]+)=$/) or return

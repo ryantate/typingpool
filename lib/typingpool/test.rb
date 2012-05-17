@@ -20,6 +20,10 @@ module Typingpool
       ::File.join(self.class.app_dir, 'test', 'fixtures')
     end
 
+    def audio_dir
+      ::File.join(template_dir, 'audio')
+    end
+
 
     class Script < Test 
       #Yes, big fat integration tests written in Test::Unit. Get over it.
@@ -31,9 +35,6 @@ module Typingpool
       require 'fileutils'
       require 'open3'
 
-      def audio_dir
-        ::File.join(template_dir, 'audio')
-      end
 
       def audio_files(subdir='mp3')
         dir = ::File.join(audio_dir, subdir)
