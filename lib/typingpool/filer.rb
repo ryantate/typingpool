@@ -322,13 +322,9 @@ module Typingpool
         #the parent directory. If the so-named directory exists within
         #the parent directory, returns it. If not, returns nil.
         def named(name, in_dir)
-          #TODO - Can just use File.exists? here, right?
-          match = ::Dir.entries(in_dir).map{|entry| File.join(in_dir, entry) }.select do |entry| 
-            (File.basename(entry) == name)  &&
-              (File.directory? entry)
-          end
-          if match.first
-            new(match.first)
+          path = File.join(in_dir, name)
+          if File.exists?(path) && File.directory?(path)
+            new(path)
           end
         end
       end #class << self
