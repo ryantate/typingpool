@@ -24,6 +24,26 @@ module Typingpool
       ::File.join(template_dir, 'audio')
     end
 
+    def config
+      Config.file
+    end
+
+    def amazon_credentials?(config=self.config)
+      config.amazon && config.amazon.key && config.amazon.secret
+    end
+
+    def skip_if_no_amazon_credentials(skipping='', config=self.config)
+      skipping = " #{skipping}" if not(skipping.empty?)
+      if not (amazon_credentials?(config))
+        skip ("Skipping#{skipping}: No Amazon credentials") 
+      end
+    end
+
+    def add_goodbye_message(msg)
+      at_exit do
+        STDERR.puts msg
+      end
+    end
 
     class Script < Test 
       #Yes, big fat integration tests written in Test::Unit. Get over it.
@@ -41,10 +61,6 @@ module Typingpool
         ::Dir.entries(dir).reject{|entry| entry.match(/^\./) }.map{|entry| ::File.join(dir, entry)}.select{|path| ::File.file?(path) }
       end
 
-      def config
-        Config.file
-      end
-
       def config_path(dir)
         ::File.join(dir, project_default[:config_filename])   
       end
@@ -53,26 +69,11 @@ module Typingpool
         Config.file(config_path(dir))
       end
 
-      def amazon_credentials?(config=self.config)
-        config.amazon && config.amazon.key && config.amazon.secret
-      end
-
-      def skip_if_no_amazon_credentials(skipping='', config=self.config)
-        skipping = " #{skipping}" if not(skipping.empty?)
-        if not (amazon_credentials?(config))
-          skip ("Skipping#{skipping}: No Amazon credentials") 
-        end
-      end
 
       def setup_amazon(dir)
         Amazon.setup(:sandbox => true, :config => config_from_dir(dir))
       end
 
-      def add_goodbye_message(msg)
-        at_exit do
-          STDERR.puts msg
-        end
-      end
 
       def in_temp_tp_dir
         ::Dir.mktmpdir('typingpool_') do |dir|

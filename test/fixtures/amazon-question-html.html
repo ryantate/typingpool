@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+function setAmazonAssignmentId() {
+    var params = window.location.search.substring(1).split('&');
+    var i = 0;
+    for (i = 0; i < params.length; i++) {
+        var param = params[i].split('=');
+        var key = param[0];
+        var value = param[1];
+        if (key === 'assignmentId') {
+            if (value === 'ASSIGNMENT_ID_NOT_AVAILABLE') {
+		var input = document.getElementById('disable_on_preview');
+		if (input) {
+		    input.setAttribute('disabled', 'disabled');
+		    var span = document.createElement('span');
+		    span.setAttribute('class', 'disabled_message');
+		    span.appendChild(document.createTextNode(' Disabled because you are previewing this HIT.')); 
+		    var inputSibling = input.nextSibling;
+		    if (inputSibling) {
+			input.parentNode.insertBefore(span, inputSibling);
+		    }
+		    else {
+			input.parentNode.appendChild(span);
+		    }
+		}
+            }
+            else {
+		document.getElementById('assignmentId').value = value;
+            }
+        }
+        else if (key === 'turkSubmitTo') {
+            var form = document.getElementById('turkForm');
+            if (form) {
+		form.setAttribute('action', decodeURIComponent(value) + '/mturk/externalSubmit');
+            }
+        }
+    }
+}
+
+</script>
+  <style>
+body {
+  color: black;
+  background: white;    
+  font-family: Georgia, Times, "Times New Roman", serif;
+}
+
+h1, h2, h3, h4, h5, .disabled_message {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+p {
+  line-height: 140%;
+}
+
+.disabled_message {
+  color: gray;
+  font-size: small;
+}
+
+</style>
+  <title>Transcribe MP3 of 1-minute phone calll</title>
+</head>
+
+<body onload="setAmazonAssignmentId()">
+
+  <h2>Transcribe MP3 of 1-minute phone call</h2>
+  <p id="description">I split up a telephone conversation into 1-minute parts, you transcribe the audio for one 1-minute part.</p>
+
+  <h3>Labeling</h3>
+  <p>There are two speakers. The person asking the questions is <strong>Ryan</strong>. The person answering the questions, on the distant end of the telephone line, is <strong>Havi</strong>, hacker. Label each speaker with a colon, like this:</p>
+  <blockquote>
+    <p>Ryan:&nbsp;Do you think it was a mistake to set up Saturn as its own Corporation?</p>
+    <p>Havi:&nbsp;In hindsight, you can look at it that way, and I think a lot of people do, quite honestly. They don't think GM needed another brand. But at the time this was all developed. It sure seemed like a good idea.</p>
+  </blockquote>
+
+  <h3>Important</h3>
+  <ul>
+    <li><strong>Unusual words</strong> you might hear: <strong>Hack Day, Sunnyvale, Chad D</strong></li>
+    <li><strong>Don't</strong> type short responses like <strong>ya</strong>, <strong>OK</strong>, <strong>Oh</strong>, <strong>Ah</strong>, and <strong>Mmmhmm</strong>.
+    <li>For <strong>inaudible</strong> words, type <strong>??</strong></li>
+  </ul>
+
+  <h3>Instructions</h3>
+  <p>Please <strong>transcribe</strong> this 1-minute MP3: <a target="_blank" href="http://webmasher.com/mturk/TestTpInterview.00.00.77421e0a6302f4c8c34e24004a4ad828.YSOQJU.mp3">http://webmasher.com/mturk/TestTpInterview.00.00.77421e0a6302f4c8c34e24004a4ad828.YSOQJU.mp3</a></p>
+  <form action="https://www.mturk.com/mturk/externalSubmit" method="POST" id="turkForm">
+    <p><input name="assignmentId" type="hidden" id="assignmentId"><input name="typingpool_url" type="hidden" value="http://webmasher.com/mturk/TestTpInterview.00.00.77421e0a6302f4c8c34e24004a4ad828.YSOQJU.mp3" /><input name="typingpool_project_id" type="hidden" value="77421e0a6302f4c8c34e24004a4ad828" />Enter your transcription below:</p>
+    <p><textarea name="transcription" cols="80" rows="15"></textarea></p>
+    <p><input type="submit" value="Submit" id="disable_on_preview"></p>
+  </form>
+
+</body>
+</html>

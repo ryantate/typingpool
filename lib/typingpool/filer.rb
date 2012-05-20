@@ -162,7 +162,6 @@ module Typingpool
       # [dest]      Destination directory for the new chunks as a
       #             Filer::Dir. Default is the same directory as the
       #             original file.
-
       # ==== Returns
       # Filer::Files containing the new files.
       def split(interval_in_min_dot_seconds, basename=File.basename(path, '.*'), dest=dir)
