@@ -357,18 +357,17 @@ module Typingpool
         @ours ||= not(url.to_s.empty?)
       end
 
-      #Returns a Typingpool::Transcription::Chunk instance built using
+      #Returns a Typingpool::Transcript::Chunk instance built using
       #this HIT and its associated assignment.
-      def transcription
-        transcript = Transcription::Chunk.new(assignment.body)
+      def transcript
+        transcript = Transcript::Chunk.new(assignment.body)
         transcript.url = url
         transcript.project = project_id
         transcript.worker = assignment.worker_id
         transcript.hit = @id
         transcript
       end
-      alias :transcript :transcription
-
+   
       #If this HIT is cacheable, serializes it to the cache file
       #specified in the config passed to Amazon.setup, or specified in
       #the default config file. In short, a HIT is cacheable if it

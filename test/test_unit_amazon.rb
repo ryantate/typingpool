@@ -74,7 +74,7 @@ class TestAmazon < Typingpool::Test
       assert(not(hit.rejected?))
       assert(not(hit.submitted?))
       assert(hit.ours?)
-      assert_instance_of(Typingpool::Transcription::Chunk, hit.transcript)
+      assert_instance_of(Typingpool::Transcript::Chunk, hit.transcript)
       assert_kind_of(RTurk::Hit, hit.at_amazon)
       assert_instance_of(Typingpool::Amazon::HIT::Full, hit.full)
       assert_instance_of(Typingpool::Amazon::HIT::Assignment::Empty, hit.assignment)

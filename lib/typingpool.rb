@@ -5,92 +5,7 @@ module Typingpool
   require 'typingpool/filer'
   require 'typingpool/amazon'
   require 'typingpool/project'
-
-  class Transcription
-    include Enumerable
-    require 'csv'
-    attr_accessor :title, :subtitle, :url
-
-    def initialize(title=nil, chunks=[])
-      @title = title
-      @chunks = chunks
-    end
-
-    def each
-      @chunks.each do |chunk|
-        yield chunk
-      end
-    end
-
-    def [](index)
-      @chunks[index]
-    end
-
-    def to_s
-      @chunks.join("\n\n")
-    end
-    
-    def add_chunk(chunk)
-      @chunks.push(chunk)
-    end
-
-    class Chunk
-      require 'cgi'
-      require 'text/format'
-
-      attr_accessor :body, :worker, :hit, :project
-      attr_reader :offset, :offset_seconds, :filename, :filename_local
-
-      def initialize(body)
-        @body = body
-      end
-
-      def <=>(other)
-        self.offset_seconds <=> other.offset_seconds
-      end
-
-      def url=(url)
-        #http://ryantate.com/transfer/Speech.01.00.ede9b0f2aed0d35a26cef7160bc9e35e.ISEAOM.mp3
-        matches = Project.url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
-        @url = matches[0]
-        @filename = matches[1]
-        @filename_local = Project.local_basename_from_url(@url)
-        @offset = "#{matches[3]}:#{matches[4]}"
-        @offset_seconds = (matches[3].to_i * 60) + matches[4].to_i
-      end
-
-      def url
-        @url
-      end
-
-      def wrap_text(text)
-        formatter = Text::Format.new
-        yield(formatter) if block_given?
-        formatter.format(text)
-      end
-
-      def body_as_text
-        text = self.body
-        text = Utility.normalize_newlines(text)
-        text.gsub!(/\n\n+/, "\n\n")
-        text = text.split("\n").map{|line| line.strip }.join("\n")
-        if block_given?
-          text = text.split("\n\n").map{|line| wrap_text(line){|formatter| yield(formatter) }.chomp }.join("\n\n")
-        end
-        text
-      end
-
-      def body_as_html
-        text = body_as_text
-        text = CGI::escapeHTML(text)
-        text = Utility.newlines_to_html(text)
-        text = text.split("\n").map do |line| 
-          wrap_text(line){|formatter| formatter.first_indent = 0 }.chomp
-        end.join("\n") 
-        text
-      end
-    end #Transcription::Chunk 
-  end #Transcription 
+  require 'typingpool/transcript'
 
   class Template
     require 'erb'
@@ -222,7 +137,7 @@ module Typingpool
             next
           else
             need[hit.project_id] = false
-            project = Typingpool::Project.local_with_id(hit.project_title_from_url, config, hit.transcription.project) or next
+            project = Typingpool::Project.local_with_id(hit.project_title_from_url, config, hit.transcript.project) or next
             #transcript must not be complete
             next if File.exists?(File.join(project.local.path, transcript_filename[:done]))
             by_project_id[hit.project_id] = {
@@ -251,8 +166,8 @@ module Typingpool
       def record_approved_hits_in_project(project, hits)
         record_hits_in_project(project, hits) do |hit, csv_row|
           next if csv_row['transcription']
-          csv_row['transcription'] = hit.transcription.body
-          csv_row['worker'] = hit.transcription.worker
+          csv_row['transcription'] = hit.transcript.body
+          csv_row['worker'] = hit.transcript.worker
           csv_row['hit_id'] = hit.id
         end
       end
@@ -289,18 +204,18 @@ module Typingpool
       end
 
       def create_transcript(project, config=project.config)
-        transcription_chunks = project.local.csv('data', 'assignment.csv').select{|assignment| assignment['transcription']}.map do |assignment|
-          chunk = Typingpool::Transcription::Chunk.new(assignment['transcription'])
+        transcript_chunks = project.local.csv('data', 'assignment.csv').select{|assignment| assignment['transcription']}.map do |assignment|
+          chunk = Typingpool::Transcript::Chunk.new(assignment['transcription'])
           chunk.url = assignment['audio_url']
           chunk.project = assignment['project_id']
           chunk.worker = assignment['worker']
           chunk.hit = assignment['hit_id']
           chunk
         end
-        transcription = Typingpool::Transcription.new(project.name, transcription_chunks)
-        transcription.subtitle = project.local.subtitle
+        transcript = Typingpool::Transcript.new(project.name, transcript_chunks)
+        transcript.subtitle = project.local.subtitle
         File.delete(File.join(project.local.path, transcript_filename[:working])) if File.exists?(File.join(project.local.path, transcript_filename[:working]))
-        done = (transcription.to_a.length == project.local.subdir('audio', 'chunks').to_a.size)
+        done = (transcript.to_a.length == project.local.subdir('audio', 'chunks').to_a.size)
         out_file = done ? transcript_filename[:done] : transcript_filename[:working]
         begin
           template ||= Template.from_config('transcript', config)
@@ -310,7 +225,7 @@ module Typingpool
           abort "There was a fatal error with the transcript template: #{e}"
         end
         File.open(File.join(project.local.path, out_file), 'w') do |out|
-          out << template.render({:transcription => transcription})
+          out << template.render({:transcript => transcript})
         end
         out_file
       end
