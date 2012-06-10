@@ -52,6 +52,9 @@ module Typingpool
 
     end #class << self
 
+    #Class representing an Amazon Mechanical Turk Human Intelligence
+    #Task (HIT).
+    #
     #We go above and beyond RTurk::Hit for several practical reasons:
     # * To allow easy serialization.  Caching is a very useful way of
     #   reducing network calls to Amazon, and thus of speeding up

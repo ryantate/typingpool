@@ -3,6 +3,7 @@
 require 'optparse'
 require 'erb'
 require 'typingpool'
+require 'stringio'
 
 options = nil
 config = nil

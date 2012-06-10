@@ -126,10 +126,6 @@ class TestAmazon < Typingpool::Test
     Typingpool::Amazon::Question.new(question_url, question_html)
   end
 
-  def dummy_config
-    Typingpool::Config.file(File.join(fixtures_dir, 'config-1'))
-  end
-
   def dummy_hit(config)
     Typingpool::Amazon::HIT.create(dummy_question, config.assign)
   end

@@ -76,9 +76,15 @@ end
 
 choices = %w(approve reject quit skip)
 catch :quitting do
-  Typingpool::App.find_projects_waiting_for_hits(hits, options[:config]) do |project, hits|
+  hits_by_project_id = Typingpool::App.find_projects_waiting_for_hits(hits, options[:config]) 
+  all_hits = hits_by_project_id.map{|id, hash| hash[:hits] }.flatten
+  i = 0
+  hits_by_project_id.values.each do |hash|
+    hits = hash[:hits]
+    project = hash[:project]
     hits.sort!{|a, b| a.url <=> b.url }
     hits.each do |hit|
+      i += 1
       say(HighLine.color("Transcript for: ", :bold) + hit.url)
       project_info = HighLine.color("Project: ", :bold) + project.name
       if project.local.subtitle
@@ -94,6 +100,7 @@ catch :quitting do
       prompt << HighLine.color('[', :reverse) + prompt.pop + HighLine.color(']', :reverse)
       prompt = prompt.join(HighLine.color(', ', :reverse)) 
       prompt += HighLine.color('? ', :reverse)
+      prompt += HighLine.color("(#{i}/#{all_hits.count}) ", :reverse)
 
       choice=nil
       until choice
@@ -127,7 +134,7 @@ catch :quitting do
         say(HighLine.color("Skipping", :bold))
         next
       end #case choice
-    end #hits.each
+    end #hits.each_with_index
 
   end #find_projects_waiting_for(...) do
 end #catch :quitting do

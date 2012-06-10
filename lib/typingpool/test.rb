@@ -3,6 +3,8 @@ module Typingpool
 
   class Test < ::Test::Unit::TestCase 
     require 'nokogiri'
+    require 'net/http'
+    require 'fileutils'
 
     def MiniTest.filter_backtrace(bt)
       bt
@@ -32,11 +34,28 @@ module Typingpool
       config.amazon && config.amazon.key && config.amazon.secret
     end
 
-    def skip_if_no_amazon_credentials(skipping='', config=self.config)
-      skipping = " #{skipping}" if not(skipping.empty?)
+    def skip_with_message(reason, skipping_what='')
+      skipping_what = " #{skipping_what}" if not(skipping_what.empty?)
+      skip ("Skipping#{skipping_what}: #{reason}")
+      true
+    end
+
+    def skip_if_no_amazon_credentials(skipping_what='', config=self.config)
       if not (amazon_credentials?(config))
-        skip ("Skipping#{skipping}: No Amazon credentials") 
+        skip_with_message('Missing or incomplete Amazon credentials', skipping_what)
       end
+    end
+
+    def s3_credentials?(config)
+      amazon_credentials?(config) && config.amazon.bucket
+    end
+
+    def skip_if_no_s3_credentials(skipping_what='', config=self.config)
+      if not (skip_if_no_amazon_credentials(skipping_what, config))
+        if not(s3_credentials?(config))
+          skip_with_message('No Amazon S3 credentials', skipping_what)
+        end #if not(s3_credentials?...)
+      end #if not(skip_if_no_amazon_credentials...)
     end
 
     def add_goodbye_message(msg)
@@ -45,14 +64,56 @@ module Typingpool
       end
     end
 
+    def dummy_config(number=1)
+      Typingpool::Config.file(File.join(fixtures_dir, "config-#{number}"))
+    end
+
+
+    def project_default
+      Hash[
+           :config_filename => '.config',
+           :subtitle => 'Typingpool test interview transcription',
+           :title => 'TestTpInterview',
+           :chunks => '0:20',
+           :unusual => ['Hack Day', 'Sunnyvale', 'Chad D'],
+           :voice => ['Ryan', 'Havi, hacker'],
+          ]
+    end
+
+    def working_url?(url, max_redirects=6)
+      response = nil
+      seen = Set.new
+      loop do
+        url = URI.parse(url)
+        break if seen.include? url.to_s
+        break if seen.count > max_redirects
+        seen.add(url.to_s)
+        request = Net::HTTP.new(url.host, url.port)
+        request.use_ssl = true if url.scheme == 'https'
+        response = request.request_head(url.path)
+        if response.kind_of?(Net::HTTPRedirection)
+          url = response['location']
+        else
+          break
+        end
+      end
+      response.kind_of?(Net::HTTPSuccess) && url.to_s
+    end
+
+    def in_temp_dir
+      dir = Dir.mktmpdir
+      begin
+        yield(dir)
+      ensure
+        FileUtils.rm_r(dir)
+      end # begin
+    end
+
     class Script < Test 
-      #Yes, big fat integration tests written in Test::Unit. Get over it.
       require 'typingpool'
       require 'tmpdir'
       require 'yaml'
       require 'set'
-      require 'net/http'
-      require 'fileutils'
       require 'open3'
 
 
@@ -111,26 +172,6 @@ module Typingpool
         Project.new(project_default[:title], config)
       end
 
-      def working_url?(url, max_redirects=6)
-        response = nil
-        seen = Set.new
-        loop do
-          url = URI.parse(url)
-          break if seen.include? url.to_s
-          break if seen.count > max_redirects
-          seen.add(url.to_s)
-          request = Net::HTTP.new(url.host, url.port)
-          request.use_ssl = true if url.scheme == 'https'
-          response = request.request_head(url.path)
-          if response.kind_of?(Net::HTTPRedirection)
-            url = response['location']
-          else
-            break
-          end
-        end
-        response.kind_of?(Net::HTTPSuccess) && url.to_s
-      end
-
       def call_script(*args)
         Utility.system_quietly(*args)
       end
@@ -141,17 +182,6 @@ module Typingpool
 
       def call_tp_make(*args)
         call_script(path_to_tp_make, *args)
-      end
-
-      def project_default
-        Hash[
-             :config_filename => '.config',
-             :subtitle => 'Typingpool test interview transcription',
-             :title => 'TestTpInterview',
-             :chunks => '0:20',
-             :unusual => ['Hack Day', 'Sunnyvale', 'Chad D'],
-             :voice => ['Ryan', 'Havi, hacker'],
-            ]
       end
 
       def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3')
