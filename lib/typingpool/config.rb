@@ -275,9 +275,17 @@ module Typingpool
           end
 
           def type
-            type = @raw.split(/\s+/)[0].to_sym
-            RTurk::Qualification::TYPES[type] or raise Error::Argument, "Unknown qualification type '#{type.to_s}'"
-            type
+            type = @raw.split(/\s+/)[0]
+            if RTurk::Qualification::TYPES[type.to_sym]
+              return type.to_sym
+            elsif (type.match(/\d/) || type.size >= 25)
+              return type
+            else
+              #Seems likely to be qualification typo: Not a known
+              #system qualification, all letters and less than 25
+              #chars
+              raise Error::Argument, "Unknown qualification type and does not appear to be a raw qualification type ID: '#{type.to_s}'"
+            end 
           end
 
           def opts
