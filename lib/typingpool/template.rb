@@ -83,7 +83,8 @@ module Typingpool
     #A Template::Assignment works just like a regular template, except
     #that within each transcript dir (Config#transcript and the
     #built-in app template dir) we search within a subdir called
-    #'assignment'
+    #'assignment' first, then, after all the 'assignment' subdirs have
+    #been search, we look in the original template dirs.
     class Assignment < Template
       def self.look_in_from_config(*args)
         look_in = super(*args)
@@ -94,7 +95,7 @@ module Typingpool
 
     #This subclass provides two utility methods to all templates:
     #read, for including the text of another template, and render, for
-    #rendering anothet template. Read takes a relative path,
+    #rendering another template. Read takes a relative path,
     #documented below. Render is passed the same hash as the parent
     #template, merged with an optional override hash, as documented
     #below.
@@ -116,14 +117,25 @@ module Typingpool
       #returns the text of the file at that path.
       #
       #The relative path is resolved as in look_in above, with the
-      #following difference: each parent directory of the active
-      #template is searched first, up to the root transcript directory
-      #(either Config#template, the built-in app template dir, or any
-      #dir that has been manually added to look_in).
+      #following difference: the current directory and each parent
+      #directory of the active template is searched first, up to the
+      #root transcript directory (either Config#template, the built-in
+      #app template dir, or any dir that has been manually added to
+      #look_in).
       def read(path)
         @template.class.new(path, localized_look_in).read
       end
 
+      #Method passed into each template. Takes a reltive path and
+      #returns the *rendered* text of the ERB template at that
+      #path. Can also take an optional hash, which will be merged into
+      #the parent template's hash and passed to the included
+      #template. If the optional hash it not passed, the parent
+      #template's hash will be passed to the included template
+      #unmodified.
+      #
+      #The relative path is resolved as described in the docs for
+      #Template::Env#read.
       def render(path, hash={})
         @template.class.new(path, localized_look_in).render(@hash.merge(hash))
       end

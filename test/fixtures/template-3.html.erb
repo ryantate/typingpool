@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title><%= title %></title>
+</head>
+<body>
+<h3><%= title %></h3>
+<pre>
+<%= read('template') %>
+</pre>
+<pre>
+<%= render('template') %>
+</pre>
+<pre>
+<%= render('template', :title => new_title) %>
+</pre>
+<pre>
+<%= render('template-2') %>
+</pre>
+</body>
+</html>
