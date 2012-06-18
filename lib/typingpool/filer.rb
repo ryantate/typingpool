@@ -371,8 +371,6 @@ module Typingpool
         system('open', @path)
       end
 
-      #private
-
       def file_path(*relative_path)
         File.join(@path, *relative_path)
       end

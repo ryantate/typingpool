@@ -215,7 +215,7 @@ module Typingpool
           filter_ours(hits, &filter)
         end
 
-        #private
+        #protected
 
         #Constructor. Takes an RTurk::Hit instance. Returns a
         #Typingpool::Amazon::HIT instance, preferably from the cache.
@@ -589,7 +589,7 @@ module Typingpool
           end
         end
 
-        #private
+        protected
 
         def import_standard_attrs_from_rturk_hit(hit)
           %w(id type_id status expires_at assignments_duration).each do |attr|
@@ -638,7 +638,7 @@ module Typingpool
             self.annotation = annotation
           end
 
-          #private
+          protected
 
           def external_question_url
             unless @checked_question
@@ -684,8 +684,8 @@ module Typingpool
           (answers['transcription'] || answers['1']).to_s
         end
 
-        #private        
-
+        #Returms an RTurk::Assignment object corresponding to this
+        #assignment.
         def at_amazon
           RTurk::Assignment.new(@id)
         end
@@ -736,7 +736,7 @@ module Typingpool
         noko.css('#description')[0].content
       end
 
-      #private
+      protected
 
       def noko(html=@html)
         #TODO - fix this encoding situation!
