@@ -172,8 +172,7 @@ module Typingpool
         text
       end
 
-
-      #private
+      protected
 
       def wrap_text(text)
         formatter = Text::Format.new
