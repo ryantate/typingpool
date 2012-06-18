@@ -138,8 +138,6 @@ module Typingpool
       local.file_path(*relative_path)
     end
 
-    #private
-
     #Takes an array of file paths, file names, or Filer
     #instances. Returns an array of file basenames. The return
     #basenames will be the original basenames with the project id and
@@ -173,6 +171,8 @@ module Typingpool
       matches = Project.url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
       [matches[2..4].join('.'), matches[5]].join
     end
+
+    protected
 
     #Takes an optional string length (default 6). Returns a string of
     #pseudo-random uppercase letters of the specified length. Should
@@ -226,7 +226,7 @@ module Typingpool
         remove(basenames){|file| yield(file) if block_given? }
       end
 
-      #private
+      protected
 
       def url_basename(url)
         url.split("#{self.url}/").last or raise Error "Could not find base url '#{self.url}' within longer url '#{url}'"
@@ -319,7 +319,7 @@ module Typingpool
           end
         end
 
-        #private
+        protected
 
         def batch(io_streams)
           results = []
@@ -423,7 +423,7 @@ module Typingpool
           end
         end
 
-        #private
+        protected
 
         def connection
           begin
