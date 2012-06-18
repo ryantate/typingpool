@@ -74,7 +74,7 @@ module Typingpool
       return
     end
 
-    #private
+    protected
 
     def extensions
       ['.html.erb', '']
@@ -140,11 +140,11 @@ module Typingpool
         @template.class.new(path, localized_look_in).render(@hash.merge(hash))
       end
 
-      #private
-
       def get_binding
         binding()
       end
+
+      protected
 
       def localized_look_in
         look_in = []
