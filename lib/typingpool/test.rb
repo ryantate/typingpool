@@ -72,8 +72,8 @@ module Typingpool
     def project_default
       Hash[
            :config_filename => '.config',
-           :subtitle => 'Typingpool test interview transcription',
-           :title => 'TestTpInterview',
+           :subtitle => "Typingpool's test interview transcription",
+           :title => "Typingpool's Test & Interview",
            :chunks => '0:20',
            :unusual => ['Hack Day', 'Sunnyvale', 'Chad D'],
            :voice => ['Ryan', 'Havi, hacker'],

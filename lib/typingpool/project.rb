@@ -226,10 +226,9 @@ module Typingpool
         remove(basenames){|file| yield(file) if block_given? }
       end
 
-      protected
-
       def url_basename(url)
-        url.split("#{self.url}/").last or raise Error "Could not find base url '#{self.url}' within longer url '#{url}'"
+        basename = url.split("#{self.url}/").last or raise Error "Could not find base url '#{self.url}' within longer url '#{url}'"
+        URI.unescape(basename)
       end
 
       #Subclass for storing remote files on Amazon Simple Storage
