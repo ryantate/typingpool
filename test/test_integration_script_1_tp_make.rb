@@ -18,6 +18,13 @@ class TestTpMake < Typingpool::Test::Script
     end
   end
 
+  def test_abort_with_invalid_title
+    exception = assert_raise(Typingpool::Error::Shell) do
+      call_tp_make('--file', audio_files[0], '--title', 'Foo/Bar')
+    end #assert_raise
+    assert_match(exception.message, /invalid title/i)
+  end
+
   def tp_make_with(dir, config_path, subdir='mp3')
     skip_if_no_amazon_credentials('tp-make test')
     project = nil

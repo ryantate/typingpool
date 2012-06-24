@@ -13,6 +13,9 @@ class TestProject < Typingpool::Test
     assert_instance_of(Typingpool::Project, project)
     assert_equal(project_default[:title], project.name)
     assert_equal(dummy_config.to_hash.to_s, project.config.to_hash.to_s)
+    assert_raise(Typingpool::Error::Argument::Format) do 
+      Typingpool::Project.new('one/two', dummy_config)
+    end #assert_raise...
   end
 
   def test_project_base_bitrate

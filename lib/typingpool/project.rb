@@ -27,6 +27,7 @@ module Typingpool
     #instance (default is the default Config.file). Project does not
     #have to exist locally or remotely.
     def initialize(name, config=Config.file)
+      Local.valid_name?(name) or raise Error::Argument::Format, "The project name '#{name}' is invalid; a project name must be a valid name for a directory in the local filesystem. Eliminate '/' or any other illegal character."
       @name = name
       @config = config
     end
@@ -512,6 +513,19 @@ module Typingpool
         #Project::Local instance.
         def ours?(dir)
           File.exists?(dir.subdir('audio')) && File.exists?(dir.subdir('audio', 'originals'))
+        end
+
+        #Takes the name of a project and returns true if it is a valid
+        #name for a directory in the local filesystem, false if not.
+        def valid_name?(name)
+          Utility.in_temp_dir do |dir|
+            begin
+              FileUtils.mkdir(File.join(dir, name))
+            rescue Errno::ENOENT
+              return false
+            end #begin
+            return File.exists?(File.join(dir, name))
+          end #Utility.in_temp_dir do...
         end
 
         #Takes one or more symbols. Adds corresponding getter/setter

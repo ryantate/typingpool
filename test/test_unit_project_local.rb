@@ -19,6 +19,11 @@ class TestProjectLocal < Typingpool::Test
     assert_kind_of(Typingpool::Project::Local, local = Typingpool::Project::Local.named('project', project_template_dir_parent))
   end
 
+  def test_project_local_valid_name
+    assert(Typingpool::Project::Local.valid_name?('hello, world'))
+    refute(Typingpool::Project::Local.valid_name?('hello / world'))
+  end
+
   def test_project_local_create
     in_temp_dir do |dir|
       assert(local = create_project_local(dir))

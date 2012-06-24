@@ -81,23 +81,29 @@ options[:voices].map! do |voice|
   }
 end
 
-project = Typingpool::Project.new(options[:title], config)
+begin
+  project = Typingpool::Project.new(options[:title], config)
+rescue Typingpool::Error::Argument::Format
+  abort "Invalid title '#{options[:title]}'. Title must be a valid directory name. Eliminate '/' or any other illegal character."
+end #begin
+
 begin
   project.interval = options[:chunk] if options[:chunk]
 rescue Typingpool::Error::Argument::Format
   abort "Could not make sense of chunk argument '#{options[:chunk]}'. Required format is SS, or MM:SS, or HH:MM:SS, with optional decimal values (e.g. MM:SS.ss)"
-end
+end #begin
+
 begin
   project.bitrate = options[:bitrate] if options[:bitrate]
 rescue Typingpool::Error::Argument::Format
   abort "Could not make sense of bitrate argument '#{options[:bitrate]}'. Should be an integer corresponding to kb/s."
-end
+end #begin
 
 begin
   project.create_local
 rescue Errno::EEXIST
-  abort "The name #{options[:title]} is taken"
-end
+  abort "The title '#{options[:title]}' is taken"
+end #begin
 
 project.local.subtitle = options[:subtitle] if options[:subtitle]
 options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }

@@ -101,17 +101,11 @@ module Typingpool
     end
 
     def in_temp_dir
-      dir = Dir.mktmpdir
-      begin
-        yield(dir)
-      ensure
-        FileUtils.rm_r(dir)
-      end # begin
+      Typingpool::Utility.in_temp_dir{|dir| yield(dir) }
     end
 
     class Script < Test 
       require 'typingpool'
-      require 'tmpdir'
       require 'yaml'
       require 'set'
       require 'open3'

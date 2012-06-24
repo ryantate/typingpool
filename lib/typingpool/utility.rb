@@ -2,6 +2,7 @@ module Typingpool
   class Utility
     require 'open3'
     require 'uri'
+    require 'tmpdir'
     class << self
       #Much like Kernel#system, except it doesn't spew STDERR and
       #STDOUT all over your screen (when called with multiple args,
@@ -92,6 +93,18 @@ module Typingpool
         text.gsub!(/<p>/, "\n\n<p>")
         text.gsub!(/<br>/, "\n<br>")
         text
+      end
+
+      #Takes a block and calls that block with a path to a temporary
+      #directory. Recursively deletes that directory when the block is
+      #finished.
+      def in_temp_dir
+        dir = Dir.mktmpdir
+        begin
+          yield(dir)
+        ensure
+          FileUtils.rm_r(dir)
+        end # begin
       end
     end #class << self
   end #Utility
