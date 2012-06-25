@@ -58,6 +58,22 @@ module Typingpool
       end #if not(skip_if_no_amazon_credentials...)
     end
 
+    def sftp_credentials?(config)
+      config.sftp && config.sftp.user && config.sftp.host && config.sftp.url
+    end
+
+    def skip_if_no_sftp_credentials(skipping_what='', config=self.config)
+      if not(sftp_credentials?(config))
+        skip_with_message('No SFTP credentials', skipping_what)
+      end #if not(sftp_credentials?...
+    end
+
+    def skip_if_no_upload_credentials(skipping_what='', config=self.config)
+      if not(s3_credentials?(config) || sftp_credentials?(config))
+        skip_with_message("No S3 or SFTP credentials in config", skipping_what)
+      end #if not(s3_credentials?...
+    end
+
     def add_goodbye_message(msg)
       at_exit do
         STDERR.puts msg

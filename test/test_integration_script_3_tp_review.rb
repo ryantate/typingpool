@@ -9,6 +9,8 @@ class TestTpReview < Typingpool::Test::Script
 
   def test_tp_review
     in_temp_tp_dir do |dir|
+      skip_if_no_upload_credentials('tp-review integration test')
+      skip_if_no_amazon_credentials('tp-review integration test')
       tp_make(dir)
       copy_fixtures_to_temp_tp_dir(dir, 'tp_review_')
       project = temp_tp_dir_project(dir)

@@ -10,6 +10,8 @@ class TestTpCollect < Typingpool::Test::Script
 
   def test_tp_collect
     in_temp_tp_dir do |dir|
+      skip_if_no_upload_credentials('tp-collect integration test')
+      skip_if_no_amazon_credentials('tp-collect integration test')
       tp_make(dir)
       copy_fixtures_to_temp_tp_dir(dir, 'tp_collect_')
       begin

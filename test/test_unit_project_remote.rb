@@ -60,9 +60,7 @@ class TestProjectRemote < Typingpool::Test
 
   def test_project_remote_sftp_networked
     assert(config = self.config)
-    if not(config.sftp && config.sftp.user && config.sftp.host && config.sftp.url)
-      skip_with_message('Missing or incomplete SFTP credentials', 'Project::Remote::SFTP upload and delete tests')
-    end
+    skip_if_no_sftp_credentials('Project::Remote::SFTP upload and delete tests', config)
     assert(project = Typingpool::Project.new(project_default[:title], config))
     assert_instance_of(Typingpool::Project::Remote::SFTP, remote = project.remote)
     standard_put_remove_tests(remote)

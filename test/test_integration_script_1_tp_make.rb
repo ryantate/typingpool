@@ -26,7 +26,6 @@ class TestTpMake < Typingpool::Test::Script
   end
 
   def tp_make_with(dir, config_path, subdir='mp3')
-    skip_if_no_amazon_credentials('tp-make test')
     project = nil
     assert_nothing_raised do
       tp_make(dir, config_path, subdir)
@@ -62,6 +61,7 @@ class TestTpMake < Typingpool::Test::Script
     Dir.entries(audio_dir).select{|entry| File.directory?(File.join(audio_dir, entry))}.reject{|entry| entry.match(/^\./) }.each do |subdir|
       in_temp_tp_dir do |dir|
         config_path = self.config_path(dir)
+        skip_if_no_upload_credentials('tp-make integration test', Typingpool::Config.file(config_path))
         tp_make_with(dir, config_path, subdir)
         tp_finish(dir, config_path)
       end #in_temp_tp_dir
@@ -73,8 +73,10 @@ class TestTpMake < Typingpool::Test::Script
       config = config_from_dir(dir)
       config.to_hash.delete('sftp')
       config_path = write_config(config, dir, '.config_s3')
+      skip_if_no_s3_credentials('tp-make S3 integration test', config)
       tp_make_with(dir, config_path)
       tp_finish(dir, config_path)
-    end
-  end #test_tp_make_s3
+    end #in_temp_to_dir do...
+  end 
+
 end #TestTpMake

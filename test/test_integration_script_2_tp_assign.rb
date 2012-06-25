@@ -39,7 +39,8 @@ class TestTpAssign < Typingpool::Test::Script
   end
 
   def test_tp_assign
-    skip_if_no_amazon_credentials('tp-assign test')
+    skip_if_no_amazon_credentials('tp-assign integration test')
+    skip_if_no_upload_credentials('tp-assign integration test')
     in_temp_tp_dir do |dir|
       tp_make(dir)
       assigning_started = Time.now
