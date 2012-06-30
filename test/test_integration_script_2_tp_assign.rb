@@ -60,6 +60,9 @@ class TestTpAssign < Typingpool::Test::Script
       assert_in_delta((assigning_started + assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60)
       keywords = results[0].at_amazon.keywords
       assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
+      assert(assignment_urls = project.local.csv('data', 'assignment.csv').map{|assignment| assignment['assignment_url'] })
+      assert(assignment_html = fetch_url(assignment_urls.first).body)
+      assert_match(assignment_html, /\b20[\s-]+second\b/)
       assert_nothing_raised{tp_finish(dir)}
       assert_empty(Typingpool::Amazon::HIT.all_for_project(project.local.id))
     end # in_temp_tp_dir

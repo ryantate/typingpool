@@ -17,5 +17,6 @@ module Typingpool
     class Amazon < Error
       class UnreviewedContent < Amazon; end
     end #Amazon
+    class HTTP < Error; end
   end #Error
 end #Typingpool

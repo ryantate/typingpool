@@ -123,7 +123,7 @@ remote_files = project.remote.put(files.to_streams, project.create_remote_names(
 end
 project.local.audio_is_on_www = remote_files.join("\n")
 
-assignment_path = project.create_assignment_csv(['data', 'assignment.csv'],remote_files, options[:unusual], options[:voices])
+assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => remote_files, :chunk => options[:chunk], :unusual => options[:unusual], :voices => options[:voices])
 puts "Wrote #{assignment_path}"
 
 if STDOUT.tty?

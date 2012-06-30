@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script><%= read 'amazon-init.js' %></script>
+  <style><%= read 'main.css' %></style>
+  <% length_description = [] %>
+  <% length_description.push("#{chunk_hours} hour") if chunk_hours %>
+  <% length_description.push("#{chunk_minutes} minute") if chunk_minutes %>  
+  <% length_description.push("#{chunk_seconds} second") if chunk_seconds %>  
+  <% length_description = length_description.join(' ') %>
+  <title>Transcribe MP3 of <%= length_description %> phone calll</title>
+</head>
+
+<body onload="setAmazonAssignmentId()">
+
+  <h2>Transcribe MP3 of <%= length_description %> phone call</h2>
+  <p id="description">I split up a telephone conversation into <%= length_description %> parts, you transcribe the audio for one <%= length_description %> part.</p>
+
+  <h3>Labeling</h3>
+  <p>There are two speakers. The person asking the questions is <strong><%= voice1 %></strong>. The person answering the questions, on the distant end of the telephone line, is <strong><%= voice2 %></strong><% unless voice2title.to_s.empty? %>, <%= voice2title %><% end %>. Label each speaker with a colon, like this:</p>
+  <blockquote>
+    <p><%= voice1 %>:&nbsp;Do you think it was a mistake to set up Saturn as its own Corporation?</p>
+    <p><%= voice2 %>:&nbsp;In hindsight, you can look at it that way, and I think a lot of people do, quite honestly. They don't think GM needed another brand. But at the time this was all developed. It sure seemed like a good idea.</p>
+  </blockquote>
+
+  <h3>Important</h3>
+  <ul>
+    <li><strong>Unusual words</strong> you might hear: <strong><%= unusual %></strong></li>
+    <li><strong>Don't</strong> type short responses like <strong>ya</strong>, <strong>OK</strong>, <strong>Oh</strong>, <strong>Ah</strong>, and <strong>Mmmhmm</strong>.
+    <li>For <strong>inaudible</strong> words, type <strong>??</strong></li>
+  </ul>
+
+  <h3>Instructions</h3>
+  <p>Please <strong>transcribe</strong> this 1-minute MP3: <a target="_blank" href="<%= audio_url %>"><%= audio_url %></a></p>
+  <form action="https://www.mturk.com/mturk/externalSubmit" method="POST" id="turkForm">
+    <p><input name="assignmentId" type="hidden" id="assignmentId"><input name="typingpool_url" type="hidden" value="<%= audio_url %>" /><input name="typingpool_project_id" type="hidden" value="<%= project_id %>" />Enter your transcription below:</p>
+    <p><textarea name="transcription" cols="80" rows="15"></textarea></p>
+    <p><input type="submit" value="Submit" id="disable_on_preview"></p>
+  </form>
+
+</body>
+</html>

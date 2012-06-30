@@ -97,23 +97,43 @@ module Typingpool
     end
 
     def working_url?(url, max_redirects=6)
-      response = nil
+      response = request_url_with(url, max_redirects) do |url|
+        request = Net::HTTP.new(url.host, url.port)
+        request.use_ssl = true if url.scheme == 'https'
+        request.request_head(url.path)
+      end #request_url_with... do |url|
+      response.kind_of?(Net::HTTPSuccess)
+    end
+
+    def fetch_url(url, max_redirects=6)
+      response = request_url_with(url, max_redirects) do |url|
+        Net::HTTP.get_response(url)
+      end
+      if response.kind_of?(Net::HTTPSuccess)
+        return response
+      else
+        raise Error::HTTP, "HTTP error fetching '#{url.to_s}': '#{response.code}: #{response.message}'"
+      end #if response.kind_of?
+    end
+
+    def request_url_with(url, max_redirects=6)
       seen = Set.new
       loop do
         url = URI.parse(url)
-        break if seen.include? url.to_s
-        break if seen.count > max_redirects
+        if seen.include? url.to_s
+          raise Error::HTTP, "Redirect infinite loop (at '#{url.to_s}')" 
+        end
+        if seen.count > max_redirects
+          raise Error::HTTP, "Too many redirects (>#{max_redirects})" 
+        end
         seen.add(url.to_s)
-        request = Net::HTTP.new(url.host, url.port)
-        request.use_ssl = true if url.scheme == 'https'
-        response = request.request_head(url.path)
+        response = yield(url)
         if response.kind_of?(Net::HTTPRedirection)
           url = response['location']
         else
-          break
-        end
-      end
-      response.kind_of?(Net::HTTPSuccess) && url.to_s
+          return response
+        end #if response.kind_of?...
+      end #loop do
     end
 
     def in_temp_dir
@@ -231,7 +251,7 @@ module Typingpool
 
       def assign_default
         Hash[
-             :template => 'interview/phone/1minute',
+             :template => 'interview/phone',
              :deadline => '5h',
              :lifetime => '10h',
              :approval => '10h',

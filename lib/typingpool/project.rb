@@ -82,7 +82,7 @@ module Typingpool
     #Takes a time specification for setting the project.interval. The
     #time specification may be an integer corresponding to the nuymber
     #of secods or a colon-delimited time of the format HH:MM::SS.ssss,
-    #where the hour component is optional.
+    #where the hour and fractional seconds components are optional.
     def interval=(mmss)
       formatted = mmss.to_s.match(
                                   /^((\d+)|((\d+:)?(\d+):(\d\d)))(\.(\d+))?$/
@@ -114,14 +114,17 @@ module Typingpool
 
     #Writes a CSV file into project.local directory, storing information about the specified files.
     # ==== Params
-    # [relative_path] Where the file will be written. Array of
+    # [:path]         Relative path where the file will be written. Array of
     #                 relative path elements. See Filer::Dir#file docs
     #                 for details.
-    # [remote_files]  Array of URLs corresponding to project files.
-    # [unusual_words] Optional. Array of unusual words spoken in the
+    # [:urls]         Array of URLs corresponding to project files.
+    # [:chunk]        Length of the audio chunk in MM:SS format. See the
+    #                 Project#interval documentation for further
+    #                 details.
+    # [:unusual]      Optional. Array of unusual words spoken in the
     #                 audio to be transcribed. This list is ultimately
     #                 provided to transcribers to aid in their work.
-    # [voices]        Optional. Array of hashes, with each having a :name and
+    # [:voices]       Optional. Array of hashes, with each having a :name and
     #                 :description element. Each hash corresponds to a
     #                 person whose voice is on the audio. These
     #                 details are ultimately provided to transcibers
@@ -129,14 +132,15 @@ module Typingpool
     #                 transcript
     # ==== Returns
     # Path to the resulting CSV file.
-    def create_assignment_csv(relative_path, remote_files, unusual_words=[], voices=[])
-      headers = ['audio_url', 'project_id', 'unusual', (1 .. voices.count).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
+    def create_assignment_csv(args)
+      [:path, :urls, :chunk].each{|arg| args[arg] or raise Error::Argument, "Missing arg '#{arg}'" }
+      headers = ['audio_url', 'project_id', 'chunk', 'unusual', (1 .. args[:voices].count).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
       csv = []
-      remote_files.each do |file|
-        csv << [file, local.id, unusual_words.join(', '), voices.map{|v| [v[:name], v[:description]]}].flatten
+      args[:urls].each do |url|
+        csv << [url, local.id, args[:chunk], args[:unusual].join(', '), args[:voices].map{|v| [v[:name], v[:description]]}].flatten
       end
-      local.csv(*relative_path).write_arrays(csv, headers)
-      local.file_path(*relative_path)
+      local.csv(*args[:path]).write_arrays(csv, headers)
+      local.file_path(*args[:path])
     end
 
     #Takes an array of file paths, file names, or Filer
