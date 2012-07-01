@@ -5,14 +5,14 @@ http_interactions:
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body: 
       encoding: US-ASCII
-      string: HITId=298V66RLPHITH0C8M7BI92NJV1KF7Q&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-06-24T12%3A03%3A52-07%3A00&Version=2008-08-02&Signature=eB8hchFM9saJVltpYpwwJpSm0NU%3D
+      string: HITId=2LX0OHOVR14IB35EXLTHHCWACYA56R&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-07-01T15%3A22%3A50-07%3A00&Version=2008-08-02&Signature=L3g9viHOrKv1VDMrtn9yRq%2B2Gb4%3D
     headers: 
       Accept: 
       - "*/*; q=0.5, application/xml"
       Accept-Encoding: 
       - gzip, deflate
       Content-Length: 
-      - "253"
+      - "255"
       User-Agent: 
       - Ruby
   response: 
@@ -25,22 +25,22 @@ http_interactions:
       Transfer-Encoding: 
       - chunked
       Date: 
-      - Sun, 24 Jun 2012 19:03:53 GMT
+      - Sun, 01 Jul 2012 22:22:49 GMT
       Server: 
       - MTurk
     body: 
       encoding: US-ASCII
       string: |-
         <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>c379463a-c8aa-401c-980f-ef86c3e0ba00</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>297YQS1CSTMOTG8P4G9C4EYDNHUPM3</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>298V66RLPHITH0C8M7BI92NJV1KF7Q</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2012-06-25T05:01:40Z</AutoApprovalTime><AcceptTime>2012-06-24T19:01:28Z</AcceptTime><SubmitTime>2012-06-24T19:01:40Z</SubmitTime><ApprovalTime>2012-06-24T19:03:48Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        <GetAssignmentsForHITResponse><OperationRequest><RequestId>10bd0c81-8e87-4039-8d8d-6bd4dc6c9c29</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2MOY2AOO2GMMSZ50S2JCP6IAAMA55E</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>2LX0OHOVR14IB35EXLTHHCWACYA56R</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2012-07-02T08:21:11Z</AutoApprovalTime><AcceptTime>2012-07-01T22:21:01Z</AcceptTime><SubmitTime>2012-07-01T22:21:11Z</SubmitTime><ApprovalTime>2012-07-01T22:22:45Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
         &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;http://webmasher.com/mturk/Typingpool's%20Test%20&amp;amp;%20Interview.00.00.c48df12d971f147de805a71f37b41524.VFNKKP.mp3&lt;/FreeText&gt;
+        &lt;FreeText&gt;http://webmasher.com/mturk/Typingpool's%20Test%20&amp;amp;%20Interview.00.00.5a786c80f5b6c457c7e77baceaece289.COKFVJ.mp3&lt;/FreeText&gt;
         &lt;/Answer&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;c48df12d971f147de805a71f37b41524&lt;/FreeText&gt;
+        &lt;FreeText&gt;5a786c80f5b6c457c7e77baceaece289&lt;/FreeText&gt;
         &lt;/Answer&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
@@ -51,20 +51,20 @@ http_interactions:
         &lt;/QuestionFormAnswers&gt;
         </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
     http_version: 
-  recorded_at: Sun, 24 Jun 2012 19:03:53 GMT
+  recorded_at: Sun, 01 Jul 2012 22:22:50 GMT
 - request: 
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body: 
       encoding: US-ASCII
-      string: HITId=2I3Y58B727M0WZWWTPS61FSVK3EAV0&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-06-24T12%3A03%3A53-07%3A00&Version=2008-08-02&Signature=Shl2J0A4yDrO8lBU7j0KUW0biXQ%3D
+      string: HITId=24ZMVHVKCJ01F3JJGVY9NQW679U57Q&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-07-01T15%3A22%3A50-07%3A00&Version=2008-08-02&Signature=L3g9viHOrKv1VDMrtn9yRq%2B2Gb4%3D
     headers: 
       Accept: 
       - "*/*; q=0.5, application/xml"
       Accept-Encoding: 
       - gzip, deflate
       Content-Length: 
-      - "253"
+      - "255"
       User-Agent: 
       - Ruby
   response: 
@@ -77,22 +77,22 @@ http_interactions:
       Transfer-Encoding: 
       - chunked
       Date: 
-      - Sun, 24 Jun 2012 19:03:53 GMT
+      - Sun, 01 Jul 2012 22:22:50 GMT
       Server: 
       - MTurk
     body: 
       encoding: US-ASCII
       string: |-
         <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>e1c2c017-330e-4437-9cc9-5248584c11c5</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>29UMIKMN9U8PNHKK58NXL3SUY2XSBX</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>2I3Y58B727M0WZWWTPS61FSVK3EAV0</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2012-06-25T05:03:33Z</AutoApprovalTime><AcceptTime>2012-06-24T19:03:15Z</AcceptTime><SubmitTime>2012-06-24T19:03:33Z</SubmitTime><ApprovalTime>2012-06-24T19:03:49Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        <GetAssignmentsForHITResponse><OperationRequest><RequestId>b5b3bc0d-8863-4db0-8d85-bfbb9b72aab7</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2TTLY58B727ME1XRWT419YFSVZM9UR</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>24ZMVHVKCJ01F3JJGVY9NQW679U57Q</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2012-07-02T08:22:03Z</AutoApprovalTime><AcceptTime>2012-07-01T22:21:56Z</AcceptTime><SubmitTime>2012-07-01T22:22:03Z</SubmitTime><ApprovalTime>2012-07-01T22:22:47Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
         &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;http://webmasher.com/mturk/Typingpool's%20Test%20&amp;amp;%20Interview.00.40.c48df12d971f147de805a71f37b41524.MNWGKH.mp3&lt;/FreeText&gt;
+        &lt;FreeText&gt;http://webmasher.com/mturk/Typingpool's%20Test%20&amp;amp;%20Interview.00.40.5a786c80f5b6c457c7e77baceaece289.RKEFVA.mp3&lt;/FreeText&gt;
         &lt;/Answer&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;c48df12d971f147de805a71f37b41524&lt;/FreeText&gt;
+        &lt;FreeText&gt;5a786c80f5b6c457c7e77baceaece289&lt;/FreeText&gt;
         &lt;/Answer&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
@@ -105,20 +105,20 @@ http_interactions:
         &lt;/QuestionFormAnswers&gt;
         </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
     http_version: 
-  recorded_at: Sun, 24 Jun 2012 19:03:53 GMT
+  recorded_at: Sun, 01 Jul 2012 22:22:51 GMT
 - request: 
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body: 
       encoding: US-ASCII
-      string: HITId=2L13NAB6BFMFT7FAU5STMFDGJRVHUT&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-06-24T12%3A03%3A53-07%3A00&Version=2008-08-02&Signature=Shl2J0A4yDrO8lBU7j0KUW0biXQ%3D
+      string: HITId=2M998D8J3VE7AB95ZA3G6MCKEBZXHT&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-07-01T15%3A22%3A51-07%3A00&Version=2008-08-02&Signature=xqZ%2FsfthS5YbIz5D%2F7tXrlnGyxE%3D
     headers: 
       Accept: 
       - "*/*; q=0.5, application/xml"
       Accept-Encoding: 
       - gzip, deflate
       Content-Length: 
-      - "253"
+      - "257"
       User-Agent: 
       - Ruby
   response: 
@@ -131,80 +131,74 @@ http_interactions:
       Transfer-Encoding: 
       - chunked
       Date: 
-      - Sun, 24 Jun 2012 19:03:54 GMT
+      - Sun, 01 Jul 2012 22:22:51 GMT
       Server: 
       - MTurk
     body: 
       encoding: US-ASCII
       string: |-
         <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>3b68387d-0d3f-438b-b68a-3257d96ba1d9</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
-    http_version: 
-  recorded_at: Sun, 24 Jun 2012 19:03:54 GMT
-- request: 
-    method: post
-    uri: https://mechanicalturk.sandbox.amazonaws.com/
-    body: 
-      encoding: US-ASCII
-      string: HITId=2BU26DG67D1XHEHRWC3ON2JE6LQF8D&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-06-24T12%3A03%3A54-07%3A00&Version=2008-08-02&Signature=A69Za8C01UEcWDEjqxgoUY5vgtM%3D
-    headers: 
-      Accept: 
-      - "*/*; q=0.5, application/xml"
-      Accept-Encoding: 
-      - gzip, deflate
-      Content-Length: 
-      - "253"
-      User-Agent: 
-      - Ruby
-  response: 
-    status: 
-      code: 200
-      message: OK
-    headers: 
-      Content-Type: 
-      - text/xml
-      Transfer-Encoding: 
-      - chunked
-      Date: 
-      - Sun, 24 Jun 2012 19:03:54 GMT
-      Server: 
-      - MTurk
-    body: 
-      encoding: US-ASCII
-      string: |-
-        <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>31e37898-1e7d-4223-9576-07bc4c577bec</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2FLYMNCWYB49TS944TO14JONSDGMQR</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>2BU26DG67D1XHEHRWC3ON2JE6LQF8D</HITId><AssignmentStatus>Submitted</AssignmentStatus><AutoApprovalTime>2012-06-25T05:01:12Z</AutoApprovalTime><AcceptTime>2012-06-24T19:01:04Z</AcceptTime><SubmitTime>2012-06-24T19:01:12Z</SubmitTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        <GetAssignmentsForHITResponse><OperationRequest><RequestId>4ac97600-abae-4ba7-87cf-c0bfb34a5dda</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2S1NZW6HEZ6OSN78J5Z6CGUM2LIZP0</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>2M998D8J3VE7AB95ZA3G6MCKEBZXHT</HITId><AssignmentStatus>Submitted</AssignmentStatus><AutoApprovalTime>2012-07-02T08:21:23Z</AutoApprovalTime><AcceptTime>2012-07-01T22:21:15Z</AcceptTime><SubmitTime>2012-07-01T22:21:23Z</SubmitTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
         &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;http://webmasher.com/mturk/Typingpool's%20Test%20&amp;amp;%20Interview.01.40.c48df12d971f147de805a71f37b41524.BGIRJR.mp3&lt;/FreeText&gt;
+        &lt;FreeText&gt;http://webmasher.com/mturk/Typingpool's%20Test%20&amp;amp;%20Interview.01.20.5a786c80f5b6c457c7e77baceaece289.BCYSXT.mp3&lt;/FreeText&gt;
         &lt;/Answer&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;c48df12d971f147de805a71f37b41524&lt;/FreeText&gt;
+        &lt;FreeText&gt;5a786c80f5b6c457c7e77baceaece289&lt;/FreeText&gt;
         &lt;/Answer&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;Havi:  ...theme that came out during that election that's one of the themese that truly led to reporting on it &amp;#13;
+        &lt;FreeText&gt;Ryan: ...NUMMI which is just like this amazing GM plant that turned out these juist incredibly high quality small cars, and people just don;t know about a lot of this stuff, like that it exists. So. I look forward to reading -- I'm still reading through your archive -- but I look forward to finishing it because I'm really interested in these issues.&amp;#13;
         &amp;#13;
-        Ryan: Ya.&amp;#13;
-        &amp;#13;
-        Havi: ....outside of my work plans was that theme of um disillusionment and kind of abandonment and that a lot of people in the Midwest &amp;#13;
-        &amp;#13;
-        Ryan: Right.&amp;#13;
-        &amp;#13;
-        Havi: Felt that they were playing the pawn in this particular election.&lt;/FreeText&gt;
+        Havi: Ya I think it was a really interesting....&lt;/FreeText&gt;
         &lt;/Answer&gt;
         &lt;/QuestionFormAnswers&gt;
         </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
     http_version: 
-  recorded_at: Sun, 24 Jun 2012 19:03:54 GMT
+  recorded_at: Sun, 01 Jul 2012 22:22:51 GMT
 - request: 
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body: 
       encoding: US-ASCII
-      string: HITId=2X12D21O3W5XVJ011492NYEPQR8F92&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-06-24T12%3A03%3A54-07%3A00&Version=2008-08-02&Signature=A69Za8C01UEcWDEjqxgoUY5vgtM%3D
+      string: HITId=21ASZVXX2Q458D120A7NLW1NY9V7PE&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-07-01T15%3A22%3A51-07%3A00&Version=2008-08-02&Signature=xqZ%2FsfthS5YbIz5D%2F7tXrlnGyxE%3D
+    headers: 
+      Accept: 
+      - "*/*; q=0.5, application/xml"
+      Accept-Encoding: 
+      - gzip, deflate
+      Content-Length: 
+      - "257"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Content-Type: 
+      - text/xml
+      Transfer-Encoding: 
+      - chunked
+      Date: 
+      - Sun, 01 Jul 2012 22:22:51 GMT
+      Server: 
+      - MTurk
+    body: 
+      encoding: US-ASCII
+      string: |-
+        <?xml version="1.0"?>
+        <GetAssignmentsForHITResponse><OperationRequest><RequestId>beec06cb-c6c2-4050-a1a3-3c6d09936807</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>0</TotalNumResults><PageNumber>1</PageNumber></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+    http_version: 
+  recorded_at: Sun, 01 Jul 2012 22:22:52 GMT
+- request: 
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body: 
+      encoding: US-ASCII
+      string: HITId=2SST2D5NQYN5TM7CVSWT1MNC2ZI592&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-07-01T15%3A22%3A52-07%3A00&Version=2008-08-02&Signature=GulD43cl08AXwBP3jzSO8VJVm0w%3D
     headers: 
       Accept: 
       - "*/*; q=0.5, application/xml"
@@ -224,22 +218,22 @@ http_interactions:
       Transfer-Encoding: 
       - chunked
       Date: 
-      - Sun, 24 Jun 2012 19:03:55 GMT
+      - Sun, 01 Jul 2012 22:22:51 GMT
       Server: 
       - MTurk
     body: 
       encoding: US-ASCII
       string: |-
         <?xml version="1.0"?>
-        <GetAssignmentsForHITResponse><OperationRequest><RequestId>7d4b6a51-3f83-421f-b631-31522e6c1464</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2JCQW618N46UBYTPGHOCHTNDS74PN3</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>2X12D21O3W5XVJ011492NYEPQR8F92</HITId><AssignmentStatus>Submitted</AssignmentStatus><AutoApprovalTime>2012-06-25T05:01:59Z</AutoApprovalTime><AcceptTime>2012-06-24T19:01:45Z</AcceptTime><SubmitTime>2012-06-24T19:01:59Z</SubmitTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        <GetAssignmentsForHITResponse><OperationRequest><RequestId>f08eb428-1913-4235-a0c6-91926c2def70</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>2JJNDWIOV1S766KP5SL16YDZ87PXIP</AssignmentId><WorkerId>A9S0AOAI8HO9P</WorkerId><HITId>2SST2D5NQYN5TM7CVSWT1MNC2ZI592</HITId><AssignmentStatus>Submitted</AssignmentStatus><AutoApprovalTime>2012-07-02T08:21:51Z</AutoApprovalTime><AcceptTime>2012-07-01T22:21:44Z</AcceptTime><SubmitTime>2012-07-01T22:21:51Z</SubmitTime><Answer>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
         &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;http://webmasher.com/mturk/Typingpool's%20Test%20&amp;amp;%20Interview.02.00.c48df12d971f147de805a71f37b41524.SXBYQW.mp3&lt;/FreeText&gt;
+        &lt;FreeText&gt;http://webmasher.com/mturk/Typingpool's%20Test%20&amp;amp;%20Interview.02.00.5a786c80f5b6c457c7e77baceaece289.WSLIMR.mp3&lt;/FreeText&gt;
         &lt;/Answer&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
-        &lt;FreeText&gt;c48df12d971f147de805a71f37b41524&lt;/FreeText&gt;
+        &lt;FreeText&gt;5a786c80f5b6c457c7e77baceaece289&lt;/FreeText&gt;
         &lt;/Answer&gt;
         &lt;Answer&gt;
         &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
@@ -248,13 +242,13 @@ http_interactions:
         &lt;/QuestionFormAnswers&gt;
         </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
     http_version: 
-  recorded_at: Sun, 24 Jun 2012 19:03:55 GMT
+  recorded_at: Sun, 01 Jul 2012 22:22:52 GMT
 - request: 
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body: 
       encoding: US-ASCII
-      string: AssignmentId=2FLYMNCWYB49TS944TO14JONSDGMQR&Operation=ApproveAssignment&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-06-24T12%3A03%3A55-07%3A00&Version=2008-08-02&Signature=dyZwcYqwm9tJH4ac1gOsj4zgOpc%3D
+      string: AssignmentId=2S1NZW6HEZ6OSN78J5Z6CGUM2LIZP0&Operation=ApproveAssignment&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-07-01T15%3A22%3A52-07%3A00&Version=2008-08-02&Signature=5itP20UMN4wRSjo8t9lhZFTQuRQ%3D
     headers: 
       Accept: 
       - "*/*; q=0.5, application/xml"
@@ -274,29 +268,29 @@ http_interactions:
       Transfer-Encoding: 
       - chunked
       Date: 
-      - Sun, 24 Jun 2012 19:03:55 GMT
+      - Sun, 01 Jul 2012 22:22:53 GMT
       Server: 
       - MTurk
     body: 
       encoding: US-ASCII
       string: |-
         <?xml version="1.0"?>
-        <ApproveAssignmentResponse><OperationRequest><RequestId>7b209bb9-b43e-4ad2-8e92-66f0801f3230</RequestId></OperationRequest><ApproveAssignmentResult><Request><IsValid>True</IsValid></Request></ApproveAssignmentResult></ApproveAssignmentResponse>
+        <ApproveAssignmentResponse><OperationRequest><RequestId>a20d71c3-64ef-4121-85c6-842dcbe8fffb</RequestId></OperationRequest><ApproveAssignmentResult><Request><IsValid>True</IsValid></Request></ApproveAssignmentResult></ApproveAssignmentResponse>
     http_version: 
-  recorded_at: Sun, 24 Jun 2012 19:03:56 GMT
+  recorded_at: Sun, 01 Jul 2012 22:22:53 GMT
 - request: 
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body: 
       encoding: US-ASCII
-      string: AssignmentId=2JCQW618N46UBYTPGHOCHTNDS74PN3&RequesterFeedback=No+reason+-+this+is+a+test&Operation=RejectAssignment&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-06-24T12%3A03%3A56-07%3A00&Version=2008-08-02&Signature=samWG0jYW%2BwdhvMxg9wfitL7ItY%3D
+      string: AssignmentId=2JJNDWIOV1S766KP5SL16YDZ87PXIP&RequesterFeedback=No+reason+-+this+is+a+test&Operation=RejectAssignment&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-07-01T15%3A22%3A53-07%3A00&Version=2008-08-02&Signature=DcFrUSMeJMj1BL6R9PQCSqlRp6s%3D
     headers: 
       Accept: 
       - "*/*; q=0.5, application/xml"
       Accept-Encoding: 
       - gzip, deflate
       Content-Length: 
-      - "290"
+      - "288"
       User-Agent: 
       - Ruby
   response: 
@@ -309,29 +303,29 @@ http_interactions:
       Transfer-Encoding: 
       - chunked
       Date: 
-      - Sun, 24 Jun 2012 19:03:56 GMT
+      - Sun, 01 Jul 2012 22:22:53 GMT
       Server: 
       - MTurk
     body: 
       encoding: US-ASCII
       string: |-
         <?xml version="1.0"?>
-        <RejectAssignmentResponse><OperationRequest><RequestId>b9f8fcda-69df-40c1-9355-1469815929e6</RequestId></OperationRequest><RejectAssignmentResult><Request><IsValid>True</IsValid></Request></RejectAssignmentResult></RejectAssignmentResponse>
+        <RejectAssignmentResponse><OperationRequest><RequestId>e2c886bb-e26f-4b5f-a549-003f0f856091</RequestId></OperationRequest><RejectAssignmentResult><Request><IsValid>True</IsValid></Request></RejectAssignmentResult></RejectAssignmentResponse>
     http_version: 
-  recorded_at: Sun, 24 Jun 2012 19:03:56 GMT
+  recorded_at: Sun, 01 Jul 2012 22:22:54 GMT
 - request: 
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body: 
       encoding: US-ASCII
-      string: HITId=2X12D21O3W5XVJ011492NYEPQR8F92&Operation=DisposeHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-06-24T12%3A03%3A56-07%3A00&Version=2008-08-02&Signature=OiRYKGredvFy2CzkyZJD1KQGmOA%3D
+      string: HITId=2SST2D5NQYN5TM7CVSWT1MNC2ZI592&Operation=DisposeHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2012-07-01T15%3A22%3A54-07%3A00&Version=2008-08-02&Signature=047lUg5mYC1WomSD2%2BOQa1VuAIA%3D
     headers: 
       Accept: 
       - "*/*; q=0.5, application/xml"
       Accept-Encoding: 
       - gzip, deflate
       Content-Length: 
-      - "230"
+      - "232"
       User-Agent: 
       - Ruby
   response: 
@@ -344,14 +338,14 @@ http_interactions:
       Transfer-Encoding: 
       - chunked
       Date: 
-      - Sun, 24 Jun 2012 19:03:57 GMT
+      - Sun, 01 Jul 2012 22:22:54 GMT
       Server: 
       - MTurk
     body: 
       encoding: US-ASCII
       string: |-
         <?xml version="1.0"?>
-        <DisposeHITResponse><OperationRequest><RequestId>5b96bf49-dc7c-4432-929b-e79d725875e7</RequestId></OperationRequest><DisposeHITResult><Request><IsValid>True</IsValid></Request></DisposeHITResult></DisposeHITResponse>
+        <DisposeHITResponse><OperationRequest><RequestId>8ab6c4c9-c685-4ea9-a444-c376cc5bf74e</RequestId></OperationRequest><DisposeHITResult><Request><IsValid>True</IsValid></Request></DisposeHITResult></DisposeHITResponse>
     http_version: 
-  recorded_at: Sun, 24 Jun 2012 19:03:57 GMT
+  recorded_at: Sun, 01 Jul 2012 22:22:54 GMT
 recorded_with: VCR 2.0.0.rc2
