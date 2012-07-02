@@ -173,6 +173,14 @@ module Typingpool
         end
       end
 
+      #Just like unrecord_hits_details_in_project, but does not delete
+      #assignment_url information.
+      def unrecord_hits_amazon_details_in_project(project, hits=nil)
+        record_hits_in_project(project, hits) do |hit, csv_row|
+          unrecord_hit_amazon_details_in_csv_row(hit, csv_row)
+        end
+      end
+
       #Begins recording of an HTTP mock fixture (for automated
       #testing) using the great VCR gem. Automatically filters your
       #Config#amazon#key and Config#amazon#secret from the recorded
@@ -216,7 +224,12 @@ module Typingpool
       end
 
       def unrecord_hit_details_in_csv_row(hit, csv_row)
-        %w(hit_expires_at hit_assignments_duration assignment_url).each{|key| csv_row.delete(key) }
+        unrecord_hit_amazon_details_in_csv_row(hit, csv_row)
+        csv_row.delete('assignment_url')
+      end
+
+      def unrecord_hit_amazon_details_in_csv_row(hit, csv_row)
+        %w(hit_expires_at hit_assignments_duration).each{|key| csv_row.delete(key) }
       end
 
 

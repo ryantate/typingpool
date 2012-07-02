@@ -71,6 +71,10 @@ results.each do |result|
   rescue Typingpool::Error::Amazon::UnreviewedContent => e
     fails.push(e)
   else
+    if project
+      STDERR.puts "  Removing from data/assignment.csv"
+      Typingpool::App.unrecord_hits_amazon_details_in_project(project, [result])  
+    end
     STDERR.puts "  Removing from local cache"
     Typingpool::Amazon::HIT.delete_cache(result.id)
   end
