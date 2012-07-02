@@ -1,0 +1,6 @@
+<% length_description = [] %>
+<% length_description.push("#{chunk_hours} hour") if chunk_hours %>
+<% length_description.push("#{chunk_minutes} minute") if chunk_minutes %>
+<% length_description.push("#{chunk_seconds} second") if chunk_seconds %>
+<% length_description = length_description.join(' ') %>
+<%= length_description %>

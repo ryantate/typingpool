@@ -123,7 +123,7 @@ module Typingpool
       #app template dir, or any dir that has been manually added to
       #look_in).
       def read(path)
-        @template.class.new(path, localized_look_in).read
+        @template.class.new(path, localized_look_in).read.strip
       end
 
       #Method passed into each template. Takes a reltive path and
@@ -137,7 +137,7 @@ module Typingpool
       #The relative path is resolved as described in the docs for
       #Template::Env#read.
       def render(path, hash={})
-        @template.class.new(path, localized_look_in).render(@hash.merge(hash))
+        @template.class.new(path, localized_look_in).render(@hash.merge(hash)).strip
       end
 
       def get_binding
