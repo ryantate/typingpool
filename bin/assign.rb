@@ -225,7 +225,10 @@ end
 STDERR.puts "Uploading assignment HTML to #{project.remote.host}"
 needed_assignments_sorted = needed_assignments.values
 ios = needed_assignments_sorted.map{|assignment| StringIO.new(template.render(assignment)) }
-remote_names = project.create_remote_names(needed_assignments_sorted.map{|assignment| project.class.local_basename_from_url(assignment['audio_url']) + '.html' })
+remote_basenames = needed_assignments_sorted.map do |assignment| 
+  File.basename(project.class.local_basename_from_url(assignment['audio_url']), '.*') + '.html' 
+end 
+remote_names = project.create_remote_names(remote_basenames)
 project.remote.put(ios, remote_names).each_with_index do |assignment_url, i|
   needed_assignments_sorted[i]['assignment_url'] = assignment_url
 end
