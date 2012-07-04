@@ -1,0 +1,12 @@
+<% @title = 'Transcribe MP3 of ' + render('length-description') + ' interview (background noise)' %>
+<%= render 'header' %>
+<p id="description">I split up an interview into <%= render 'length-description' %> parts, you transcribe the audio for one <%= render 'length-description' %> part. There is background noise.</p>
+
+<%= render 'voices' %>
+
+<%= render 'labeling' %>
+
+<% @important = ['The interview takes place in a noisy environment. You should transcribe <strong>only</strong> the comments from the people involved in the interview.'] %>
+<%= render 'entry' %>
+
+<%= render 'footer' %>

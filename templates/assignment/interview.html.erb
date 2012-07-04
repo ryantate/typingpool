@@ -1,22 +1,10 @@
 <% @title = 'Transcribe MP3 of ' + render('length-description') + ' interview' %>
 <%= render 'header' %>
-<h2><%= @title %></h2>
 <p id="description">I split up an interview into <%= render 'length-description' %> parts, you transcribe the audio for one <%= render 'length-description' %> part.</p>
 
-<% if voices_count > 0 %>
-<h3>Names</h3>
-<p>There are <%= voices_count %> speakers:
-<ul>
-  <% 1.upto(voices_count) do |i| %>
-    <li><strong><%= send("voice#{i}") %></strong><% unless send("voice#{i}title").to_s.empty? %>, <%= send("voice#{i}title") %><% end %>.
-  <% end %>
-</ul>
-<% end %>
+<%= render 'interview/voices' %>
 
-<h3>Labeling</h3>
-<p>Label each speaker with a colon, like this:</p>
-<% voice1 ||= 'Male 1' %><% voice2 ||= 'Male 2' %>
-<%= render 'labeling-example' %>
+<%= render 'labeling' %>
 
 <%= render 'entry' %>
 

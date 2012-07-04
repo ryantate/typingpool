@@ -1,0 +1,10 @@
+<% if voices_count > 0 %>
+<h3>Names</h3>
+<p>There are <%= voices_count %> speakers:
+<ul>
+  <% 1.upto(voices_count) do |i| %>
+    <li><strong><%= send("voice#{i}") %></strong><% unless send("voice#{i}title").to_s.empty? %>, <%= send("voice#{i}title") %><% end %>.
+  <% end %>
+</ul>
+<% end %>
+
