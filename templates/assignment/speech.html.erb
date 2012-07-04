@@ -1,0 +1,13 @@
+<% @title = 'Transcribe MP3 of ' + render('length-description') + ' speech' %>
+
+<%= render 'header' %>
+
+<h2><%= @title %></h2>
+<p id="description">I split up a speech into <%= render 'length-description' %> parts, you transcribe the audio for one <%= render 'length-description' %> part.</p>
+
+<h3>Formatting</h3>
+<p>There should only be one speaker. Simply type what the person says. No need to label. If the speaker changes, type [SPEAKER CHANGES].</p>
+
+<%= render 'entry' %>
+
+<%= render 'footer' %>

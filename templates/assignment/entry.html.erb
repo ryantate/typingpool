@@ -1,0 +1,14 @@
+<h3>Important</h3>
+<ul>
+  <li><strong>Unusual words</strong> you might hear: <strong><%= unusual %></strong></li>
+  <li><strong>Don't</strong> type short responses like <strong>ya</strong>, <strong>OK</strong>, <strong>Oh</strong>, <strong>Ah</strong>, and <strong>Mmmhmm</strong>.
+  <li>For <strong>inaudible</strong> words, type <strong>??</strong></li>
+</ul>
+
+<h3>Instructions</h3>
+<p>Please <strong>transcribe</strong> this <%= render 'length-description' %> MP3: <a target="_blank" href="<%= audio_url %>"><%= audio_url %></a></p>
+<form action="https://www.mturk.com/mturk/externalSubmit" method="POST" id="turkForm">
+  <p><input name="assignmentId" type="hidden" id="assignmentId"><input name="typingpool_url" type="hidden" value="<%= audio_url %>" /><input name="typingpool_project_id" type="hidden" value="<%= project_id %>" />Enter your transcription below:</p>
+  <p><textarea name="transcription" cols="80" rows="15"></textarea></p>
+  <p><input type="submit" value="Submit" id="disable_on_preview"></p>
+</form>
