@@ -51,7 +51,12 @@ module Typingpool
     #top-level namespace of the template, so the keys are accessed
     #just as you'd normally access a variable in an ERB template).
     def render(hash)
-      ERB.new(read, nil, '<>').result(Env.new(hash, self).get_binding)
+      render_with_binding(Env.new(hash, self).get_binding)
+    end
+
+    #Like render, but takes a binding instead of hash
+    def render_with_binding(binding)
+      ERB.new(read, nil, '<>').result(binding)
     end
 
     #Returns the raw text of the template, unrendered.
@@ -80,6 +85,7 @@ module Typingpool
       ['.html.erb', '']
     end
 
+
     #A Template::Assignment works just like a regular template, except
     #that within each transcript dir (Config#transcript and the
     #built-in app template dir) we search within a subdir called
@@ -103,14 +109,12 @@ module Typingpool
     #This subclass also makes it easier to use a hash as the top-level
     #variable namespace when rendering ERB templates.
     class Env
-      require 'ostruct'
 
       #Construtor. Takes a hash to be passed to the template and a
       #template (ERB).
       def initialize(hash, template)
         @hash = hash
         @template = template
-        @ostruct = OpenStruct.new(@hash)
       end
 
       #Method passed into each template. Takes a relative path and
@@ -137,7 +141,11 @@ module Typingpool
       #The relative path is resolved as described in the docs for
       #Template::Env#read.
       def render(path, hash={})
-        @template.class.new(path, localized_look_in).render(@hash.merge(hash)).strip
+        original = @hash
+        @hash = @hash.merge(hash)
+        rendered = @template.class.new(path, localized_look_in).render_with_binding(binding).strip
+        @hash = original
+        rendered
       end
 
       def get_binding
@@ -155,8 +163,15 @@ module Typingpool
         look_in.push(path, (@template.look_in - [path])).flatten
       end
 
-      def method_missing(meth)
-        @ostruct.send(meth)
+      def method_missing(key, value=nil)
+        if value
+          @hash[key] = value
+        end
+        if @hash.has_key? key
+          @hash[key]
+        elsif @hash.has_key? key.to_s
+          @hash[key.to_s]
+        end
       end
     end #Env
   end #Template

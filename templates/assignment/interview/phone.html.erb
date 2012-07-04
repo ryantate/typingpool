@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <script><%= read 'amazon-init.js' %></script>
-  <style><%= read 'main.css' %></style>
-  <title>Transcribe MP3 of <%= render 'length-description' %> phone calll</title>
-</head>
-
-<body onload="setAmazonAssignmentId()">
-
-  <h2>Transcribe MP3 of <%= render 'length-description' %> phone call</h2>
+<% @title = 'Transcribe MP3 of ' + render('length-description') + ' phone call' %>
+<%= render 'header' %>
+  <h2><%= @title %></h2>
   <p id="description">I split up a telephone conversation into <%= render 'length-description' %> parts, you transcribe the audio for one <%= render 'length-description' %> part.</p>
 
   <h3>Labeling</h3>
