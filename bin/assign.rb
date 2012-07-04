@@ -177,9 +177,9 @@ end
 #add some fields to the assignments to make life easier for our
 #assignment HTML templates
 needed_assignments.each do |url, assignment|
-  elements = assignment['chunk'].split(/:/)
+  chunk_elements = assignment['chunk'].split(/:/)
   %w(seconds minutes hours).each do |period|
-    value = elements.pop
+    value = chunk_elements.pop
     if value
       if value.to_f == 0
         value = nil
@@ -191,6 +191,8 @@ needed_assignments.each do |url, assignment|
     end #if value
     assignment["chunk_#{period}"] = value
   end #%w(...).each do |period|
+  assignment['voices_count'] = 0
+  assignment['voices_count'] += 1 while assignment["voice#{assignment['voices_count'] + 1}"]
 end
 
 STDERR.puts "#{assignments.size} assignments total"

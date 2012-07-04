@@ -1,14 +1,12 @@
 <% @title = 'Transcribe MP3 of ' + render('length-description') + ' phone call' %>
 <%= render 'header' %>
-  <h2><%= @title %></h2>
-  <p id="description">I split up a telephone conversation into <%= render 'length-description' %> parts, you transcribe the audio for one <%= render 'length-description' %> part.</p>
 
-  <h3>Labeling</h3>
-  <p>There are two speakers. The person asking the questions is <strong><%= voice1 %></strong>. The person answering the questions, on the distant end of the telephone line, is <strong><%= voice2 %></strong><% unless voice2title.to_s.empty? %>, <%= voice2title %><% end %>. Label each speaker with a colon, like this:</p>
-  <blockquote>
-    <p><%= voice1 %>:&nbsp;Do you think it was a mistake to set up Saturn as its own Corporation?</p>
-    <p><%= voice2 %>:&nbsp;In hindsight, you can look at it that way, and I think a lot of people do, quite honestly. They don't think GM needed another brand. But at the time this was all developed. It sure seemed like a good idea.</p>
-  </blockquote>
+<h2><%= @title %></h2>
+<p id="description">I split up a telephone conversation into <%= render 'length-description' %> parts, you transcribe the audio for one <%= render 'length-description' %> part.</p>
+
+<h3>Labeling</h3>
+<p>There are two speakers. The person asking the questions is <strong><%= voice1 %></strong>. The person answering the questions, on the distant end of the telephone line, is <strong><%= voice2 %></strong><% unless voice2title.to_s.empty? %>, <%= voice2title %><% end %>. Label each speaker with a colon, like this:</p>
+<%= render 'labeling-example' %>
 
 <%= render 'entry' %>
 
