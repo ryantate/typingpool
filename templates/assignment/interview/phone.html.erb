@@ -3,13 +3,13 @@
 <head>
   <script><%= read 'amazon-init.js' %></script>
   <style><%= read 'main.css' %></style>
-  <title>Transcribe MP3 of <%= render 'length_description' %> phone calll</title>
+  <title>Transcribe MP3 of <%= render 'length-description' %> phone calll</title>
 </head>
 
 <body onload="setAmazonAssignmentId()">
 
-  <h2>Transcribe MP3 of <%= render 'length_description' %> phone call</h2>
-  <p id="description">I split up a telephone conversation into <%= render 'length_description' %> parts, you transcribe the audio for one <%= render 'length_description' %> part.</p>
+  <h2>Transcribe MP3 of <%= render 'length-description' %> phone call</h2>
+  <p id="description">I split up a telephone conversation into <%= render 'length-description' %> parts, you transcribe the audio for one <%= render 'length-description' %> part.</p>
 
   <h3>Labeling</h3>
   <p>There are two speakers. The person asking the questions is <strong><%= voice1 %></strong>. The person answering the questions, on the distant end of the telephone line, is <strong><%= voice2 %></strong><% unless voice2title.to_s.empty? %>, <%= voice2title %><% end %>. Label each speaker with a colon, like this:</p>
