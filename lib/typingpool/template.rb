@@ -82,7 +82,7 @@ module Typingpool
     protected
 
     def extensions
-      ['.html.erb', '']
+      ['.html.erb', '.erb', '']
     end
 
 
