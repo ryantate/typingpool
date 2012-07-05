@@ -141,11 +141,7 @@ module Typingpool
       #The relative path is resolved as described in the docs for
       #Template::Env#read.
       def render(path, hash={})
-        original = @hash
-        @hash = @hash.merge(hash)
-        rendered = @template.class.new(path, localized_look_in).render_with_binding(binding).strip
-        @hash = original
-        rendered
+        @template.class.new(path, localized_look_in).render(@hash.merge(hash)).strip
       end
 
       def get_binding
@@ -165,7 +161,8 @@ module Typingpool
 
       def method_missing(key, value=nil)
         if value
-          @hash[key] = value
+          key = key.to_s.sub(/=$/, '')
+          @hash[key.to_sym] = value
         end
         if @hash.has_key? key
           @hash[key]

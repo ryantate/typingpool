@@ -1,11 +1,11 @@
-<% @title = 'Transcribe MP3 of ' + render('length-description') + ' interview' %>
-<%= render 'header' %>
-<p id="description">I split up an interview into <%= render 'length-description' %> parts, you transcribe the audio for one <%= render 'length-description' %> part.</p>
+<% self.title = 'Transcribe MP3 of ' + render('partials/length-description') + ' interview' %>
+<%= render 'partials/header' %>
+<p id="description">I split up an interview into <%= render 'partials/length-description' %> parts, you transcribe the audio for one <%= render 'partials/length-description' %> part.</p>
 
-<%= render 'interview/voices' %>
+<%= render 'interview/partials/voices' %>
 
-<%= render 'labeling' %>
+<%= render 'partials/labeling' %>
 
-<%= render 'entry' %>
+<%= render 'partials/entry' %>
 
-<%= render 'footer' %>
+<%= render 'partials/footer' %>
