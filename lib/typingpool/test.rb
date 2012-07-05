@@ -208,7 +208,7 @@ module Typingpool
       end
 
       def path_to_tp_make
-        ::File.join(self.class.app_dir, 'bin', 'make.rb')
+        ::File.join(self.class.app_dir, 'bin', 'tp-make')
       end
 
       def call_tp_make(*args)
@@ -226,7 +226,7 @@ module Typingpool
       end
 
       def path_to_tp_finish
-        ::File.join(self.class.app_dir, 'bin', 'finish.rb')
+        ::File.join(self.class.app_dir, 'bin', 'tp-finish')
       end
 
       def call_tp_finish(*args)
@@ -242,7 +242,7 @@ module Typingpool
 
 
       def path_to_tp_assign
-        File.join(self.class.app_dir, 'bin', 'assign.rb')
+        File.join(self.class.app_dir, 'bin', 'tp-assign')
       end
 
       def call_tp_assign(*args)
@@ -271,7 +271,7 @@ module Typingpool
       end
 
       def path_to_tp_collect
-        File.join(self.class.app_dir, 'bin', 'collect.rb')
+        File.join(self.class.app_dir, 'bin', 'tp-collect')
       end
 
       def call_tp_collect(fixture_path, *args)
