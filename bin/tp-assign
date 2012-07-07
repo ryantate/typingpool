@@ -241,15 +241,17 @@ needed_assignments_sorted.each do |assignment|
   question = Typingpool::Amazon::Question.new(assignment['assignment_url'], template.render(assignment))
   begin
     hit = Typingpool::Amazon::HIT.create(question, config.assign)
+    Typingpool::App.record_assigned_hits_in_project(project, [hit], [assignment['assignment_url']])
   rescue  RTurk::RTurkError => e
     STDERR.puts "Mechanical Turk error: #{e}"
     unless hits.empty?
       STDERR.puts "Rolling back assignments"
       hits.each{|hit| hit.remove_from_amazon }
+      Typingpool::App.unrecord_hits_in_project(project, hits)
     end
     abort
   end
   hits.push(hit)
   STDERR.puts "Assigned #{hits.size} / #{needed_assignments.values.size}"
 end
-Typingpool::App.record_assigned_hits_in_project(project, hits, needed_assignments_sorted.map{|assignment| assignment['assignment_url'] })
+#Typingpool::App.record_assigned_hits_in_project(project, hits, needed_assignments_sorted.map{|assignment| assignment['assignment_url'] })
