@@ -200,7 +200,7 @@ module Typingpool
     def method_missing(meth, *args)
       equals_param = equals_method?(meth)
       if equals_param
-        args.count == 1 or raise Error::Argument, "Wrong number of args(#{args.count} for 1)"
+        args.count == 1 or raise Error::Argument, "Wrong number of args (#{args.count} for 1)"
         return @param[equals_param] = args[0]
       end
       args.empty? or raise Error::Argument, "Too many args #{meth} #{args.join('|')}"
