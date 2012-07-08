@@ -11,19 +11,19 @@ module Typingpool
     end
 
     def self.app_dir
-      ::File.dirname(::File.dirname(::File.dirname(__FILE__)))
+      File.dirname(File.dirname(File.dirname(__FILE__)))
     end
 
     def template_dir
-      ::File.join(Utility.lib_dir, 'templates', 'test')
+      File.join(Utility.lib_dir, 'templates', 'test')
     end
 
     def fixtures_dir
-      ::File.join(self.class.app_dir, 'test', 'fixtures')
+      File.join(Utility.lib_dir, 'test', 'fixtures')
     end
 
     def audio_dir
-      ::File.join(template_dir, 'audio')
+      File.join(template_dir, 'audio')
     end
 
     def config

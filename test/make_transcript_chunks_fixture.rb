@@ -49,5 +49,5 @@ end #data_files.each do...
 if assignments.empty?
   abort "No transcripts found"
 end
-fixtures_dir = File.join(File.dirname(File.dirname($0)), 'test', 'fixtures')
+fixtures_dir = File.join(Typingpool::Utility.lib_dir, 'test', 'fixtures')
 Typingpool::Filer::CSV.new(File.join(fixtures_dir, 'transcript-chunks.csv')).write(assignments)
