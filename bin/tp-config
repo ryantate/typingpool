@@ -38,13 +38,13 @@ abort "Cannot proceed without an Amazon Access Key ID" if config.amazon.key.empt
 config.amazon.secret = ask('Your Amazon Web Services "Secret Access Key"? '){|q| q.default = config.amazon.secret if config.amazon.secret }.to_s.chomp
 abort "Cannot proceed without an Amazon Secret Access Key" if config.amazon.secret.empty?
 
-# begin
-#   RTurk.setup(config.amazon.key, config.amazon.secret, :sandbox => true)
-#   RTurk.GetAccountBalance
-#   puts "Verified your new Amazon credentials"
-# rescue RTurk::InvalidRequest
-#   abort "Your Amazon credentials do not appear to work. Please check them and run #{File.basename($PROGRAM_NAME)} again."
-# end #begin
+ begin
+   RTurk.setup(config.amazon.key, config.amazon.secret, :sandbox => true)
+   RTurk.GetAccountBalance
+   puts "Verified your new Amazon credentials"
+ rescue RTurk::InvalidRequest
+   abort "Your Amazon credentials do not appear to work. Please check them and run #{File.basename($PROGRAM_NAME)} again."
+ end #begin
 
 config.amazon.bucket ||= ['typingpool', SecureRandom.hex(8)].join('-')
 config.amazon.bucket = ask('Your Amazon S3 bucket name? '){|q| q.default = config.amazon.bucket }.to_s.chomp
