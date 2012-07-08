@@ -210,7 +210,6 @@ module Typingpool
         VCR.eject_cassette
       end
 
-
       #protected
 
       def record_hits_in_project(project, hits=nil)

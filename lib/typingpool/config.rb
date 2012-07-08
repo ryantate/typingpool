@@ -122,6 +122,10 @@ module Typingpool
         @@default_file
       end
 
+      def from_bundled_template
+        file(File.join(Utility.lib_dir, 'templates', 'config.yml'))
+      end
+
       #protected
 
       #Define a field in a Config subclass as a local path. Reads on

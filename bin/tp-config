@@ -1,0 +1,96 @@
+#!/usr/bin/env ruby
+
+require 'typingpool'
+require 'highline'
+require 'highline/import'
+require 'securerandom'
+require 'fileutils'
+
+usage = "USAGE: #{File.basename($PROGRAM_NAME)} [CONFIGFILE=#{Typingpool::Config.default_file}]
+
+Installs or updates a Typingpool config file, prompting the user for
+the minimal information to get up and running."
+if ARGV.first == '--help'
+  puts usage
+  exit
+end
+
+config_path = ARGV.first || Typingpool::Config.default_file
+config_path_full = File.expand_path(config_path)
+config = nil
+if File.exists? config_path_full
+  abort "Not a file: #{config_path}" if not(File.file? config_path_full)
+  puts "Editing existing config file '#{config_path}'"
+  begin
+    config = Typingpool::Config.file(config_path_full) 
+  rescue ArgumentError => e
+    abort "The specified config file is not valid YAML: #{e}"
+  end #begin
+else
+  abort "Invalid path '#{config_path}'" if not(File.dirname(config_path_full) && File.directory?(File.dirname(config_path_full)))
+  puts "Making a new config file at '#{config_path}'"
+  config = Typingpool::Config.from_bundled_template
+end #if File.exists? config_path
+
+config.amazon ||= {}
+config.amazon.key = ask('Your Amazon Web Services "Access Key ID"? '){|q| q.default = config.amazon.key if config.amazon.key }.to_s.chomp
+abort "Cannot proceed without an Amazon Access Key ID" if config.amazon.key.empty?
+config.amazon.secret = ask('Your Amazon Web Services "Secret Access Key"? '){|q| q.default = config.amazon.secret if config.amazon.secret }.to_s.chomp
+abort "Cannot proceed without an Amazon Secret Access Key" if config.amazon.secret.empty?
+
+# begin
+#   RTurk.setup(config.amazon.key, config.amazon.secret, :sandbox => true)
+#   RTurk.GetAccountBalance
+#   puts "Verified your new Amazon credentials"
+# rescue RTurk::InvalidRequest
+#   abort "Your Amazon credentials do not appear to work. Please check them and run #{File.basename($PROGRAM_NAME)} again."
+# end #begin
+
+config.amazon.bucket ||= ['typingpool', SecureRandom.hex(8)].join('-')
+config.amazon.bucket = ask('Your Amazon S3 bucket name? '){|q| q.default = config.amazon.bucket }.to_s.chomp
+if config.amazon.bucket.empty? && not(config.sftp && config.sftp.user)
+  abort "Cannot proceed without an Amazon S3 bucket name"
+end
+
+if not(config.transcripts)
+  if RUBY_PLATFORM.match(/\bdarwin/i)
+    config.transcripts = '~/Desktop/Transcripts'
+  else
+    config.transcripts = '~/transcripts'
+  end #if RUBY_PLATFORM...
+end
+
+transcripts = nil
+loop do
+  transcripts = ask('Working directory/folder for transcripts? '){|q| q.default = config['transcripts'] }.to_s.chomp
+  abort "Cannot proceed without a transcripts directory" if transcripts.empty?
+  if File.exists?(File.expand_path(transcripts))
+    if File.directory?(File.expand_path(transcripts))
+      break
+    else
+      puts "Location #{transcripts} already taken by a file"
+    end #if File.directory?...
+  else
+    FileUtils.mkdir(File.expand_path(transcripts))
+    break
+  end #if File.exists?...
+end #loop do
+config.transcripts = transcripts
+
+if not(config.templates)
+  templates = RUBY_PLATFORM.match(/\bdarwin/i) ? 'Templates' : 'templates'
+  config.templates = File.join(config['transcripts'], templates)
+  if not(File.exists? config.templates)
+    FileUtils.mkdir(config.templates)
+  end
+end
+
+if not(config.cache)
+  config.cache = '~/.typingpool.cache'
+end
+
+File.open(config_path_full, 'w') do |out|
+  out << YAML.dump(config.to_hash)
+end
+
+puts "Successfully wrote config to '#{config_path}'."
