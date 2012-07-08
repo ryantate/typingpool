@@ -122,6 +122,8 @@ module Typingpool
         @@default_file
       end
 
+      #Returns a new Config instance, empty except for the values
+      #included in lib/templates/config.yml
       def from_bundled_template
         file(File.join(Utility.lib_dir, 'templates', 'config.yml'))
       end

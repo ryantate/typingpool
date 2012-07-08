@@ -5,15 +5,21 @@ require 'highline'
 require 'highline/import'
 require 'securerandom'
 require 'fileutils'
+require 'optparse'
 
-usage = "USAGE: #{File.basename($PROGRAM_NAME)} [CONFIGFILE=#{Typingpool::Config.default_file}]
-
-Installs or updates a Typingpool config file, prompting the user for
-the minimal information to get up and running."
-if ARGV.first == '--help'
-  puts usage
-  exit
-end
+options = {
+  :testing => false
+}
+OptionParser.new do |opts|
+  opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} [CONFIGFILE=#{Typingpool::Config.default_file}]\n\nInstalls or updates a Typingpool config file, prompting the user for\nthe minimal information to get up and running."
+  opts.on('--help', 'Display this screen.') do
+    puts opts
+    exit
+  end
+  opts.on('--test', "Used by automated tests. Ignore.") do
+    options[:testing] = true
+  end
+end.parse!
 
 config_path = ARGV.first || Typingpool::Config.default_file
 config_path_full = File.expand_path(config_path)
@@ -38,18 +44,18 @@ abort "Cannot proceed without an Amazon Access Key ID" if config.amazon.key.empt
 config.amazon.secret = ask('Your Amazon Web Services "Secret Access Key"? '){|q| q.default = config.amazon.secret if config.amazon.secret }.to_s.chomp
 abort "Cannot proceed without an Amazon Secret Access Key" if config.amazon.secret.empty?
 
-begin
-  RTurk.setup(config.amazon.key, config.amazon.secret, :sandbox => true)
-  RTurk.GetAccountBalance
-  puts "Verified your new Amazon credentials"
-rescue RTurk::InvalidRequest
-  abort "Your Amazon credentials do not appear to work. Please check them and run #{File.basename($PROGRAM_NAME)} again."
-end #begin
+if not(options[:testing])
+  begin
+    RTurk.setup(config.amazon.key, config.amazon.secret, :sandbox => true)
+    RTurk.GetAccountBalance
+    puts "Verified your new Amazon credentials"
+  rescue RTurk::InvalidRequest
+    abort "Your Amazon credentials do not appear to work. Please check them and run #{File.basename($PROGRAM_NAME)} again."
+  end #begin
+end
 
-config.amazon.bucket ||= ['typingpool', SecureRandom.hex(8)].join('-')
-config.amazon.bucket = ask('Your Amazon S3 bucket name? '){|q| q.default = config.amazon.bucket }.to_s.chomp
-if config.amazon.bucket.empty? && not(config.sftp && config.sftp.user)
-  abort "Cannot proceed without an Amazon S3 bucket name"
+if not(config.amazon.bucket || (config.sftp && config.sftp.user))
+  config.amazon.bucket = ['typingpool', SecureRandom.hex(8)].join('-')
 end
 
 if not(config.transcripts)

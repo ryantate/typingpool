@@ -306,6 +306,28 @@ module Typingpool
         output
       end
 
+      def path_to_tp_config
+        File.join(self.class.app_dir, 'bin', 'tp-config')
+      end
+
+      def tp_config(*args)
+        call_script(path_to_tp_config, *args)
+      end
+
+      def tp_config_with_input(args, input)
+        output = {}
+        Open3.popen3(path_to_tp_config, *args) do |stdin, stdout, stderr, wait_thr|
+          input.each do |sending|
+            stdin.puts(sending)
+          end
+          output[:out] = stdout.gets(nil)
+          output[:err] = stderr.gets(nil)
+          [stdin, stdout, stderr].each{|stream| stream.close }
+          output[:status] = wait_thr.value
+        end #Open3.popen3...
+        output
+      end
+
       def fixture_project_dir(name)
         File.join(fixtures_dir, name)
       end
