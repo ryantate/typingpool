@@ -106,6 +106,12 @@ module Typingpool
           FileUtils.rm_r(dir)
         end # begin
       end
+
+      #Returns Typingpool's lib/ root, usually for purposes of
+      #locating templates or test fixtures.
+      def lib_dir
+        File.dirname(__FILE__)
+      end
     end #class << self
   end #Utility
 end #Typingpool

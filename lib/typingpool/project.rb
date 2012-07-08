@@ -76,7 +76,7 @@ module Typingpool
     #optional path to a base directory in which to create the project
     #directory; default is project.config.transcripts.
     def create_local(basedir=@config.transcripts)
-      Local.create(@name, basedir, File.join(@config.app, 'templates', 'project'))
+      Local.create(@name, basedir, File.join(Utility.lib_dir, 'templates', 'project'))
     end
 
     #Takes a time specification for setting the project.interval. The

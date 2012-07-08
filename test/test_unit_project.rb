@@ -71,7 +71,7 @@ class TestProject < Typingpool::Test
     assert(project = Typingpool::Project.new('project', config))
     assert_nil(project.local)
     assert_nil(Typingpool::Project.local('project', config))
-    valid_transcript_dir = File.join(self.class.app_dir, 'templates')
+    valid_transcript_dir = File.join(Typingpool::Utility.lib_dir, 'templates')
     assert_kind_of(Typingpool::Project::Local, project.local(valid_transcript_dir))
     config.transcripts = valid_transcript_dir
     assert(project = Typingpool::Project.new('project', config))

@@ -15,7 +15,7 @@ module Typingpool
     end
 
     def template_dir
-      ::File.join(self.class.app_dir, 'templates', 'test')
+      ::File.join(Utility.lib_dir, 'templates', 'test')
     end
 
     def fixtures_dir

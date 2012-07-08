@@ -59,7 +59,7 @@ class TestProjectLocal < Typingpool::Test
   end
 
   def project_template_dir_parent
-    File.join(self.class.app_dir, 'templates')
+    File.join(Typingpool::Utility.lib_dir, 'templates')
   end
 
   def non_project_dir

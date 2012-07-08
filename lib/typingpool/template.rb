@@ -18,7 +18,7 @@ module Typingpool
       #private
 
       def look_in_from_config(config)
-        look_in =  [File.join(config.app, 'templates'), '']
+        look_in =  [File.join(Utility.lib_dir, 'templates'), '']
         look_in.unshift(config.templates) if config.templates
         look_in
       end
