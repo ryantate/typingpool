@@ -68,9 +68,6 @@ options[:files].each do |file|
 end
 
 config = options[:config]
-%w(app).each do |param|
-  abort "Required param '#{param}' missing from config file '#{config.path}'" if config.send(param.to_sym).to_s.empty?
-end
 
 options[:unusual].map!{|unusual| unusual.split(/\s*,\s*/)}.flatten!
 options[:voices].map! do |voice| 

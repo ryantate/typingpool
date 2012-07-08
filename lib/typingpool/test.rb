@@ -181,7 +181,6 @@ module Typingpool
       def make_temp_tp_dir_config(dir, config=self.config)
         config.transcripts = ::File.join(dir, 'projects')
         config.cache = ::File.join(dir, '.cache')
-        config.app = self.class.app_dir
         config['assign']['reward'] = '0.02'
         config.assign.to_hash.delete('qualify')
         write_config(config, dir, project_default[:config_filename])   

@@ -223,7 +223,7 @@ module Typingpool
     #to inherit from Config, and we don't want them inheriting the
     #root level fields.
     class Root < Config
-      local_path_reader :transcripts, :app, :cache, :templates
+      local_path_reader :transcripts, :cache, :templates
 
       class SFTP < Config
         never_ends_in_slash_reader :path, :url
