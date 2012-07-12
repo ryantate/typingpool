@@ -1,0 +1,13 @@
+<% self.title = 'Transcribe MP3 of ' + render('partials/length-description') + ' interview' %>
+<%= render 'partials/header' %>
+<p id="description">I split up an interview into <%= render 'partials/length-description' %> parts, you transcribe the audio for one <%= render 'partials/length-description' %> part.</p>
+
+<h3>Labeling</h3>
+<p>Label each speaker with a gender and, if needed, a number. Use the labels "MALE:", "FEMALE:",  "MALE 2:", "FEMALE 2:", "MALE 3:", "FEMALE 3:", etc., like this:
+
+<% self.voice1 = 'MALE' %><% self.voice2 = 'MALE 2' %> 
+<%= render 'partials/labeling-example' %>
+
+<%= render 'partials/entry' %>
+
+<%= render 'partials/footer' %>
