@@ -48,7 +48,7 @@ if not(options[:testing])
   begin
     RTurk.setup(config.amazon.key, config.amazon.secret, :sandbox => true)
     RTurk.GetAccountBalance
-    puts "Verified your new Amazon credentials"
+    STDERR.puts "Verified your new Amazon credentials"
   rescue RTurk::InvalidRequest
     abort "Your Amazon credentials do not appear to work. Please check them and run #{File.basename($PROGRAM_NAME)} again."
   end #begin
@@ -74,7 +74,7 @@ loop do
     if File.directory?(File.expand_path(transcripts))
       break
     else
-      puts "Location #{transcripts} already taken by a file"
+      STDERR.puts "Location #{transcripts} already taken by a file"
     end #if File.directory?...
   else
     FileUtils.mkdir(File.expand_path(transcripts))
@@ -99,4 +99,4 @@ File.open(config_path_full, 'w') do |out|
   out << YAML.dump(config.to_hash)
 end
 
-puts "Successfully wrote config to '#{config_path}'."
+STDERR.puts "Successfully wrote config to '#{config_path}'."

@@ -46,7 +46,7 @@ def test_new_config_creation
     }
     path.values.each{|path| refute(File.exists? path) }
     assert(output = tp_config_with_input([path[:config], '--test'], ['keykey', 'secretsecret', path[:transcript_dir]]))
-    assert_match(output[:out], /wrote config to/i)
+    assert_match(output[:err], /wrote config to/i)
     path.values.each{|path| assert(File.exists? path) }
     assert(File.file? path[:config] )
     assert(File.directory? path[:transcript_dir] )
@@ -99,7 +99,7 @@ def test_skips_bucket_when_sftp_params_exist
     assert(original_config = Typingpool::Config.file(path[:config]))
     assert_empty(original_config.amazon.bucket.to_s)
     assert(output = tp_config_with_input([path[:config], '--test'], ['keykey', 'secretsecret', path[:transcript_dir]]))
-    assert_match(output[:out], /wrote config to/i)
+    assert_match(output[:err], /wrote config to/i)
     assert(edited_config = Typingpool::Config.file(path[:config]))
     assert_empty(edited_config.amazon.bucket.to_s)
   end #in_temp_dir do |dir|
