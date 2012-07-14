@@ -27,11 +27,6 @@ class TestTpMake < Typingpool::Test::Script
     assert_match(exception.message, /invalid title/i)
   end
 
-  def test_accepts_unnamed_args
-    assert(output = call_tp_make(project_default[:title], audio_files[0], audio_files[1]))
-    assert_match(output, /\bDone\b/i)
-  end
-
   def test_abort_with_no_args
     exception = assert_raise(Typingpool::Error::Shell) do
       call_tp_make

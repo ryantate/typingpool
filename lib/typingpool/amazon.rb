@@ -220,14 +220,7 @@ module Typingpool
         #Constructor. Takes an RTurk::Hit instance. Returns a
         #Typingpool::Amazon::HIT instance, preferably from the cache.
         def cached_or_new(rturk_hit)
-          typingpool_hit=nil
-          if typingpool_hit = from_cache(rturk_hit.id)
-            puts "DEBUG from_cache"
-          else
-            typingpool_hit = new(rturk_hit)
-            puts "DEBUG from_new"
-          end
-          typingpool_hit
+          from_cache(rturk_hit.id) || new(rturk_hit)
         end
 
         #Constructor. Same as cached_or_new, but handles peculiarities
@@ -241,13 +234,9 @@ module Typingpool
         #for an additional network call to flesh out the HIT, so this
         #method pre-fleshes-out the HIT.
         def cached_or_new_from_searchhits(rturk_hit, annotation)
-          typingpool_hit=nil
-          if typingpool_hit = from_cache(rturk_hit.id)
-            puts "DEBUG from_cache"
-          else
+          if not (typingpool_hit = from_cache(rturk_hit.id))
             typingpool_hit = new(rturk_hit)
             typingpool_hit.full(Amazon::HIT::Full::FromSearchHITs.new(rturk_hit, annotation))
-            puts "DEBUG from_new"
           end
           typingpool_hit
         end
@@ -570,7 +559,6 @@ module Typingpool
           if @external_question.nil?
             if external_question_url && external_question_url.match(/^http/)
               #expensive, obviously:
-              puts "DEBUG fetching external question"
               @external_question = open(external_question_url).read
             end
           end
