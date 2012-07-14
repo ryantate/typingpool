@@ -6,6 +6,7 @@ require 'typingpool'
 require 'typingpool/test'
 require 'tmpdir'
 require 'fileutils'
+require 'uri'
 
 class TestProject < Typingpool::Test
   def test_project_base_new
@@ -126,6 +127,12 @@ class TestProject < Typingpool::Test
       assert(parsed = CSV.read(csv_file))
       assert_equal(dummy_remote_files.count + 1, parsed.count)
     end #in_temp_dir do
+  end
+
+  def test_local_basename_from_url
+    url = ['http://example.com/dir/', URI.escape('Example Title With Spaces & Ampersand.html')].join
+    assert_match(url, /%20/)
+#assert(basename = Typingpool::Project.local_basename_from_url.u)
   end
 
   def set_and_return_interval(project, interval)

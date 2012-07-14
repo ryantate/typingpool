@@ -7,15 +7,17 @@ require 'typingpool/test'
 
 class TestTpMake < Typingpool::Test::Script                   
   def test_abort_with_no_files
-    assert_raise(Typingpool::Error::Shell) do
+    exception = assert_raise(Typingpool::Error::Shell) do
       call_tp_make('--title', 'Foo', '--chunks', '0:20')
     end
+    assert_match(exception.message, /no files/i)
   end
 
   def test_abort_with_no_title
-    assert_raise(Typingpool::Error::Shell) do
+    exception = assert_raise(Typingpool::Error::Shell) do
       call_tp_make('--file', audio_files[0])
     end
+    assert_match(exception.message, /no title/i)
   end
 
   def test_abort_with_invalid_title
@@ -23,6 +25,18 @@ class TestTpMake < Typingpool::Test::Script
       call_tp_make('--file', audio_files[0], '--title', 'Foo/Bar')
     end #assert_raise
     assert_match(exception.message, /invalid title/i)
+  end
+
+  def test_accepts_unnamed_args
+    assert(output = call_tp_make(project_default[:title], audio_files[0], audio_files[1]))
+    assert_match(output, /\bDone\b/i)
+  end
+
+  def test_abort_with_no_args
+    exception = assert_raise(Typingpool::Error::Shell) do
+      call_tp_make
+    end
+    assert_match(exception.message, /\bUSAGE:/)
   end
 
   def tp_make_with(dir, config_path, subdir='mp3')

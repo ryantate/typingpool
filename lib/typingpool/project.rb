@@ -7,6 +7,7 @@ module Typingpool
   #Mechanical Turk, a Project is associated with various HITs. A
   #project is also associated with audio files on a remote server.
   class Project
+    require 'uri'
 
     #Returns a time interval corresponding to the length of each audio
     #chunk within the project. (Each chunk may be transcribed
@@ -174,7 +175,7 @@ module Typingpool
     #Make this unneccesary.)
     def self.local_basename_from_url(url)
       matches = Project.url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
-      [matches[2..4].join('.'), matches[5]].join
+      URI.unescape([matches[2..4].join('.'), matches[5]].join)
     end
 
     protected
@@ -202,7 +203,6 @@ module Typingpool
     #methods available, in addition to the Project::Remote methods
     #outlined below.
     class Remote
-      require 'uri'
 
       #The project name
       attr_accessor :name
