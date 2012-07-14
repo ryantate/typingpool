@@ -64,6 +64,7 @@ end
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
 
 hits = []
+STDERR.puts "Gathering submissions from Amazon"
 if options[:project] && not((hit_ids = options[:project].local.csv('data', 'assignment.csv').map{|assignment| assignment['hit_id'] }.select{|hit_id| hit_id }).empty?)
   hits = Typingpool::Amazon::HIT.with_ids(hit_ids).select{|hit| hit.submitted? }
 else
@@ -74,6 +75,7 @@ else
   end
 end
 
+STDERR.puts "Matching submissions with local projects"
 choices = %w(approve reject quit skip)
 catch :quitting do
   hits_by_project_id = Typingpool::App.find_projects_waiting_for_hits(hits, options[:config]) 
