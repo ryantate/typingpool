@@ -23,17 +23,44 @@ module Typingpool
       # [hits]            An enumerable collection of Amazon::HIT instances that
       #                   were just assigned (that is, that have one
       #                   assignment, which has a blank status).
-      # [assignment_urls] An array of URLs (strings) corresponding to
-      #                   the assignment HTML (Amazon Mechanical Turk
-      #                   "external questions") of each of [hits].
-      def record_assigned_hits_in_project(project, hits, assignment_urls)
+      def record_assigned_hits_in_project(project, hits)
         record_hits_in_project(project, hits) do |hit, csv_row|
           csv_row['hit_id'] = hit.id
           csv_row['hit_expires_at'] = hit.full.expires_at.to_s
           csv_row['hit_assignments_duration'] = hit.full.assignments_duration.to_s
-          csv_row['assignment_url'] = assignment_urls.shift
         end #record_hits_in_project do....
       end        
+
+      #Extracts relevant information from a collection of
+      #just-approved Amazon::HITs and writes it into the Project's
+      #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for
+      #future use.
+      # ==== Params
+      # [project] A Project instance.
+      # [hits]    An enumerable collection of Amazon::HIT instances whose
+      #           one assignment has the status 'Approved'.
+      def record_approved_hits_in_project(project, hits)
+        record_hits_in_project(project, hits) do |hit, csv_row|
+          next if csv_row['transcription']
+          csv_row['transcription'] = hit.transcript.body
+          csv_row['worker'] = hit.transcript.worker
+          csv_row['hit_id'] = hit.id
+        end #record_hits_in_project do...
+      end
+
+      #Given a Project instance and an array of modified assignment
+      #hashes previously retrieved from the Project's assignment CSV
+      #(Project#local#csv('data', 'assignment.csv')), writes the
+      #'assignment_url' property of each modified hash back to the
+      #corresponding row in the original CSV.
+      def record_assignment_urls_in_project(project, assignments)
+        assignments_by_audio_url = Hash[ *assignments.map{|assignment| [assignment['audio_url'], assignment] }.flatten ]
+        project.local.csv('data', 'assignment.csv').each! do |csv_row|
+          assignment = assignments_by_audio_url[csv_row['audio_url']] or next
+          csv_row['assignment_url'] = assignment['assignment_url']
+        end
+      end
+
 
       #Given a collection of Amazon::HITs, looks for Project folders
       #on the local system waiting to "receive" those HITs. Such
@@ -78,23 +105,6 @@ module Typingpool
         end
         by_project_id
       end 
-
-      #Extracts relevant information from a collection of
-      #just-approved Amazon::HITs and writes it into the Project's
-      #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for
-      #future use.
-      # ==== Params
-      # [project] A Project instance.
-      # [hits]    An enumerable collection of Amazon::HIT instances whose
-      #           one assignment has the status 'Approved'.
-      def record_approved_hits_in_project(project, hits)
-        record_hits_in_project(project, hits) do |hit, csv_row|
-          next if csv_row['transcription']
-          csv_row['transcription'] = hit.transcript.body
-          csv_row['worker'] = hit.transcript.worker
-          csv_row['hit_id'] = hit.id
-        end #record_hits_in_project do...
-      end
 
       #Given a Project, writes an HTML transcript for that project
       #within the local project folder (Project#local). To do so, uses
@@ -212,9 +222,10 @@ module Typingpool
 
       #protected
 
-      def record_hits_in_project(project, hits=nil)
+      def record_hits_in_project(project, hits)
         hits_by_url = self.hits_by_url(hits) if hits
         project.local.csv('data', 'assignment.csv').each! do |csv_row|
+          hit = nil
           if hits
             hit = hits_by_url[csv_row['audio_url']] or next
           end

@@ -234,6 +234,7 @@ remote_names = project.create_remote_names(remote_basenames)
 project.remote.put(ios, remote_names).each_with_index do |assignment_url, i|
   needed_assignments_sorted[i]['assignment_url'] = assignment_url
 end
+Typingpool::App.record_assignment_urls_in_project(project, needed_assignments_sorted)
 
 STDERR.puts 'Assigning'
 hits = []
@@ -241,7 +242,7 @@ needed_assignments_sorted.each do |assignment|
   question = Typingpool::Amazon::Question.new(assignment['assignment_url'], template.render(assignment))
   begin
     hit = Typingpool::Amazon::HIT.create(question, config.assign)
-    Typingpool::App.record_assigned_hits_in_project(project, [hit], [assignment['assignment_url']])
+    Typingpool::App.record_assigned_hits_in_project(project, [hit])
   rescue  RTurk::RTurkError => e
     STDERR.puts "Mechanical Turk error: #{e}"
     unless hits.empty?
