@@ -116,13 +116,16 @@ file = files.merge(project.local.audio('audio', "#{project.name}.all.mp3"))
 puts "Splitting audio into uniform bits"
 files = file.split(project.interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), project.local.subdir('audio','chunks'))
 
-remote_files = project.remote.put(files.to_streams, project.create_remote_names(files)) do |file, as|
+#Write mp3 URLs before uploading, so we can rollback if uploading dies
+#halfway through
+remote_names = project.create_remote_names(files)
+urls = remote_names.map{|name| project.remote.file_to_url(name) }
+assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :chunk => options[:chunk], :unusual => options[:unusual], :voices => options[:voices])
+puts "Wrote #{assignment_path}"
+project.local.audio_is_on_www = 'yes'
+remote_files = project.remote.put(files.to_streams, remote_names) do |file, as|
   puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
 end
-project.local.audio_is_on_www = remote_files.join("\n")
-
-assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => remote_files, :chunk => options[:chunk], :unusual => options[:unusual], :voices => options[:voices])
-puts "Wrote #{assignment_path}"
 
 if STDOUT.tty?
   puts "Opening project folder #{project.local.path}"
