@@ -3,6 +3,7 @@
 require 'optparse'
 require 'typingpool'
 require 'fileutils'
+require 'set'
 
 options = {
   :config => Typingpool::Config.file,
@@ -97,35 +98,73 @@ rescue Typingpool::Error::Argument::Format
   abort "Could not make sense of bitrate argument '#{options[:bitrate]}'. Should be an integer corresponding to kb/s."
 end #begin
 
-begin
+files = nil
+remote_files=nil
+urls = nil
+audio_upload_confirms = []
+if project.local
+  if not( File.exists?(project.local.csv('data', 'assignment.csv')) && 
+          project.local.csv('data', 'assignment.csv').read.select{|assignment| assignment['audio_upload_confirmed'].to_i == 0 }.count > 0)
+    #successfully made project
+    abort "The title '#{options[:title]}' is taken"
+  end
+  #project where the upload died partway through
+  STDERR.puts "Fixing incomplete project"
+  if options[:files]
+    project_files = Set.new(project.local.subdir('audio', 'originals').files.map{|file| file.path })
+    if not( (options[:files].count == project_files.count) &&
+            (options[:files].reject{|file| project_files.include? file }))
+      abort "Files submitted don't match files originally used to build the project. If you want to re-build the project with new files, run tp-finish PROJECTPATH, then rm -r or rename the project folder, and call tp-make again with the same args."
+    end
+  end
+  STDERR.puts "Determining which mp3s need uploading"
+  urls = []
+  assignments_not_uploaded = []
+  project.local.csv('data', 'assignment.csv').each do |assignment|
+    urls.push(assignment['audio_url'])
+    STDERR.puts "Testing #{assignment['audio_url']}"
+    if ( (assignment['audio_upload_confirmed'].to_i == 0) && (not(Typingpool::Utility.working_url? assignment['audio_url'])) )
+      assignments_not_uploaded.push(assignment)
+      audio_upload_confirms.push(0)
+    else
+      audio_upload_confirms.push(1)
+    end #if ((assignment['audio_upload_confirmed'].to_i == 0...
+  end #project.local.csv('data', 'assignment.csv').each...
+  remote_files = assignments_not_uploaded.map{|assignment| project.remote.url_basename(assignment['audio_url']) }
+  files = assignments_not_uploaded.map{|assignment|  Typingpool::Project.local_basename_from_url(assignment['audio_url']) }.map{|basename| project.local.file('audio', 'chunks', basename) }
+  files = Typingpool::Filer::Files.new(files)
+else
   project.create_local
-rescue Errno::EEXIST
-  abort "The title '#{options[:title]}' is taken"
-end #begin
+
+  options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }
+
+  files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(project.local.subdir('etc','tmp'), project.bitrate) do |file| 
+    puts "Converting #{File.basename(file) } to mp3" 
+  end
+
+  puts "Merging audio" if files.count > 1
+  file = files.merge(project.local.audio('audio', "#{project.name}.all.mp3"))
+
+  puts "Splitting audio into uniform bits"
+  files = file.split(project.interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), project.local.subdir('audio','chunks'))
+
+  remote_files = project.create_remote_names(files)
+  urls = remote_files.map{|file| project.remote.file_to_url(file) }
+  audio_upload_confirms = urls.map{ 0 }
+end #if project.local
+
 
 project.local.subtitle = options[:subtitle] if options[:subtitle]
-options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }
-
-files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(project.local.subdir('etc','tmp'), project.bitrate) do |file| 
-  puts "Converting #{File.basename(file) } to mp3" 
-end
-
-puts "Merging audio" if files.count > 1
-file = files.merge(project.local.audio('audio', "#{project.name}.all.mp3"))
-
-puts "Splitting audio into uniform bits"
-files = file.split(project.interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), project.local.subdir('audio','chunks'))
 
 #Write mp3 URLs before uploading, so we can rollback if uploading dies
 #halfway through
-remote_names = project.create_remote_names(files)
-urls = remote_names.map{|name| project.remote.file_to_url(name) }
-assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :chunk => options[:chunk], :unusual => options[:unusual], :voices => options[:voices])
+assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :chunk => options[:chunk], :unusual => options[:unusual], :voices => options[:voices], :audio_upload_confirms => audio_upload_confirms)
 puts "Wrote #{assignment_path}"
 project.local.audio_is_on_www = 'yes'
-remote_files = project.remote.put(files.to_streams, remote_names) do |file, as|
+remote_files = project.remote.put(files.to_streams, remote_files) do |file, as|
   puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
 end
+project.local.csv('data', 'assignment.csv').each!{|assignment| assignment['audio_upload_confirmed'] = 1 }
 
 if STDOUT.tty?
   puts "Opening project folder #{project.local.path}"

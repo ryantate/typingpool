@@ -134,11 +134,11 @@ module Typingpool
     # ==== Returns
     # Path to the resulting CSV file.
     def create_assignment_csv(args)
-      [:path, :urls, :chunk].each{|arg| args[arg] or raise Error::Argument, "Missing arg '#{arg}'" }
-      headers = ['audio_url', 'project_id', 'chunk', 'unusual', (1 .. args[:voices].count).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
+      [:path, :urls, :chunk, :audio_upload_confirms].each{|arg| args[arg] or raise Error::Argument, "Missing arg '#{arg}'" }
+      headers = ['audio_url', 'audio_upload_confirmed', 'project_id', 'chunk', 'unusual', (1 .. args[:voices].count).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
       csv = []
-      args[:urls].each do |url|
-        csv << [url, local.id, args[:chunk], args[:unusual].join(', '), args[:voices].map{|v| [v[:name], v[:description]]}].flatten
+      args[:urls].each_with_index do |url, i|
+        csv << [url, (args[:audio_upload_confirms][i] || 0), local.id, args[:chunk], args[:unusual].join(', '), args[:voices].map{|v| [v[:name], v[:description]]}].flatten
       end
       local.csv(*args[:path]).write_arrays(csv, headers)
       local.file_path(*args[:path])

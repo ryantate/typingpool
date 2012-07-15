@@ -3,7 +3,6 @@ module Typingpool
 
   class Test < ::Test::Unit::TestCase 
     require 'nokogiri'
-    require 'net/http'
     require 'fileutils'
 
     def MiniTest.filter_backtrace(bt)
@@ -96,60 +95,28 @@ module Typingpool
           ]
     end
 
-    def working_url?(url, max_redirects=6)
-      response = request_url_with(url, max_redirects) do |url|
-        request = Net::HTTP.new(url.host, url.port)
-        request.use_ssl = true if url.scheme == 'https'
-        request.request_head(url.path)
-      end #request_url_with... do |url|
-      response.kind_of?(Net::HTTPSuccess)
-    end
-
-    def fetch_url(url, max_redirects=6)
-      response = request_url_with(url, max_redirects) do |url|
-        Net::HTTP.get_response(url)
-      end
-      if response.kind_of?(Net::HTTPSuccess)
-        return response
-      else
-        raise Error::HTTP, "HTTP error fetching '#{url.to_s}': '#{response.code}: #{response.message}'"
-      end #if response.kind_of?
-    end
-
-    def request_url_with(url, max_redirects=6)
-      seen = Set.new
-      loop do
-        url = URI.parse(url)
-        if seen.include? url.to_s
-          raise Error::HTTP, "Redirect infinite loop (at '#{url.to_s}')" 
-        end
-        if seen.count > max_redirects
-          raise Error::HTTP, "Too many redirects (>#{max_redirects})" 
-        end
-        seen.add(url.to_s)
-        response = yield(url)
-        if response.kind_of?(Net::HTTPRedirection)
-          url = response['location']
-        else
-          return response
-        end #if response.kind_of?...
-      end #loop do
-    end
 
     def in_temp_dir
       Typingpool::Utility.in_temp_dir{|dir| yield(dir) }
     end
 
+    def working_url?(*args)
+      Typingpool::Utility.working_url?(*args)
+    end
+
+    def fetch_url(*args)
+      Typingpool::Utility.fetch_url(*args)
+    end
+
     class Script < Test 
       require 'typingpool'
       require 'yaml'
-      require 'set'
       require 'open3'
 
 
       def audio_files(subdir='mp3')
-        dir = ::File.join(audio_dir, subdir)
-        ::Dir.entries(dir).reject{|entry| entry.match(/^\./) }.map{|entry| ::File.join(dir, entry)}.select{|path| ::File.file?(path) }
+        dir = File.join(audio_dir, subdir)
+        Dir.entries(dir).reject{|entry| entry.match(/^\./) }.map{|entry| File.join(dir, entry)}.select{|path| File.file?(path) }
       end
 
       def config_path(dir)

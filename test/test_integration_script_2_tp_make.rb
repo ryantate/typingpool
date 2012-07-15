@@ -4,6 +4,7 @@ $:.unshift File.join(File.dirname(File.dirname($0)), 'lib')
 
 require 'typingpool'
 require 'typingpool/test'
+require 'csv'
 
 class TestTpMake < Typingpool::Test::Script                   
   def test_abort_with_no_files
@@ -85,7 +86,51 @@ class TestTpMake < Typingpool::Test::Script
       skip_if_no_s3_credentials('tp-make S3 integration test', config)
       tp_make_with(dir, config_path)
       tp_finish(dir, config_path)
-    end #in_temp_to_dir do...
+    end #in_temp_tp_dir do...
   end 
+
+  def test_fixing_failed_tp_make
+    in_temp_tp_dir do |dir|
+      config = config_from_dir(dir)
+      config.to_hash.delete('sftp')
+      skip_if_no_s3_credentials('tp-make failed upload integration test', config)
+      good_config_path = write_config(config, dir, '.config_s3')
+      bad_password = 'f'
+      refute_equal(config.to_hash['amazon']['secret'], bad_password)
+      config.to_hash['amazon']['secret'] = bad_password
+      bad_config_path = write_config(config, dir, '.config_s3_bad')
+      assert_raises(Typingpool::Error::Shell) do
+        tp_make(dir, bad_config_path, 'mp3')
+      end
+      project_dir = temp_tp_dir_project_dir(dir)
+      assert(File.exists? project_dir)
+      assert(File.directory? project_dir)
+      assert(File.exists? File.join(project_dir, 'data', 'assignment.csv'))
+      originals_dir = File.join(project_dir, 'audio', 'originals')
+      refute_empty(Dir.entries(originals_dir).reject{|entry| entry.match(/^\./) }.map{|entry| File.join(originals_dir, entry) }.select{|path| File.file? path })
+      refute_empty(assignment_csv = File.read(File.join(project_dir, 'data', 'assignment.csv')))
+      refute_empty(assignment_rows = CSV.parse(assignment_csv))
+      assignment_headers = assignment_rows.shift
+      assert(assignment_confirm_index = assignment_headers.find_index('audio_upload_confirmed'))
+      assert_empty(assignment_rows.reject{|row| row[assignment_confirm_index].to_i == 0 })
+      assert(assignment_url_index = assignment_headers.find_index('audio_url'))
+      refute_empty(assignment_urls = assignment_rows.map{|row| row[assignment_url_index] })
+      assert_empty(assignment_urls.select{|url| working_url? url })
+      begin
+        tp_make(dir, good_config_path, 'mp3')
+        refute_empty(assignment_csv = File.read(File.join(project_dir, 'data', 'assignment.csv')))
+        refute_empty(assignment_rows = CSV.parse(assignment_csv))
+        assignment_rows.shift
+        assert_empty(assignment_rows.reject{|row| row[assignment_confirm_index].to_i == 1 })
+        refute_empty(assignment_urls2 = assignment_rows.map{|row| row[assignment_url_index] })
+        assignment_urls.each_with_index do |original_url, i|
+          assert_equal(original_url, assignment_urls2[i])
+        end
+        assert_empty(assignment_urls2.reject{|url| working_url? url })
+      ensure
+        tp_finish(dir, good_config_path)
+      end #begin
+    end #in_temp_tp_dir do...
+  end
 
 end #TestTpMake
