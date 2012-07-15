@@ -119,7 +119,7 @@ class TestProject < Typingpool::Test
         hash[:description] = spec[1] if spec[1]
         hash
       end
-      assert(result = project.create_assignment_csv(:path => relative_path, :urls => dummy_remote_files, :unusual => project_default[:unusual], :voices => voices, :chunk => '1:00', :audio_upload_confirms => []))
+      assert(result = project.create_assignment_csv(:path => relative_path, :urls => dummy_remote_files, :unusual => project_default[:unusual], :voices => voices, :chunk => '1:00'))
       assert_includes(result, dir)
       csv_file = File.join(dir, project_default[:title], *relative_path)
       assert(File.exists? csv_file)

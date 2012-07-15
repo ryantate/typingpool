@@ -69,29 +69,29 @@ class TestTpAssign < Typingpool::Test::Script
     end # in_temp_tp_dir
   end
 
-  def test_aborts_with_unuploaded_audio
-    skip_if_no_amazon_credentials('tp-assign unuploaded audio integration test')
-    skip_if_no_s3_credentials('tp-assign unuploaded audio integration test')
-    in_temp_tp_dir do |dir|
-      config = config_from_dir(dir)
-      config.to_hash.delete('sftp')
-      good_config_path = write_config(config, dir, '.config_s3')
-      bad_password = 'f'
-      refute_equal(config.to_hash['amazon']['secret'], bad_password)
-      config.to_hash['amazon']['secret'] = bad_password
-      bad_config_path = write_config(config, dir, '.config_s3_bad')
-      assert_raises(Typingpool::Error::Shell) do
-        tp_make(dir, bad_config_path, 'mp3')
-      end
-      project_dir = temp_tp_dir_project_dir(dir)
-      assert(File.exists? project_dir)
-      assert(File.directory? project_dir)
-      exception = assert_raises(Typingpool::Error::Shell) do
-        tp_assign(dir)
-      end
-      assert_match(exception.message, /\baudio\b.+\buploaded\b/i)
-    end # in_temp_tp_dir do...
-  end
+  # def test_aborts_with_unuploaded_audio
+  #   skip_if_no_amazon_credentials('tp-assign unuploaded audio integration test')
+  #   skip_if_no_s3_credentials('tp-assign unuploaded audio integration test')
+  #   in_temp_tp_dir do |dir|
+  #     config = config_from_dir(dir)
+  #     config.to_hash.delete('sftp')
+  #     good_config_path = write_config(config, dir, '.config_s3')
+  #     bad_password = 'f'
+  #     refute_equal(config.to_hash['amazon']['secret'], bad_password)
+  #     config.to_hash['amazon']['secret'] = bad_password
+  #     bad_config_path = write_config(config, dir, '.config_s3_bad')
+  #     assert_raises(Typingpool::Error::Shell) do
+  #       tp_make(dir, bad_config_path, 'mp3')
+  #     end
+  #     project_dir = temp_tp_dir_project_dir(dir)
+  #     assert(File.exists? project_dir)
+  #     assert(File.directory? project_dir)
+  #     exception = assert_raises(Typingpool::Error::Shell) do
+  #       tp_assign(dir)
+  #     end
+  #     assert_match(exception.message, /\baudio\b.+\buploaded\b/i)
+  #   end # in_temp_tp_dir do...
+  # end
 
 
 end #TestTpAssign

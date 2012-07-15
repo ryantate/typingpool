@@ -14,6 +14,38 @@ module Typingpool
     require 'vcr'
     class << self
 
+      def upload_audio_for_project(project)
+        assignments = project.local.csv('data', 'assignment.csv')
+        uploading = nil
+        if project.local.audio_is_on_www
+          #we started an upload, but did we finish it?
+          #re-upload any file whose upload failed
+          uploading = assignments.select{|assignment| assignment['audio_upload_confirmed'] && assignment['audio_upload_confirmed'].to_i == 0 }
+          uploading.reject!{|assignment| Typingpool::Utility.working_url? assignment['audio_url'] }
+        else
+          uploading = assignments.read
+        end #project.local.audio_is_on_www
+        return uploading if uploading.empty?
+        files = uploading.map{|assignment| Typingpool::Project.local_basename_from_url(assignment['audio_url']) }
+        files.map!{|basename| project.local.audio('audio', 'chunks', basename) }
+        files = Typingpool::Filer::Files.new(files)
+        remote_files = uploading.map{|assignment| project.remote.url_basename(assignment['audio_url']) }
+        uploading_by_url = Hash[ *uploading.map{|assignment| [assignment['audio_url'], assignment] }.flatten ]
+        #Record that we're uploading so we'll know later if something
+        #goes wrong
+        assignments.each! do |assignment|
+          if uploading_by_url[assignment['audio_url']]
+            assignment['audio_upload_confirmed'] = 0
+          end
+        end #assignments.each!...
+        project.local.audio_is_on_www = 'yes'
+        project.remote.put(files.to_streams, remote_files) do |file, as|
+          yield(file, as) if block_given?
+        end
+        assignments.each!{|assignment| assignment['audio_upload_confirmed'] = 1 }
+        uploading.map{|assignment| assignment['audio_url'] }
+      end
+
       #Extracts relevant information from a collection of
       #just-assigned Amazon::HITs and writes it into the Project's
       #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for

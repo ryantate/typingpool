@@ -144,7 +144,6 @@ project = Typingpool::Project.new(File.basename(options[:project]), config)
 abort "Not a project directory at '#{options[:project]}'" if not(project.local)
 assignments = project.local.csv('data', 'assignment.csv').read
 abort "No data in assignment CSV" if assignments.empty?
-abort "Audio hasn't been uploaded in '#{project.name}', run tp-make again" if not(assignments.select{|assignment| assignment['audio_upload_confirmed'].to_i == 0}.empty?)
 abort "No Amazon key+secret in config" if not(config.amazon && config.amazon.key && config.amazon.secret)
 
 
@@ -211,9 +210,11 @@ Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 #we'll need to re-upload audio if we ran tp-finish on the project
 if not(project.local.audio_is_on_www)
   project.local.audio_is_on_www = 'yes'
+  project.local.csv('data', 'assignment.csv').each!{|assignment| assignment['audio_upload_confirmed'] = 0 }
   urls = project.remote.put(project.local.subdir('audio','chunks').as(:audio).to_streams, assignments.map{|assignment| project.remote.url_basename(assignment['audio_url']) }) do |file, as|
     puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
   end
+  project.local.csv('data', 'assignment.csv').each!{|assignment| assignment['audio_upload_confirmed'] = 1 }
 end
 
 #Delete old assignment html for assignments to be re-assigned. We
