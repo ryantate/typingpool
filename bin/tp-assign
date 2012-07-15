@@ -231,10 +231,14 @@ remote_basenames = needed_assignments_sorted.map do |assignment|
   File.basename(project.class.local_basename_from_url(assignment['audio_url']), '.*') + '.html' 
 end 
 remote_names = project.create_remote_names(remote_basenames)
-project.remote.put(ios, remote_names).each_with_index do |assignment_url, i|
-  needed_assignments_sorted[i]['assignment_url'] = assignment_url
+#record upload URLs ahead of time so we can roll back later if the
+#upload fails halfway through
+needed_assignments_sorted.each_with_index do |assignment, i|
+  assignment['assignment_url'] = project.remote.file_to_url(remote_names[i])
 end
 Typingpool::App.record_assignment_urls_in_project(project, needed_assignments_sorted)
+project.remote.put(ios, remote_names)
+
 
 STDERR.puts 'Assigning'
 hits = []
