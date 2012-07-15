@@ -43,28 +43,30 @@ class TestTpAssign < Typingpool::Test::Script
     skip_if_no_upload_credentials('tp-assign integration test')
     in_temp_tp_dir do |dir|
       tp_make(dir)
-      assigning_started = Time.now
-      assert_nothing_raised do
+      begin
+        assigning_started = Time.now
         tp_assign(dir)
-      end #assert_nothing_raised
-      assign_time = Time.now - assigning_started
-      config = config_from_dir(dir)
-      project = temp_tp_dir_project(dir)
-      setup_amazon(dir)
-      results = nil
-      assert_nothing_raised{ results = Typingpool::Amazon::HIT.all_for_project(project.local.id) }
-      assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
-      assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].full.assignments_duration.to_i)
-      #These numbers will be apart due to clock differences and
-      #timing vagaries of the assignment.
-      assert_in_delta((assigning_started + assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60)
-      keywords = results[0].at_amazon.keywords
-      assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
-      assert(assignment_urls = project.local.csv('data', 'assignment.csv').map{|assignment| assignment['assignment_url'] })
-      assert(assignment_html = fetch_url(assignment_urls.first).body)
-      assert_match(assignment_html, /\b20[\s-]+second\b/)
-      assert_nothing_raised{tp_finish(dir)}
+        assign_time = Time.now - assigning_started
+        config = config_from_dir(dir)
+        project = temp_tp_dir_project(dir)
+        setup_amazon(dir)
+        results = nil
+        refute_empty(results = Typingpool::Amazon::HIT.all_for_project(project.local.id))
+        assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
+        assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].full.assignments_duration.to_i)
+        #These numbers will be apart due to clock differences and
+        #timing vagaries of the assignment.
+        assert_in_delta((assigning_started + assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60)
+        keywords = results[0].at_amazon.keywords
+        assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
+        assert(assignment_urls = project.local.csv('data', 'assignment.csv').map{|assignment| assignment['assignment_url'] })
+        assert(assignment_html = fetch_url(assignment_urls.first).body)
+        assert_match(assignment_html, /\b20[\s-]+second\b/)
+      ensure
+        tp_finish(dir)
+      end #begin
       assert_empty(Typingpool::Amazon::HIT.all_for_project(project.local.id))
     end # in_temp_tp_dir
   end
+
 end #TestTpAssign
