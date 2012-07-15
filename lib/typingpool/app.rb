@@ -164,8 +164,7 @@ module Typingpool
       #(Project#local#csv('data', 'assignment.csv')).
       #
       #Specifically, deletes information about the HIT's
-      #expires_at, assignments_duration and assignment URL (assignment
-      #external question).
+      #expires_at, and assignments_duration.
       #
       #Typically used when some or all of a Project's HITs have been
       #processed and incorporated into a transcript and are not needed
@@ -183,11 +182,9 @@ module Typingpool
         end
       end
 
-      #Just like unrecord_hits_details_in_project, but does not delete
-      #assignment_url information.
-      def unrecord_hits_amazon_details_in_project(project, hits=nil)
-        record_hits_in_project(project, hits) do |hit, csv_row|
-          unrecord_hit_amazon_details_in_csv_row(hit, csv_row)
+      def unrecord_assignment_urls_in_project(project)
+        project.local.csv('data', 'assignment.csv').each! do |csv_row|
+          csv_row.delete('assignment_url')
         end
       end
 
@@ -234,15 +231,8 @@ module Typingpool
       end
 
       def unrecord_hit_details_in_csv_row(hit, csv_row)
-        unrecord_hit_amazon_details_in_csv_row(hit, csv_row)
-        csv_row.delete('assignment_url')
-      end
-
-      def unrecord_hit_amazon_details_in_csv_row(hit, csv_row)
         %w(hit_expires_at hit_assignments_duration).each{|key| csv_row.delete(key) }
       end
-
-
 
       def transcript_filename
         {

@@ -73,7 +73,7 @@ results.each do |result|
   else
     if project
       STDERR.puts "  Removing from data/assignment.csv"
-      Typingpool::App.unrecord_hits_amazon_details_in_project(project, [result])  
+      Typingpool::App.unrecord_hits_details_in_project(project, [result])  
     end
     STDERR.puts "  Removing from local cache"
     Typingpool::Amazon::HIT.delete_cache(result.id)
@@ -102,5 +102,5 @@ if project
       project.local.delete_audio_is_on_www
     end
   end #if not(deleting.empty?)
-  Typingpool::App.unrecord_hits_details_in_project(project)  
+  Typingpool::App.unrecord_assignment_urls_in_project(project)  
 end #if project
