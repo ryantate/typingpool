@@ -231,6 +231,14 @@ module Typingpool
         remove(basenames){|file| yield(file) if block_given? }
       end
 
+      #Given a file path, returns the URL to the file path were it to
+      #be uploaded by this instance.
+      def file_to_url(file)
+        "#{@url}/#{URI.escape(file)}"
+      end
+
+      #Given an URL, returns the file portion of the path, given the
+      #configuration of this instance.
       def url_basename(url)
         basename = url.split("#{self.url}/").last or raise Error "Could not find base url '#{self.url}' within longer url '#{url}'"
         URI.unescape(basename)
@@ -305,7 +313,7 @@ module Typingpool
               make_bucket
               retry
             end
-            "#{@url}/#{URI.escape(dest)}"
+            file_to_url(dest)
           end #batch
         end
 
@@ -448,10 +456,6 @@ module Typingpool
             end
           end
           return results
-        end
-
-        def file_to_url(file)
-          "#{@url}/#{URI.escape(file)}"
         end
 
         def join_with_path(file)
