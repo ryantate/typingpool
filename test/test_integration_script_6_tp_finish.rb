@@ -7,8 +7,8 @@ require 'typingpool/test'
 
 class TestTpFinish < Typingpool::Test::Script
   def tp_finish_on_audio_files_with(dir, config_path)
-    skip_if_no_amazon_credentials('tp-collect audio test')
-    skip_if_no_upload_credentials('tp-collect audio test')
+    skip_if_no_amazon_credentials('tp-finish audio test')
+    skip_if_no_upload_credentials('tp-finish audio test')
     tp_make(dir, config_path)
     project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
     urls = project.local.csv('data', 'assignment.csv').map{|assignment| assignment['audio_url'] }
@@ -37,8 +37,8 @@ class TestTpFinish < Typingpool::Test::Script
   end
 
   def test_tp_finish_on_amazon_hits
-    skip_if_no_amazon_credentials('tp-collect Amazon test')
-    skip_if_no_upload_credentials('tp-collect Amazon test')
+    skip_if_no_amazon_credentials('tp-finish Amazon test')
+    skip_if_no_upload_credentials('tp-finish Amazon test')
     in_temp_tp_dir do |dir|
       tp_make(dir)
       tp_assign(dir)
@@ -63,4 +63,31 @@ class TestTpFinish < Typingpool::Test::Script
       end
     end #in_temp_tp_dir
   end
+
+  def test_tp_finish_with_missing_files
+    skip_if_no_amazon_credentials('tp-finish missing files test')
+    skip_if_no_upload_credentials('tp-finish missing files test')
+    in_temp_tp_dir do |dir|
+      project = nil
+      tp_make(dir)
+      begin
+        project = temp_tp_dir_project(dir)
+        assignments = project.local.csv('data', 'assignment.csv').read
+        urls = assignments.map{|assignment| assignment['audio_url'] }
+        assert_empty(urls.reject{|url| working_url? url })
+        bogus_url = urls.first.sub(/\.mp3/, '.foo.mp3')
+        refute_equal(urls.first, bogus_url)
+        refute(working_url? bogus_url)
+        bogus_assignment = assignments.first.dup
+        bogus_assignment['audio_url'] = bogus_url
+        assignments.insert(1, bogus_assignment)
+        project.local.csv('data', 'assignment.csv').write(assignments)
+        assert_equal(1, project.local.csv('data', 'assignment.csv').reject{|assignment| working_url? assignment['audio_url'] }.count)
+      ensure
+        tp_finish(dir)
+      end #begin
+      assert_empty(project.local.csv('data', 'assignment.csv').select{|assignment| working_url? assignment['audio_url'] })
+    end #in_temp_tp_dir...
+  end
+
 end #TestTpFinish

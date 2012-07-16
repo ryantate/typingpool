@@ -92,15 +92,25 @@ if project
   end
   if not(deleting.empty?)
     STDERR.puts "Removing mp3s and assignment HTML from #{project.remote.host}"
+    missing = []
     begin
       project.remote.remove_urls(deleting.flatten)
-    rescue Typingpool::Error::File::Remote => e
-      abort "Can't remove remote audio files: #{e}"
+    rescue Typingpool::Error::File::Remote => exception
+      others = []
+      exception.message.split('; ').each do |message|
+        if message.match(/no such file/i)
+          missing.push(message)
+        else
+          others.push(message)
+        end
+      end #messages.each...
+      if not(others.empty?)
+        abort "Can't remove files: #{others.join('; ')}"
+      end
     end #begin
-    STDERR.puts "  Removed #{deleting.size}  files from #{project.remote.host}"
-    if project.local.audio_is_on_www
-      project.local.delete_audio_is_on_www
-    end
+    STDERR.puts "  Removed #{deleting.count - missing.count} files from #{project.remote.host}" if ((deleting.count - missing.count) > 0)
+    STDERR.puts "  Failed to remove #{missing.count} files from #{project.remote.host}: files missing" if missing.count > 0
+    project.local.delete_audio_is_on_www if project.local.audio_is_on_www
   end #if not(deleting.empty?)
   Typingpool::App.unrecord_assignment_urls_in_project(project)  
 end #if project
