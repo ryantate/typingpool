@@ -226,11 +226,11 @@ module Typingpool
             ]
       end
 
-      def tp_assign(dir)
+      def tp_assign(dir, config_path=config_path(dir))
         call_tp_assign(
                        project_default[:title],
                        assign_default[:template],
-                       '--config', config_path(dir),
+                       '--config', config_path,
                        *[:deadline, :lifetime, :approval].map{|param| ["--#{param}", assign_default[param]] }.flatten,
                        *[:qualify, :keyword].map{|param| assign_default[param].map{|value| ["--#{param}", value] } }.flatten
                        )
