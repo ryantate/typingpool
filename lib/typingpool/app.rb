@@ -14,6 +14,23 @@ module Typingpool
     require 'vcr'
     class << self
 
+      #Given a Project instance, figures out which audio chunks, if
+      #any, need to be uploaded and uploads them.
+      #
+      #Note that this method is sensitive to the possibility of
+      #interrupted batch uploads. It checks for previously interrupted
+      #uploads at the start to see if it needs to re-try them, and
+      #writes out what uploads it is attempting prior to beginning the
+      #upload in case the upload is interrupted by an exception.
+      #
+      #As such, any script calling this method can usually be simply
+      #re-run to re-attempt the upload.
+      #
+      #Reads and writes from Project#local#csv('data',
+      #'assignment.csv') and Project#local#is_audio_on_www.
+      #
+      #  Returns an array of urls corresponding to uploaded files. If
+      #no files were uploaded, the array may be empty
       def upload_audio_for_project(project)
         assignments = project.local.csv('data', 'assignment.csv')
         uploading = nil
