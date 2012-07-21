@@ -113,31 +113,32 @@ else
   options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }
 
   files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(project.local.subdir('etc','tmp'), project.bitrate) do |file| 
-    puts "Converting #{File.basename(file) } to mp3" 
+    STDERR.puts "Converting #{File.basename(file) } to mp3" 
   end
 
-  puts "Merging audio" if files.count > 1
+  STDERR.puts "Merging audio" if files.count > 1
   file = files.merge(project.local.audio('audio', "#{project.name}.all.mp3"))
 
-  puts "Splitting audio into uniform bits"
+  STDERR.puts "Splitting audio into uniform bits"
   files = file.split(project.interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), project.local.subdir('audio','chunks'))
   urls = project.create_remote_names(files).map{|file| project.remote.file_to_url(file) }
   #Write mp3 URLs before uploading, so we can rollback if uploading
   #dies halfway through
   assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :chunk => options[:chunk], :unusual => options[:unusual], :voices => options[:voices])
-  puts "Wrote #{assignment_path}"
+  STDERR.puts "Wrote #{assignment_path}"
 end #if project.local
 
 Typingpool::App.upload_audio_for_project(project) do |file, as|
-  puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
+  STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
 end
 
 if STDOUT.tty?
-  puts "Opening project folder #{project.local.path}"
+  STDERR.puts "Opening project folder #{project.local.path}"
   project.local.finder_open 
 end
 
-puts "Deleting temp files"
+STDERR.puts "Deleting temp files"
 FileUtils.rm_r(project.local.subdir('etc', 'tmp'))
 
-puts "Done"
+STDERR.puts "Done"
+puts project.local.path
