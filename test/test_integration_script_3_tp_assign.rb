@@ -73,13 +73,8 @@ class TestTpAssign < Typingpool::Test::Script
      skip_if_no_amazon_credentials('tp-assign unuploaded audio integration test')
      skip_if_no_s3_credentials('tp-assign unuploaded audio integration test')
      in_temp_tp_dir do |dir|
-       config = config_from_dir(dir)
-       config.to_hash.delete('sftp')
-       good_config_path = write_config(config, dir, '.config_s3')
-       bad_password = 'f'
-       refute_equal(config.to_hash['amazon']['secret'], bad_password)
-       config.to_hash['amazon']['secret'] = bad_password
-       bad_config_path = write_config(config, dir, '.config_s3_bad')
+       good_config_path = setup_s3_config(dir)
+       bad_config_path = setup_s3_config_with_bad_password(dir)
        assert_raises(Typingpool::Error::Shell) do
          tp_make(dir, bad_config_path, 'mp3')
        end
@@ -96,5 +91,32 @@ class TestTpAssign < Typingpool::Test::Script
        end #begin
      end # in_temp_tp_dir do...
    end
+
+def test_fixing_failed_assignment_html_upload
+  skip_if_no_amazon_credentials('tp-assign failed assignment upload integration test')
+  skip_if_no_s3_credentials('tp-assign failed assignment upload integration test')
+  in_temp_tp_dir do |dir|
+    good_config_path = setup_s3_config(dir)
+    bad_config_path = setup_s3_config_with_bad_password(dir)
+    tp_make(dir, good_config_path, 'mp3')
+    begin
+      assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(good_config_path)))
+      assert(project.local)
+      get_assignment_urls = lambda{ project.local.csv('data', 'assignment.csv').map{|assignment| assignment['assignment_url'] }.select{|url| url } }
+      assert_empty(get_assignment_urls.call)
+      exception = assert_raises(Typingpool::Error::Shell) do
+        tp_assign(dir, bad_config_path)
+      end #assert_raises...
+      assert_match(exception.message, /s3 operation fail/i)
+      refute_empty(get_assignment_urls.call)
+      check_assignment_urls = lambda{ get_assignment_urls.call.map{|url| Typingpool::Utility.working_url? url } }
+      check_assignment_urls.call.each{|checked_out| refute(checked_out) }
+      tp_assign(dir, good_config_path)
+      check_assignment_urls.call.each{|checked_out| assert(checked_out) }
+    ensure
+      tp_finish(dir, good_config_path)
+    end #begin
+  end #in_temp_tp_dir do...
+end
 
 end #TestTpAssign

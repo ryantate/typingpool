@@ -145,9 +145,22 @@ module Typingpool
         FileUtils.cp_r(::File.join(template_dir, 'projects'), dir)
       end
 
+      def setup_s3_config(dir, config=config_from_dir(dir), filename='.config_s3')
+        return unless s3_credentials?(config)
+        config.to_hash.delete('sftp')
+        write_config(config, dir, filename)
+      end
+
+      def setup_s3_config_with_bad_password(dir, config=config_from_dir(dir))
+        bad_password = 'f'
+        refute_equal(config.to_hash['amazon']['secret'], bad_password)
+        config.to_hash['amazon']['secret'] = bad_password
+        setup_s3_config(dir, config, '.config_s3_bad')
+      end
+
       def make_temp_tp_dir_config(dir, config=self.config)
-        config.transcripts = ::File.join(dir, 'projects')
-        config.cache = ::File.join(dir, '.cache')
+        config.transcripts = File.join(dir, 'projects')
+        config.cache = File.join(dir, '.cache')
         config['assign']['reward'] = '0.02'
         config.assign.to_hash.delete('qualify')
         write_config(config, dir, project_default[:config_filename])   
@@ -363,6 +376,8 @@ module Typingpool
   def vcr_dir
     File.join(fixtures_dir, 'vcr')
   end
+
+
 
 
     end #Script

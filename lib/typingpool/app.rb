@@ -63,6 +63,48 @@ module Typingpool
         uploading.map{|assignment| assignment['audio_url'] }
       end
 
+      def updelete_html_for_project_assignments(project, assignments)
+        deleting = assignments.select{|assignment| assignment['assignment_url'] }
+        deleting.select! do |assignment| 
+          (assignment['assignment_url_confirmed'].to_i == 1) ||
+            (Typingpool::Utility.working_url? assignment['assignment_url'])
+        end
+        if not(deleting.empty?)
+          project.remote.remove_urls(deleting)
+        end
+      end
+
+      def upload_html_for_project_assignments(project, assignments, template)
+        ios = assignments.map{|assignment| StringIO.new(template.render(assignment)) }
+        remote_basenames = assignments.map do |assignment| 
+          File.basename(project.class.local_basename_from_url(assignment['audio_url']), '.*') + '.html' 
+        end 
+        remote_names = project.create_remote_names(remote_basenames)
+        urls = remote_names.map{|name| project.remote.file_to_url(name) }
+        assignments.each_with_index do |assignment, i|
+          assignment['assignment_url'] = urls[i]
+        end
+        #record upload URLs ahead of time so we can roll back later if the
+        #upload fails halfway through
+        uploading_by_url = Hash[ *assignments.map{|assignment| [assignment['audio_url'], assignment] }.flatten ]
+        i = 0
+        project.local.csv('data', 'assignment.csv').each! do |assignment|
+          if uploading_by_url[assignment['audio_url']]
+            assignment['assignment_url'] = urls[i]
+            assignment['assignment_upload_confirmed'] = 0
+            i += 1
+          end
+        end
+        project.remote.put(ios, remote_names)
+        project.local.csv('data', 'assignment.csv').each! do |assignment|
+          if uploading_by_url[assignment['audio_url']]
+            assignment['assignment_upload_confirmed'] = 1
+          end
+        end
+        assignments.map{|assignment| assignment['assignment_url'] }
+      end
+
+
       #Given a collection of Amazon::HITs, looks for Project folders
       #on the local system waiting to "receive" those HITs. Such
       #folders are kept in Config#transcripts. Returns Project
@@ -195,13 +237,13 @@ module Typingpool
       #(Project#local#csv('data', 'assignment.csv')), writes the
       #'assignment_url' property of each modified hash back to the
       #corresponding row in the original CSV.
-      def record_assignment_urls_in_project(project, assignments)
-        assignments_by_audio_url = Hash[ *assignments.map{|assignment| [assignment['audio_url'], assignment] }.flatten ]
-        project.local.csv('data', 'assignment.csv').each! do |csv_row|
-          assignment = assignments_by_audio_url[csv_row['audio_url']] or next
-          csv_row['assignment_url'] = assignment['assignment_url']
-        end
-      end
+#      def record_assignment_urls_in_project(project, assignments)
+#        assignments_by_audio_url = Hash[ *assignments.map{|assignment| [assignment['aud#io_url'], assignment] }.flatten ]
+#        project.local.csv('data', 'assignment.csv').each! do |csv_row|
+#          assignment = assignments_by_audio_url[csv_row['audio_url']] or next
+#          csv_row['assignment_url'] = assignment['assignment_url']
+#        end
+#      end
 
       #Erases all mention of the given Amazon::HITs from the Project's
       #assignment CSV file (Project#local#csv('data',

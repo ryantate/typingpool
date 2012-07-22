@@ -80,10 +80,8 @@ class TestTpMake < Typingpool::Test::Script
 
   def test_tp_make_s3
     in_temp_tp_dir do |dir|
-      config = config_from_dir(dir)
-      config.to_hash.delete('sftp')
-      config_path = write_config(config, dir, '.config_s3')
       skip_if_no_s3_credentials('tp-make S3 integration test', config)
+      config_path = setup_s3_config(dir)
       tp_make_with(dir, config_path)
       tp_finish(dir, config_path)
     end #in_temp_tp_dir do...
@@ -92,13 +90,9 @@ class TestTpMake < Typingpool::Test::Script
   def test_fixing_failed_tp_make
     in_temp_tp_dir do |dir|
       config = config_from_dir(dir)
-      config.to_hash.delete('sftp')
       skip_if_no_s3_credentials('tp-make failed upload integration test', config)
-      good_config_path = write_config(config, dir, '.config_s3')
-      bad_password = 'f'
-      refute_equal(config.to_hash['amazon']['secret'], bad_password)
-      config.to_hash['amazon']['secret'] = bad_password
-      bad_config_path = write_config(config, dir, '.config_s3_bad')
+      good_config_path = setup_s3_config(dir)
+      bad_config_path = setup_s3_config_with_bad_password(dir)
       assert_raises(Typingpool::Error::Shell) do
         tp_make(dir, bad_config_path, 'mp3')
       end

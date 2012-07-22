@@ -340,7 +340,7 @@ module Typingpool
             begin
               results.push(yield(stream, i))
             rescue AWS::S3::S3Exception => e
-              if e.match(/AWS::S3::SignatureDoesNotMatch/)
+              if e.message.match(/AWS::S3::SignatureDoesNotMatch/)
                 raise Error::File::Remote::S3::Credentials, "S3 operation failed with a signature error. This likely means your AWS key or secret is wrong. Error: #{e}"
               else
                 raise Error::File::Remote::S3, "Your S3 operation failed with an Amazon error: #{e}"
