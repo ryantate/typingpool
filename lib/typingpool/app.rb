@@ -30,7 +30,7 @@ module Typingpool
       #'assignment.csv') and Project#local#is_audio_on_www.
       #
       #  Returns an array of urls corresponding to uploaded files. If
-      #no files were uploaded, the array may be empty
+      #no files were uploaded, the array will be empty
       def upload_audio_for_project(project)
         assignments = project.local.csv('data', 'assignment.csv')
         uploading = nil
@@ -69,9 +69,7 @@ module Typingpool
           (assignment['assignment_url_confirmed'].to_i == 1) ||
             (Typingpool::Utility.working_url? assignment['assignment_url'])
         end
-        if not(deleting.empty?)
-          project.remote.remove_urls(deleting)
-        end
+        project.remote.remove_urls(deleting) unless deleting.empty?
       end
 
       def upload_html_for_project_assignments(project, assignments, template)
