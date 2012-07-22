@@ -63,54 +63,6 @@ module Typingpool
         uploading.map{|assignment| assignment['audio_url'] }
       end
 
-      #Extracts relevant information from a collection of
-      #just-assigned Amazon::HITs and writes it into the Project's
-      #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for
-      #future use.
-      # ==== Params
-      # [project]         A Project instance.
-      # [hits]            An enumerable collection of Amazon::HIT instances that
-      #                   were just assigned (that is, that have one
-      #                   assignment, which has a blank status).
-      def record_assigned_hits_in_project(project, hits)
-        record_hits_in_project(project, hits) do |hit, csv_row|
-          csv_row['hit_id'] = hit.id
-          csv_row['hit_expires_at'] = hit.full.expires_at.to_s
-          csv_row['hit_assignments_duration'] = hit.full.assignments_duration.to_s
-        end #record_hits_in_project do....
-      end        
-
-      #Extracts relevant information from a collection of
-      #just-approved Amazon::HITs and writes it into the Project's
-      #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for
-      #future use.
-      # ==== Params
-      # [project] A Project instance.
-      # [hits]    An enumerable collection of Amazon::HIT instances whose
-      #           one assignment has the status 'Approved'.
-      def record_approved_hits_in_project(project, hits)
-        record_hits_in_project(project, hits) do |hit, csv_row|
-          next if csv_row['transcription']
-          csv_row['transcription'] = hit.transcript.body
-          csv_row['worker'] = hit.transcript.worker
-          csv_row['hit_id'] = hit.id
-        end #record_hits_in_project do...
-      end
-
-      #Given a Project instance and an array of modified assignment
-      #hashes previously retrieved from the Project's assignment CSV
-      #(Project#local#csv('data', 'assignment.csv')), writes the
-      #'assignment_url' property of each modified hash back to the
-      #corresponding row in the original CSV.
-      def record_assignment_urls_in_project(project, assignments)
-        assignments_by_audio_url = Hash[ *assignments.map{|assignment| [assignment['audio_url'], assignment] }.flatten ]
-        project.local.csv('data', 'assignment.csv').each! do |csv_row|
-          assignment = assignments_by_audio_url[csv_row['audio_url']] or next
-          csv_row['assignment_url'] = assignment['assignment_url']
-        end
-      end
-
-
       #Given a collection of Amazon::HITs, looks for Project folders
       #on the local system waiting to "receive" those HITs. Such
       #folders are kept in Config#transcripts. Returns Project
@@ -193,6 +145,64 @@ module Typingpool
         out_file
       end
 
+      def ensure_sandbox_assignment_csv(project)
+        return if File.exists? project.local.csv('data', 'sandbox-assignment.csv')
+        raise Error, "No assignment CSV to copy" if not(File.exists? project.local.csv('data', 'assignment.csv'))
+        project.local.csv('data', 'sandbox-assignment.csv').write(
+                                                                  project.local.csv('data', 'assignment.csv').map do |assignment|
+                                                                    unrecord_hit_in_csv_row(assignment)
+                                                                    assignment.delete('assignment_url')
+                                                                  end #project.local.csv('data', 'assignment.csv') map...
+                                                                  )
+      end
+
+      #Extracts relevant information from a collection of
+      #just-assigned Amazon::HITs and writes it into the Project's
+      #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for
+      #future use.
+      # ==== Params
+      # [project]         A Project instance.
+      # [hits]            An enumerable collection of Amazon::HIT instances that
+      #                   were just assigned (that is, that have one
+      #                   assignment, which has a blank status).
+      def record_assigned_hits_in_project(project, hits)
+        record_hits_in_project(project, hits) do |hit, csv_row|
+          csv_row['hit_id'] = hit.id
+          csv_row['hit_expires_at'] = hit.full.expires_at.to_s
+          csv_row['hit_assignments_duration'] = hit.full.assignments_duration.to_s
+        end #record_hits_in_project do....
+      end        
+
+      #Extracts relevant information from a collection of
+      #just-approved Amazon::HITs and writes it into the Project's
+      #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for
+      #future use.
+      # ==== Params
+      # [project] A Project instance.
+      # [hits]    An enumerable collection of Amazon::HIT instances whose
+      #           one assignment has the status 'Approved'.
+      def record_approved_hits_in_project(project, hits)
+        record_hits_in_project(project, hits) do |hit, csv_row|
+          next if csv_row['transcription']
+          csv_row['transcription'] = hit.transcript.body
+          csv_row['worker'] = hit.transcript.worker
+          csv_row['hit_id'] = hit.id
+        end #record_hits_in_project do...
+      end
+
+      #Given a Project instance and an array of modified assignment
+      #hashes previously retrieved from the Project's assignment CSV
+      #(Project#local#csv('data', 'assignment.csv')), writes the
+      #'assignment_url' property of each modified hash back to the
+      #corresponding row in the original CSV.
+      def record_assignment_urls_in_project(project, assignments)
+        assignments_by_audio_url = Hash[ *assignments.map{|assignment| [assignment['audio_url'], assignment] }.flatten ]
+        project.local.csv('data', 'assignment.csv').each! do |csv_row|
+          assignment = assignments_by_audio_url[csv_row['audio_url']] or next
+          csv_row['assignment_url'] = assignment['assignment_url']
+        end
+      end
+
       #Erases all mention of the given Amazon::HITs from the Project's
       #assignment CSV file (Project#local#csv('data',
       #'assignment.csv')). Typically used when rejecting a HIT
@@ -203,8 +213,7 @@ module Typingpool
       #           deleted.
       def unrecord_hits_in_project(project, hits)
         record_hits_in_project(project, hits) do |hit, csv_row|
-          unrecord_hit_details_in_csv_row(hit, csv_row)
-          csv_row.delete('hit_id')
+          unrecord_hit_in_csv_row(csv_row)
         end
       end
 
@@ -227,7 +236,7 @@ module Typingpool
       #           assignment CSV will be deleted.
       def unrecord_hits_details_in_project(project, hits=nil)
         record_hits_in_project(project, hits) do |hit, csv_row|
-          unrecord_hit_details_in_csv_row(hit, csv_row)
+          unrecord_hit_details_in_csv_row(csv_row)
         end
       end
 
@@ -279,8 +288,13 @@ module Typingpool
         end
       end
 
-      def unrecord_hit_details_in_csv_row(hit, csv_row)
+      def unrecord_hit_details_in_csv_row(csv_row)
         %w(hit_expires_at hit_assignments_duration).each{|key| csv_row.delete(key) }
+      end
+
+      def unrecord_hit_in_csv_row(csv_row)
+        unrecord_hit_details_in_csv_row(csv_row)
+        csv_row.delete('hit_id')
       end
 
       def transcript_filename
