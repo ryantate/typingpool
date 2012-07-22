@@ -105,8 +105,8 @@ class TestTpMake < Typingpool::Test::Script
       refute_empty(assignment_csv = File.read(File.join(project_dir, 'data', 'assignment.csv')))
       refute_empty(assignment_rows = CSV.parse(assignment_csv))
       assignment_headers = assignment_rows.shift
-      assert(assignment_confirm_index = assignment_headers.find_index('audio_upload_confirmed'))
-      assert_empty(assignment_rows.reject{|row| row[assignment_confirm_index].to_i == 0 })
+      assert(assignment_uploaded_index = assignment_headers.find_index('audio_uploaded'))
+      assert_equal(assignment_rows.count, assignment_rows.select{|row| row[assignment_uploaded_index] == 'maybe' }.count)
       assert(assignment_url_index = assignment_headers.find_index('audio_url'))
       refute_empty(assignment_urls = assignment_rows.map{|row| row[assignment_url_index] })
       assert_empty(assignment_urls.select{|url| working_url? url })
@@ -115,7 +115,7 @@ class TestTpMake < Typingpool::Test::Script
         refute_empty(assignment_csv = File.read(File.join(project_dir, 'data', 'assignment.csv')))
         refute_empty(assignment_rows = CSV.parse(assignment_csv))
         assignment_rows.shift
-        assert_empty(assignment_rows.reject{|row| row[assignment_confirm_index].to_i == 1 })
+        assert_equal(assignment_rows.count, assignment_rows.select{|row| row[assignment_uploaded_index] == 'yes' }.count)
         refute_empty(assignment_urls2 = assignment_rows.map{|row| row[assignment_url_index] })
         assignment_urls.each_with_index do |original_url, i|
           assert_equal(original_url, assignment_urls2[i])

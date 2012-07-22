@@ -42,7 +42,7 @@ class TestProjectLocal < Typingpool::Test
         local.create_id
       end
       assert_nil(local.subtitle)
-      [:subtitle, :audio_is_on_www].each do |accessor|
+      [:subtitle].each do |accessor|
         text = 'hello, world'
         assert(local.send("#{accessor.to_s}=".to_sym, text))
         assert_equal(text, local.send(accessor))

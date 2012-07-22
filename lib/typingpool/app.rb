@@ -33,75 +33,128 @@ module Typingpool
       #no files were uploaded, the array will be empty
       def upload_audio_for_project(project)
         assignments = project.local.csv('data', 'assignment.csv')
-        uploading = nil
-        if project.local.audio_is_on_www
-          #we started an upload, but did we finish it?
-          #re-upload any file whose upload failed
-          uploading = assignments.select{|assignment| assignment['audio_upload_confirmed'] && assignment['audio_upload_confirmed'].to_i == 0 }
-          uploading.reject!{|assignment| Typingpool::Utility.working_url? assignment['audio_url'] }
-        else
-          uploading = assignments.read
-        end #project.local.audio_is_on_www
+        check_interrupted_uploads(assignments, 'audio')
+        uploading = assignments.reject{|assignment| assignment['audio_uploaded'] == 'yes' }
         return uploading if uploading.empty?
         files = uploading.map{|assignment| Typingpool::Project.local_basename_from_url(assignment['audio_url']) }
         files.map!{|basename| project.local.audio('audio', 'chunks', basename) }
         files = Typingpool::Filer::Files.new(files)
         remote_files = uploading.map{|assignment| project.remote.url_basename(assignment['audio_url']) }
-        uploading_by_url = Hash[ *uploading.map{|assignment| [assignment['audio_url'], assignment] }.flatten ]
         #Record that we're uploading so we'll know later if something
         #goes wrong
-        assignments.each! do |assignment|
-          if uploading_by_url[assignment['audio_url']]
-            assignment['audio_upload_confirmed'] = 0
-          end
-        end #assignments.each!...
-        project.local.audio_is_on_www = 'yes'
+        record_assignment_upload_status(assignments, uploading, ['audio'], 'maybe')
         project.remote.put(files.to_streams, remote_files) do |file, as|
           yield(file, as) if block_given?
         end
-        assignments.each!{|assignment| assignment['audio_upload_confirmed'] = 1 }
+        record_assignment_upload_status(assignments, uploading, ['audio'], 'yes')
         uploading.map{|assignment| assignment['audio_url'] }
       end
 
-      def updelete_html_for_project_assignments(project, assignments)
-        deleting = assignments.select{|assignment| assignment['assignment_url'] }
-        deleting.select! do |assignment| 
-          (assignment['assignment_url_confirmed'].to_i == 1) ||
-            (Typingpool::Utility.working_url? assignment['assignment_url'])
-        end
-        project.remote.remove_urls(deleting) unless deleting.empty?
+      #Removes one or more types of remote files -- audio, assignment
+      #html, etc. -- assoiated with a subset of a Project instance's
+      #chunks/assignments.
+      #
+      #Writes to Project#local.csv('data', 'assignment.csv') to
+      #reflect these changes.
+      #
+      #As with upload_audio_for_project, this method is sensitive to
+      #the possibility of interrupted batch operations over the
+      #network. This means 
+      #  1. It handles deleting files that *might* have been uploaded,
+      #  trapping any exceptions that arise if such files do not exist
+      #  on the remote server.
+      #  2. It writes out what deletions it is attempting before
+      #  attempting them, so that if the deletion operation is
+      #  interrupted by an exception, the files will be clearly marked
+      #  in an unknown state.
+      #
+      # ==== Params
+      # [project]                A Project instance.
+      # [assignments_updeleting] An array of hashes corresponding to
+      #                          rows in Project#local.csv('data',
+      #                          'assignment.csv'). Only assets whose
+      #                          URLs are contained in these hashes
+      #                          will be deleted.
+      # [types]                  Optional. An array of asset 'types'. The default,
+      #                          ['audio', 'assignment'], means assets
+      #                          at assignment['audio_url'] and
+      #                          assignment['assignment_url'] will be
+      #                          deleted for each assignment hash in
+      #                          assignments_updeleting.
+      # ==== Returns
+      # A count of how many items were actually removed from the
+      # server.
+      def updelete_assignment_assets(project, assignments_updeleting, types=['audio', 'assignment'])
+        deleting = types.map do |type|
+          assignments_updeleting.select do |assignment| 
+            assignment["#{type}_uploaded"] == 'yes' || assignment["#{type}_uploaded"] == 'maybe' 
+          end.map{|assignment| assignment["#{type}_url"] }
+        end.flatten
+        return 0 if deleting.empty?
+        missing = []
+        assignments = project.local.csv('data', 'assignment.csv')
+        record_assignment_upload_status(assignments, deleting, types, 'maybe')
+        begin
+          project.remote.remove_urls(deleting){|file| yield(file) if block_given? }
+        rescue Typingpool::Error::File::Remote => exception
+          others = []
+          exception.message.split('; ').each do |message|
+            if message.match(/no such file/i)
+              missing.push(message)
+            else
+              others.push(message)
+            end
+          end #messages.each...
+          raise Error, "Can't remove files: #{others.join('; ')}" if others.count > 0
+        end #begin
+        record_assignment_upload_status(assignments, deleting, types, 'no')
+        deleting.count - missing.count
       end
 
-      def upload_html_for_project_assignments(project, assignments, template)
-        ios = assignments.map{|assignment| StringIO.new(template.render(assignment)) }
-        remote_basenames = assignments.map do |assignment| 
+      #For a subset of a Project instance's chunks/assignments,
+      #uploads assignment html that is used as the external question
+      #for a Mechanical Turk HIT.
+      #
+      #Takes the same precautions around interrupted network uploads
+      #as upload_audio_for_project.
+      #
+      #The URL of each uploaded assignment is written into
+      #Project#local.csv('data', 'assignment.csv'), along with
+      #metadata confirming that the upload completed.
+      #
+      # ==== Params
+      # [project]               A Project instance.
+      # [assignments_uploading] An array of hashes corresponding to
+      #                         rows in Project#local.csv('data',
+      #                         'assignment.csv'). Only assignments
+      #                         whose URLs are contained in these
+      #                         hashes will be uploaded. This array is
+      #                         modified: the field assignment_url is
+      #                         added to each hash.
+      # [template]              A Template::Assignment instance. Used to render
+      #                         assignments_uploading into HTML prior
+      #                         to uploading.
+      # ==== Returns
+      # An array of URLs of the uploaded assignments
+      def upload_html_for_project_assignments(project, assignments_uploading, template)
+        ios = assignments_uploading.map{|assignment| StringIO.new(template.render(assignment)) }
+        remote_basenames = assignments_uploading.map do |assignment| 
           File.basename(project.class.local_basename_from_url(assignment['audio_url']), '.*') + '.html' 
         end 
         remote_names = project.create_remote_names(remote_basenames)
         urls = remote_names.map{|name| project.remote.file_to_url(name) }
-        assignments.each_with_index do |assignment, i|
+        assignments_uploading.each_with_index do |assignment, i|
           assignment['assignment_url'] = urls[i]
         end
         #record upload URLs ahead of time so we can roll back later if the
         #upload fails halfway through
-        uploading_by_url = Hash[ *assignments.map{|assignment| [assignment['audio_url'], assignment] }.flatten ]
-        i = 0
-        project.local.csv('data', 'assignment.csv').each! do |assignment|
-          if uploading_by_url[assignment['audio_url']]
-            assignment['assignment_url'] = urls[i]
-            assignment['assignment_upload_confirmed'] = 0
-            i += 1
-          end
-        end
+        assignments = project.local.csv('data', 'assignment.csv')
+        record_assignment_upload_status(assignments, assignments_uploading, ['assignment'], 'maybe')
+        record_assignment_urls(assignments, assignments_uploading, 'assignment', urls)
         project.remote.put(ios, remote_names)
-        project.local.csv('data', 'assignment.csv').each! do |assignment|
-          if uploading_by_url[assignment['audio_url']]
-            assignment['assignment_upload_confirmed'] = 1
-          end
-        end
-        assignments.map{|assignment| assignment['assignment_url'] }
+        record_assignment_upload_status(assignments, assignments_uploading, ['assignment'], 'yes')
+        assignments_uploading.map{|assignment| assignment['assignment_url'] }
       end
-
 
       #Given a collection of Amazon::HITs, looks for Project folders
       #on the local system waiting to "receive" those HITs. Such
@@ -192,6 +245,7 @@ module Typingpool
                                                                   project.local.csv('data', 'assignment.csv').map do |assignment|
                                                                     unrecord_hit_in_csv_row(assignment)
                                                                     assignment.delete('assignment_url')
+                                                                    assignment
                                                                   end #project.local.csv('data', 'assignment.csv') map...
                                                                   )
       end
@@ -328,6 +382,31 @@ module Typingpool
         end
       end
 
+      def record_assignment_upload_status(assignments, uploading, types, status)
+        record_in_selected_assignments(assignments, uploading) do |assignment|
+          types.each do |type|
+            assignment["#{type}_uploaded"] = status
+          end          
+        end #record_in_selected_assignments...
+      end
+
+      def record_assignment_urls(assignments, uploading, type, urls)
+        i = 0
+        record_in_selected_assignments(assignments, uploading) do |assignment|
+          assignment["#{type}_url"] = urls[i]
+          i += 1
+        end #record_in_selected_assignments...
+      end
+
+      def record_in_selected_assignments(assignments, selected)
+        selected_by_url = Hash[ *selected.map{|assignment| [assignment['audio_url'], assignment] }.flatten ]
+        assignments.each! do |assignment|
+          if selected_by_url[assignment['audio_url']]
+            yield(assignment)
+          end #if uploading...
+        end #assignments.each!...
+      end
+
       def unrecord_hit_details_in_csv_row(csv_row)
         %w(hit_expires_at hit_assignments_duration).each{|key| csv_row.delete(key) }
       end
@@ -346,6 +425,15 @@ module Typingpool
 
       def hits_by_url(hits)
         Hash[ *hits.map{|hit| [hit.url, hit] }.flatten ]
+      end
+
+
+      def check_interrupted_uploads(assignments, property)
+        assignments.each! do |assignment|
+          if assignment["#{property}_uploaded"].to_s == 'maybe'
+            assignment["#{property}_uploaded"] = (Typingpool::Utility.working_url? assignment["#{property}_url"]) ? 'yes' : 'no' 
+          end
+        end #assignments.each!...
       end
 
     end #class << self

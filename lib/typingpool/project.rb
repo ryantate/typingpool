@@ -568,12 +568,6 @@ module Typingpool
       #'delete_subtitle' will delete 'data/subtitle.txt'.
       data_file_accessor :subtitle
 
-      #Calling 'audio_is_on_www' will read 'data/audio_is_on_www.txt';
-      #calling 'audio_is_on_www=' will write
-      #'data/audio_is_on_www.txt'; calling 'delete_audio_is_on_www'
-      #will delete 'data/audio_is_on_www.txt'.
-      data_file_accessor :audio_is_on_www
-
       #Returns the ID of the project, as stored in 'data/id.txt'.
       def id
         file('data','id.txt').read

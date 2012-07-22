@@ -218,7 +218,7 @@ end
 #might cause the new HTML to be different
 needed_assignments_sorted = needed_assignments.values
 STDERR.puts "Deleting old assignment HTML from #{project.remote.host}"
-Typingpool::App.updelete_html_for_project_assignments(project, needed_assignments_sorted)
+Typingpool::App.updelete_assignment_assets(project, needed_assignments_sorted, ['assignment'])
 
 STDERR.puts "Uploading assignment HTML to #{project.remote.host}"
 Typingpool::App.upload_html_for_project_assignments(project, needed_assignments_sorted, template)
