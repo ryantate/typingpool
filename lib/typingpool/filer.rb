@@ -243,6 +243,7 @@ module Typingpool
       #can merge the Filer::Audio instances into a single audio file,
       #provided they are in mp3 format.
       class Audio < Files
+
         #Constructor. Takes an array of Filer or Filer subclass instances.
         def initialize(files)
           @files = files.map{|file| self.file(file.path) }

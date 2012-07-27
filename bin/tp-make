@@ -4,6 +4,8 @@ require 'optparse'
 require 'typingpool'
 require 'fileutils'
 require 'set'
+require 'tempfile'
+require 'tmpdir'
 
 options = {
   :config => Typingpool::Config.file,
@@ -112,12 +114,12 @@ else
   project.local.subtitle = options[:subtitle] if options[:subtitle]
   options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }
 
-  files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(project.local.subdir('etc','tmp'), project.bitrate) do |file| 
+  files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(Typingpool::Filer::Dir.new(Dir.mktmpdir), project.bitrate) do |file| 
     STDERR.puts "Converting #{File.basename(file) } to mp3" 
   end
 
   STDERR.puts "Merging audio" if files.count > 1
-  file = files.merge(project.local.audio('audio', "#{project.name}.all.mp3"))
+  file = files.merge(Typingpool::Filer::Audio.new(Tempfile.new(["#{project.name}.all", ".mp3"]).path))
 
   STDERR.puts "Splitting audio into uniform bits"
   files = file.split(project.interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), project.local.subdir('audio','chunks'))
@@ -136,9 +138,6 @@ if STDOUT.tty?
   STDERR.puts "Opening project folder #{project.local.path}"
   project.local.finder_open 
 end
-
-STDERR.puts "Deleting temp files"
-FileUtils.rm_r(project.local.subdir('etc', 'tmp'))
 
 STDERR.puts "Done"
 puts project.local.path

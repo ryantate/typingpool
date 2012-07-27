@@ -23,11 +23,6 @@ module Typingpool
     #(a.k.a data/subtitle.txt in the project dir)
     attr_accessor :subtitle
 
-    #Get/set a link to the full audio of the transcript. This is
-    #typically a relative link from transcript.html to
-    #audio/ProjectTitle.all.mp3 in the Project dir.
-    attr_accessor :url
-
     #Constructor. Takes an optional title (see above for explanation
     #of title) and an optional array of Transcript::Chunk instances.
     def initialize(title=nil, chunks=[])

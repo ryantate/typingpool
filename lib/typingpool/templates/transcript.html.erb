@@ -10,7 +10,6 @@
 <body>
 <h1><%= transcript.title %> transcript</h1>
 <h2><% if transcript.subtitle %><%= transcript.subtitle %><% end %></h2>
-<% if transcript.url %><h3><a href="<%= transcript.url %>">Full audio</a></h3><% end %>
 
 <% transcript.sort.each do |chunk| %>
 
