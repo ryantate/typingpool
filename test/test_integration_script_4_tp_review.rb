@@ -13,15 +13,16 @@ class TestTpReview < Typingpool::Test::Script
       skip_if_no_amazon_credentials('tp-review integration test')
       tp_make(dir)
       copy_fixtures_to_temp_tp_dir(dir, 'tp_review_')
+      assert(File.exists? File.join(temp_tp_dir_project_dir(dir), 'data','sandbox-assignment.csv'))
       project = temp_tp_dir_project(dir)
-        assert_equal(7, project.local.csv('data','assignment.csv').reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
+        assert_equal(7, project.local.csv('data','sandbox-assignment.csv').reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
       begin
         output = nil
         assert_nothing_raised do
           output = tp_review_with_fixture(dir, File.join(fixtures_dir, 'vcr', 'tp-review-1'), %w(a r a r s q))
         end
         assert_equal(0, output[:status].to_i, "Bad exit code: #{output[:status]} err: #{output[:err]}")
-        assert_equal(5, project.local.csv('data','assignment.csv').reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
+        assert_equal(5, project.local.csv('data','sandbox-assignment.csv').reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
         reviews = split_reviews(output[:out])
         assert_match(reviews[1], /Interview\.00\.00/)
         #we can't specify leading \b boundaries because the ansi
@@ -41,13 +42,13 @@ class TestTpReview < Typingpool::Test::Script
         assert_match(reviews[6], /Quitting\b/i)
         transcript = assert_has_partial_transcript(dir)
         assert_html_has_audio_count(2, transcript)
-        assert_assignment_csv_has_transcription_count(2, project)
+        assert_assignment_csv_has_transcription_count(2, project, 'sandbox-assignment.csv')
 
         assert_nothing_raised do
           output = tp_review_with_fixture(dir, File.join(fixtures_dir, 'vcr', 'tp-review-2'), %w(a r))
         end
         assert_equal(0, output[:status].to_i, "Bad exit code: #{output[:status]} err: #{output[:err]}")
-        assert_equal(4, project.local.csv('data','assignment.csv').reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
+        assert_equal(4, project.local.csv('data','sandbox-assignment.csv').reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
         reviews = split_reviews(output[:out])
         assert_match(reviews[1], /Interview\.01\.20/)
         assert_match(reviews[1], /Approved\b/i)
@@ -56,7 +57,7 @@ class TestTpReview < Typingpool::Test::Script
         assert_match(reviews[2], /Rejected\b/i)
         transcript = assert_has_partial_transcript(dir)
         assert_html_has_audio_count(3, transcript)
-        assert_assignment_csv_has_transcription_count(3, project)
+        assert_assignment_csv_has_transcription_count(3, project, 'sandbox-assignment.csv')
       ensure
         rm_fixtures_from_temp_tp_dir(dir, 'tp_review_')
         tp_finish(dir)

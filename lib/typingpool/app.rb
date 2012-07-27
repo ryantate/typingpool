@@ -26,15 +26,27 @@ module Typingpool
       #As such, any script calling this method can usually be simply
       #re-run to re-attempt the upload.
       #
-      #Reads and writes from Project#local#csv('data',
-      #'assignment.csv') and Project#local#is_audio_on_www.
+      #Reads and writes from a Filer::CSV instance passed as the
+      #second param, intended to link to a file like
+      #Project#local#csv('data', 'assignment.csv')
       #
       #  Returns an array of urls corresponding to uploaded files. If
       #no files were uploaded, the array will be empty
-      def upload_audio_for_project(project)
-        assignments = project.local.csv('data', 'assignment.csv')
-        check_interrupted_uploads(assignments, 'audio')
-        uploading = assignments.reject{|assignment| assignment['audio_uploaded'] == 'yes' }
+      # ==== Params
+      # [project]          A Project instance.
+      # [assignments_file] Optional. A Filer::CSV instance
+      #                    corresponding to a file like the default,
+      #                    Project#local#csv('data',
+      #                    'assignment.csv'). Should already contain
+      #                    the URLs we'll be uploading to. The status
+      #                    of the uploads is written here o we can
+      #                    later recover from an interrupted upload if
+      #                    need be.
+      # ==== Returns
+      # An array of URLs of the uploaded audio files.
+      def upload_audio_for_project(project, assignments_file=project.local.csv('data', 'assignment.csv'))
+        check_interrupted_uploads(assignments_file, 'audio')
+        uploading = assignments_file.reject{|assignment| assignment['audio_uploaded'] == 'yes' }
         return uploading if uploading.empty?
         files = uploading.map{|assignment| Typingpool::Project.local_basename_from_url(assignment['audio_url']) }
         files.map!{|basename| project.local.audio('audio', 'chunks', basename) }
@@ -42,11 +54,11 @@ module Typingpool
         remote_files = uploading.map{|assignment| project.remote.url_basename(assignment['audio_url']) }
         #Record that we're uploading so we'll know later if something
         #goes wrong
-        record_assignment_upload_status(assignments, uploading, ['audio'], 'maybe')
+        record_assignment_upload_status(assignments_file, uploading, ['audio'], 'maybe')
         project.remote.put(files.to_streams, remote_files) do |file, as|
           yield(file, as) if block_given?
         end
-        record_assignment_upload_status(assignments, uploading, ['audio'], 'yes')
+        record_assignment_upload_status(assignments_file, uploading, ['audio'], 'yes')
         uploading.map{|assignment| assignment['audio_url'] }
       end
 
@@ -70,8 +82,13 @@ module Typingpool
       #
       # ==== Params
       # [project]                A Project instance.
-      # [assignments_updeleting] An array of hashes corresponding to
-      #                          rows in Project#local.csv('data',
+      # [assignments_file]       A Filer::CSV instance from which
+      #                          assignments_updeleting were
+      #                          drawn. The upload status will be
+      #                          written and tracked here.
+      # [assignments_updeleting] An enumerable collection of hashes
+      #                          corresponding to selected rows in
+      #                          Project#local#csv('data',
       #                          'assignment.csv'). Only assets whose
       #                          URLs are contained in these hashes
       #                          will be deleted.
@@ -84,7 +101,7 @@ module Typingpool
       # ==== Returns
       # A count of how many items were actually removed from the
       # server.
-      def updelete_assignment_assets(project, assignments_updeleting, types=['audio', 'assignment'])
+      def updelete_assignment_assets(project,  assignments_file, assignments_updeleting=assignments_file, types=['audio', 'assignment'])
         deleting = types.map do |type|
           assignments_updeleting.select do |assignment| 
             assignment["#{type}_uploaded"] == 'yes' || assignment["#{type}_uploaded"] == 'maybe' 
@@ -92,8 +109,7 @@ module Typingpool
         end.flatten
         return 0 if deleting.empty?
         missing = []
-        assignments = project.local.csv('data', 'assignment.csv')
-        record_assignment_upload_status(assignments, deleting, types, 'maybe')
+         record_assignment_upload_status(assignments_file, deleting, types, 'maybe')
         begin
           project.remote.remove_urls(deleting){|file| yield(file) if block_given? }
         rescue Typingpool::Error::File::Remote => exception
@@ -107,7 +123,7 @@ module Typingpool
           end #messages.each...
           raise Error, "Can't remove files: #{others.join('; ')}" if others.count > 0
         end #begin
-        record_assignment_upload_status(assignments, deleting, types, 'no')
+        record_assignment_upload_status(assignments_file, deleting, types, 'no')
         deleting.count - missing.count
       end
 
@@ -124,8 +140,13 @@ module Typingpool
       #
       # ==== Params
       # [project]               A Project instance.
-      # [assignments_uploading] An array of hashes corresponding to
-      #                         rows in Project#local.csv('data',
+      # [assignments_file]      A Filer::CSV instance from which
+      #                         assignments_uploading were drawn. The
+      #                         upload status will be written and
+      #                         tracked here.
+      # [assignments_uploading] An enumerable collection of hashes
+      #                         corresponding to rows in
+      #                         Project#local.csv('data',
       #                         'assignment.csv'). Only assignments
       #                         whose URLs are contained in these
       #                         hashes will be uploaded. This array is
@@ -136,7 +157,7 @@ module Typingpool
       #                         to uploading.
       # ==== Returns
       # An array of URLs of the uploaded assignments
-      def upload_html_for_project_assignments(project, assignments_uploading, template)
+      def upload_html_for_project_assignments(project, assignments_file, assignments_uploading, template)
         ios = assignments_uploading.map{|assignment| StringIO.new(template.render(assignment)) }
         remote_basenames = assignments_uploading.map do |assignment| 
           File.basename(project.class.local_basename_from_url(assignment['audio_url']), '.*') + '.html' 
@@ -148,11 +169,10 @@ module Typingpool
         end
         #record upload URLs ahead of time so we can roll back later if the
         #upload fails halfway through
-        assignments = project.local.csv('data', 'assignment.csv')
-        record_assignment_upload_status(assignments, assignments_uploading, ['assignment'], 'maybe')
-        record_assignment_urls(assignments, assignments_uploading, 'assignment', urls)
+        record_assignment_upload_status(assignments_file, assignments_uploading, ['assignment'], 'maybe')
+        record_assignment_urls(assignments_file, assignments_uploading, 'assignment', urls)
         project.remote.put(ios, remote_names)
-        record_assignment_upload_status(assignments, assignments_uploading, ['assignment'], 'yes')
+        record_assignment_upload_status(assignments_file, assignments_uploading, ['assignment'], 'yes')
         assignments_uploading.map{|assignment| assignment['assignment_url'] }
       end
 
@@ -200,19 +220,26 @@ module Typingpool
         by_project_id
       end 
 
-      #Given a Project, writes an HTML transcript for that project
-      #within the local project folder (Project#local). To do so, uses
-      #data from within Project#local, in particular the data dir and
-      #in particular within that the assignment.csv file.
+      #Given a Project and assignments file like
+      #Project#local#csv('data', 'assignments.csv'), writes an HTML
+      #transcript for that project within the local project folder
+      #(Project#local). To do so, uses data from within Project#local,
+      #in particular the data dir and in particular within that the
+      #assignment.csv file.
       # ==== Params
-      # [project] A Project instance.
-      # [config]  Optional. A Config instance. If not supplied, will
-      #           use Project#config. Used to find the transcript
-      #           template (Config#templates is examined).
+      # [project]          A Project instance.
+      # [assignments_file] A Filer::CSV instance
+      #                    corresponding to a file like
+      #                    Project#local#csv('data',
+      #                    'assignment.csv'). 
+      # [config]           Optional. A Config instance. If not supplied, will
+      #                    use Project#config. Used to find the
+      #                    transcript template (Config#templates is
+      #                    examined).
       # ==== Returns
       # Path to the resulting HTML transcript file.
-      def create_transcript(project, config=project.config)
-        transcript_chunks = project.local.csv('data', 'assignment.csv').select{|assignment| assignment['transcription']}.map do |assignment|
+      def create_transcript(project, assignments_file, config=project.config)
+        transcript_chunks = assignments_file.select{|assignment| assignment['transcription']}.map do |assignment|
           chunk = Typingpool::Transcript::Chunk.new(assignment['transcription'])
           chunk.url = assignment['audio_url']
           chunk.project = assignment['project_id']
@@ -238,29 +265,42 @@ module Typingpool
         out_file
       end
 
+      #Creates the file Project#local#csv('data',
+      #'sandbox-assignments.csv') if it doesn't exist. Populates the
+      #file by copying over Project#local#csv('data',
+      #'assignment.csv') and stripping it of HIT and assignment_url
+      #data.
+      #
+      #Always returns a Filer::CSV instance linked to
+      #sandbox-assignmens.csv.
       def ensure_sandbox_assignment_csv(project)
-        return if File.exists? project.local.csv('data', 'sandbox-assignment.csv')
-        raise Error, "No assignment CSV to copy" if not(File.exists? project.local.csv('data', 'assignment.csv'))
-        project.local.csv('data', 'sandbox-assignment.csv').write(
-                                                                  project.local.csv('data', 'assignment.csv').map do |assignment|
-                                                                    unrecord_hit_in_csv_row(assignment)
-                                                                    assignment.delete('assignment_url')
-                                                                    assignment
-                                                                  end #project.local.csv('data', 'assignment.csv') map...
-                                                                  )
+        csv = project.local.csv('data', 'sandbox-assignment.csv')
+        return csv if File.exists? csv
+        raise Error, "No assignment CSV to copy" unless File.exists? project.local.csv('data', 'assignment.csv')
+        csv.write(
+                  project.local.csv('data', 'assignment.csv').map do |assignment|
+                    unrecord_hit_in_csv_row(assignment)
+                    assignment.delete('assignment_url')
+                    assignment.delete('assignment_uploaded')
+                    assignment
+                  end #project.local.csv('data', 'assignment.csv') map...
+                  )
+        csv
       end
 
       #Extracts relevant information from a collection of
       #just-assigned Amazon::HITs and writes it into the Project's
-      #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for
-      #future use.
+      #assignment CSV file for future use.
       # ==== Params
-      # [project]         A Project instance.
+      # [assignments_file] A Filer::CSV instance
+      #                    corresponding to a file like
+      #                    Project#local#csv('data',
+      #                    'assignment.csv'). 
       # [hits]            An enumerable collection of Amazon::HIT instances that
       #                   were just assigned (that is, that have one
       #                   assignment, which has a blank status).
-      def record_assigned_hits_in_project(project, hits)
-        record_hits_in_project(project, hits) do |hit, csv_row|
+      def record_assigned_hits_in_assignments_file(assignments_file, hits)
+        record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
           csv_row['hit_id'] = hit.id
           csv_row['hit_expires_at'] = hit.full.expires_at.to_s
           csv_row['hit_assignments_duration'] = hit.full.assignments_duration.to_s
@@ -272,11 +312,14 @@ module Typingpool
       #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for
       #future use.
       # ==== Params
-      # [project] A Project instance.
-      # [hits]    An enumerable collection of Amazon::HIT instances whose
-      #           one assignment has the status 'Approved'.
-      def record_approved_hits_in_project(project, hits)
-        record_hits_in_project(project, hits) do |hit, csv_row|
+      # [assignments_file] A Filer::CSV instance
+      #                    corresponding to a file like
+      #                    Project#local#csv('data',
+      #                    'assignment.csv'). 
+      # [hits]             An enumerable collection of Amazon::HIT instances whose
+      #                    one assignment has the status 'Approved'.
+      def record_approved_hits_in_assignments_file(assignments_file, hits)
+        record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
           next if csv_row['transcription']
           csv_row['transcription'] = hit.transcript.body
           csv_row['worker'] = hit.transcript.worker
@@ -297,23 +340,24 @@ module Typingpool
 #        end
 #      end
 
-      #Erases all mention of the given Amazon::HITs from the Project's
-      #assignment CSV file (Project#local#csv('data',
-      #'assignment.csv')). Typically used when rejecting a HIT
-      #assignment.
+      #Erases all mention of the given Amazon::HITs from one of the
+      #Project's assignment CSV files. Typically used when rejecting a
+      #HIT assignment.
       # ==== Params
-      # [project] A Project instance.
-      # [hits]    An enumerable collection of Amazon::HIT instances to be
-      #           deleted.
-      def unrecord_hits_in_project(project, hits)
-        record_hits_in_project(project, hits) do |hit, csv_row|
+      # [assignments_file] A Filer::CSV instance
+      #                    corresponding to a file like
+      #                    Project#local#csv('data',
+      #                    'assignment.csv'). 
+      # [hits]              An enumerable collection of Amazon::HIT instances to be
+      #                     deleted.
+      def unrecord_hits_in_assignments_file(assignments_file, hits)
+        record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
           unrecord_hit_in_csv_row(csv_row)
         end
       end
 
       #Erases particular details of a subset or all of a Project's
-      #Amazon::HITs from the Project's assignment CSV file
-      #(Project#local#csv('data', 'assignment.csv')).
+      #Amazon::HITs from one of the Project's assignment CSV files.
       #
       #Specifically, deletes information about the HIT's
       #expires_at, and assignments_duration.
@@ -323,20 +367,18 @@ module Typingpool
       #any more as Amazon::HITs on Amazon servers, but when we still
       #want to retain the HIT ids in the Project assignment CSV.
       # ==== Params
-      # [project] A Project instance.
-      # [hits]    Optional. An enumerable collection of Amazon::HIT
-      #           instances whose details are to be deleted. If not
-      #           supplied, details for ALL HITs in the Project
-      #           assignment CSV will be deleted.
-      def unrecord_hits_details_in_project(project, hits=nil)
-        record_hits_in_project(project, hits) do |hit, csv_row|
+      # [assignments_file] A Filer::CSV instance
+      #                    corresponding to a file like
+      #                    Project#local#csv('data',
+      #                    'assignment.csv'). 
+      # [hits]             Optional. An enumerable collection of Amazon::HIT
+      #                    instances whose details are to be
+      #                    deleted. If not supplied, details for ALL
+      #                    HITs in the Project assignment CSV will be
+      #                    deleted.
+      def unrecord_hits_details_in_assignments_file(assignments_file, hits=nil)
+        record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
           unrecord_hit_details_in_csv_row(csv_row)
-        end
-      end
-
-      def unrecord_assignment_urls_in_project(project)
-        project.local.csv('data', 'assignment.csv').each! do |csv_row|
-          csv_row.delete('assignment_url')
         end
       end
 
@@ -371,9 +413,9 @@ module Typingpool
 
       #protected
 
-      def record_hits_in_project(project, hits)
+      def record_hits_in_assignments_file(assignments_file, hits)
         hits_by_url = self.hits_by_url(hits) if hits
-        project.local.csv('data', 'assignment.csv').each! do |csv_row|
+        assignments_file.each! do |csv_row|
           hit = nil
           if hits
             hit = hits_by_url[csv_row['audio_url']] or next

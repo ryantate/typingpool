@@ -73,7 +73,7 @@ class TestTpMake < Typingpool::Test::Script
         config_path = self.config_path(dir)
         skip_if_no_upload_credentials('tp-make integration test', Typingpool::Config.file(config_path))
         tp_make_with(dir, config_path, subdir)
-        tp_finish(dir, config_path)
+        tp_finish_outside_sandbox(dir, config_path)
       end #in_temp_tp_dir
     end #Dir.entries
   end
@@ -83,7 +83,7 @@ class TestTpMake < Typingpool::Test::Script
       skip_if_no_s3_credentials('tp-make S3 integration test', config)
       config_path = setup_s3_config(dir)
       tp_make_with(dir, config_path)
-      tp_finish(dir, config_path)
+      tp_finish_outside_sandbox(dir, config_path)
     end #in_temp_tp_dir do...
   end 
 
@@ -122,7 +122,7 @@ class TestTpMake < Typingpool::Test::Script
         end
         assert_empty(assignment_urls2.reject{|url| working_url? url })
       ensure
-        tp_finish(dir, good_config_path)
+        tp_finish_outside_sandbox(dir, good_config_path)
       end #begin
     end #in_temp_tp_dir do...
   end

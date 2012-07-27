@@ -39,8 +39,9 @@ projects = {}
 need = {}
 STDERR.puts "Looking for local project folders to receive results" unless hits.empty?
 Typingpool::App.find_projects_waiting_for_hits(hits, options[:config]) do |project, hits|
-  Typingpool::App.record_approved_hits_in_project(project, hits)
-  out_file = Typingpool::App.create_transcript(project)
+  assignments_file = options[:sandbox] ? Typingpool::App.ensure_sandbox_assignment_csv(project) : project.local.csv('data', 'assignment.csv')
+  Typingpool::App.record_approved_hits_in_assignments_file(assignments_file, hits)
+  out_file = Typingpool::App.create_transcript(project, assignments_file)
   STDERR.puts "Wrote #{out_file} to local folder #{project.name}."
 end
 

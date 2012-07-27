@@ -209,16 +209,26 @@ module Typingpool
       end
 
       def call_tp_finish(*args)
-        call_script(path_to_tp_finish, '--sandbox', *args)
+        call_script(path_to_tp_finish, *args)
       end
 
       def tp_finish(dir, config_path=self.config_path(dir))
-        call_tp_finish(
-                       project_default[:title],
-                       '--config', config_path
-                       )
+        tp_finish_inside_sandbox(dir, config_path)
+        tp_finish_outside_sandbox(dir, config_path)
       end
 
+
+      def tp_finish_inside_sandbox(dir, config_path=self.config_path(dir))
+        tp_finish_outside_sandbox(dir, config_path, '--sandbox')
+      end
+
+      def tp_finish_outside_sandbox(dir, config_path=self.config_path(dir), *args)
+        call_tp_finish(
+                       project_default[:title],
+                       '--config', config_path, 
+                       *args
+                       )
+      end
 
       def path_to_tp_assign
         File.join(self.class.app_dir, 'bin', 'tp-assign')
@@ -326,26 +336,31 @@ module Typingpool
       end
 
       def with_fixtures_in_temp_tp_dir(dir, fixture_prefix)
-        [['data', 'id.txt'],['data','assignment.csv']].each do |path_elems|
-          project_path = File.join(temp_tp_dir_project_dir(dir), *path_elems)
-          fixture_path = File.join(fixtures_dir, [fixture_prefix, path_elems.last].join )
+        fixtures = Dir.entries(fixtures_dir).select{|entry| entry.include?(fixture_prefix) && entry.index(fixture_prefix) == 0 }.select{|entry| File.file?(File.join(fixtures_dir, entry)) }
+        fixtures.map!{|fixture| fixture[fixture_prefix.size .. -1] }
+        fixtures.each do |fixture|
+          project_path = File.join(temp_tp_dir_project_dir(dir), 'data', fixture)
+          fixture_path = File.join(fixtures_dir, [fixture_prefix, fixture].join )
           yield(fixture_path, project_path)
         end
       end
 
       def copy_fixtures_to_temp_tp_dir(dir, fixture_prefix)
         with_fixtures_in_temp_tp_dir(dir, fixture_prefix) do |fixture_path, project_path|
-          FileUtils.mv(project_path, File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}"))
+          if File.exists? project_path
+            FileUtils.mv(project_path, File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}"))
+          end
           FileUtils.cp(fixture_path, project_path)
         end
       end
 
       def rm_fixtures_from_temp_tp_dir(dir, fixture_prefix)
         with_fixtures_in_temp_tp_dir(dir, fixture_prefix) do |fixture_path, project_path|
-          path_to_orig = File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}")
-          File.exists?(path_to_orig) or raise Error::Test, "Couldn't find original file '#{path_to_orig}' when trying to restore it to original location"
           FileUtils.rm(project_path)
-          FileUtils.mv(path_to_orig, project_path)
+          path_to_orig = File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}")
+          if File.exists?(path_to_orig)
+            FileUtils.mv(path_to_orig, project_path)
+          end
         end
       end
 
@@ -360,8 +375,8 @@ module Typingpool
         assert_has_transcript(dir, 'transcript_in_progress.html')
       end
 
-      def assert_assignment_csv_has_transcription_count(count, project)
-        assert_equal(count, project.local.csv('data', 'assignment.csv').reject{|assignment| assignment['transcription'].to_s.empty?}.size)
+      def assert_assignment_csv_has_transcription_count(count, project, which_csv='assignment.csv')
+        assert_equal(count, project.local.csv('data', which_csv).reject{|assignment| assignment['transcription'].to_s.empty?}.size)
       end
 
       def assert_html_has_audio_count(count, html)

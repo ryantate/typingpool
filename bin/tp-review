@@ -63,9 +63,14 @@ end
 
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
 
+assignments = nil
+if options[:project]
+  assignments = options[:sandbox] ? Typingpool::App.ensure_sandbox_assignment_csv(options[:project]) : options[:project].local.csv('data', 'assignments.csv')
+end
+
 hits = []
 STDERR.puts "Gathering submissions from Amazon"
-if options[:project] && not((hit_ids = options[:project].local.csv('data', 'assignment.csv').map{|assignment| assignment['hit_id'] }.select{|hit_id| hit_id }).empty?)
+if options[:project] && not((hit_ids = assignments.map{|assignment| assignment['hit_id'] }.select{|hit_id| hit_id }).empty?)
   hits = Typingpool::Amazon::HIT.with_ids(hit_ids).select{|hit| hit.submitted? }
 else
   hits = Typingpool::Amazon::HIT.all_reviewable{|hit| hit.submitted? && hit.ours? }
@@ -84,6 +89,7 @@ catch :quitting do
   hits_by_project_id.values.each do |hash|
     hits = hash[:hits]
     project = hash[:project]
+    assignments = options[:sandbox] ? Typingpool::App.ensure_sandbox_assignment_csv(project) : project.local.csv('data', 'assignment.csv')
     hits.sort!{|a, b| a.url <=> b.url }
     hits.each do |hit|
       i += 1
@@ -117,8 +123,8 @@ catch :quitting do
       case choice
       when 'approve'
         hit.assignment.at_amazon.approve!
-        Typingpool::App.record_approved_hits_in_project(project, [hit])
-        Typingpool::App.create_transcript(project)
+        Typingpool::App.record_approved_hits_in_assignments_file(assignments, [hit])
+        Typingpool::App.create_transcript(project, assignments)
         say(HighLine.color("Approved. ", :bold) + "#{project.name} transcript updated.")
       when 'reject'
         reason=nil
@@ -127,7 +133,7 @@ catch :quitting do
         end
         hit.assignment.at_amazon.reject!(reason)
         hit.at_amazon.dispose!
-        Typingpool::App.unrecord_hits_in_project(project, [hit])
+        Typingpool::App.unrecord_hits_in_assignments_file(assignments, [hit])
         say(HighLine.color("Rejected", :bold))
       when 'quit'
         say(HighLine.color("Quitting", :bold))

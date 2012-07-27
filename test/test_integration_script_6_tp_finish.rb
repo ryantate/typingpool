@@ -15,7 +15,7 @@ class TestTpFinish < Typingpool::Test::Script
     assert(not(urls.empty?))
     assert_equal(urls.size, urls.select{|url| working_url? url}.size)
     assert_nothing_raised do
-      tp_finish(dir, config_path)
+      tp_finish_outside_sandbox(dir, config_path)
     end
     assert_empty(urls.select{|url| working_url? url })
   end
@@ -84,7 +84,7 @@ class TestTpFinish < Typingpool::Test::Script
         project.local.csv('data', 'assignment.csv').write(assignments)
         assert_equal(1, project.local.csv('data', 'assignment.csv').reject{|assignment| working_url? assignment['audio_url'] }.count)
       ensure
-        tp_finish(dir)
+        tp_finish_outside_sandbox(dir)
       end #begin
       assert_empty(project.local.csv('data', 'assignment.csv').select{|assignment| working_url? assignment['audio_url'] })
     end #in_temp_tp_dir...

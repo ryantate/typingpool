@@ -33,7 +33,7 @@ class TestFiler < Typingpool::Test
   end
 
   def test_filer_csv
-    path = File.join(fixtures_dir, 'tp_review_assignment.csv')
+    path = File.join(fixtures_dir, 'tp_review_sandbox-assignment.csv')
     assert(filer = Typingpool::Filer::CSV.new(path))
     assert_equal(path, "#{filer}")
     assert(data = filer.read)
@@ -169,7 +169,7 @@ keys = filer2.first.keys
     assert(filer = dir.file('vcr', 'tp-collect-1.yml'))
     assert(File.exists? filer.path)
     assert_instance_of(Typingpool::Filer, filer)
-    assert(csv = dir.csv('tp_collect_assignment.csv'))
+    assert(csv = dir.csv('tp_collect_sandbox-assignment.csv'))
     assert(File.exists? csv.path)
     assert_instance_of(Typingpool::Filer::CSV, csv)
     dir4 = Typingpool::Filer::Dir.new(audio_dir)

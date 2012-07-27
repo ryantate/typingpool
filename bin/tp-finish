@@ -33,6 +33,7 @@ abort "Can't specify both PROJECT and --dead" if project_name_or_path && options
 abort "No PROJECT specified (and no --dead option)\n#{options[:banner]}" if not(project_name_or_path || options[:dead])
 
 project=nil
+assignments=nil
 #Error checking on project info first
 if project_name_or_path
   project_path = nil
@@ -40,11 +41,16 @@ if project_name_or_path
     project_path = project_name_or_path
     options[:config].transcripts = File.dirname(project_name_or_path)
   else
-    project_path = "#{options[:config].transcripts}/#{project_name_or_path}"
+    project_path = File.join(options[:config].transcripts, project_name_or_path)
   end
   project = Typingpool::Project.new(File.basename(project_path), options[:config])
   project.local or abort "No such project '#{project_name_or_path}'\n"
   project.local.id or abort "Can't find project id in #{project.local.path}"
+  assignments = if options[:sandbox]
+                  Typingpool::App.ensure_sandbox_assignment_csv(project)
+                else
+                  project.local.csv('data', 'assignment.csv')
+                end #if options[:sandbox]
 end
 
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
@@ -73,22 +79,32 @@ results.each do |result|
   else
     if project
       STDERR.puts "  Removing from data/assignment.csv"
-      Typingpool::App.unrecord_hits_details_in_project(project, [result])  
+      Typingpool::App.unrecord_hits_details_in_assignments_file(assignments, [result])  
     end
     STDERR.puts "  Removing from local cache"
     Typingpool::Amazon::HIT.delete_cache(result.id)
   end
 end
-if not (fails.empty?)
+if fails.count > 0
   STDERR.puts "  Removed " + (results.size - fails.size) + " HITs from Amazon"
   abort "#{fails.size} transcriptions are submitted but unprocessed (#{fails.join('; ')})"
 end
-#Remove the remote audio files associated with the results and update the assignment.csb associated with the project
+#Remove the remote audio files associated with the results and update
+#one of the assignment.csvs associated with the project
 if project 
-  assignments = project.local.csv('data', 'assignment.csv')
-  deleted = Typingpool::App.updelete_assignment_assets(project, assignments) do |file|
+  #Don't want to delete audio if there's another assignments file
+  #relying on it
+  delete_types = if (options[:sandbox] || (File.exists? project.local.csv('data', 'sandbox-assignment.csv')))
+                   ['assignment']
+                 else
+                   ['audio', 'assignment']
+                 end #if options[:sandbox] ||...
+  deleted = Typingpool::App.updelete_assignment_assets(project, assignments, assignments, delete_types) do |file|
     STDERR.puts "Removing #{file} from #{project.remote.host}"
   end
-  STDERR.puts "  Removed #{deleted} files from #{project.remote.host}" if deleted > 0
-  Typingpool::App.unrecord_assignment_urls_in_project(project)  
+  if options[:sandbox]
+    #delete sandbox-assignment.csv so we know it's safe to delete
+    #audio files when we finish using regular assignment.csv
+    File.delete project.local.csv('data', 'sandbox-assignment.csv')
+  end
 end #if project
