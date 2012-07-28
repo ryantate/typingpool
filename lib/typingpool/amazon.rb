@@ -708,7 +708,7 @@ module Typingpool
       #text for a HIT#annotation. The key-value pairs correspond to
       #all hidden HTML form fields in the question HTML.
       def annotation
-        URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').map{|e| [e['name'], e['value']]}.flatten])
+        URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').select{|e| e['name'].match(/^typingpool_/) }.map{|e| [e['name'], e['value']]}.flatten])
       end
 
       #Returns the title, extracted from the title element of the
