@@ -161,10 +161,16 @@ module Typingpool
     end #class << self
 
     module Castable
-      #Cast this object instance into a new subclass. Call this from
+      #Cast this object instance to a relative class. Call this from
       #super in your own class if you want to pass args to the
       #subclass constructor. All args after the first will be passed
       #to new.
+      #
+      #A relative class can be a subclass and in some cases a sibling
+      #class, parent class, parent sibling class, grandparent class,
+      #grandparent sibling class, and so on. A relative class will
+      #never be higher up the inheritance tree than the subclasses of
+      #the class where Castable was included.
       # ==== Params
       # [sym] Symbol corresponding to subclass to cast into. For
       # example, Class#as(:audio) will cast into a Class::Audio and
