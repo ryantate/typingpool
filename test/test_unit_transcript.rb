@@ -31,8 +31,8 @@ class TestTranscript < Typingpool::Test
 
   def test_transcript_chunks
     dummy_assignments.each do |assignment|
-      assert(chunk = Typingpool::Transcript::Chunk.new(assignment['transcription']))
-      assert_equal(assignment['transcription'], chunk.body)
+      assert(chunk = Typingpool::Transcript::Chunk.new(assignment['transcript']))
+      assert_equal(assignment['transcript'], chunk.body)
       chunk.worker = assignment['worker']
       assert_equal(assignment['worker'], chunk.worker)
       chunk.project = assignment['project_id']
@@ -61,7 +61,7 @@ class TestTranscript < Typingpool::Test
 
   def dummy_chunks
     dummy_assignments.map do |assignment|
-      chunk = Typingpool::Transcript::Chunk.new(assignment['transcription'])
+      chunk = Typingpool::Transcript::Chunk.new(assignment['transcript'])
       chunk.worker = assignment['worker']
       chunk.project = assignment['project_id']
       chunk.hit = assignment['hit_id']

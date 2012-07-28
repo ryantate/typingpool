@@ -150,7 +150,7 @@ unneeded_assignments = {
   :outstanding => 0
 }
 assignments.each do |assignment|
-  if assignment['transcription']
+  if assignment['transcript']
     unneeded_assignments[:complete] += 1
     next
   end
@@ -228,7 +228,7 @@ needed_assignments_sorted.each do |assignment|
     Typingpool::App.record_assigned_hits_in_assignments_file(assignments, [hit])
   rescue  RTurk::RTurkError => e
     STDERR.puts "Mechanical Turk error: #{e}"
-    unless hits.empty?
+    if hits.count > 0
       STDERR.puts "Rolling back assignments"
       hits.each{|hit| hit.remove_from_amazon }
       Typingpool::App.unrecord_hits_in_assignments_file(assignments, hits)

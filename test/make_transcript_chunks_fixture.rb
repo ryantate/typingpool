@@ -37,7 +37,7 @@ end #ARGV.map
 assignments=[]
 data_files.each do |path|
   csv = Typingpool::Filer::CSV.new(path)
-  with_transcripts = csv.reject{|assignment| assignment['transcription'].to_s.empty? }
+  with_transcripts = csv.reject{|assignment| assignment['transcript'].to_s.empty? }
   next if with_transcripts.empty?
   seeking = with_transcripts.count
   if seeking > lines_each

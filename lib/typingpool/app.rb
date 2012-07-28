@@ -239,8 +239,8 @@ module Typingpool
       # ==== Returns
       # Path to the resulting HTML transcript file.
       def create_transcript(project, assignments_file, config=project.config)
-        transcript_chunks = assignments_file.select{|assignment| assignment['transcription']}.map do |assignment|
-          chunk = Typingpool::Transcript::Chunk.new(assignment['transcription'])
+        transcript_chunks = assignments_file.select{|assignment| assignment['transcript']}.map do |assignment|
+          chunk = Typingpool::Transcript::Chunk.new(assignment['transcript'])
           chunk.url = assignment['audio_url']
           chunk.project = assignment['project_id']
           chunk.worker = assignment['worker']
@@ -320,8 +320,8 @@ module Typingpool
       #                    one assignment has the status 'Approved'.
       def record_approved_hits_in_assignments_file(assignments_file, hits)
         record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
-          next if csv_row['transcription']
-          csv_row['transcription'] = hit.transcript.body
+          next if csv_row['transcript']
+          csv_row['transcript'] = hit.transcript.body
           csv_row['worker'] = hit.transcript.worker
           csv_row['hit_id'] = hit.id
         end #record_hits_in_project do...

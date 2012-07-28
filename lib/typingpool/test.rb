@@ -376,7 +376,7 @@ module Typingpool
       end
 
       def assert_assignment_csv_has_transcription_count(count, project, which_csv='assignment.csv')
-        assert_equal(count, project.local.csv('data', which_csv).reject{|assignment| assignment['transcription'].to_s.empty?}.size)
+        assert_equal(count, project.local.csv('data', which_csv).reject{|assignment| assignment['transcript'].to_s.empty?}.size)
       end
 
       def assert_html_has_audio_count(count, html)
