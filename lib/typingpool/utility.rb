@@ -172,11 +172,17 @@ module Typingpool
       #never be higher up the inheritance tree than the subclasses of
       #the class where Castable was included.
       # ==== Params
-      # [sym] Symbol corresponding to subclass to cast into. For
+      # [sym] Symbol corresponding to relative class to cast into. For
       # example, Class#as(:audio) will cast into a Class::Audio and
       # Class#as(:csv) will cast into Class::CSV. Casting is class
       # insensitive, which means you can't have class CSV and class
-      # Csv.
+      # Csv. To cast into a related class whose name is not not
+      # directly under that of its parent, you must either specify the
+      # full name, e.g. Class#as(:foo_bar_baz) to cast to
+      # Foo::Bar::Baz, or a name relative to the parent,
+      # e.g. Class#as(:remote_html), where Class::Remote does not
+      # inherit from Class but Class::Remote::HTML does.
+
       # ==== Returns
       # New instance of subclass
       def as(sym, *args)
@@ -193,7 +199,7 @@ module Typingpool
 
       module ClassMethods
         def inherited(subklass)
-          subklasses[subklass.to_s.split('::').last.downcase] = subklass
+          subklasses[subklass.to_s.split("#{self.name}::").last.downcase.gsub(/::/, '_')] = subklass
         end
 
         def subklasses
