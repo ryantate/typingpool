@@ -5,93 +5,83 @@ require 'erb'
 require 'typingpool'
 require 'stringio'
 
-options = nil
-config = nil
-configs = [Typingpool::Config.file]
-
-#We need to incorporate command line options immediately into the
-#config object, since it checks incoming values for us (see rescue
-#clauses).
-#
-#BUT the user can specify an alternate config file at an arbitrary
-#point in the command line options string. So in those cases we loop
-#and do it all again. (Actually we loop twice in all cases, because we
-#need to do a destructive parse the second time around, and there's no
-#way of knowing in advance if we can do a destructive parse the first
-#time.)
-#
-#This solution is DRY and simple. The alternatives tend to be complex
-#or repetitive.
-
-2.times do |i|
-  config = configs.last
-  options = {}
-  yet = {}
-  option_parser = OptionParser.new do |opts|
-    options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n  [--keyword transcription --keyword mp3...] [--deadline 3h] [--lifetime 2d]\n  [--approval 1d] [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n  [--sandbox]  [--config PATH]\n"
-    opts.on('--project=PROJECT', "Required. Path or name within $config_file:transcripts.", "  Also accepted as first argument to script or via STDIN") do |project|
-      options[:project] = project
-    end
-    opts.on('--template=TEMPLATE', "Required. Path or name within dir", "  $config_file:app/templates/assign. Also accepted as first argument to script") do |template|
-      options[:template] = template
-    end
-    opts.on('--reward=DOLLARS', "Default: $config_file:assign:reward.", "  Always in USD (Amazon only supports USD).","  Per chunk. Format N.NN") do |reward|
-      reward.match(/(\d+(\.\d+)?)|(\d*\.\d+)/) or abort "Bad --reward format '#{reward}'"
-      config.assign.reward = reward
-    end
-    opts.on('--keyword=WORD', "Default: $config_file:assign:keywords.", "  Repeatable") do |keyword|
-      unless yet[:keyword]
-        yet[:keyword] = true
-        #We ignore keywords from the conf file if the user specified any.
-        config.assign.keywords = []
-      end
-      config.assign.keywords.push(keyword)
-    end
-    Hash[
-         'deadline' => 'Worker time to transcribe',
-         'lifetime' => 'Assignment time to expire',
-         'approval' => 'Submission time to auto approve'
-        ].each do |param, meaning|
-      opts.on("--#{param}=TIMESPEC", "Default: $config:assign:#{param}.", "  #{meaning}.", "  N[.N]y|M(onths)|d|h|m(inutes)|s") do |timespec|
-        begin
-          config.assign.send("#{param}=", timespec)
-        rescue Typingpool::Error::Argument => e
-          abort "Bad --#{param} '#{timespec}': #{e}"
-        end
-      end
-    end
-    opts.on('--qualify=QUALIFICATION', "Default: $config:assign:qualify.","  Repeatable.", "  An RTurk::Qualifications::TYPES +", "  >|<|==|!=|true|exists|>=|<=", "  [+ INT]") do |qualification|
-      unless yet[:qualify]
-        yet[:qualify] = true
-        #We ignore qualifications from the conf file if the user specified any.
-        config.assign.qualify = []
-      end
-      begin
-        config.assign.add_qualification(qualification)
-      rescue Typingpool::Error::Argument => e
-        abort "Bad --qualify '#{qualification}': #{e}"
-      end
-    end
-    opts.on('--sandbox', "Test in Mechanical Turk's sandbox") do
-      options[:sandbox] = true
-    end
-    opts.on('--config=PATH', 'Default: ~/.typingpool') do |path|
-      path = File.expand_path(path)
-      File.exists?(path) && File.file?(path) or abort "No such file #{path}"
-      new_config = Typingpool::Config.file(path)
-      configs.push(new_config)
-    end
-    opts.on('--help', 'Display this screen') do
-      STDERR.puts opts
-      exit
+options = {
+  :keyword => [],
+  :qualify => []
+}
+OptionParser.new do |opts|
+  options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n  [--keyword transcription --keyword mp3...] [--deadline 3h] [--lifetime 2d]\n  [--approval 1d] [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n  [--sandbox]  [--config PATH]\n"
+  opts.on('--project=PROJECT', "Required. Path or name within $config_file:transcripts.", "  Also accepted as first argument to script or via STDIN") do |project|
+    options[:project] = project
+  end
+  opts.on('--template=TEMPLATE', "Required. Path or name within dir", "  $config_file:app/templates/assign. Also accepted as first argument to script") do |template|
+    options[:template] = template
+  end
+  opts.on('--reward=DOLLARS', "Default: $config_file:assign:reward.", "  Always in USD (Amazon only supports USD).","  Per chunk. Format N.NN") do |reward|
+    options[:reward] = reward
+  end
+  opts.on('--keyword=WORD', "Default: $config_file:assign:keywords.", "  Repeatable") do |keyword|
+    options[:keyword].push(keyword)
+  end
+  Hash[
+       :deadline => 'Worker time to transcribe',
+       :lifetime => 'Assignment time to expire',
+       :approval => 'Submission time to auto approve'
+      ].each do |param, meaning|
+    opts.on("--#{param.to_s}=TIMESPEC", "Default: $config:assign:#{param.to_s}.", "  #{meaning}.", "  N[.N]y|M(onths)|d|h|m(inutes)|s") do |timespec|
+      options[param] = timespec
     end
   end
-  if i == 0
-    option_parser.parse(ARGV)
-  else
-    option_parser.parse!
+  opts.on('--qualify=QUALIFICATION', "Default: $config:assign:qualify.","  Repeatable.", "  An RTurk::Qualifications::TYPES +", "  >|<|==|!=|true|exists|>=|<=", "  [+ INT]") do |qualification|
+    options[:qualify].push(qualification)
   end
+  opts.on('--sandbox', "Test in Mechanical Turk's sandbox") do
+    options[:sandbox] = true
+  end
+  opts.on('--config=PATH', 'Default: ~/.typingpool') do |path|
+    options[:config] = path
+  end
+  opts.on('--help', 'Display this screen') do
+    STDERR.puts opts
+    exit
+  end
+end.parse!
+
+config = if options[:config]
+           full_path = File.expand_path(options[:config])
+           File.exists?(full_path) && File.file?(full_path) or abort "No such file #{options[:config]}"
+           Typingpool::Config.file(full_path)
+
+         else
+           Typingpool::Config.file
+         end #if options[:config]
+if options[:reward]
+  options[:reward].match(/(\d+(\.\d+)?)|(\d*\.\d+)/) or abort "Bad --reward format '#{options[:reward]}'"
+  config.assign.reward = options[:reward]
 end
+if options[:keyword].count > 0
+  config.assign.keywords = []
+  config.assign.keywords.push(*options[:keyword])
+end
+[:deadline, :lifetime, :approval].each do |param|
+  next unless options[param]
+  begin
+    config.assign.send("#{param.to_s}=", options[param])
+  rescue Typingpool::Error::Argument => e
+    abort "Bad --#{param.to_s} '#{options[:param.to_s]}': #{e}"
+  end
+end #[:deadline, :lifetime, :approval].each...
+if options[:qualify].count > 0
+  config.assign.qualify = []
+  options[:qualify].each do |qualification|
+    begin
+      config.assign.add_qualification(qualification)
+    rescue Typingpool::Error::Argument => e
+      abort "Bad --qualify '#{qualification}': #{e}"
+    end
+  end #options[:qualify].each...
+end #if options[:qualify].count > 0 
+
 
 options[:banner] += "`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
 options[:banner] = "\n#{options[:banner]}"
