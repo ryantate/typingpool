@@ -355,7 +355,7 @@ module Typingpool
           AWS::S3::Base.establish_connection!(
                                               :access_key_id => @key,
                                               :secret_access_key => @secret,
-                                              :persistent => false,
+                                              :persistent => true,
                                               :use_ssl => true
                                               )
         end
