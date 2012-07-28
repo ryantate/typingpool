@@ -1,5 +1,5 @@
 module Typingpool
-  class Utility
+  module Utility
     require 'open3'
     require 'uri'
     require 'tmpdir'
@@ -159,5 +159,38 @@ module Typingpool
       end
 
     end #class << self
+
+    module Castable
+      #Cast this object instance into a new subclass. Call this from
+      #super in your own class if you want to pass args to the
+      #subclass constructor. All args after the first will be passed
+      #to new.
+      # ==== Params
+      # [sym] Symbol corresponding to subclass to cast into. For
+      # example, passing :audio will cast into a Class::Audio and
+      # passing :csv will cast into Class::CSV. Casting is class
+      # insensitive, which means you can't have class CSV and class
+      # Csv.
+      # ==== Returns
+      # New instance of subclass
+      def as(sym, *args)
+        self.class.subklass(sym.to_s.downcase).new(*args)
+      end
+
+      def self.included(receiver)
+        receiver.extend(ClassMethods)
+      end
+
+      module ClassMethods
+        def inherited(subklass)
+          @subklasses ||= {}
+          @subklasses[subklass.to_s.split('::').last.downcase] = subklass
+        end
+
+        def subklass(subklass_key)
+          @subklasses[subklass_key]
+        end
+      end #module ClassMethods
+    end #Castable
   end #Utility
 end #Typingpool

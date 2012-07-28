@@ -19,6 +19,8 @@ class TestFiler < Typingpool::Test
     assert_equal(fixtures_dir, filer.dir.path)
     path = File.join(fixtures_dir, 'filer-temp')
     assert(filer = Typingpool::Filer.new(path))
+    assert_instance_of(Typingpool::Filer::CSV, filer_csv = filer.as(:csv))
+    assert_equal(filer.path, filer_csv.path)
     assert_nil(filer.read)
     data = "foo\nbar\nbaz."
     begin

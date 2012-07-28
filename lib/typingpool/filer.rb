@@ -5,9 +5,21 @@ module Typingpool
   #collections.
   class Filer
     require 'fileutils'
+    include Utility::Castable
 
     #Fully-expanded path to file
     attr_reader :path
+
+    class << self
+      # def inherited(subklass)
+      #   @subklasses ||= {}
+      #   @subklasses[subklass.to_s.split('::').last.downcase] = subklass
+      # end
+
+      # def subklass(subklass_key)
+      #   @subklasses[subklass_key]
+      # end
+    end #class << self
 
     #Constructor.
     # ==== Params
@@ -58,6 +70,18 @@ module Typingpool
     def dir
       Filer::Dir.new(File.dirname(@path))
     end
+
+      #Cast this file into a new Filer subtype, e.g. Filer::Audio.
+      # ==== Params
+      # [sym] Symbol corresponding to Filer subclass to cast into. For
+      # example, passing :audio will cast into a Filer::Audio.
+      # ==== Returns
+      # Instance of new Filer subclass
+      def as(sym)
+        super(sym, @path)
+#        self.class.subklass(sym.to_s.downcase).new(@path)
+      end
+
 
     #Convenience wrapper for CSV files. Makes them Enumerable, so you
     #can iterate through rows with each, map, select, etc. You can
