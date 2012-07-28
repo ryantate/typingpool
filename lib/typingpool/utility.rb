@@ -163,8 +163,8 @@ module Typingpool
     module Castable
       #Cast this object instance to a relative class. Call this from
       #super in your own class if you want to pass args to the
-      #subclass constructor. All args after the first will be passed
-      #to new.
+      #relative class constructor. All args after the first will be
+      #passed to new.
       #
       #A relative class can be a subclass and in some cases a sibling
       #class, parent class, parent sibling class, grandparent class,
@@ -182,7 +182,6 @@ module Typingpool
       # Foo::Bar::Baz, or a name relative to the parent,
       # e.g. Class#as(:remote_html), where Class::Remote does not
       # inherit from Class but Class::Remote::HTML does.
-
       # ==== Returns
       # New instance of subclass
       def as(sym, *args)

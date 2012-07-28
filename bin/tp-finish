@@ -49,7 +49,7 @@ if project_name_or_path
   assignments = if options[:sandbox]
                   Typingpool::App.ensure_sandbox_assignment_csv(project)
                 else
-                  project.local.csv('data', 'assignment.csv')
+                  project.local.file('data', 'assignment.csv').as(:csv)
                 end #if options[:sandbox]
 end
 
@@ -94,7 +94,7 @@ end
 if project 
   #Don't want to delete audio if there's another assignments file
   #relying on it
-  delete_types = if (options[:sandbox] || (File.exists? project.local.csv('data', 'sandbox-assignment.csv')))
+  delete_types = if (options[:sandbox] || (File.exists? project.local.file('data', 'sandbox-assignment.csv')))
                    ['assignment']
                  else
                    ['audio', 'assignment']
@@ -105,6 +105,6 @@ if project
   if options[:sandbox]
     #delete sandbox-assignment.csv so we know it's safe to delete
     #audio files when we finish using regular assignment.csv
-    File.delete project.local.csv('data', 'sandbox-assignment.csv')
+    File.delete project.local.file('data', 'sandbox-assignment.csv')
   end
 end #if project

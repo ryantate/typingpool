@@ -28,7 +28,7 @@ module Typingpool
       #
       #Reads and writes from a Filer::CSV instance passed as the
       #second param, intended to link to a file like
-      #Project#local#csv('data', 'assignment.csv')
+      #Project#local#file('data', 'assignment.csv')
       #
       #  Returns an array of urls corresponding to uploaded files. If
       #no files were uploaded, the array will be empty
@@ -36,7 +36,7 @@ module Typingpool
       # [project]          A Project instance.
       # [assignments_file] Optional. A Filer::CSV instance
       #                    corresponding to a file like the default,
-      #                    Project#local#csv('data',
+      #                    Project#local#file('data',
       #                    'assignment.csv'). Should already contain
       #                    the URLs we'll be uploading to. The status
       #                    of the uploads is written here o we can
@@ -44,12 +44,12 @@ module Typingpool
       #                    need be.
       # ==== Returns
       # An array of URLs of the uploaded audio files.
-      def upload_audio_for_project(project, assignments_file=project.local.csv('data', 'assignment.csv'))
+      def upload_audio_for_project(project, assignments_file=project.local.file('data', 'assignment.csv').as(:csv))
         check_interrupted_uploads(assignments_file, 'audio')
         uploading = assignments_file.reject{|assignment| assignment['audio_uploaded'] == 'yes' }
         return uploading if uploading.empty?
         files = uploading.map{|assignment| Typingpool::Project.local_basename_from_url(assignment['audio_url']) }
-        files.map!{|basename| project.local.audio('audio', 'chunks', basename) }
+        files.map!{|basename| project.local.file('audio', 'chunks', basename).as(:audio) }
         files = Typingpool::Filer::Files.new(files)
         remote_files = uploading.map{|assignment| project.remote.url_basename(assignment['audio_url']) }
         #Record that we're uploading so we'll know later if something
@@ -66,7 +66,7 @@ module Typingpool
       #html, etc. -- assoiated with a subset of a Project instance's
       #chunks/assignments.
       #
-      #Writes to Project#local.csv('data', 'assignment.csv') to
+      #Writes to Project#local.file('data', 'assignment.csv') to
       #reflect these changes.
       #
       #As with upload_audio_for_project, this method is sensitive to
@@ -88,7 +88,7 @@ module Typingpool
       #                          written and tracked here.
       # [assignments_updeleting] An enumerable collection of hashes
       #                          corresponding to selected rows in
-      #                          Project#local#csv('data',
+      #                          Project#local#file('data',
       #                          'assignment.csv'). Only assets whose
       #                          URLs are contained in these hashes
       #                          will be deleted.
@@ -135,7 +135,7 @@ module Typingpool
       #as upload_audio_for_project.
       #
       #The URL of each uploaded assignment is written into
-      #Project#local.csv('data', 'assignment.csv'), along with
+      #Project#local.file('data', 'assignment.csv'), along with
       #metadata confirming that the upload completed.
       #
       # ==== Params
@@ -146,7 +146,7 @@ module Typingpool
       #                         tracked here.
       # [assignments_uploading] An enumerable collection of hashes
       #                         corresponding to rows in
-      #                         Project#local.csv('data',
+      #                         Project#local.file('data',
       #                         'assignment.csv'). Only assignments
       #                         whose URLs are contained in these
       #                         hashes will be uploaded. This array is
@@ -221,7 +221,7 @@ module Typingpool
       end 
 
       #Given a Project and assignments file like
-      #Project#local#csv('data', 'assignments.csv'), writes an HTML
+      #Project#local#file('data', 'assignments.csv'), writes an HTML
       #transcript for that project within the local project folder
       #(Project#local). To do so, uses data from within Project#local,
       #in particular the data dir and in particular within that the
@@ -230,7 +230,7 @@ module Typingpool
       # [project]          A Project instance.
       # [assignments_file] A Filer::CSV instance
       #                    corresponding to a file like
-      #                    Project#local#csv('data',
+      #                    Project#local#file('data',
       #                    'assignment.csv'). 
       # [config]           Optional. A Config instance. If not supplied, will
       #                    use Project#config. Used to find the
@@ -265,25 +265,25 @@ module Typingpool
         out_file
       end
 
-      #Creates the file Project#local#csv('data',
+      #Creates the file Project#local#file('data',
       #'sandbox-assignments.csv') if it doesn't exist. Populates the
-      #file by copying over Project#local#csv('data',
+      #file by copying over Project#local#file('data',
       #'assignment.csv') and stripping it of HIT and assignment_url
       #data.
       #
       #Always returns a Filer::CSV instance linked to
       #sandbox-assignmens.csv.
       def ensure_sandbox_assignment_csv(project)
-        csv = project.local.csv('data', 'sandbox-assignment.csv')
+        csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
         return csv if File.exists? csv
-        raise Error, "No assignment CSV to copy" unless File.exists? project.local.csv('data', 'assignment.csv')
+        raise Error, "No assignment CSV to copy" unless File.exists? project.local.file('data', 'assignment.csv')
         csv.write(
-                  project.local.csv('data', 'assignment.csv').map do |assignment|
+                  project.local.file('data', 'assignment.csv').as(:csv).map do |assignment|
                     unrecord_hit_in_csv_row(assignment)
                     assignment.delete('assignment_url')
                     assignment.delete('assignment_uploaded')
                     assignment
-                  end #project.local.csv('data', 'assignment.csv') map...
+                  end #project.local.file('data', 'assignment.csv').as(:csv) map...
                   )
         csv
       end
@@ -294,7 +294,7 @@ module Typingpool
       # ==== Params
       # [assignments_file] A Filer::CSV instance
       #                    corresponding to a file like
-      #                    Project#local#csv('data',
+      #                    Project#local#file('data',
       #                    'assignment.csv'). 
       # [hits]            An enumerable collection of Amazon::HIT instances that
       #                   were just assigned (that is, that have one
@@ -309,12 +309,12 @@ module Typingpool
 
       #Extracts relevant information from a collection of
       #just-approved Amazon::HITs and writes it into the Project's
-      #assignment CSV file (Project#local#csv('data', 'assignment.csv')) for
+      #assignment CSV file (Project#local#file('data', 'assignment.csv')) for
       #future use.
       # ==== Params
       # [assignments_file] A Filer::CSV instance
       #                    corresponding to a file like
-      #                    Project#local#csv('data',
+      #                    Project#local#file('data',
       #                    'assignment.csv'). 
       # [hits]             An enumerable collection of Amazon::HIT instances whose
       #                    one assignment has the status 'Approved'.
@@ -329,12 +329,12 @@ module Typingpool
 
       #Given a Project instance and an array of modified assignment
       #hashes previously retrieved from the Project's assignment CSV
-      #(Project#local#csv('data', 'assignment.csv')), writes the
+      #(Project#local#file('data', 'assignment.csv')), writes the
       #'assignment_url' property of each modified hash back to the
       #corresponding row in the original CSV.
 #      def record_assignment_urls_in_project(project, assignments)
 #        assignments_by_audio_url = Hash[ *assignments.map{|assignment| [assignment['aud#io_url'], assignment] }.flatten ]
-#        project.local.csv('data', 'assignment.csv').each! do |csv_row|
+#        project.local.file('data', 'assignment.csv').as(:csv).each! do |csv_row|
 #          assignment = assignments_by_audio_url[csv_row['audio_url']] or next
 #          csv_row['assignment_url'] = assignment['assignment_url']
 #        end
@@ -346,7 +346,7 @@ module Typingpool
       # ==== Params
       # [assignments_file] A Filer::CSV instance
       #                    corresponding to a file like
-      #                    Project#local#csv('data',
+      #                    Project#local#file('data',
       #                    'assignment.csv'). 
       # [hits]              An enumerable collection of Amazon::HIT instances to be
       #                     deleted.
@@ -369,7 +369,7 @@ module Typingpool
       # ==== Params
       # [assignments_file] A Filer::CSV instance
       #                    corresponding to a file like
-      #                    Project#local#csv('data',
+      #                    Project#local#file('data',
       #                    'assignment.csv'). 
       # [hits]             Optional. An enumerable collection of Amazon::HIT
       #                    instances whose details are to be

@@ -131,7 +131,7 @@ abort "Not a project directory at '#{options[:project]}'" if not(project.local)
 assignments = if options[:sandbox]
                 Typingpool::App.ensure_sandbox_assignment_csv(project)
               else
-                project.local.csv('data', 'assignment.csv')
+                project.local.file('data', 'assignment.csv').as(:csv)
               end #if options[:sandbox]
 abort "No data in assignment CSV" if assignments.read.empty?
 abort "No Amazon key+secret in config" unless config.amazon && config.amazon.key && config.amazon.secret

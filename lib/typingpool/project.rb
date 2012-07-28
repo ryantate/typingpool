@@ -140,7 +140,7 @@ module Typingpool
       args[:urls].each_with_index do |url, i|
         csv << [url, local.id, args[:chunk], args[:unusual].join(', '), args[:voices].map{|v| [v[:name], v[:description]]}].flatten
       end
-      local.csv(*args[:path]).write_arrays(csv, headers)
+      local.file(*args[:path]).as(:csv).write_arrays(csv, headers)
       local.file_path(*args[:path])
     end
 

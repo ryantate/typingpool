@@ -101,8 +101,8 @@ rescue Typingpool::Error::Argument::Format
 end #begin
 
 if project.local
-  if (not(File.exists?(project.local.csv('data', 'assignment.csv'))) || 
-      project.local.csv('data', 'assignment.csv').read.select{|assignment| assignment['audio_uploaded'] == 'maybe' }.count == 0)
+  if (not(File.exists?(project.local.file('data', 'assignment.csv'))) || 
+      project.local.file('data', 'assignment.csv').as(:csv).read.select{|assignment| assignment['audio_uploaded'] == 'maybe' }.count == 0)
     #successfully made project
     abort "The title '#{options[:title]}' is taken"
   end

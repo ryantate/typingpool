@@ -360,16 +360,6 @@ module Typingpool
         Filer.new(file_path(*relative_path))
       end
 
-      #Same as file method, but returns a Filer::CSV.
-      def csv(*relative_path)
-        Filer::CSV.new(file_path(*relative_path))
-      end
-
-      #Same as file methd, but returns a Filer::Audio.
-      def audio(*relative_path)
-        Filer::Audio.new(file_path(*relative_path))
-      end
-
       #Returns the files in the Filer::Dir directory as Filer
       #instances. Excludes files whose names start with a dot.
       def files

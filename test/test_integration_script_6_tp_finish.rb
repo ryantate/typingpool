@@ -11,7 +11,7 @@ class TestTpFinish < Typingpool::Test::Script
     skip_if_no_upload_credentials('tp-finish audio test')
     tp_make(dir, config_path)
     project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
-    urls = project.local.csv('data', 'assignment.csv').map{|assignment| assignment['audio_url'] }
+    urls = project.local.file('data', 'assignment.csv').as(:csv).map{|assignment| assignment['audio_url'] }
     assert(not(urls.empty?))
     assert_equal(urls.size, urls.select{|url| working_url? url}.size)
     assert_nothing_raised do
@@ -72,7 +72,7 @@ class TestTpFinish < Typingpool::Test::Script
       tp_make(dir)
       begin
         project = temp_tp_dir_project(dir)
-        assignments = project.local.csv('data', 'assignment.csv').read
+        assignments = project.local.file('data', 'assignment.csv').as(:csv).read
         urls = assignments.map{|assignment| assignment['audio_url'] }
         assert_empty(urls.reject{|url| working_url? url })
         bogus_url = urls.first.sub(/\.mp3/, '.foo.mp3')
@@ -81,12 +81,12 @@ class TestTpFinish < Typingpool::Test::Script
         bogus_assignment = assignments.first.dup
         bogus_assignment['audio_url'] = bogus_url
         assignments.insert(1, bogus_assignment)
-        project.local.csv('data', 'assignment.csv').write(assignments)
-        assert_equal(1, project.local.csv('data', 'assignment.csv').reject{|assignment| working_url? assignment['audio_url'] }.count)
+        project.local.file('data', 'assignment.csv').as(:csv).write(assignments)
+        assert_equal(1, project.local.file('data', 'assignment.csv').as(:csv).reject{|assignment| working_url? assignment['audio_url'] }.count)
       ensure
         tp_finish_outside_sandbox(dir)
       end #begin
-      assert_empty(project.local.csv('data', 'assignment.csv').select{|assignment| working_url? assignment['audio_url'] })
+      assert_empty(project.local.file('data', 'assignment.csv').as(:csv).select{|assignment| working_url? assignment['audio_url'] })
     end #in_temp_tp_dir...
   end
 
