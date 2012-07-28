@@ -28,19 +28,16 @@ configs = [Typingpool::Config.file]
   options = {}
   yet = {}
   option_parser = OptionParser.new do |opts|
-    options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n  [--keyword transcription --keyword mp3...] [--deadline 3h] [--lifetime 2d]\n  [--approval 1d] [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n  [--sandbox] [--currency USD] [--config PATH]\n"
+    options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n  [--keyword transcription --keyword mp3...] [--deadline 3h] [--lifetime 2d]\n  [--approval 1d] [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n  [--sandbox]  [--config PATH]\n"
     opts.on('--project=PROJECT', "Required. Path or name within $config_file:transcripts.", "  Also accepted as first argument to script or via STDIN") do |project|
       options[:project] = project
     end
     opts.on('--template=TEMPLATE', "Required. Path or name within dir", "  $config_file:app/templates/assign. Also accepted as first argument to script") do |template|
       options[:template] = template
     end
-    opts.on('--reward=DOLLARS', "Default: $config_file:assign:reward.", "  Per chunk. Format N.NN") do |reward|
+    opts.on('--reward=DOLLARS', "Default: $config_file:assign:reward.", "  Always in USD (Amazon only supports USD).","  Per chunk. Format N.NN") do |reward|
       reward.match(/(\d+(\.\d+)?)|(\d*\.\d+)/) or abort "Bad --reward format '#{reward}'"
       config.assign.reward = reward
-    end
-    opts.on('--currency=TYPE', "Default: $config_file:assign:currency") do |currency|
-      config.assign.currency = currency
     end
     opts.on('--keyword=WORD', "Default: $config_file:assign:keywords.", "  Repeatable") do |keyword|
       unless yet[:keyword]
@@ -204,11 +201,17 @@ STDERR.puts "#{unneeded_assignments[:outstanding]} assignments outstanding" if u
 if needed_assignments.empty?
   STDERR.puts "Nothing to assign"
   exit
-else
-  STDERR.puts "#{needed_assignments.size} assignments to assign"
 end
-
+STDERR.puts "#{needed_assignments.size} assignments to assign"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
+
+#Are there enough funds for this assignment?
+unless options[:sandbox]
+  STDERR.puts "Checking your balance"
+  balance = RTurk.GetAccountBalance.amount
+  cost = needed_assignments.count * options[:reward]
+  abort "Anticipated assignment cost of $#{cost} would exceed available balance of $#{balance}" if cost > balance
+end
 
 #we'll need to re-upload audio if we ran tp-finish on the project
 #or if our last attempt to upload audio failed partway through

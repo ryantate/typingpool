@@ -132,7 +132,6 @@ module Typingpool
                 hit.duration = config_assign.deadline or raise Error, "Missing deadline config"
                 hit.auto_approval = config_assign.approval or raise Error, "Missing approval config"
                 hit.keywords = config_assign.keywords if config_assign.keywords
-                hit.currency = config_assign.currency if config_assign.currency
                 config_assign.qualify.each{|q| hit.qualifications.add(*q.to_arg)} if config_assign.qualify
               end)
         end
