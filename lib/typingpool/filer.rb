@@ -10,17 +10,6 @@ module Typingpool
     #Fully-expanded path to file
     attr_reader :path
 
-    class << self
-      # def inherited(subklass)
-      #   @subklasses ||= {}
-      #   @subklasses[subklass.to_s.split('::').last.downcase] = subklass
-      # end
-
-      # def subklass(subklass_key)
-      #   @subklasses[subklass_key]
-      # end
-    end #class << self
-
     #Constructor.
     # ==== Params
     #[path] Fully expanded path to file.
@@ -78,8 +67,8 @@ module Typingpool
       # ==== Returns
       # Instance of new Filer subclass
       def as(sym)
+        #super calls into Utility::Castable mixin
         super(sym, @path)
-#        self.class.subklass(sym.to_s.downcase).new(@path)
       end
 
 
@@ -220,6 +209,7 @@ module Typingpool
     #and provides various other convenience methods.  
     class Files
       include Enumerable
+      include Utility::Castable
       require 'fileutils'
 
       #Array of Filer instances included in the collection
@@ -246,7 +236,9 @@ module Typingpool
       # ==== Returns
       # Instance of new Filer::Files subclass
       def as(sym)
-        self.class.const_get(sym.to_s.capitalize).new(files)
+        #super calls into Utility::Castable mixin
+        super(sym, files)
+#        self.class.const_get(sym.to_s.capitalize).new(files)
       end
 
       #Returns array of IO streams created by calling to_stream on
@@ -388,7 +380,7 @@ module Typingpool
       #method. Returns a new Filer::Dir instance wrapping the
       #referenced subdir.
       def subdir(*relative_path)
-        self.class.new(file_path(*relative_path))
+        Dir.new(file_path(*relative_path))
       end
 
       #OS X specific. Opens the dir in the Finder via the 'open' command.

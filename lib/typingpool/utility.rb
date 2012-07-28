@@ -167,14 +167,18 @@ module Typingpool
       #to new.
       # ==== Params
       # [sym] Symbol corresponding to subclass to cast into. For
-      # example, passing :audio will cast into a Class::Audio and
-      # passing :csv will cast into Class::CSV. Casting is class
+      # example, Class#as(:audio) will cast into a Class::Audio and
+      # Class#as(:csv) will cast into Class::CSV. Casting is class
       # insensitive, which means you can't have class CSV and class
       # Csv.
       # ==== Returns
       # New instance of subclass
       def as(sym, *args)
-        self.class.subklass(sym.to_s.downcase).new(*args)
+        if klass = self.class.relative_klass(sym.to_s.downcase)
+          klass.new(*args)
+        else
+          raise Error, "Can't find class '#{sym.to_s}' to cast to"
+        end #if subklass =...
       end
 
       def self.included(receiver)
@@ -183,13 +187,25 @@ module Typingpool
 
       module ClassMethods
         def inherited(subklass)
+          subklasses[subklass.to_s.split('::').last.downcase] = subklass
+        end
+
+        def subklasses
           @subklasses ||= {}
-          @subklasses[subklass.to_s.split('::').last.downcase] = subklass
         end
 
         def subklass(subklass_key)
-          @subklasses[subklass_key]
+          subklasses[subklass_key]
         end
+
+        def relative_klass(key)
+          if subklasses[key]
+            subklasses[key]
+          elsif self.superclass.respond_to? :relative_klass
+            self.superclass.relative_klass(key)
+          end
+        end
+
       end #module ClassMethods
     end #Castable
   end #Utility
