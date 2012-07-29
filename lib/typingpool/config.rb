@@ -177,6 +177,15 @@ module Typingpool
         end
       end
 
+      def define_accessor(*syms)
+        define_reader(*syms) do |value|
+          yield(value) if value
+        end
+        define_writer(*syms) do |value|
+          yield(value)
+        end
+      end
+
       def inherited(subklass)
         @@subklasses ||= {}
         @@subklasses[subklass.name.downcase] = subklass
@@ -242,6 +251,11 @@ module Typingpool
       class Assign < Config
         local_path_reader :templates
         time_accessor :deadline, :approval, :lifetime
+
+        define_accessor(:reward) do |value|
+          value.to_s.match(/(\d+(\.\d+)?)|(\d*\.\d+)/) or raise Error::Argument::Format, "Bad reward format '#{value}'; should be N.NN"
+          value
+        end
 
         def qualify
           self.qualify = @param['qualify'] || [] if not(@qualify)

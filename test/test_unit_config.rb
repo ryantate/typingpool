@@ -7,7 +7,7 @@ require 'typingpool/test'
 
 class TestConfig < Typingpool::Test
 
-  def test_config_regular
+  def test_config_regular_file
     assert(config = Typingpool::Config.file(File.join(fixtures_dir, 'config-1')))
     assert_equal('~/Documents/Transcripts/', config['transcripts'])
     assert_match(config.transcripts, /Transcripts$/)
@@ -39,7 +39,7 @@ class TestConfig < Typingpool::Test
     assert_equal('http://example.com/mturk', config.sftp.url)
   end
 
-  def test_config_screwy
+  def test_config_screwy_file
     assert(config = Typingpool::Config.file(File.join(fixtures_dir, 'config-2')))
     exception = assert_raises(Typingpool::Error::Argument) do 
       config.assign.qualify
@@ -55,5 +55,25 @@ class TestConfig < Typingpool::Test
       config.assign.deadline
     end
     assert_match(exception.message, /can't convert/i)
+    config.assign['reward'] = 'foo'
+    exception = assert_raises(Typingpool::Error::Argument::Format) do
+      config.assign.reward
+    end
+    assert_match(exception.message, /bad reward format/i)
+  end
+
+  def test_config_regular_input
+    assert(config = Typingpool::Config.file(File.join(fixtures_dir, 'config-1')))
+    new_reward = '0.80'
+    refute_equal(config.assign.reward, new_reward)
+    assert(config.assign.reward = new_reward)
+    assert_equal(new_reward, config.assign.reward)
+  end
+
+  def test_config_screwy_input
+    exception = assert_raises(Typingpool::Error::Argument::Format) do
+      config.assign.reward = 'foo'
+    end
+    assert_match(exception.message, /bad reward format/i)
   end
 end #TestConfig
