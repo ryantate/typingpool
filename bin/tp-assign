@@ -1,60 +1,97 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require 'erb'
 require 'typingpool'
-require 'stringio'
 
 options = {
   :keyword => [],
   :qualify => []
 }
 OptionParser.new do |opts|
-  options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n  [--keyword transcription --keyword mp3...] [--deadline 3h] [--lifetime 2d]\n  [--approval 1d] [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n  [--sandbox]  [--config PATH]\n"
-  opts.on('--project=PROJECT', "Required. Path or name within $config_file:transcripts.", "  Also accepted as first argument to script or via STDIN") do |project|
+  options[:banner] = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n"
+  options[:banner] += "  [--deadline 3h] [--lifetime 2d] [--approval 1d] \n"
+  options[:banner] += "  [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n"
+  options[:banner] += "  [--keyword transcription --keyword mp3...]\n"
+  options[:banner] += "  [--sandbox] [--config PATH]\n"
+  opts.banner = options[:banner]
+
+  opts.on('--project=PROJECT',
+          "Required. Path or name within $config_file:transcripts.",
+          "  Also accepted as first argument to script or via STDIN") do |project|
     options[:project] = project
   end
-  opts.on('--template=TEMPLATE', "Required. Path or name within dir", "  $config_file:app/templates/assign. Also accepted as first argument to script") do |template|
+
+  opts.on('--template=TEMPLATE',
+          "Required. Path or name within dir",
+          '   $config_file:app/templates/assign',
+          "  Also accepted as first argument to script") do |template|
     options[:template] = template
   end
-  opts.on('--reward=DOLLARS', "Default: $config_file:assign:reward.", "  Always in USD (Amazon only supports USD).","  Per chunk. Format N.NN") do |reward|
+
+  opts.on('--reward=DOLLARS',
+          "Default: $config_file:assign:reward.",
+          "  Always in USD (Amazon only supports USD).",
+          "  Per chunk. Format N.NN") do |reward|
     options[:reward] = reward
   end
-  opts.on('--keyword=WORD', "Default: $config_file:assign:keywords.", "  Repeatable") do |keyword|
+
+  opts.on('--keyword=WORD', 
+          "Default: $config_file:assign:keywords.",
+          "  Repeatable") do |keyword|
     options[:keyword].push(keyword)
   end
-  Hash[
-       :deadline => 'Worker time to transcribe',
-       :lifetime => 'Assignment time to expire',
-       :approval => 'Submission time to auto approve'
-      ].each do |param, meaning|
-    opts.on("--#{param.to_s}=TIMESPEC", "Default: $config:assign:#{param.to_s}.", "  #{meaning}.", "  N[.N]y|M(onths)|d|h|m(inutes)|s") do |timespec|
-      options[param] = timespec
-    end
+
+  timespec = 'N[.N]y|M(onths)|d|h|m(inutes)|s'
+
+  opts.on('--deadline=TIMESPEC',
+          'Default: $config:assign:deadline.',
+          '  Worker time to transcribe.',
+          "  #{timespec}") do |timespec|
+    options[:deadline] = timespec
   end
-  opts.on('--qualify=QUALIFICATION', "Default: $config:assign:qualify.","  Repeatable.", "  An RTurk::Qualifications::TYPES +", "  >|<|==|!=|true|exists|>=|<=", "  [+ INT]") do |qualification|
+
+  opts.on('--lifetime=TIMESPEC',
+          'Default: $config:assign:lifetime.',
+          '  Assignment time to expire.',
+          "  #{timespec}") do |timespec|
+    options[:lifetime] = timespec
+  end
+
+  opts.on('--approval=TIMESPEC',
+          'Default: $config:assign:approval.',
+          '  Submission time to auto approve.',
+          "  #{timespec}") do |timespec|
+    options[:approval] = timespec
+  end
+
+  opts.on('--qualify=QUALIFICATION',
+          "Default: $config:assign:qualify.",
+          "  Repeatable.",
+          "  An RTurk::Qualifications::TYPES +",
+          "  >|<|==|!=|true|exists|>=|<=",
+          "  [+ INT]") do |qualification|
     options[:qualify].push(qualification)
   end
-  opts.on('--sandbox', "Test in Mechanical Turk's sandbox") do
+
+  opts.on('--sandbox',
+          "Test in Mechanical Turk's sandbox") do
     options[:sandbox] = true
   end
-  opts.on('--config=PATH', 'Default: ~/.typingpool') do |path|
+
+  opts.on('--config=PATH',
+          'Default: ~/.typingpool') do |path|
     options[:config] = path
   end
-  opts.on('--help', 'Display this screen') do
+
+  opts.on('--help',
+          'Display this screen') do
     STDERR.puts opts
     exit
   end
 end.parse!
 
-config = if options[:config]
-           full_path = File.expand_path(options[:config])
-           File.exists?(full_path) && File.file?(full_path) or abort "No such file #{options[:config]}"
-           Typingpool::Config.file(full_path)
+config = Typingpool::App.config_from_option(options[:config]) or abort "No config file at '#{options[:config]}'"
 
-         else
-           Typingpool::Config.file
-         end #if options[:config]
 if options[:reward]
   options[:reward].match(/(\d+(\.\d+)?)|(\d*\.\d+)/) or abort "Bad --reward format '#{options[:reward]}'"
   config.assign.reward = options[:reward]
