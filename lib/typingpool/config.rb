@@ -151,12 +151,8 @@ module Typingpool
       #specification. For format details, see docs for
       #Utility.timespec_to_seconds.
       def time_accessor(*syms)
-        define_reader(*syms) do |value|
-          Utility.timespec_to_seconds(value) if value
-        end
-        define_writer(*syms) do |value|
+        define_accessor(*syms) do |value|
           Utility.timespec_to_seconds(value) or raise Error::Argument::Format, "Can't convert '#{value}' to time"
-          value
         end
       end
 

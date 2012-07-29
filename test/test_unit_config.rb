@@ -41,20 +41,24 @@ class TestConfig < Typingpool::Test
 
   def test_config_screwy_file
     assert(config = Typingpool::Config.file(File.join(fixtures_dir, 'config-2')))
+
     exception = assert_raises(Typingpool::Error::Argument) do 
       config.assign.qualify
     end
     assert_match(exception.message, /Unknown qualification type/i)
+
     config.assign['qualify'] = [config.assign['qualify'].pop]
     exception = assert_raises(Typingpool::Error::Argument) do 
       config.assign.qualify
     end
     assert_match(exception.message, /Unknown comparator/i)
+
     assert_equal('3z', config.assign['deadline'])
     exception = assert_raises(Typingpool::Error::Argument::Format) do
       config.assign.deadline
     end
     assert_match(exception.message, /can't convert/i)
+
     config.assign['reward'] = 'foo'
     exception = assert_raises(Typingpool::Error::Argument::Format) do
       config.assign.reward
@@ -68,6 +72,11 @@ class TestConfig < Typingpool::Test
     refute_equal(config.assign.reward, new_reward)
     assert(config.assign.reward = new_reward)
     assert_equal(new_reward, config.assign.reward)
+    
+    new_time = '11d'
+    refute_equal(new_time, config.assign.approval)
+    assert(config.assign.approval = new_time)
+    assert_equal(950400, config.assign.approval)
   end
 
   def test_config_screwy_input
@@ -75,5 +84,11 @@ class TestConfig < Typingpool::Test
       config.assign.reward = 'foo'
     end
     assert_match(exception.message, /bad reward format/i)
+
+    exception = assert_raises(Typingpool::Error::Argument::Format) do
+      config.assign.approval = '11f'
+    end
+    assert_match(exception.message, /can't convert/i)
+
   end
 end #TestConfig
