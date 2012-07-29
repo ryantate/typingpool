@@ -133,7 +133,7 @@ keys = filer2.first.keys
       assert_equal(filer_wma.files.count, filer_conversion.select{|file|  file.mp3? }.count)
       assert_equal(filer_conversion.files.count, dest_filer.files.count)
     ensure
-      FileUtils.rm_r(temp_path)
+      FileUtils.remove_entry_secure(temp_path)
     end #begin
     temp_path = "#{temp_path}.mp3"
     assert(filer_merged = filer_mp3.merge(Typingpool::Filer.new(temp_path)))
@@ -166,7 +166,7 @@ keys = filer2.first.keys
       assert_equal(dir3_path, dir3.to_str)
       assert(filer = dir3.file('doesntexist'))
     ensure
-      FileUtils.rmdir(dir3_path)
+      FileUtils.remove_entry_secure(dir3_path)
     end #begin
     assert(filer = dir.file('vcr', 'tp-collect-1.yml'))
     assert(File.exists? filer.path)

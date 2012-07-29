@@ -106,7 +106,7 @@ module Typingpool
         begin
           yield(dir)
         ensure
-          FileUtils.rm_r(dir)
+          FileUtils.remove_entry_secure(dir)
         end # begin
       end
 
