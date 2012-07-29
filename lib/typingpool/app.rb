@@ -288,6 +288,21 @@ module Typingpool
         csv
       end
 
+      #Optionally takes an ostensible path to a config file, as passed
+      #as a command-line option. Checks to make sure the file exists;
+      #returns nil if does not, returns a Config instance if it
+      #does. If no path is passed, the default config file is returned
+      #(as retrieved by Config.file with no args).
+      def config_from_option(option=nil)
+        if option
+          path = File.expand_path(option)
+          return unless File.exists?(path) && File.file?(path)
+          Config.file(path)
+        else
+          Config.file
+        end #if option
+      end
+
       #Extracts relevant information from a collection of
       #just-assigned Amazon::HITs and writes it into the Project's
       #assignment CSV file for future use.

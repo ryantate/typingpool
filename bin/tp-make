@@ -6,7 +6,6 @@ require 'fileutils'
 require 'tempfile'
 require 'tmpdir'
 
-config = Typingpool::Config.file
 options = {
   :files => [],
   :voices => [],
@@ -60,9 +59,7 @@ OptionParser.new do |opts|
 
   opts.on('--config PATH',
           'Default: ~/.typingpool. A config file') do |path|
-    full_path = File.expand_path(path)
-    File.exists?(full_path) && File.file?(full_path) or abort "No such file #{path}"
-    config = Typingpool::Config.file(full_path)
+    options[:config] = path
   end
 
   opts.on('--bitrate KBPS',
@@ -98,6 +95,8 @@ options[:voices].map! do |voice|
     :description => (description || '')
   }
 end
+
+config = Typingpool::App.config_from_option(options[:config]) or abort "No config file at '#{options[:config]}'"
 
 begin
   project = Typingpool::Project.new(options[:title], config)
