@@ -38,6 +38,13 @@ class TestTpAssign < Typingpool::Test::Script
     assert_match(exception.message, /unknown\b[^\n\r\f]*\btype/i)
   end
 
+  def test_abort_with_bad_reward
+    exception = assert_raise(Typingpool::Error::Shell) do
+      call_tp_assign(project_default[:title], assign_default[:template], '--reward', 'foo')
+    end
+    assert_match(exception.message, /bad --reward/i)
+  end
+
   def test_tp_assign
     skip_if_no_amazon_credentials('tp-assign integration test')
     skip_if_no_upload_credentials('tp-assign integration test')
