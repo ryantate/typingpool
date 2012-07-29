@@ -3,63 +3,81 @@
 require 'optparse'
 require 'typingpool'
 require 'fileutils'
-require 'set'
 require 'tempfile'
 require 'tmpdir'
 
+config = Typingpool::Config.file
 options = {
-  :config => Typingpool::Config.file,
   :files => [],
   :voices => [],
   :unusual => [],
   :chunk => '1:00',
 }
 OptionParser.new do |opts|
-  options[:banner] = opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECTNAME FILE [FILE [FILE...]]\n  [--title PROJECTNAME] [--file foo.mp3 [--file bar.mp3...]]\n  [--chunks 1:00] [--subtitle 'Hack Day interview']\n  [--voice 'John' --voice 'Pat Foo, British female'...]\n  [--unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson'...]\n  [--bitrate 256][--moveorig] [--config PATH]\n"
+  options[:banner] = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECTNAME FILE [FILE [FILE...]]\n"
+  options[:banner] += "  [--chunks 1:00] [--subtitle 'Hack Day interview']\n"
+  options[:banner] += "  [--voice 'John' --voice 'Pat Foo, British female'...]\n"
+  options[:banner] += "  [--unusual 'Hack Day' --unusual 'Sunnyvale, Chad Dickerson'...]\n"
+  options[:banner] += "  [--bitrate 256] [--config PATH]\n"
+  options[:banner] += "  [--title PROJECTNAME] [--file foo.mp3 [--file bar.mp3...]]\n"
+  opts.banner = options[:banner]
 
-  opts.on('--title TITLE', 'Required. For file names and transcript.', '  Also accepted as first argument') do |title|
+  opts.on('--title TITLE', 
+          'Required. For file names and transcript.', 
+          '  Also accepted as first argument') do |title|
     options[:title] = title
   end
 
-  opts.on('--file FILE', 'Required. Audio for transcribing.', '  Repeatable (sorting is by name).', '  Also accepted as second and later arguments') do |file|
+  opts.on('--file FILE', 
+          'Required. Audio for transcribing.', 
+          '  Repeatable (sorting is by name).', 
+          '  Also accepted as second and later arguments') do |file|
     options[:files].push(file)
   end
 
-  opts.on('--subtitle SUBTITLE', 'For transcript') do |subtitle|
+  opts.on('--subtitle SUBTITLE',
+          'For transcript') do |subtitle|
     options[:subtitle] = subtitle
   end
 
-  opts.on('--chunks MM:SS', 'Default: 1:00. Audio divided thusly for transcribing.', '  Try also HH:MM:SS.ss and SSS') do |chunk|
+  opts.on('--chunks MM:SS', 
+          'Default: 1:00. Audio divided thusly for transcribing.', 
+          '  Try also HH:MM:SS and SSS') do |chunk|
     options[:chunk] = chunk
   end
 
-  opts.on('--voice "NAME[, DESCR]"', 'Name, optional description of recorded person, to aid transcriber.', '  Repeatable') do |voice|
+  opts.on('--voice "NAME[, DESCR]"', 
+          'Name, optional description of recorded person, to aid transcriber.', 
+          '  Repeatable') do |voice|
     options[:voices].push(voice)
   end
 
-  opts.on('--unusual WORD[,WORD,]', 'Unusual word within recording, to aid transcriber.', '  Commas for multiple. Repeatable') do |word|
+  opts.on('--unusual WORD[,WORD,]', 
+          'Unusual word within recording, to aid transcriber.', 
+          '  Commas for multiple. Repeatable') do |word|
     options[:unusual].push(word)
   end
 
-  opts.on('--config PATH', 'Default: ~/.typingpool. A config file') do |config|
-    path = File.expand_path(config)
-    File.exists?(path) && File.file?(path) or abort "No such file #{path}"
-    options[:config] = Typingpool::Config.file(config)
+  opts.on('--config PATH',
+          'Default: ~/.typingpool. A config file') do |path|
+    full_path = File.expand_path(path)
+    File.exists?(full_path) && File.file?(full_path) or abort "No such file #{path}"
+    config = Typingpool::Config.file(full_path)
   end
 
-  opts.on('--bitrate KBPS', 'Default: Mirror input. Output bitrate in kb/s.', '  Only applies if/when converting to MP3') do |kbps|
+  opts.on('--bitrate KBPS',
+          'Default: Mirror input. Output bitrate in kb/s.',
+          '  Only applies if/when converting to MP3') do |kbps|
     options[:bitrate] = kbps
   end
 
-  opts.on('--moveorig', 'Move input files instead of copying.') do
-    options[:moveorig] = true
-  end
-
-  opts.on('--help', 'Display this screen.') do
+  opts.on('--help',
+          'Display this screen.') do
     puts opts
     exit
   end
 end.parse!
+
 options[:title] ||= ARGV.shift if not(ARGV.empty?)
 options[:files].push(ARGV).flatten! if not(ARGV.empty?)
 options[:banner] += "\n`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
@@ -68,10 +86,9 @@ abort "No title specified\n\n#{options[:banner]}" if options[:title].to_s.empty?
 options[:files].sort!
 options[:files].each do |file|
   File.extname(file) or abort "You need a file extension on the file '#{file}'"
-  File.exist?(file) or abort "There is no file '#{file}'"
+  File.exists?(file) or abort "There is no file '#{file}'"
+  File.file?(file) or abort "Not a file: '#{file}'"
 end
-
-config = options[:config]
 
 options[:unusual].map!{|unusual| unusual.split(/\s*,\s*/)}.flatten!
 options[:voices].map! do |voice| 
@@ -91,9 +108,8 @@ end #begin
 begin
   project.interval = options[:chunk] if options[:chunk]
 rescue Typingpool::Error::Argument::Format
-  abort "Could not make sense of chunk argument '#{options[:chunk]}'. Required format is SS, or MM:SS, or HH:MM:SS, with optional decimal values (e.g. MM:SS.ss)"
+  abort "Could not make sense of chunk argument '#{options[:chunk]}'. Required format is SS, or MM:SS, or HH:MM:SS."
 end #begin
-
 begin
   project.bitrate = options[:bitrate] if options[:bitrate]
 rescue Typingpool::Error::Argument::Format
@@ -101,43 +117,50 @@ rescue Typingpool::Error::Argument::Format
 end #begin
 
 if project.local
-  if (not(File.exists?(project.local.file('data', 'assignment.csv'))) || 
-      project.local.file('data', 'assignment.csv').as(:csv).read.select{|assignment| assignment['audio_uploaded'] == 'maybe' }.count == 0)
-    #successfully made project
+  if (File.exists?(project.local.file('data', 'assignment.csv')) &&
+      project.local.file('data', 'assignment.csv').as(:csv).read.select{|assignment| assignment['audio_uploaded'] == 'maybe' }.count > 0)
+    #project where the upload died partway through
+    STDERR.puts "Fixing incomplete project"
+    STDERR.puts "Determining which mp3s need uploading"
+  else
     abort "The title '#{options[:title]}' is taken"
-  end
-  #project where the upload died partway through
-  STDERR.puts "Fixing incomplete project"
-  STDERR.puts "Determining which mp3s need uploading"
+  end #if(File.exists(project.local.file('data', 'assignment.csv') &&...
 else
   project.create_local
   project.local.subtitle = options[:subtitle] if options[:subtitle]
   options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }
 
-  files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(Typingpool::Filer::Dir.new(Dir.mktmpdir), project.bitrate) do |file| 
+  temp_dir = Typingpool::Filer::Dir.new(Dir.mktmpdir)
+  files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(temp_dir, project.bitrate) do |file| 
     STDERR.puts "Converting #{File.basename(file) } to mp3" 
   end
 
   STDERR.puts "Merging audio" if files.count > 1
-  file = files.merge(Typingpool::Filer::Audio.new(Tempfile.new(["#{project.name}.all", ".mp3"]).path))
+  temp_file = Typingpool::Filer::Audio.new(Tempfile.new(["#{project.name}.all", ".mp3"]).path)
+  file = files.merge(temp_file)
 
   STDERR.puts "Splitting audio into uniform bits"
-  files = file.split(project.interval_as_min_dot_sec, File.basename(file, '.*').sub(/\.all$/, ''), project.local.subdir('audio','chunks'))
+  files = file.split(project.interval_as_min_dot_sec, project.name, project.local.subdir('audio','chunks'))
   urls = project.create_remote_names(files).map{|file| project.remote.file_to_url(file) }
   #Write mp3 URLs before uploading, so we can rollback if uploading
   #dies halfway through
   assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :chunk => options[:chunk], :unusual => options[:unusual], :voices => options[:voices])
   STDERR.puts "Wrote #{assignment_path}"
+
+  STDERR.puts "Cleaning up temp files"
+  [temp_file, temp_dir].each{|path| STDERR.puts("PATH: #{path}"); FileUtils.remove_entry_secure(path) }
 end #if project.local
 
 Typingpool::App.upload_audio_for_project(project) do |file, as|
   STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
 end
 
-if STDOUT.tty?
+
+if STDOUT.tty? && Typingpool::Utility.os_x?
   STDERR.puts "Opening project folder #{project.local.path}"
   project.local.finder_open 
 end
 
 STDERR.puts "Done"
 puts project.local.path
+

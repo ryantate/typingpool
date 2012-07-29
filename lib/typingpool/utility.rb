@@ -116,6 +116,10 @@ module Typingpool
         File.dirname(__FILE__)
       end
 
+      def os_x?
+        RUBY_PLATFORM.match(/\bdarwin/i)
+      end
+
       def working_url?(url, max_redirects=6)
         response = request_url_with(url, max_redirects) do |url|
           request = Net::HTTP.new(url.host, url.port)

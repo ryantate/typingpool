@@ -37,17 +37,23 @@ class TestProject < Typingpool::Test
     assert_equal(1, set_and_return_interval(project, '01'))
     assert_equal(1, set_and_return_interval(project, 1))
     assert_equal(2, set_and_return_interval(project, 2))
-    assert_equal(2.1, set_and_return_interval(project, 2.1))
+    assert_raises(Typingpool::Error::Argument::Format) do 
+      set_and_return_interval(project, 2.1)
+    end
     assert_equal(11, set_and_return_interval(project,11))
     assert_equal(1, set_and_return_interval(project, '00:01'))
     assert_equal(60, set_and_return_interval(project, '01:00'))
     assert_equal(60, set_and_return_interval(project, '1:00'))
     assert_equal(3552, set_and_return_interval(project, '59:12'))
     assert_equal(3680, set_and_return_interval(project, '61:20'))
-    assert_equal(3680.1, set_and_return_interval(project, '61:20.1'))
+    assert_raises(Typingpool::Error::Argument::Format) do 
+      set_and_return_interval(project, '61:20.1')
+    end
     assert_equal(7152, set_and_return_interval(project, '01:59:12'))
     assert_equal(7152, set_and_return_interval(project, '1:59:12'))
-    assert_equal(7152.01, set_and_return_interval(project, '01:59:12.01'))
+    assert_raises(Typingpool::Error::Argument::Format) do 
+      set_and_return_interval(project, '01:59:12.01')
+    end
     assert_equal(43152, set_and_return_interval(project, '11:59:12'))
   end
 
@@ -55,14 +61,11 @@ class TestProject < Typingpool::Test
     assert(project = Typingpool::Project.new(project_default[:title], dummy_config))
     assert_equal('0.1', set_and_return_interval_as_mds(project, 1))
     assert_equal('0.2', set_and_return_interval_as_mds(project, 2))
-    assert_equal('0.2.1', set_and_return_interval_as_mds(project, 2.1))
     assert_equal('0.11', set_and_return_interval_as_mds(project,11))
     assert_equal('1.0', set_and_return_interval_as_mds(project, '01:00'))
     assert_equal('59.12', set_and_return_interval_as_mds(project, '59:12'))
     assert_equal('61.20', set_and_return_interval_as_mds(project, '61:20'))
-    assert_equal('61.20.1', set_and_return_interval_as_mds(project, '61:20.1'))
     assert_equal('119.12', set_and_return_interval_as_mds(project, '1:59:12'))
-    assert_equal('119.12.01', set_and_return_interval_as_mds(project, '01:59:12.01'))
     assert_equal('719.12', set_and_return_interval_as_mds(project, '11:59:12'))
   end
 

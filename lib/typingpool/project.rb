@@ -86,10 +86,9 @@ module Typingpool
     #where the hour and fractional seconds components are optional.
     def interval=(mmss)
       formatted = mmss.to_s.match(
-                                  /^((\d+)|((\d+:)?(\d+):(\d\d)))(\.(\d+))?$/
-                                  ) or raise Error::Argument::Format, "Interval does not match nnn or [nn:]nn:nn[.nn]"
+                                  /^((\d+)|((\d+:)?(\d+):(\d\d)))$/
+                                  ) or raise Error::Argument::Format, "Interval does not match nnn or [nn:]nn:nn"
       @interval = (formatted[2] || ((formatted[4].to_i * 60 * 60) + (formatted[5].to_i * 60) + formatted[6].to_i)).to_i
-      @interval += ("0.#{formatted[8]}".to_f) if formatted[8]
     end
 
     #Returns the project.interval in a format understood by the Unix

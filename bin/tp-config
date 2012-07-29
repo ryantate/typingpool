@@ -59,7 +59,7 @@ if not(config.amazon.bucket || (config.sftp && config.sftp.user))
 end
 
 if not(config.transcripts)
-  if RUBY_PLATFORM.match(/\bdarwin/i)
+  if Typingpool::Utility.os_x?
     config.transcripts = '~/Desktop/Transcripts'
   else
     config.transcripts = '~/transcripts'
