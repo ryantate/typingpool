@@ -23,14 +23,14 @@ OptionParser.new do |opts|
 
   opts.on('--title TITLE', 
           'Required. For file names and transcript.', 
-          '  Also accepted as first argument') do |title|
+          'Also accepted as first argument') do |title|
     options[:title] = title
   end
 
   opts.on('--file FILE', 
           'Required. Audio for transcribing.', 
-          '  Repeatable (sorting is by name).', 
-          '  Also accepted as second and later arguments') do |file|
+          'Repeatable (sorting is by name).', 
+          'Also accepted as second and later arguments') do |file|
     options[:files].push(file)
   end
 
@@ -40,20 +40,21 @@ OptionParser.new do |opts|
   end
 
   opts.on('--chunks MM:SS', 
-          'Default: 1:00. Audio divided thusly for transcribing.', 
-          '  Try also HH:MM:SS and SSS') do |chunk|
+          'Default: 1:00. Audio divided thusly for',
+          'transcribing. Try also HH:MM:SS and SSS') do |chunk|
     options[:chunk] = chunk
   end
 
   opts.on('--voice "NAME[, DESCR]"', 
-          'Name, optional description of recorded person, to aid transcriber.', 
-          '  Repeatable') do |voice|
+          'Name, optional description of recorded', 
+          'person, to aid transcriber. Repeatable') do |voice|
     options[:voices].push(voice)
   end
 
   opts.on('--unusual WORD[,WORD,]', 
-          'Unusual word within recording, to aid transcriber.', 
-          '  Commas for multiple. Repeatable') do |word|
+          'Unusual word within recording, to aid', 
+          'transcriber. Commas for multiple.',
+          'Repeatable') do |word|
     options[:unusual].push(word)
   end
 
@@ -63,8 +64,9 @@ OptionParser.new do |opts|
   end
 
   opts.on('--bitrate KBPS',
-          'Default: Mirror input. Output bitrate in kb/s.',
-          '  Only applies if/when converting to MP3') do |kbps|
+          'Default: Mirror input. Output bitrate in',
+          'kb/s. Only applies if/when converting to',
+          'MP3') do |kbps|
     options[:bitrate] = kbps
   end
 
