@@ -288,6 +288,18 @@ module Typingpool
         csv
       end
 
+      #Takes Project instance and a boolean indicating whether we're
+      #working in the Amazon sandbox. Returns a Filer::CSV instance
+      #corresponding to the appropriate assignments file,
+      #e.g. Project#local#file('data', 'assignments.csv')#as(:csv).
+      def assignments_file_for_sandbox_status(sandbox, project)
+        if sandbox
+          ensure_sandbox_assignment_csv(project)
+        else
+          project.local.file('data', 'assignment.csv').as(:csv)
+        end
+      end
+
       #Optionally takes an ostensible path to a config file, as passed
       #as a command-line option. Checks to make sure the file exists;
       #returns nil if does not, returns a Config instance if it

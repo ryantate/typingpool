@@ -147,6 +147,12 @@ if File.exists?(options[:project])
 else
   options[:project] = File.join(config.transcripts, options[:project])
 end
+abort "No project at '#{options[:project]}'" unless File.exists?(options[:project])
+abort "Project '#{options[:project]}' is not a directory" unless File.directory?(options[:project])
+project = Typingpool::Project.new(File.basename(options[:project]), config)
+abort "Not a project directory at '#{options[:project]}'" unless project.local
+
+assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project)
 
 begin
   template = Typingpool::Template::Assignment.from_config(options[:template], config)
@@ -155,28 +161,9 @@ rescue Typingpool::Error::File::NotExists => e
 rescue Typingpool::Error => e
   abort "Couldn't find your template: #{e}"
 end
-%w(project).each do |arg|
-  abort "No #{arg} at #{options[arg.to_sym]}" if not(File.exists?(options[arg.to_sym]))
-end
-abort "Project '#{options[:project]}' is not a directory" if not(File.directory?(options[:project]))
-
-project = Typingpool::Project.new(File.basename(options[:project]), config)
-abort "Not a project directory at '#{options[:project]}'" if not(project.local)
-assignments = if options[:sandbox]
-                Typingpool::App.ensure_sandbox_assignment_csv(project)
-              else
-                project.local.file('data', 'assignment.csv').as(:csv)
-              end #if options[:sandbox]
-abort "No data in assignment CSV" if assignments.read.empty?
-abort "No Amazon key+secret in config" unless config.amazon && config.amazon.key && config.amazon.secret
-
 
 #always upload assignment html (can't re-use old ones because params
-#may have changed, affecting html output) 
-#
-#TO DO merge in params with assignments from csv before passing to
-#template
-
+#may have changed, affecting html output) #
 STDERR.puts "Figuring out what needs to be assigned"
 needed_assignments = {}
 unneeded_assignments = {
