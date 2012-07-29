@@ -75,8 +75,8 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-options[:title] ||= ARGV.shift if not(ARGV.empty?)
-options[:files].push(ARGV).flatten! if not(ARGV.empty?)
+options[:title] ||= ARGV.shift if ARGV.count > 0
+options[:files].push(ARGV).flatten! if ARGV.count > 0
 options[:banner] += "\n`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
 abort "No files specified\n\n#{options[:banner]}" if options[:files].empty?
 abort "No title specified\n\n#{options[:banner]}" if options[:title].to_s.empty?
