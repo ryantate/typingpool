@@ -116,10 +116,26 @@ module Typingpool
         File.dirname(__FILE__)
       end
 
+      #Returns true if this Ruby was built on Mac OS X
       def os_x?
         RUBY_PLATFORM.match(/\bdarwin/i)
       end
 
+      #Returns true if anything appears to be waiting on STDIN
+      def stdin_has_content?
+        STDIN.fcntl(Fcntl::F_GETFL, 0) == 0
+      end
+
+      #Makes one or more HEAD requests to determine whether a
+      #particular web resource is available.
+      # ==== Params
+      #[url]           URL as a string.
+      #[max_redirects] Default 6. Maximum number of HTTP redirects to
+      #                follow.
+      # ==== Returns
+      #True if the HTTP response code indicates success (after
+      #following redirects). False if the HTTP response code indicates
+      #an error (e.g. 4XX and 5XX response codes).
       def working_url?(url, max_redirects=6)
         response = request_url_with(url, max_redirects) do |url|
           request = Net::HTTP.new(url.host, url.port)
@@ -129,6 +145,18 @@ module Typingpool
         response.kind_of?(Net::HTTPSuccess)
       end
 
+      #Makes one or more web requests to fetch a resource. Follows
+      #redirects by default.
+      # ==== Params
+      #[url]           URL as a string.
+      #[max_redirects] Default 6. Maximum number of HTTP redirects to
+      #                follow.
+      # ==== Exceptions
+      #Raises Error::HTTP if it receives an HTTP response code
+      #indicating an error (after followinf redirects). Exception
+      #message will include the response code and response message.
+      # ==== Returns
+      #A Net::HTTPResponse instance, if the request was successful.
       def fetch_url(url, max_redirects=6)
         response = request_url_with(url, max_redirects) do |url|
           Net::HTTP.get_response(url)

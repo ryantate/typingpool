@@ -16,60 +16,60 @@ OptionParser.new do |opts|
   opts.banner = options[:banner]
 
   opts.on('--project=PROJECT',
-          "Required. Path or name within $config_file:transcripts.",
-          "  Also accepted as first argument to script or via STDIN") do |project|
+          "Required. Path or name within", 
+          "$config_file:transcripts. Also accepted as",
+          "first argument to script or via STDIN") do |project|
     options[:project] = project
   end
 
   opts.on('--template=TEMPLATE',
           "Required. Path or name within dir",
-          '   $config_file:app/templates/assign',
-          "  Also accepted as first argument to script") do |template|
+          "$config_file:app/templates/assign. Also", 
+          "accepted as first argument to script") do |template|
     options[:template] = template
   end
 
   opts.on('--reward=DOLLARS',
           "Default: $config_file:assign:reward.",
-          "  Always in USD (Amazon only supports USD).",
-          "  Per chunk. Format N.NN") do |reward|
+          "Always in USD (Amazon only supports USD).",
+          "Per chunk. Format N.NN") do |reward|
     options[:reward] = reward
   end
 
   opts.on('--keyword=WORD', 
           "Default: $config_file:assign:keywords.",
-          "  Repeatable") do |keyword|
+          "Repeatable") do |keyword|
     options[:keyword].push(keyword)
   end
 
   timespec = 'N[.N]y|M(onths)|d|h|m(inutes)|s'
 
   opts.on('--deadline=TIMESPEC',
-          'Default: $config:assign:deadline.',
-          '  Worker time to transcribe.',
-          "  #{timespec}") do |timespec|
+          'Default: $config:assign:deadline. Worker',
+          "time to transcribe.",
+          timespec) do |timespec|
     options[:deadline] = timespec
   end
 
   opts.on('--lifetime=TIMESPEC',
           'Default: $config:assign:lifetime.',
-          '  Assignment time to expire.',
-          "  #{timespec}") do |timespec|
+          'Assignment time to expire.',
+          timespec) do |timespec|
     options[:lifetime] = timespec
   end
 
   opts.on('--approval=TIMESPEC',
           'Default: $config:assign:approval.',
-          '  Submission time to auto approve.',
-          "  #{timespec}") do |timespec|
+          'Submission time to auto approve.',
+          timespec) do |timespec|
     options[:approval] = timespec
   end
 
   opts.on('--qualify=QUALIFICATION',
           "Default: $config:assign:qualify.",
-          "  Repeatable.",
-          "  An RTurk::Qualifications::TYPES +",
-          "  >|<|==|!=|true|exists|>=|<=",
-          "  [+ INT]") do |qualification|
+          "Repeatable.",
+          "An RTurk::Qualifications::TYPES +",
+          ">|<|==|!=|true|exists|>=|<= [+ INT]") do |qualification|
     options[:qualify].push(qualification)
   end
 
@@ -102,14 +102,15 @@ if options[:keyword].count > 0
   config.assign.keywords = []
   config.assign.keywords.push(*options[:keyword])
 end
+
 [:deadline, :lifetime, :approval].each do |param|
-  next unless options[param]
   begin
-    config.assign.send("#{param.to_s}=", options[param])
+    config.assign.send("#{param.to_s}=", options[param]) if options[param]
   rescue Typingpool::Error::Argument => e
     abort "Bad --#{param.to_s} '#{options[:param.to_s]}': #{e}"
   end
 end #[:deadline, :lifetime, :approval].each...
+
 if options[:qualify].count > 0
   config.assign.qualify = []
   options[:qualify].each do |qualification|
@@ -121,38 +122,32 @@ if options[:qualify].count > 0
   end #options[:qualify].each...
 end #if options[:qualify].count > 0 
 
-
-options[:banner] += "`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
-options[:banner] = "\n#{options[:banner]}"
+options[:banner] += "\n`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
 
 positional = %w(project template)
-#Anything waiting on STDIN?
-if STDIN.fcntl(Fcntl::F_GETFL, 0) == 0
-  project = STDIN.gets
-  if project
-    project.chomp!
-    abort "Duplicate project values (STDIN and --project)" if options[:project]
-    options[:project] = project
-    positional.shift
-  end
+if Typingpool::Utility.stdin_has_content? && project = STDIN.gets
+  project.chomp!
+  abort "Duplicate project values (STDIN and --project)" if options[:project]
+  options[:project] = project
+  positional.shift
 end
+
 positional.each do |name|
   arg = ARGV.shift
-  abort "Duplicate values for #{name}" if (not(arg.to_s.empty?)) && (not(options[name.to_sym].to_s.empty?))
-  options[name.to_sym] = arg if options[name.to_sym].to_s.empty?
-  abort "Missing required arg #{name}#{options[:banner]}" if options[name.to_sym].to_s.empty?
+  if options[name.to_sym]
+    abort "Duplicate values for #{name} (argument and --#{name})" if arg
+  else
+    options[name.to_sym] = arg or abort "Missing required arg #{name}\n\n#{options[:banner]}"
+  end
 end
-abort "Unexpected argument(s): #{ARGV.join(';')}" if not(ARGV.empty?)
+abort "Unexpected argument(s): #{ARGV.join(';')}" if ARGV.count > 0
 
 if File.exists?(options[:project])
   config.transcripts = File.dirname(options[:project])
 else
-  if config.transcripts.to_s.empty?
-    abort "Required param 'transcripts' missing from config file '#{config.path}'" 
-  end
   options[:project] = File.join(config.transcripts, options[:project])
 end
-abort "No template specified" if not(options[:template])
+
 begin
   template = Typingpool::Template::Assignment.from_config(options[:template], config)
 rescue Typingpool::Error::File::NotExists => e
