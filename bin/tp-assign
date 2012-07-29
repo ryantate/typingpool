@@ -152,8 +152,6 @@ abort "Project '#{options[:project]}' is not a directory" unless File.directory?
 project = Typingpool::Project.new(File.basename(options[:project]), config)
 abort "Not a project directory at '#{options[:project]}'" unless project.local
 
-assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project)
-
 begin
   template = Typingpool::Template::Assignment.from_config(options[:template], config)
 rescue Typingpool::Error::File::NotExists => e
@@ -165,6 +163,7 @@ end
 #always upload assignment html (can't re-use old ones because params
 #may have changed, affecting html output) #
 STDERR.puts "Figuring out what needs to be assigned"
+assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project)
 needed_assignments = {}
 unneeded_assignments = {
   :complete => 0,
@@ -191,16 +190,7 @@ needed_assignments.each do |url, assignment|
   chunk_elements = assignment['chunk'].split(/:/)
   %w(seconds minutes hours).each do |period|
     value = chunk_elements.pop
-    if value
-      if value.to_f == 0
-        value = nil
-      elsif value.to_f == value.to_i
-        value = value.to_i
-      else
-        value = value.to_f
-      end #if value.to_f ==0
-    end #if value
-    assignment["chunk_#{period}"] = value
+    assignment["chunk_#{period}"] = (value.to_i == 0) ? nil : value.to_i
   end #%w(...).each do |period|
   assignment['voices_count'] = 0
   assignment['voices_count'] += 1 while assignment["voice#{assignment['voices_count'] + 1}"]
