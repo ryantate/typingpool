@@ -184,18 +184,6 @@ assignments.each do |assignment|
   needed_assignments[assignment['audio_url']] = assignment
 end
 
-#add some fields to the assignments to make life easier for our
-#assignment HTML templates
-needed_assignments.each do |url, assignment|
-  chunk_elements = assignment['chunk'].split(/:/)
-  %w(seconds minutes hours).each do |period|
-    value = chunk_elements.pop
-    assignment["chunk_#{period}"] = (value.to_i == 0) ? nil : value.to_i
-  end #%w(...).each do |period|
-  assignment['voices_count'] = 0
-  assignment['voices_count'] += 1 while assignment["voice#{assignment['voices_count'] + 1}"]
-end
-
 STDERR.puts "#{assignments.count} assignments total"
 STDERR.puts "#{unneeded_assignments[:complete]} assignments completed" if unneeded_assignments[:complete] > 0
 STDERR.puts "#{unneeded_assignments[:outstanding]} assignments outstanding" if unneeded_assignments[:outstanding] > 0

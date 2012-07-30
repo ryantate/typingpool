@@ -36,25 +36,33 @@ class TestProject < Typingpool::Test
     assert_equal(120, project.interval)
     assert_equal(1, set_and_return_interval(project, '01'))
     assert_equal(1, set_and_return_interval(project, 1))
+    assert_equal("0:01", project.send(:interval_as_time_string))
     assert_equal(2, set_and_return_interval(project, 2))
+    assert_equal("0:02", project.send(:interval_as_time_string))
     assert_raises(Typingpool::Error::Argument::Format) do 
       set_and_return_interval(project, 2.1)
     end
     assert_equal(11, set_and_return_interval(project,11))
+    assert_equal("0:11", project.send(:interval_as_time_string))
     assert_equal(1, set_and_return_interval(project, '00:01'))
     assert_equal(60, set_and_return_interval(project, '01:00'))
+    assert_equal("1:00", project.send(:interval_as_time_string))
     assert_equal(60, set_and_return_interval(project, '1:00'))
     assert_equal(3552, set_and_return_interval(project, '59:12'))
+    assert_equal("59:12", project.send(:interval_as_time_string))
     assert_equal(3680, set_and_return_interval(project, '61:20'))
+    assert_equal("1:01:20", project.send(:interval_as_time_string))
     assert_raises(Typingpool::Error::Argument::Format) do 
       set_and_return_interval(project, '61:20.1')
     end
     assert_equal(7152, set_and_return_interval(project, '01:59:12'))
+    assert_equal("1:59:12", project.send(:interval_as_time_string))
     assert_equal(7152, set_and_return_interval(project, '1:59:12'))
     assert_raises(Typingpool::Error::Argument::Format) do 
       set_and_return_interval(project, '01:59:12.01')
     end
     assert_equal(43152, set_and_return_interval(project, '11:59:12'))
+    assert_equal("11:59:12", project.send(:interval_as_time_string))
   end
 
   def test_project_base_interval_as_mds
@@ -113,6 +121,7 @@ class TestProject < Typingpool::Test
       config.transcripts = dir
       assert(project = Typingpool::Project.new(project_default[:title], config))
       project.create_local
+      assert(project.interval = '1:00')
       assert_kind_of(Typingpool::Project::Local, project.local)
       dummy_remote_files = (1..5).map{|n| "#{project_default[:title]}.#{n}" }
       relative_path = ['data', 'assignment.csv']
@@ -122,13 +131,24 @@ class TestProject < Typingpool::Test
         hash[:description] = spec[1] if spec[1]
         hash
       end
-      assert(result = project.create_assignment_csv(:path => relative_path, :urls => dummy_remote_files, :unusual => project_default[:unusual], :voices => voices, :chunk => '1:00'))
+      assert(result = project.create_assignment_csv(:path => relative_path, :urls => dummy_remote_files, :unusual => project_default[:unusual], :voices => voices, ))
       assert_includes(result, dir)
       csv_file = File.join(dir, project_default[:title], *relative_path)
       assert(File.exists? csv_file)
       assert(File.file? csv_file)
       assert(parsed = CSV.read(csv_file))
-      assert_equal(dummy_remote_files.count + 1, parsed.count)
+      assignment_headers = parsed.shift
+      assert_equal(dummy_remote_files.count, parsed.count)
+      assert(chunk_index = assignment_headers.find_index('chunk'))
+      assert_equal('1:00', parsed.first[chunk_index].to_s)
+      assert(chunk_minutes_index = assignment_headers.find_index('chunk_minutes'))
+      assert_equal(1, parsed.first[chunk_minutes_index].to_i)
+      assert(chunk_seconds_index = assignment_headers.find_index('chunk_seconds'))
+      assert_empty(parsed.first[chunk_seconds_index].to_s)
+      assert(voices_count_index = assignment_headers.find_index('voices_count'))
+      assert_equal(voices.count, parsed.first[voices_count_index].to_i)
+      assert(voice_2_title_index = assignment_headers.find_index('voice2title'))
+      refute_empty(parsed.first[voice_2_title_index].to_s)
     end #in_temp_dir do
   end
 

@@ -145,7 +145,7 @@ else
   urls = project.create_remote_names(files).map{|file| project.remote.file_to_url(file) }
   #Write mp3 URLs before uploading, so we can rollback if uploading
   #dies halfway through
-  assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :chunk => options[:chunk], :unusual => options[:unusual], :voices => options[:voices])
+  assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :unusual => options[:unusual], :voices => options[:voices])
   STDERR.puts "Wrote #{assignment_path}"
 
   STDERR.puts "Cleaning up temp files"

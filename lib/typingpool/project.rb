@@ -118,9 +118,6 @@ module Typingpool
     #                 relative path elements. See Filer::Dir#file docs
     #                 for details.
     # [:urls]         Array of URLs corresponding to project files.
-    # [:chunk]        Length of the audio chunk in MM:SS format. See the
-    #                 Project#interval documentation for further
-    #                 details.
     # [:unusual]      Optional. Array of unusual words spoken in the
     #                 audio to be transcribed. This list is ultimately
     #                 provided to transcribers to aid in their work.
@@ -133,11 +130,26 @@ module Typingpool
     # ==== Returns
     # Path to the resulting CSV file.
     def create_assignment_csv(args)
-      [:path, :urls, :chunk].each{|arg| args[arg] or raise Error::Argument, "Missing arg '#{arg}'" }
-      headers = ['audio_url', 'project_id', 'chunk', 'unusual', (1 .. args[:voices].count).map{|n| ["voice#{n}", "voice#{n}title"]}].flatten
-      csv = []
-      args[:urls].each_with_index do |url, i|
-        csv << [url, local.id, args[:chunk], args[:unusual].join(', '), args[:voices].map{|v| [v[:name], v[:description]]}].flatten
+      [:path, :urls].each{|arg| args[arg] or raise Error::Argument, "Missing arg '#{arg}'" }
+      headers = ['audio_url',
+                 'project_id',
+                 'unusual',
+                 'chunk',
+                 'chunk_hours',
+                 'chunk_minutes',
+                 'chunk_seconds',
+                 'voices_count',
+                 (1 .. args[:voices].count).map{|n| ["voice#{n}", "voice#{n}title"]}
+                ].flatten
+      csv = args[:urls].map do |url|
+        [url, 
+         local.id,
+         args[:unusual].join(', '),
+         interval_as_time_string,
+         interval_as_hours_minutes_seconds.map{|n| (n == 0) ? nil : n },
+         args[:voices].count,
+         args[:voices].map{|v| [v[:name], v[:description]]}
+        ].flatten
       end
       local.file(*args[:path]).as(:csv).write_arrays(csv, headers)
       local.file_path(*args[:path])
@@ -184,6 +196,25 @@ module Typingpool
     #probably move this into Utility. TODO
     def pseudo_random_uppercase_string(length=6)
       (0...length).map{(65 + rand(25)).chr}.join
+    end
+
+    def interval_as_hours_minutes_seconds
+      seconds = interval or return
+      hours = seconds / (60 * 60)
+      seconds = seconds % (60 * 60)
+      minutes = seconds / 60
+      seconds = seconds % 60
+      [hours, minutes, seconds]
+    end
+
+    #Returns interval as [HH:]MM:SS.
+    def interval_as_time_string
+      hms = interval_as_hours_minutes_seconds
+      hms.shift if hms.first == 0
+      #make sure seconds column is zero-padded and, if there are
+      #hours, do the same to the minutes column
+      (1 - hms.count .. -1).each{|i| hms[i] = hms[i].to_s.rjust(2, '0') }
+      hms.join(":")
     end
 
     #Representation of the Project instance on remote servers. This is
