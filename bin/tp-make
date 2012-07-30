@@ -88,7 +88,6 @@ options[:files].each do |file|
   File.exists?(file) or abort "There is no file '#{file}'"
   File.file?(file) or abort "Not a file: '#{file}'"
 end
-
 options[:unusual].map!{|unusual| unusual.split(/\s*,\s*/)}.flatten!
 options[:voices].map! do |voice| 
   name, description = voice.split(/\s*,\s*/)
@@ -111,6 +110,7 @@ begin
 rescue Typingpool::Error::Argument::Format
   abort "Could not make sense of chunk argument '#{options[:chunk]}'. Required format is SS, or MM:SS, or HH:MM:SS."
 end #begin
+
 begin
   project.bitrate = options[:bitrate] if options[:bitrate]
 rescue Typingpool::Error::Argument::Format
@@ -149,13 +149,12 @@ else
   STDERR.puts "Wrote #{assignment_path}"
 
   STDERR.puts "Cleaning up temp files"
-  [temp_file, temp_dir].each{|path| STDERR.puts("PATH: #{path}"); FileUtils.remove_entry_secure(path) }
+  [temp_file, temp_dir].each{|path| FileUtils.remove_entry_secure(path) }
 end #if project.local
 
 Typingpool::App.upload_audio_for_project(project) do |file, as|
   STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
 end
-
 
 if STDOUT.tty? && Typingpool::Utility.os_x?
   STDERR.puts "Opening project folder #{project.local.path}"
