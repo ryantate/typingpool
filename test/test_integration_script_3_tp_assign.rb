@@ -29,12 +29,12 @@ class TestTpAssign < Typingpool::Test::Script
     exception = assert_raise(Typingpool::Error::Shell) do
       call_tp_assign(project_default[:title], assign_default[:template], '--qualify', 'approval_rate &= 8')
     end
-    assert_match(exception.message, /bad --qualify/i)
+    assert_match(exception.message, /sense of --qualify/i)
     assert_match(exception.message, /unknown comparator/i)
     exception = assert_raise(Typingpool::Error::Shell) do
       call_tp_assign(project_default[:title], assign_default[:template], '--qualify', 'fake_rate > 8', '--sandbox')
     end
-    assert_match(exception.message, /bad --qualify/i)
+    assert_match(exception.message, /sense of --qualify/i)
     assert_match(exception.message, /unknown\b[^\n\r\f]*\btype/i)
   end
 
@@ -42,7 +42,7 @@ class TestTpAssign < Typingpool::Test::Script
     exception = assert_raise(Typingpool::Error::Shell) do
       call_tp_assign(project_default[:title], assign_default[:template], '--reward', 'foo')
     end
-    assert_match(exception.message, /bad --reward/i)
+    assert_match(exception.message, /sense of --reward/i)
   end
 
   def test_tp_assign

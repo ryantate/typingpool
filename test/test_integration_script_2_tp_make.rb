@@ -25,7 +25,7 @@ class TestTpMake < Typingpool::Test::Script
     exception = assert_raise(Typingpool::Error::Shell) do
       call_tp_make('--file', audio_files[0], '--title', 'Foo/Bar')
     end #assert_raise
-    assert_match(exception.message, /invalid title/i)
+    assert_match(exception.message, /illegal character/i)
   end
 
   def test_abort_with_no_args

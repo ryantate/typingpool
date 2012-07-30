@@ -249,7 +249,7 @@ module Typingpool
         time_accessor :deadline, :approval, :lifetime
 
         define_accessor(:reward) do |value|
-          value.to_s.match(/(\d+(\.\d+)?)|(\d*\.\d+)/) or raise Error::Argument::Format, "Bad reward format '#{value}'; should be N.NN"
+          value.to_s.match(/(\d+(\.\d+)?)|(\d*\.\d+)/) or raise Error::Argument::Format, "Format should be N.NN"
           value
         end
 
@@ -310,7 +310,7 @@ module Typingpool
               raise Error::Argument, "Unexpected number of qualification tokens: #{@raw}"
             end
             args.shift
-            comparator(args[0]) or raise Error::Argument, "Unknown comparator '#{args[0]}' in qualification '#{@raw}'"
+            comparator(args[0]) or raise Error::Argument, "Unknown comparator '#{args[0]}'"
             value = 1
             value = args[1] if args.count == 2
             return {comparator(args[0]) => value}

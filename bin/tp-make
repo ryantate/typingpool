@@ -5,6 +5,7 @@ require 'typingpool'
 require 'fileutils'
 require 'tempfile'
 require 'tmpdir'
+include Typingpool::App::InputSupervisor
 
 options = {
   :files => [],
@@ -99,23 +100,17 @@ end
 
 config = Typingpool::App.config_from_option(options[:config]) or abort "No config file at '#{options[:config]}'"
 
-begin
-  project = Typingpool::Project.new(options[:title], config)
-rescue Typingpool::Error::Argument::Format
-  abort "Invalid title '#{options[:title]}'. Title must be a valid directory name. Eliminate '/' or any other illegal character."
-end #begin
+project = supervise_user_input('project title', options[:title]) do
+  Typingpool::Project.new(options[:title], config) 
+end
 
-begin
-  project.interval = options[:chunk] if options[:chunk]
-rescue Typingpool::Error::Argument::Format
-  abort "Could not make sense of chunk argument '#{options[:chunk]}'. Required format is SS, or MM:SS, or HH:MM:SS."
-end #begin
+supervise_user_input('--chunk argument', options[:chunk]) do
+  project.interval = options[:chunk] if options[:chunk] 
+end
 
-begin
+supervise_user_input('--bitrate argument', options[:bitrate]) do
   project.bitrate = options[:bitrate] if options[:bitrate]
-rescue Typingpool::Error::Argument::Format
-  abort "Could not make sense of bitrate argument '#{options[:bitrate]}'. Should be an integer corresponding to kb/s."
-end #begin
+end
 
 if project.local
   if (File.exists?(project.local.file('data', 'assignment.csv')) &&

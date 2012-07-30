@@ -1,5 +1,5 @@
 module Typingpool
-  #Class encapsulating high-level Typingpool procedures and called
+  #Module encapsulating high-level Typingpool procedures and called
   #from the various tp-* scripts. Control layer type code.
   #
   #This is the least mature Typingpool class. At present, all methods
@@ -10,7 +10,7 @@ module Typingpool
   #
   #As such, all App methods should be considered fluid and likely to
   #change in subsequent releases.
-  class App
+  module App
     require 'vcr'
     class << self
 
@@ -504,7 +504,19 @@ module Typingpool
           end
         end #assignments.each!...
       end
-
     end #class << self
+    module InputSupervisor
+      def supervise_user_input(name, *input)
+        begin
+          yield(*input)
+        rescue Typingpool::Error::Argument => exception
+          goodbye = "Could not make sense of #{name.to_s} "
+          goodbye += input.map{|input| "'#{input}'" }.join(', ')
+          goodbye += ". #{exception.message}"
+          goodbye += '.' unless goodbye.match(/\.$/)
+          abort goodbye
+        end #begin
+      end
+    end #InputSupervisor
   end #App
 end #Typingpool

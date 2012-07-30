@@ -2,6 +2,7 @@
 
 require 'optparse'
 require 'typingpool'
+include Typingpool::App::InputSupervisor
 
 options = {
   :keyword => [],
@@ -92,32 +93,22 @@ end.parse!
 
 config = Typingpool::App.config_from_option(options[:config]) or abort "No config file at '#{options[:config]}'"
 
-begin
-  config.assign.reward = options[:reward] if options[:reward]
-rescue Typingpool::Error::Argument => exception
-  abort "Bad --reward format '#{options[:reward]}'; should be N.NN"
-end
-
 if options[:keyword].count > 0
   config.assign.keywords = []
   config.assign.keywords.push(*options[:keyword])
 end
 
-[:deadline, :lifetime, :approval].each do |param|
-  begin
+[:reward, :deadline, :lifetime, :approval].each do |param|
+  supervise_user_input("--#{param} argument", options[param]) do
     config.assign.send("#{param.to_s}=", options[param]) if options[param]
-  rescue Typingpool::Error::Argument => e
-    abort "Bad --#{param.to_s} '#{options[:param.to_s]}': #{e}"
   end
 end #[:deadline, :lifetime, :approval].each...
 
 if options[:qualify].count > 0
   config.assign.qualify = []
   options[:qualify].each do |qualification|
-    begin
+    supervise_user_input('--qualify argument', qualification) do
       config.assign.add_qualification(qualification)
-    rescue Typingpool::Error::Argument => e
-      abort "Bad --qualify '#{qualification}': #{e}"
     end
   end #options[:qualify].each...
 end #if options[:qualify].count > 0 

@@ -28,7 +28,7 @@ module Typingpool
     #instance (default is the default Config.file). Project does not
     #have to exist locally or remotely.
     def initialize(name, config=Config.file)
-      Local.valid_name?(name) or raise Error::Argument::Format, "The project name '#{name}' is invalid; a project name must be a valid name for a directory in the local filesystem. Eliminate '/' or any other illegal character."
+      Local.valid_name?(name) or raise Error::Argument::Format, "Must be a valid name for a directory in the local filesystem. Eliminate '/' or any other illegal character."
       @name = name
       @config = config
     end
@@ -87,7 +87,7 @@ module Typingpool
     def interval=(mmss)
       formatted = mmss.to_s.match(
                                   /^((\d+)|((\d+:)?(\d+):(\d\d)))$/
-                                  ) or raise Error::Argument::Format, "Interval does not match nnn or [nn:]nn:nn"
+                                  ) or raise Error::Argument::Format, "Required format is SS, or MM:SS, or HH:MM:SS"
       @interval = (formatted[2] || ((formatted[4].to_i * 60 * 60) + (formatted[5].to_i * 60) + formatted[6].to_i)).to_i
     end
 
@@ -107,7 +107,7 @@ module Typingpool
     #is used as a target when converting to mp3 (when it's neccesary
     #to do so).
     def bitrate=(kbps)
-      raise Error::Argument::Format, 'bitrate must be an integer' if kbps.to_i == 0
+      raise Error::Argument::Format, 'Should be an integer corresponding to kb/s' if kbps.to_i == 0
       @bitrate = kbps
     end
 
