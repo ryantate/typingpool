@@ -164,7 +164,7 @@ end
 #may have changed, affecting html output) #
 STDERR.puts "Figuring out what needs to be assigned"
 assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project)
-needed_assignments = {}
+needed_assignments = []
 unneeded_assignments = {
   :complete => 0,
   :outstanding => 0
@@ -181,9 +181,8 @@ assignments.each do |assignment|
       next
     end
   end
-  needed_assignments[assignment['audio_url']] = assignment
+  needed_assignments << assignment
 end
-
 STDERR.puts "#{assignments.count} assignments total"
 STDERR.puts "#{unneeded_assignments[:complete]} assignments completed" if unneeded_assignments[:complete] > 0
 STDERR.puts "#{unneeded_assignments[:outstanding]} assignments outstanding" if unneeded_assignments[:outstanding] > 0
@@ -191,7 +190,7 @@ if needed_assignments.empty?
   STDERR.puts "Nothing to assign"
   exit
 end
-STDERR.puts "#{needed_assignments.size} assignments to assign"
+STDERR.puts "#{needed_assignments.count} assignments to assign"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 #Are there enough funds for this assignment?
@@ -211,30 +210,27 @@ end
 #Delete old assignment html for assignments to be re-assigned. We
 #can't re-use old assignment HTML because new params (e.g. reward)
 #might cause the new HTML to be different
-needed_assignments_sorted = needed_assignments.values
 STDERR.puts "Deleting old assignment HTML from #{project.remote.host}"
-Typingpool::App.updelete_assignment_assets(project, assignments, needed_assignments_sorted, ['assignment'])
+Typingpool::App.updelete_assignment_assets(project, assignments, needed_assignments, ['assignment'])
 
 STDERR.puts "Uploading assignment HTML to #{project.remote.host}"
-Typingpool::App.upload_html_for_project_assignments(project, assignments, needed_assignments_sorted, template)
+Typingpool::App.upload_html_for_project_assignments(project, assignments, needed_assignments, template)
 
 STDERR.puts 'Assigning'
-hits = []
-needed_assignments_sorted.each do |assignment|
+needed_assignments.each_with_index do |assignment, i|
   question = Typingpool::Amazon::Question.new(assignment['assignment_url'], template.render(assignment))
   begin
     hit = Typingpool::Amazon::HIT.create(question, config.assign)
     Typingpool::App.record_assigned_hits_in_assignments_file(assignments, [hit])
-  rescue  RTurk::RTurkError => e
-    STDERR.puts "Mechanical Turk error: #{e}"
-    if hits.count > 0
-      STDERR.puts "Rolling back assignments"
-      hits.each{|hit| hit.remove_from_amazon }
-      Typingpool::App.unrecord_hits_in_assignments_file(assignments, hits)
-    end
-    abort
+  rescue RTurk::RTurkError => e
+    goodbye = "Mechanical Turk error: #{e}\n\n"
+    if i == 0
+      goodbye += "To retry, run tp-assign again with the same arguments."
+    else
+      goodbye += "To cancel #{i} successful assignments, run `tp-finish 'options[:project]'`.\n\n"
+      goodbye += "To try and assign remaining #{neeeded_assignments.count - i} jobs, run tp-assign again with the same arguments."
+    end #if i == 0
+    abort goodbye
   end
-  hits.push(hit)
-  STDERR.puts "Assigned #{hits.size} / #{needed_assignments.values.size}"
+  STDERR.puts "Assigned #{needed_assignments.count} transcription jobs"
 end
-
