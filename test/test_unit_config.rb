@@ -63,7 +63,7 @@ class TestConfig < Typingpool::Test
     exception = assert_raises(Typingpool::Error::Argument::Format) do
       config.assign.reward
     end
-    assert_match(exception.message, /bad reward format/i)
+    assert_match(exception.message, /\bformat should\b/i)
   end
 
   def test_config_regular_input
@@ -83,7 +83,7 @@ class TestConfig < Typingpool::Test
     exception = assert_raises(Typingpool::Error::Argument::Format) do
       config.assign.reward = 'foo'
     end
-    assert_match(exception.message, /bad reward format/i)
+    assert_match(exception.message, /\bformat should\b/i)
 
     exception = assert_raises(Typingpool::Error::Argument::Format) do
       config.assign.approval = '11f'
