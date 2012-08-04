@@ -505,8 +505,8 @@ module Typingpool
         end #assignments.each!...
       end
     end #class << self
-    module InputSupervisor
-      def supervise_user_input(name, *input)
+    module FriendlyExceptions
+      def with_friendly_exceptions(name, *input)
         begin
           yield(*input)
         rescue Typingpool::Error::Argument => exception

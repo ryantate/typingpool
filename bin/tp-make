@@ -5,7 +5,7 @@ require 'typingpool'
 require 'fileutils'
 require 'tempfile'
 require 'tmpdir'
-include Typingpool::App::InputSupervisor
+include Typingpool::App::FriendlyExceptions
 
 options = {
   :files => [],
@@ -100,15 +100,15 @@ end
 
 config = Typingpool::App.config_from_option(options[:config]) or abort "No config file at '#{options[:config]}'"
 
-project = supervise_user_input('project title', options[:title]) do
+project = with_friendly_exceptions('project title', options[:title]) do
   Typingpool::Project.new(options[:title], config) 
 end
 
-supervise_user_input('--chunk argument', options[:chunk]) do
+with_friendly_exceptions('--chunk argument', options[:chunk]) do
   project.interval = options[:chunk] if options[:chunk] 
 end
 
-supervise_user_input('--bitrate argument', options[:bitrate]) do
+with_friendly_exceptions('--bitrate argument', options[:bitrate]) do
   project.bitrate = options[:bitrate] if options[:bitrate]
 end
 

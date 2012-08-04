@@ -2,7 +2,7 @@
 
 require 'optparse'
 require 'typingpool'
-include Typingpool::App::InputSupervisor
+include Typingpool::App::FriendlyExceptions
 
 options = {
   :keyword => [],
@@ -99,7 +99,7 @@ if options[:keyword].count > 0
 end
 
 [:reward, :deadline, :lifetime, :approval].each do |param|
-  supervise_user_input("--#{param} argument", options[param]) do
+  with_friendly_exceptions("--#{param} argument", options[param]) do
     config.assign.send("#{param.to_s}=", options[param]) if options[param]
   end
 end #[:deadline, :lifetime, :approval].each...
@@ -107,7 +107,7 @@ end #[:deadline, :lifetime, :approval].each...
 if options[:qualify].count > 0
   config.assign.qualify = []
   options[:qualify].each do |qualification|
-    supervise_user_input('--qualify argument', qualification) do
+    with_friendly_exceptions('--qualify argument', qualification) do
       config.assign.add_qualification(qualification)
     end
   end #options[:qualify].each...
