@@ -211,9 +211,9 @@ module Typingpool
             next
           else
             need[hit.project_id] = false
-            project = Typingpool::Project.local_with_id(hit.project_title_from_url, config, hit.transcript.project) or next
-            #transcript must not be complete
-            next if File.exists?(File.join(project.local.path, transcript_filename[:done]))
+            project = Typingpool::Project.new(hit.project_title_from_url, config)
+            next unless project.local && (project.local.id == hit.project_id)
+            next if File.exists? project.local.file(transcript_filename[:done])
             by_project_id[hit.project_id] = {
               :project => project,
               :hits => [hit]
@@ -256,7 +256,6 @@ module Typingpool
         end #...map do |assignment|
         transcript = Typingpool::Transcript.new(project.name, transcript_chunks)
         transcript.subtitle = project.local.subtitle
-        File.delete(File.join(project.local.path, transcript_filename[:working])) if File.exists?(File.join(project.local.path, transcript_filename[:working]))
         done = (transcript.to_a.length == project.local.subdir('audio', 'chunks').to_a.size)
         out_file = done ? transcript_filename[:done] : transcript_filename[:working]
         begin
@@ -266,7 +265,8 @@ module Typingpool
         rescue Error => e
           abort "There was a fatal error with the transcript template: #{e}"
         end #begin
-        File.open(File.join(project.local.path, out_file), 'w') do |out|
+        File.delete(project.local.file(transcript_filename[:working])) if File.exists?(project.local.file(transcript_filename[:working]))
+        File.open(project.local.file(out_file), 'w') do |out|
           out << template.render({:transcript => transcript})
         end #File.open...
         out_file

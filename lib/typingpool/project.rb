@@ -43,17 +43,6 @@ module Typingpool
         end
       end
 
-      #Constructor. Like 'local', except it will only return an
-      #instance if the local project has the specified id. Id should
-      #be passed as the last (third) param.
-      def local_with_id(*args)
-        id = args.pop
-        if project = local(*args)
-          if project.local.id == id
-            return project
-          end
-        end
-      end
     end #class << self
 
     #Constructs and returns a Project::Remote instance associated with
