@@ -12,6 +12,7 @@ module Typingpool
   #change in subsequent releases.
   module App
     require 'vcr'
+    require 'stringio'
     class << self
 
       #Given a Project instance, figures out which audio chunks, if

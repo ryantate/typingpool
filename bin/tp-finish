@@ -1,72 +1,63 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require 'uri'
 require 'typingpool'
-require 'set'
+require 'fileutils'
 
-options = {
-  :config => Typingpool::Config.file
-}
+options = {}
 OptionParser.new do |commands|
-  options[:banner] = commands.banner = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT | --dead\n  [--sandbox]\n  [--config PATH]\n"
-  commands.on('--dead', "Remove ALL expired and rejected results, regardless of project.","  Use in leiu of PROJECT.", "  Removes only Mechanical Turk HITs, not remote audio files") do
+  options[:banner] =  "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT | --dead\n"
+  options[:banner] += "  [--sandbox]\n  [--config PATH]\n"
+  commands.banner = options[:banner]
+  commands.on('--dead',
+              "Remove ALL expired and rejected results, regardless of project.",
+              "Use in leiu of PROJECT.",
+              "Removes only Mechanical Turk HITs, not remote audio files") do
     options[:dead] = true
   end
-  commands.on('--sandbox', "Test in Mechanical Turk's sandbox") do
+  commands.on('--sandbox',
+              "Test in Mechanical Turk's sandbox") do
     options[:sandbox] = true
   end
-  commands.on('--config=PATH', "Default: #{Typingpool::Config.default_file}.", " A config file") do |path|
-    File.exists?(File.expand_path(path)) && File.file?(File.expand_path(path)) or abort "No such file #{path}"
-    options[:config] = Typingpool::Config.file(path)
+  commands.on('--config=PATH',
+              "Default: #{Typingpool::Config.default_file}.",
+              "A config file") do |path|
+    options[:config] = path
   end
-  commands.on('--help', 'Display this screen') do
+  commands.on('--help',
+              'Display this screen') do
     STDERR.puts commands 
     exit
   end
 end.parse!
-options[:banner] += "`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
+options[:banner] += "\n#{Typingpool::App::CLI.help_arg_explanation}\n"
+config = Typingpool::App::CLI.config_from_arg(options[:config]) or abort "No config file at '#{options[:config]}'"
 
-project_name_or_path = ARGV[0] 
-project_name_or_path = nil if project_name_or_path.to_s.match(/^\s+$/)
-abort "Can't specify both PROJECT and --dead" if project_name_or_path && options[:dead]
-abort "No PROJECT specified (and no --dead option)\n#{options[:banner]}" if not(project_name_or_path || options[:dead])
+options[:project] = ARGV.shift
+abort "Can't specify both PROJECT and --dead" if options[:project] && options[:dead]
+abort "No PROJECT specified (and no --dead option)\n#{options[:banner]}" unless (options[:project] || options[:dead])
 
 project=nil
 assignments=nil
-#Error checking on project info first
-if project_name_or_path
-  project_path = nil
-  if File.exists?(project_name_or_path)
-    project_path = project_name_or_path
-    options[:config].transcripts = File.dirname(project_name_or_path)
-  else
-    project_path = File.join(options[:config].transcripts, project_name_or_path)
-  end
-  project = Typingpool::Project.new(File.basename(project_path), options[:config])
-  project.local or abort "No such project '#{project_name_or_path}'\n"
+if options[:project]
+  project = Typingpool::App::CLI.project_from_arg_and_config(options[:project], config)
   project.local.id or abort "Can't find project id in #{project.local.path}"
-  assignments = if options[:sandbox]
-                  Typingpool::App.ensure_sandbox_assignment_csv(project)
-                else
-                  project.local.file('data', 'assignment.csv').as(:csv)
-                end #if options[:sandbox]
+  assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project) 
 end
 
-Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => options[:config])
+Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 STDERR.puts "Removing from Amazon"
 STDERR.puts "  Collecting all results"
 #Set up result set, depending on options
-results = nil
-if project
-  results = Typingpool::Amazon::HIT.all_for_project(project.local.id)
-elsif options[:dead]
-  results = Typingpool::Amazon::HIT.all.select do |result|
-    dead = ((result.full.expired_and_overdue? || result.rejected?) && result.ours?)
-    result.to_cache
-    dead
-  end
-end
+results = if project
+            Typingpool::Amazon::HIT.all_for_project(project.local.id)
+          elsif options[:dead]
+            Typingpool::Amazon::HIT.all.select do |result|
+              dead = ((result.full.expired_and_overdue? || result.rejected?) && result.ours?)
+              result.to_cache
+              dead
+            end
+          end
 
 #Remove the results from Mechanical Turk
 fails = []
@@ -105,6 +96,6 @@ if project
   if options[:sandbox]
     #delete sandbox-assignment.csv so we know it's safe to delete
     #audio files when we finish using regular assignment.csv
-    File.delete project.local.file('data', 'sandbox-assignment.csv')
+    FileUtils.remove_entry_secure project.local.file('data', 'sandbox-assignment.csv')
   end
 end #if project

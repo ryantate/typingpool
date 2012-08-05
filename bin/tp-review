@@ -2,6 +2,7 @@
 
 require 'typingpool'
 require 'highline/import'
+require 'optparse'
 
 options = {}
 OptionParser.new do |commands|
