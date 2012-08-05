@@ -82,13 +82,11 @@ class TestProject < Typingpool::Test
     config.transcripts = fixtures_dir
     assert(project = Typingpool::Project.new('project', config))
     assert_nil(project.local)
-    assert_nil(Typingpool::Project.local('project', config))
     valid_transcript_dir = File.join(Typingpool::Utility.lib_dir, 'templates')
     assert_kind_of(Typingpool::Project::Local, project.local(valid_transcript_dir))
     config.transcripts = valid_transcript_dir
     assert(project = Typingpool::Project.new('project', config))
     assert_kind_of(Typingpool::Project::Local, project.local)
-    assert_instance_of(Typingpool::Project, Typingpool::Project.local('project', config))
   end
 
   def test_project_base_remote

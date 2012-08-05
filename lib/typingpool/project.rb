@@ -33,18 +33,6 @@ module Typingpool
       @config = config
     end
 
-    class << self
-      #Constructor. Like 'new', except it will only return an instance
-      #if the project already exists locally.
-      def local(*args)
-        project = new(*args)
-        if project.local
-          return project
-        end
-      end
-
-    end #class << self
-
     #Constructs and returns a Project::Remote instance associated with
     #this Project instance. Takes an optional Config instance; default
     #is project.config.
