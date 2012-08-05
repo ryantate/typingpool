@@ -197,11 +197,11 @@ STDERR.puts "Deleting old assignment HTML from #{project.remote.host}"
 Typingpool::App.updelete_assignment_assets(project, assignments, needed_assignments, ['assignment'])
 
 STDERR.puts "Uploading assignment HTML to #{project.remote.host}"
-Typingpool::App.upload_html_for_project_assignments(project, assignments, needed_assignments, template)
+urls = Typingpool::App.upload_html_for_project_assignments(project, assignments, needed_assignments, template)
 
 STDERR.puts 'Assigning'
 needed_assignments.each_with_index do |assignment, i|
-  question = Typingpool::Amazon::Question.new(assignment['assignment_url'], template.render(assignment))
+  question = Typingpool::Amazon::Question.new(urls[i], template.render(assignment))
   begin
     hit = Typingpool::Amazon::HIT.create(question, config.assign)
     Typingpool::App.record_assigned_hits_in_assignments_file(assignments, [hit])
