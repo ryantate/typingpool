@@ -91,7 +91,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-config = Typingpool::App.config_from_option(options[:config]) or abort "No config file at '#{options[:config]}'"
+config = Typingpool::App::CLI.config_from_arg(options[:config]) or abort "No config file at '#{options[:config]}'"
 
 if options[:keyword].count > 0
   config.assign.keywords = []
@@ -113,7 +113,7 @@ if options[:qualify].count > 0
   end #options[:qualify].each...
 end #if options[:qualify].count > 0 
 
-options[:banner] += "\n`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
+options[:banner] += "\n#{Typingpool::App::CLI.help_arg_explanation}\n"
 
 positional = %w(project template)
 if Typingpool::Utility.stdin_has_content? && project = STDIN.gets
@@ -133,15 +133,7 @@ positional.each do |name|
 end
 abort "Unexpected argument(s): #{ARGV.join(';')}" if ARGV.count > 0
 
-if File.exists?(options[:project])
-  config.transcripts = File.dirname(options[:project])
-else
-  options[:project] = File.join(config.transcripts, options[:project])
-end
-abort "No project at '#{options[:project]}'" unless File.exists?(options[:project])
-abort "Project '#{options[:project]}' is not a directory" unless File.directory?(options[:project])
-project = Typingpool::Project.new(File.basename(options[:project]), config)
-abort "Not a project directory at '#{options[:project]}'" unless project.local
+project = Typingpool::App::CLI.project_from_arg_and_config(options[:project], config)
 
 begin
   template = Typingpool::Template::Assignment.from_config(options[:template], config)

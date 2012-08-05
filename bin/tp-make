@@ -80,7 +80,7 @@ end.parse!
 
 options[:title] ||= ARGV.shift if ARGV.count > 0
 options[:files].push(ARGV).flatten! if ARGV.count > 0
-options[:banner] += "\n`#{File.basename($PROGRAM_NAME)} --help` for more information.\n"
+options[:banner] += "\n#{Typingpool::App::CLI.help_arg_explanation}\n"
 abort "No files specified\n\n#{options[:banner]}" if options[:files].empty?
 abort "No title specified\n\n#{options[:banner]}" if options[:title].to_s.empty?
 options[:files].sort!
@@ -98,7 +98,7 @@ options[:voices].map! do |voice|
   }
 end
 
-config = Typingpool::App.config_from_option(options[:config]) or abort "No config file at '#{options[:config]}'"
+config = Typingpool::App::CLI.config_from_arg(options[:config]) or abort "No config file at '#{options[:config]}'"
 
 project = with_friendly_exceptions('project title', options[:title]) do
   Typingpool::Project.new(options[:title], config) 
