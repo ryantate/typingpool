@@ -3,6 +3,7 @@
 require 'typingpool'
 require 'highline/import'
 require 'optparse'
+include Typingpool::App::CLI::Formatter
 
 options = {}
 OptionParser.new do |commands|
@@ -84,29 +85,29 @@ catch :quitting do
     hits.sort!{|a, b| a.url <=> b.url }
     hits.each do |hit|
       i += 1
-      say(HighLine.color("Transcript for: ", :bold) + hit.url)
-      project_info = HighLine.color("Project: ", :bold) + project.name
+      say(cli_bold("Transcript for: ") + hit.url)
+      project_info = cli_bold("Project: ") + project.name
       if project.local.subtitle
         project_info += ": #{project.local.subtitle}"
       end
       say(project_info)
-      say(HighLine.color("Submitted at: ", :bold) +
+      say(cli_bold("Submitted at: ") +
           hit.assignment.submitted_at.localtime.to_s +
-          HighLine.color(" by ", :bold) +
+          cli_bold(" by ") +
           hit.assignment.worker_id)
       say(hit.transcript.body_as_text do |formatter|
             formatter.first_indent = 2
             formatter.body_indent = 2
           end)
       prompt = choices.map do |c| 
-        HighLine.color('(', :reverse) +
-          HighLine.color(c.slice(0).upcase, :bold, :reverse) +
-          HighLine.color(")#{c.slice(1, c.size)}", :reverse) 
+        cli_reverse('(') +
+          cli_reverse(cli_bold(c.slice(0).upcase)) +
+          cli_reverse(")#{c.slice(1, c.size)}") 
       end
-      prompt << HighLine.color('[', :reverse) + prompt.pop + HighLine.color(']', :reverse)
-      prompt = prompt.join(HighLine.color(', ', :reverse)) 
-      prompt += HighLine.color('? ', :reverse)
-      prompt += HighLine.color("(#{i}/#{all_hits.count}) ", :reverse)
+      prompt << cli_reverse('[') + prompt.pop + cli_reverse(']')
+      prompt = prompt.join(cli_reverse(', ')) 
+      prompt += cli_reverse('? ')
+      prompt += cli_reverse("(#{i}/#{all_hits.count}) ")
 
       choice=nil
       until choice
@@ -123,7 +124,7 @@ catch :quitting do
         hit.assignment.at_amazon.approve!
         Typingpool::App.record_approved_hits_in_assignments_file(assignments, [hit])
         Typingpool::App.create_transcript(project, assignments)
-        say(HighLine.color("Approved. ", :bold) + "#{project.name} transcript updated.")
+        say(cli_bold("Approved. ") + "#{project.name} transcript updated.")
       when 'reject'
         reason=nil
         until reason.to_s.match(/\S/)
@@ -132,12 +133,12 @@ catch :quitting do
         hit.assignment.at_amazon.reject!(reason)
         hit.at_amazon.dispose!
         Typingpool::App.unrecord_hits_in_assignments_file(assignments, [hit])
-        say(HighLine.color("Rejected", :bold))
+        say(cli_bold("Rejected"))
       when 'quit'
-        say(HighLine.color("Quitting", :bold))
+        say(cli_bold("Quitting"))
         throw :quitting
       when 'skip'
-        say(HighLine.color("Skipping", :bold))
+        say(cli_bold("Skipping"))
         next
       end #case choice
     end #hits.each_with_index

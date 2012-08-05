@@ -60,16 +60,16 @@ module Typingpool
       Filer::Dir.new(File.dirname(@path))
     end
 
-      #Cast this file into a new Filer subtype, e.g. Filer::Audio.
-      # ==== Params
-      # [sym] Symbol corresponding to Filer subclass to cast into. For
-      # example, passing :audio will cast into a Filer::Audio.
-      # ==== Returns
-      # Instance of new Filer subclass
-      def as(sym)
-        #super calls into Utility::Castable mixin
-        super(sym, @path)
-      end
+    #Cast this file into a new Filer subtype, e.g. Filer::Audio.
+    # ==== Params
+    # [sym] Symbol corresponding to Filer subclass to cast into. For
+    # example, passing :audio will cast into a Filer::Audio.
+    # ==== Returns
+    # Instance of new Filer subclass
+    def as(sym)
+      #super calls into Utility::Castable mixin
+      super(sym, @path)
+    end
 
 
     #Convenience wrapper for CSV files. Makes them Enumerable, so you
@@ -238,7 +238,6 @@ module Typingpool
       def as(sym)
         #super calls into Utility::Castable mixin
         super(sym, files)
-#        self.class.const_get(sym.to_s.capitalize).new(files)
       end
 
       #Returns array of IO streams created by calling to_stream on
