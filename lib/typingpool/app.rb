@@ -191,9 +191,8 @@ module Typingpool
       #          instances, corresponding to the subset of [hits]
       #          belonging to the Project.
       # ==== Returns
-      # A hash whose keys are project ids (Project#local#id) and
-      # whose values are each a hash of the form {:project =>
-      # project, :hits =>[hit1,hit2...]}.
+      # An array of hashes of the form {:project => project, :hits
+      # =>[hit1,hit2...]}.
       def find_projects_waiting_for_hits(hits, config)
         need = {}
         by_project_id = {}
@@ -217,7 +216,7 @@ module Typingpool
         if block_given?
           by_project_id.values.each{|hash| yield(hash[:project], hash[:hits]) }
         end
-        by_project_id
+        by_project_id.keys.sort.map{|key| by_project_id[key] }
       end 
 
       #Given a Project and assignments file like
