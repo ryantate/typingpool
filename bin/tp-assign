@@ -180,7 +180,7 @@ Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 unless options[:sandbox]
   STDERR.puts "Checking your balance"
   balance = RTurk.GetAccountBalance.amount
-  cost = needed_assignments.count * options[:reward]
+  cost = needed_assignments.count * options[:reward].to_f
   abort "Anticipated assignment cost of $#{cost} would exceed available balance of $#{balance}" if cost > balance
 end
 
@@ -215,5 +215,5 @@ needed_assignments.each_with_index do |assignment, i|
     end #if i == 0
     abort goodbye
   end
-  STDERR.puts "Assigned #{needed_assignments.count} transcription jobs"
 end
+STDERR.puts "Assigned #{needed_assignments.count} transcription jobs"
