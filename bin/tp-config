@@ -30,7 +30,7 @@ config_path_full = File.expand_path(config_path)
 config = nil
 if File.exists? config_path_full
   abort "Not a file: #{config_path}" unless File.file? config_path_full
-  puts "Editing existing config file '#{config_path}'"
+  STDERR.puts "Editing existing config file '#{config_path}'"
   begin
     config = Typingpool::Config.file(config_path_full) 
   rescue ArgumentError => e
@@ -38,7 +38,7 @@ if File.exists? config_path_full
   end #begin
 else
   abort "Invalid path '#{config_path}'" unless File.dirname(config_path_full) && File.directory?(File.dirname(config_path_full))
-  puts "Making a new config file at '#{config_path}'"
+  STDERR.puts "Making a new config file at '#{config_path}'"
   config = Typingpool::Config.from_bundled_template
 end #if File.exists? config_path
 
