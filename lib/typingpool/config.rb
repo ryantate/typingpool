@@ -254,12 +254,12 @@ module Typingpool
         end
 
         def qualify
-          self.qualify = @param['qualify'] || [] if not(@qualify)
+          self.qualify = (@param['qualify'] || []) unless @qualify
           @qualify
         end
 
         def qualify=(specs)
-          @qualify = specs.map{|spec| Qualification.new(spec)}
+          @qualify = specs.map{|spec| Qualification.new(spec) }
         end
 
         def add_qualification(spec)

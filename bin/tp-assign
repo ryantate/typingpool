@@ -105,7 +105,7 @@ end
 end #[:deadline, :lifetime, :approval].each...
 
 if options[:qualify].count > 0
-  config.assign.qualify = []
+  config.assign['qualify'] = []
   options[:qualify].each do |qualification|
     with_friendly_exceptions('--qualify argument', qualification) do
       config.assign.add_qualification(qualification)
