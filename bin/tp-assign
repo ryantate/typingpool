@@ -177,6 +177,7 @@ STDERR.puts "#{needed_assignments.count} assignments to assign"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 #Are there enough funds for this assignment?
+cost = 0
 unless options[:sandbox]
   STDERR.puts "Checking your balance"
   balance = RTurk.GetAccountBalance.amount
@@ -199,7 +200,7 @@ Typingpool::App.updelete_assignment_assets(project, assignments, needed_assignme
 STDERR.puts "Uploading assignment HTML to #{project.remote.host}"
 urls = Typingpool::App.upload_html_for_project_assignments(project, assignments, needed_assignments, template)
 
-STDERR.puts 'Assigning'
+STDERR.puts (options[:sandbox] ? 'Assigning (in sandbox)' : 'Assigning')
 needed_assignments.each_with_index do |assignment, i|
   question = Typingpool::Amazon::Question.new(urls[i], template.render(assignment))
   begin
@@ -216,4 +217,5 @@ needed_assignments.each_with_index do |assignment, i|
     abort goodbye
   end
 end
-STDERR.puts "Assigned #{needed_assignments.count} transcription jobs"
+STDERR.puts "Assigned #{needed_assignments.count} transcription jobs for $#{cost}"
+STDERR.puts "Remaining balance: $#{RTurk.GetAccountBalance.amount}"
