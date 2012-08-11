@@ -11,12 +11,16 @@ options = {
   :testing => false
 }
 OptionParser.new do |opts|
-  opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} [CONFIGFILE=#{Typingpool::Config.default_file}]\n\nInstalls or updates a Typingpool config file, prompting the user for\nthe minimal information to get up and running."
-  opts.on('--help', 'Display this screen.') do
+  opts.banner = "USAGE: #{File.basename($PROGRAM_NAME)} [CONFIGFILE=#{Typingpool::Config.default_file}]\n\n"
+  opts.banner += "Installs or updates a Typingpool config file, prompting the user for\n"
+  opts.banner += "the minimal information to get up and running."
+  opts.on('--help',
+          'Display this screen.') do
     puts opts
     exit
   end
-  opts.on('--test', "Used by automated tests. Ignore.") do
+  opts.on('--test',
+          "Used by automated tests. Ignore.") do
     options[:testing] = true
   end
 end.parse!
@@ -25,7 +29,7 @@ config_path = ARGV.first || Typingpool::Config.default_file
 config_path_full = File.expand_path(config_path)
 config = nil
 if File.exists? config_path_full
-  abort "Not a file: #{config_path}" if not(File.file? config_path_full)
+  abort "Not a file: #{config_path}" unless File.file? config_path_full
   puts "Editing existing config file '#{config_path}'"
   begin
     config = Typingpool::Config.file(config_path_full) 
@@ -33,7 +37,7 @@ if File.exists? config_path_full
     abort "The specified config file is not valid YAML: #{e}"
   end #begin
 else
-  abort "Invalid path '#{config_path}'" if not(File.dirname(config_path_full) && File.directory?(File.dirname(config_path_full)))
+  abort "Invalid path '#{config_path}'" unless File.dirname(config_path_full) && File.directory?(File.dirname(config_path_full))
   puts "Making a new config file at '#{config_path}'"
   config = Typingpool::Config.from_bundled_template
 end #if File.exists? config_path
@@ -44,7 +48,7 @@ abort "Cannot proceed without an Amazon Access Key ID" if config.amazon.key.empt
 config.amazon.secret = ask('Your Amazon Web Services "Secret Access Key"? '){|q| q.default = config.amazon.secret if config.amazon.secret }.to_s.chomp
 abort "Cannot proceed without an Amazon Secret Access Key" if config.amazon.secret.empty?
 
-if not(options[:testing])
+unless options[:testing]
   begin
     RTurk.setup(config.amazon.key, config.amazon.secret, :sandbox => true)
     RTurk.GetAccountBalance
@@ -58,12 +62,12 @@ if not(config.amazon.bucket || (config.sftp && config.sftp.user))
   config.amazon.bucket = ['typingpool', SecureRandom.hex(8)].join('-')
 end
 
-if not(config.transcripts)
+unless config.transcripts
   if Typingpool::Utility.os_x?
     config.transcripts = '~/Desktop/Transcripts'
   else
     config.transcripts = '~/transcripts'
-  end #if RUBY_PLATFORM...
+  end 
 end
 
 transcripts = nil
@@ -83,15 +87,13 @@ loop do
 end #loop do
 config.transcripts = transcripts
 
-if not(config.templates)
-  templates = RUBY_PLATFORM.match(/\bdarwin/i) ? 'Templates' : 'templates'
+unless config.templates
+  templates = Typingpool::Utility.os_x? ? 'Templates' : 'templates'
   config.templates = File.join(config['transcripts'], templates)
-  if not(File.exists? config.templates)
-    FileUtils.mkdir(config.templates)
-  end
+  FileUtils.mkdir(config.templates) unless File.exists? config.templates
 end
 
-if not(config.cache)
+unless config.cache
   config.cache = '~/.typingpool.cache'
 end
 
