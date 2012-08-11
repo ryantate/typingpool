@@ -84,7 +84,7 @@ module Typingpool
       #first row of the CSV file. Parsing rules are the default for
       #CSV.parse. 
       def read
-        raw = super or return
+        raw = super or return []
         rows = ::CSV.parse(raw.to_s)
         headers = rows.shift or raise Error::File, "No CSV at #{@path}"
         rows.map{|row| Utility.array_to_hash(row, headers) }

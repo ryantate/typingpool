@@ -49,7 +49,7 @@ class TestFiler < Typingpool::Test
     assert(filer.select{|r| r['audio_url'] }.count > 0)
     path = File.join(fixtures_dir, 'filer-temp')
     assert(filer2 = Typingpool::Filer::CSV.new(path))
-    assert_nil(filer2.read)
+    assert_equal([], filer2.read)
     begin
       assert(filer2.write(data))
       assert_equal(Typingpool::Filer.new(filer.path).read, Typingpool::Filer.new(filer2.path).read)
