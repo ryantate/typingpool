@@ -126,25 +126,27 @@ else
   project.local.subtitle = options[:subtitle] if options[:subtitle]
   options[:files].each{|path| FileUtils.cp(path, project.local.subdir('audio', 'originals')) }
 
-  temp_dir = Typingpool::Filer::Dir.new(Dir.mktmpdir)
-  files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(temp_dir, project.bitrate) do |file| 
+  temp_conversion_dir = Typingpool::Filer::Dir.new(Dir.mktmpdir)
+  converted_files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(temp_conversion_dir, project.bitrate) do |file| 
     STDERR.puts "Converting #{File.basename(file) } to mp3" 
   end
 
-  STDERR.puts "Merging audio" if files.count > 1
-  temp_file = Typingpool::Filer::Audio.new(Tempfile.new(["#{project.name}.all", ".mp3"]).path)
-  file = files.merge(temp_file)
+  STDERR.puts "Merging audio" if converted_files.count > 1
+  temp_merge_file = Tempfile.new(["#{project.name}.all.", ".mp3"])
+  temp_merge_filer = Typingpool::Filer::Audio.new(temp_merge_file.path)
+  converted_files.merge(temp_merge_filer)
 
   STDERR.puts "Splitting audio into uniform bits"
-  files = file.split(project.interval_as_min_dot_sec, project.name, project.local.subdir('audio','chunks'))
-  urls = project.create_remote_names(files).map{|file| project.remote.file_to_url(file) }
+  chunks = temp_merge_filer.split(project.interval_as_min_dot_sec, project.name, project.local.subdir('audio','chunks'))
+  urls = project.create_remote_names(chunks).map{|file| project.remote.file_to_url(file) }
+
   #Write mp3 URLs before uploading, so we can rollback if uploading
   #dies halfway through
   assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :unusual => options[:unusual], :voices => options[:voices])
-  STDERR.puts "Wrote #{assignment_path}"
 
-  STDERR.puts "Cleaning up temp files"
-  [temp_file, temp_dir].each{|path| FileUtils.remove_entry_secure(path) }
+  temp_merge_file.close
+  temp_merge_file.unlink
+  FileUtils.remove_entry_secure(temp_conversion_dir)
 end #if project.local
 
 Typingpool::App.upload_audio_for_project(project) do |file, as|
@@ -156,6 +158,6 @@ if STDOUT.tty? && Typingpool::Utility.os_x?
   project.local.finder_open 
 end
 
-STDERR.puts "Done"
+STDERR.puts "Done. Project at:"
 puts project.local.path
 
