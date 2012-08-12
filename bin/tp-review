@@ -85,7 +85,7 @@ catch :quitting do
     hits.sort!{|a, b| a.url <=> b.url }
     hits.each do |hit|
       i += 1
-      say(cli_bold("Transcript for: ") + hit.url)
+      say(cli_bold("\nTranscript for: ") + hit.url)
       project_info = cli_bold("Project: ") + project.name
       if project.local.subtitle
         project_info += ": #{project.local.subtitle}"
@@ -124,7 +124,7 @@ catch :quitting do
         hit.assignment.at_amazon.approve!
         Typingpool::App.record_approved_hits_in_assignments_file(assignments, [hit])
         Typingpool::App.create_transcript(project, assignments)
-        say(cli_bold("Approved. ") + "#{project.name} transcript updated.")
+        say(cli_bold("Approved. ") + "#{project.name} transcript updated.\n")
       when 'reject'
         reason=nil
         until reason.to_s.match(/\S/)
@@ -133,12 +133,12 @@ catch :quitting do
         hit.assignment.at_amazon.reject!(reason)
         hit.at_amazon.dispose!
         Typingpool::App.unrecord_hits_in_assignments_file(assignments, [hit])
-        say(cli_bold("Rejected"))
+        say(cli_bold("Rejected\n"))
       when 'quit'
         say(cli_bold("Quitting"))
         throw :quitting
       when 'skip'
-        say(cli_bold("Skipping"))
+        say(cli_bold("Skipping\n"))
         next
       end #case choice
     end #hits.each_with_index
