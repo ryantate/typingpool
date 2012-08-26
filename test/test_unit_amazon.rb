@@ -5,6 +5,7 @@ $:.unshift File.join(File.dirname(File.dirname($0)), 'lib')
 require 'typingpool'
 require 'typingpool/test'
 require 'uri'
+require 'cgi'
 
 class TestAmazon < Typingpool::Test
 
@@ -26,7 +27,7 @@ class TestAmazon < Typingpool::Test
     assert_match(question.title, /Transcribe MP3 of/i)
     assert_match(question.description, /telephone conversation/i)
     assert_match(question.annotation, /\S/)
-    assert(decoded_annotation = URI.decode_www_form(question.annotation))
+    assert(decoded_annotation = URI.decode_www_form(CGI.unescapeHTML(question.annotation)))
     decoded_annotation = Hash[*decoded_annotation.flatten]
     assert_match(decoded_annotation[Typingpool::Amazon::HIT.url_at], /^http/i)
     assert_match(decoded_annotation[Typingpool::Amazon::HIT.id_at], /\S/)
@@ -37,7 +38,7 @@ class TestAmazon < Typingpool::Test
       assert_equal(hit.full.external_question_url, dummy_question.url)
       assert_equal(config.assign.deadline, hit.full.assignments_duration.to_i)
       assert(rturk_hit = hit.at_amazon)
-      assert_equal(dummy_question.annotation.to_s, rturk_hit.annotation.to_s)
+      assert_equal(dummy_question.annotation.to_s, CGI.escapeHTML(rturk_hit.annotation.to_s))
       assert_equal(dummy_question.title.strip, rturk_hit.title.strip)
       assert_equal(dummy_question.description.strip, rturk_hit.description.strip)
       assert_equal(config.assign.reward.to_f, rturk_hit.reward.to_f)

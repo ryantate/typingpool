@@ -585,8 +585,8 @@ module Typingpool
         end
 
         def annotation=(encoded)
+          @annotation = CGI.unescapeHTML(encoded.to_s)
           begin
-            @annotation = encoded.to_s
             @annotation = URI.decode_www_form(@annotation) 
             @annotation = Hash[*@annotation.flatten]
           rescue ArgumentError
@@ -597,10 +597,8 @@ module Typingpool
         end
 
         def external_question_url=(noko_xml)
-          if question_node = noko_xml.css('HIT Question')[0] #escaped XML
-            if url_node = Nokogiri::XML::Document.parse(question_node.inner_text).css('ExternalQuestion ExternalURL')[0]
-              @external_question_url = url_node.inner_text
-            end
+          if url = noko_xml.css('HIT Question eq|ExternalQuestion eq|ExternalURL', {'eq' => 'http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd'})[0].inner_text
+            @external_question_url = url
           end
         end
 
@@ -695,6 +693,7 @@ module Typingpool
     class Question
       require 'nokogiri'
       require 'uri'
+      require 'cgi'
       attr_reader :url, :html
 
       #Constructor. Takes the URL of where the question HTML has been
@@ -708,7 +707,7 @@ module Typingpool
       #text for a HIT#annotation. The key-value pairs correspond to
       #all hidden HTML form fields in the question HTML.
       def annotation
-        URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').select{|e| e['name'].match(/^typingpool_/) }.map{|e| [e['name'], e['value']]}.flatten])
+        CGI.escapeHTML(URI.encode_www_form(Hash[*noko.css('input[type="hidden"]').select{|e| e['name'].match(/^typingpool_/) }.map{|e| [e['name'], e['value']]}.flatten]))
       end
 
       #Returns the title, extracted from the title element of the
