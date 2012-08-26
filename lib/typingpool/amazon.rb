@@ -725,8 +725,7 @@ module Typingpool
       protected
 
       def noko(html=@html)
-        #TODO - fix this encoding situation!
-        Nokogiri::HTML(html, nil, 'US-ASCII')
+        Nokogiri::HTML(html, nil, 'UTF-8')
       end
     end #Question
   end #Amazon
