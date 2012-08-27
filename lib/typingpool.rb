@@ -399,10 +399,10 @@
 #  #new Template instance
 #  template = Typingpool::Template::Assignment.from_config('interview/nameless')
 #  html = template.render({
-#                          audio_url => urls[0],
-#                          unusual => ['Hack Day', 'Yahoo', 'Atlassian'],
-#                          chunk_minutes => 1,
-#                          project_id => project.local.id
+#                          'audio_url' => urls[0],
+#                          'unusual' => ['Hack Day', 'Yahoo', 'Atlassian'],
+#                          'chunk_minutes' => 1,
+#                          'project_id' => project.local.id
 #                          })
 #  
 #  question = Typingpool::Amazon::Question.new(urls[0], html)
