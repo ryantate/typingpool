@@ -215,7 +215,8 @@ needed_assignments.each_with_index do |assignment, i|
       goodbye += "To try and assign remaining #{neeeded_assignments.count - i} jobs, run tp-assign again with the same arguments."
     end #if i == 0
     abort goodbye
-  end
-end
+  end #begin
+  STDERR.puts "  Assigned transcription job for '#{project.class.local_basename_from_url(assignment['audio_url'])}'"
+end #needed_assignments.each_with_index do...
 STDERR.puts "Assigned #{needed_assignments.count} transcription jobs for $#{cost}"
 STDERR.puts "Remaining balance: $#{RTurk.GetAccountBalance.amount}" unless options[:sandbox]
