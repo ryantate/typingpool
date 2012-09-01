@@ -22,7 +22,7 @@ module Typingpool
     end
 
     def audio_dir
-      File.join(template_dir, 'audio')
+      File.join(fixtures_dir, 'audio')
     end
 
     def config

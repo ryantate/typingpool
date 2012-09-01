@@ -68,8 +68,8 @@ keys = filer2.first.keys
   end
 
   def test_filer_audio
-    mp3 = Typingpool::Filer::Audio.new(files_from(File.join(template_dir, 'audio', 'mp3')).first)
-    wma = Typingpool::Filer::Audio.new(files_from(File.join(template_dir, 'audio', 'wma')).first)
+    mp3 = Typingpool::Filer::Audio.new(files_from(File.join(audio_dir, 'mp3')).first)
+    wma = Typingpool::Filer::Audio.new(files_from(File.join(audio_dir, 'wma')).first)
     assert(mp3.mp3?)
     assert(not(wma.mp3?))
     dest = Typingpool::Filer::Audio.new(File.join(fixtures_dir, 'filer-temp.mp3'))
@@ -115,8 +115,8 @@ keys = filer2.first.keys
   end
 
   def test_filer_files_audio
-    mp3s = files_from(File.join(template_dir, 'audio', 'mp3')).map{|path| Typingpool::Filer::Audio.new(path) }
-    wmas = files_from(File.join(template_dir, 'audio', 'wma')).map{|path| Typingpool::Filer::Audio.new(path) }
+    mp3s = files_from(File.join(audio_dir, 'mp3')).map{|path| Typingpool::Filer::Audio.new(path) }
+    wmas = files_from(File.join(audio_dir, 'wma')).map{|path| Typingpool::Filer::Audio.new(path) }
     assert(mp3s.count > 0)
     assert(wmas.count > 0)
     assert(filer_mp3 = Typingpool::Filer::Files::Audio.new(mp3s))
