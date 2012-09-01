@@ -17,21 +17,19 @@ class TestFiler < Typingpool::Test
     assert_match(text, /transcripts: ~\/Documents\/Transcripts\//)
     assert_match(text, /- mp3\s*$/)
     assert_equal(fixtures_dir, filer.dir.path)
-    path = File.join(fixtures_dir, 'filer-temp')
-    assert(filer = Typingpool::Filer.new(path))
-    assert_instance_of(Typingpool::Filer::CSV, filer_csv = filer.as(:csv))
-    assert_equal(filer.path, filer_csv.path)
-    assert_nil(filer.read)
-    data = "foo\nbar\nbaz."
-    begin
+    in_temp_dir do |dir|
+      path = File.join(dir, 'filer-temp')
+      assert(filer = Typingpool::Filer.new(path))
+      assert_instance_of(Typingpool::Filer::CSV, filer_csv = filer.as(:csv))
+      assert_equal(filer.path, filer_csv.path)
+      assert_nil(filer.read)
+      data = "foo\nbar\nbaz."
       assert(filer.write(data))
       assert_equal(data, filer.read)
-      assert(path = filer.mv!(File.join(fixtures_dir, 'filer-temp-2')))
+      assert(path = filer.mv!(File.join(dir, 'filer-temp-2')))
       assert(File.exists? filer.path)
       assert_equal('filer-temp-2', File.basename(filer.path))
-    ensure
-      File.delete(path)
-    end #begin
+    end #in_temp_dir
   end
 
   def test_filer_csv
@@ -47,10 +45,10 @@ class TestFiler < Typingpool::Test
     assert(data.first['audio_url'])
     assert_match(data.first['audio_url'], /^https?:\/\/\w/)
     assert(filer.select{|r| r['audio_url'] }.count > 0)
-    path = File.join(fixtures_dir, 'filer-temp')
-    assert(filer2 = Typingpool::Filer::CSV.new(path))
-    assert_equal([], filer2.read)
-    begin
+    in_temp_dir do |dir|
+      path = File.join(dir, 'filer-temp')
+      assert(filer2 = Typingpool::Filer::CSV.new(path))
+      assert_equal([], filer2.read)
       assert(filer2.write(data))
       assert_equal(Typingpool::Filer.new(filer.path).read, Typingpool::Filer.new(filer2.path).read)
       assert_equal(filer.count, filer2.count)
@@ -59,12 +57,10 @@ class TestFiler < Typingpool::Test
       end
       rewritten = Typingpool::Filer.new(filer2.path).read
       assert(Typingpool::Filer.new(filer.path).read != rewritten)
-keys = filer2.first.keys
+      keys = filer2.first.keys
       filer2.write_arrays(filer2.map{|row| keys.map{|key| row[key] } }, keys)
       assert_equal(rewritten, Typingpool::Filer.new(filer2.path).read)
-    ensure
-      File.delete(path)
-    end #begin
+    end #in_temp_dir
   end
 
   def test_filer_audio
@@ -72,27 +68,21 @@ keys = filer2.first.keys
     wma = Typingpool::Filer::Audio.new(files_from(File.join(audio_dir, 'wma')).first)
     assert(mp3.mp3?)
     assert(not(wma.mp3?))
-    dest = Typingpool::Filer::Audio.new(File.join(fixtures_dir, 'filer-temp.mp3'))
-    assert(converted = wma.to_mp3(dest))
-    begin
+    in_temp_dir do |dir|
+      dest = Typingpool::Filer::Audio.new(File.join(dir, 'filer-temp.mp3'))
+      assert(converted = wma.to_mp3(dest))
       assert_equal(dest.path, converted.path)
       assert_equal(35, wma.bitrate)
       assert(converted.bitrate)
       assert(converted.mp3?)
-    ensure
-      File.delete(dest)
-    end #begin
-    assert(chunks = mp3.split('0.25', 'filer-temp', Typingpool::Filer::Dir.new(fixtures_dir)))
-    begin
+      assert(chunks = mp3.split('0.25', 'filer-temp', Typingpool::Filer::Dir.new(dir)))
       assert(not(chunks.to_a.empty?))
       assert_equal(3, chunks.count)
       chunks.each{|chunk| assert(File.exists? chunk) }
       assert(chunks.first.offset)
       assert_match(chunks.first.offset, /0\.00\b/)
       assert_match(chunks.to_a[1].offset, /0\.25\b/)
-    ensure
-      chunks.each{|chunk| File.delete(chunk) }
-    end #begin
+    end #in_temp_dir
   end
 
   def files_from(dir)
@@ -123,28 +113,20 @@ keys = filer2.first.keys
     assert(filer_wma = Typingpool::Filer::Files::Audio.new(wmas))
     assert_equal(mp3s.count, filer_mp3.files.count)
     assert_equal(wmas.count, filer_wma.files.count)
-    temp_path = File.join(fixtures_dir, 'filer-temp')
-    FileUtils.mkdir(temp_path)
-    begin
-      dest_filer = Typingpool::Filer::Dir.new(temp_path)
+    in_temp_dir do |dir|
+      dest_filer = Typingpool::Filer::Dir.new(dir)
       assert(filer_conversion = filer_wma.to_mp3(dest_filer))
       assert_equal(filer_wma.files.count, filer_conversion.files.count)
       assert_equal(filer_wma.files.count, filer_conversion.select{|file| File.exists? file }.count)
       assert_equal(filer_wma.files.count, filer_conversion.select{|file|  file.mp3? }.count)
       assert_equal(filer_conversion.files.count, dest_filer.files.count)
-    ensure
-      FileUtils.remove_entry_secure(temp_path)
-    end #begin
-    temp_path = "#{temp_path}.mp3"
-    assert(filer_merged = filer_mp3.merge(Typingpool::Filer.new(temp_path)))
-    begin
+      temp_path = File.join(dir, 'temp.mp3')
+      assert(filer_merged = filer_mp3.merge(Typingpool::Filer.new(temp_path)))
       assert(File.size(filer_merged) > File.size(filer_mp3.first))
       assert(filer_merged.mp3?)
       assert(filer_merged.path != filer_mp3.first.path)
       assert(filer_merged.path != filer_mp3.to_a[1].path)
-    ensure
-      File.delete(temp_path)
-    end #begin
+    end #in_temp_dir
   end
 
   def test_filer_dir
@@ -153,9 +135,9 @@ keys = filer2.first.keys
     dir2_path = File.join(fixtures_dir, 'doesntexist')
     assert(not(File.exists? dir2_path))
     assert(dir2 = Typingpool::Filer::Dir.new(dir2_path))
-    dir3_path = File.join(fixtures_dir, 'filer-dir-temp')
-    assert(not(File.exists? dir3_path))
-    begin
+    in_temp_dir do |dir|
+      dir3_path = File.join(dir, 'filer-dir-temp')
+      assert(not(File.exists? dir3_path))
       assert(dir3 = Typingpool::Filer::Dir.create(dir3_path))
       assert(File.exists? dir3_path)
       assert_instance_of(Typingpool::Filer::Dir, dir3)
@@ -165,9 +147,7 @@ keys = filer2.first.keys
       assert_equal(dir3_path, dir3.to_s)
       assert_equal(dir3_path, dir3.to_str)
       assert(filer = dir3.file('doesntexist'))
-    ensure
-      FileUtils.remove_entry_secure(dir3_path)
-    end #begin
+    end #in_temp_dir
     assert(filer = dir.file('vcr', 'tp-collect-1.yml'))
     assert(File.exists? filer.path)
     assert_instance_of(Typingpool::Filer, filer)
@@ -188,5 +168,4 @@ keys = filer2.first.keys
     assert(File.exists? dir5.path)
     assert_instance_of(Typingpool::Filer::Dir, dir5)
   end
-
 end #TestFiler
