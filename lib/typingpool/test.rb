@@ -13,10 +13,6 @@ module Typingpool
       File.dirname(File.dirname(File.dirname(__FILE__)))
     end
 
-    def template_dir
-      File.join(Utility.lib_dir, 'templates', 'test')
-    end
-
     def fixtures_dir
       File.join(Utility.lib_dir, 'test', 'fixtures')
     end
@@ -142,7 +138,7 @@ module Typingpool
 
       def setup_temp_tp_dir(dir)
         make_temp_tp_dir_config(dir)
-        FileUtils.cp_r(::File.join(template_dir, 'projects'), dir)
+        Dir.mkdir(File.join(dir, 'projects'))
       end
 
       def setup_s3_config(dir, config=config_from_dir(dir), filename='.config_s3')
