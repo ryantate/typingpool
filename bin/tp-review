@@ -146,6 +146,12 @@ catch :quitting do
   end #find_projects_waiting_for(...) do
 end #catch :quitting do
 
+#Put project path on STDOUT so script can be pipelined, e.g.
+#`tp-review Foo | tp-finish`
+if options[:project]
+  puts options[:project].local.path
+end
+
 if options[:fixture]
   Typingpool::App.vcr_stop
 end
