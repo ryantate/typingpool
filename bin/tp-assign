@@ -218,4 +218,4 @@ needed_assignments.each_with_index do |assignment, i|
   end
 end
 STDERR.puts "Assigned #{needed_assignments.count} transcription jobs for $#{cost}"
-STDERR.puts "Remaining balance: $#{RTurk.GetAccountBalance.amount}"
+STDERR.puts "Remaining balance: $#{RTurk.GetAccountBalance.amount}" unless options[:sandbox]
