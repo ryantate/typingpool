@@ -137,10 +137,8 @@ module Typingpool
       #following redirects). False if the HTTP response code indicates
       #an error (e.g. 4XX and 5XX response codes).
       def working_url?(url, max_redirects=6)
-        response = request_url_with(url, max_redirects) do |url|
-          request = Net::HTTP.new(url.host, url.port)
-          request.use_ssl = true if url.scheme == 'https'
-          request.request_head(url.path)
+        response = request_url_with(url, max_redirects) do |url, http|
+          http.request_head(url.path)
         end #request_url_with... do |url|
         response.kind_of?(Net::HTTPSuccess)
       end
@@ -158,8 +156,8 @@ module Typingpool
       # ==== Returns
       #A Net::HTTPResponse instance, if the request was successful.
       def fetch_url(url, max_redirects=6)
-        response = request_url_with(url, max_redirects) do |url|
-          Net::HTTP.get_response(url)
+        response = request_url_with(url, max_redirects) do |url, http|
+          http.request_get(url.path)
         end
         if response.kind_of?(Net::HTTPSuccess)
           return response
@@ -181,7 +179,10 @@ module Typingpool
             raise Error::HTTP, "Too many redirects (>#{max_redirects})" 
           end
           seen.add(url.to_s)
-          response = yield(url)
+          #Die in a fire, net/http.
+          http = Net::HTTP.new(url.host, url.port)
+          http.use_ssl = true if url.scheme == 'https'
+          response = yield(url, http)
           if response.kind_of?(Net::HTTPRedirection)
             url = response['location']
           else
