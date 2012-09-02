@@ -56,7 +56,9 @@ module Typingpool
         files = uploading.map{|assignment| Typingpool::Project.local_basename_from_url(assignment['audio_url']) }
         files.map!{|basename| project.local.file('audio', 'chunks', basename).as(:audio) }
         files = Typingpool::Filer::Files.new(files)
-        remote_files = uploading.map{|assignment| project.remote.url_basename(assignment['audio_url']) }
+        remote_files = with_abort_on_url_mismatch('audio') do
+           uploading.map{|assignment| project.remote.url_basename(assignment['audio_url']) }
+        end 
         #Record that we're uploading so we'll know later if something
         #goes wrong
         record_assignment_upload_status(assignments_file, uploading, ['audio'], 'maybe')
@@ -168,7 +170,9 @@ module Typingpool
         missing = []
         record_assignment_upload_status(assignments_file, deleting, types, 'maybe')
         begin
-          project.remote.remove_urls(deleting){|file| yield(file) if block_given? }
+          with_abort_on_url_mismatch do
+            project.remote.remove_urls(deleting){|file| yield(file) if block_given? }
+          end
         rescue Typingpool::Error::File::Remote => exception
           others = []
           exception.message.split('; ').each do |message|
@@ -431,6 +435,19 @@ module Typingpool
       end
 
       #protected
+
+      def with_abort_on_url_mismatch(url_type='')
+        url_type = " #{url_type}"
+        begin
+          yield
+        rescue Typingpool::Error => exception
+          if exception.message.match(/not find base url/i)
+            abort "Previously recorded #{url_type}URLs don\'t look right. Are you using the right config file? You may have passed in a --config argument to a previous script and forgotten to do so now."
+          else
+            raise exception
+          end
+        end #begin
+      end
 
       def record_hits_in_assignments_file(assignments_file, hits)
         hits_by_url = self.hits_by_url(hits) if hits
