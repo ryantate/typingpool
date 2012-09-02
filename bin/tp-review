@@ -121,7 +121,17 @@ catch :quitting do
 
       case choice
       when 'approve'
-        hit.assignment.at_amazon.approve!
+        begin
+          hit.assignment.at_amazon.approve!
+        rescue RTurk::InvalidRequest => exception
+            #assignment may have passed its approval deadline since
+            #the session started and has been auto approved. In that
+            #case, add to the transcript; no need to tell the user.
+          unless exception.message.match(/AWS.MechanicalTurk.InvalidAssignmentState\b.+\bstatus of:\s*Submitted/i)
+            #different issue than auto approval; raise exception
+            raise exception
+          end
+        end #begin
         Typingpool::App.record_approved_hits_in_assignments_file(assignments, [hit])
         Typingpool::App.create_transcript(project, assignments)
         say(cli_bold("Approved. ") + "#{project.name} transcript updated.\n")
@@ -130,10 +140,21 @@ catch :quitting do
         until reason.to_s.match(/\S/)
           reason = ask("Rejection reason, for worker: ")
         end
-        hit.assignment.at_amazon.reject!(reason)
-        hit.at_amazon.dispose!
+        begin
+          hit.assignment.at_amazon.reject!(reason)
+          hit.at_amazon.dispose!
+        rescue RTurk::InvalidRequest => exception
+          #see comment under 'approve' case above
+          if exception.message.match(/AWS.MechanicalTurk.InvalidAssignmentState\b.+\bstatus of:\s*Submitted/i)
+            say(cli_bold("Not rejected:") + " This assignment passed its approval deadline since this session began and the assignment has been auto-approved. It will be deleted, but you've been charged for this assignment and your rejection message will not be delivered.")
+            hit.remove_from_amazon
+          else
+            raise exception
+          end
+        else
+          say(cli_bold("Rejected\n"))
+        end #begin
         Typingpool::App.unrecord_hits_in_assignments_file(assignments, [hit])
-        say(cli_bold("Rejected\n"))
       when 'quit'
         say(cli_bold("Quitting"))
         throw :quitting
