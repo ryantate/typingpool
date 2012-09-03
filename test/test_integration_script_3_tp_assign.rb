@@ -66,9 +66,11 @@ class TestTpAssign < Typingpool::Test::Script
         assert_in_delta((assigning_started + assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60)
         keywords = results[0].at_amazon.keywords
         assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
-        assert(assignment_urls = project.local.file('data', 'sandbox-assignment.csv').as(:csv).map{|assignment| assignment['assignment_url'] })
+        sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
+        refute_empty(assignment_urls = sandbox_csv.map{|assignment| assignment['assignment_url'] })
         assert(assignment_html = fetch_url(assignment_urls.first).body)
         assert_match(assignment_html, /\b20[\s-]+second\b/)
+        assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
       ensure
         tp_finish(dir)
       end #begin
@@ -91,11 +93,14 @@ class TestTpAssign < Typingpool::Test::Script
        assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(bad_config_path)))
        csv = project.local.file('data', 'assignment.csv').as(:csv)
        assert_empty(csv.select{|assignment| working_url? assignment['audio_url']})
+       assert_all_assets_have_upload_status(csv, ['audio'], 'maybe')
        begin
          tp_assign(dir, good_config_path)
          sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
          assert_equal(csv.count, sandbox_csv.count)
          assert_equal(sandbox_csv.count, sandbox_csv.select{|assignment| working_url? assignment['audio_url'] }.count)
+         assert_all_assets_have_upload_status(sandbox_csv, ['audio'], 'yes')
+#        TODO (bugfix): assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
        ensure
          tp_finish(dir, good_config_path)
        end #begin
@@ -122,8 +127,33 @@ def test_fixing_failed_assignment_html_upload
       refute_empty(get_assignment_urls.call(sandbox_csv))
       check_assignment_urls = lambda{ get_assignment_urls.call(sandbox_csv).map{|url| Typingpool::Utility.working_url? url } }
       check_assignment_urls.call.each{|checked_out| refute(checked_out) }
+      assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'maybe')
       tp_assign(dir, good_config_path)
       check_assignment_urls.call.each{|checked_out| assert(checked_out) }
+      assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
+    ensure
+      tp_finish(dir, good_config_path)
+    end #begin
+  end #in_temp_tp_dir do...
+end
+
+def test_abort_on_config_mismatch
+  skip_if_no_s3_credentials('tp-assign abort on config mismatch test')
+  in_temp_tp_dir do |dir|
+    config = config_from_dir(dir)
+    good_config_path = setup_s3_config(dir, config, '.config_s3_good')
+    tp_make(dir, good_config_path)
+    begin
+      tp_finish_outside_sandbox(dir, good_config_path)
+      assert(config.amazon.bucket)
+      new_bucket = 'configmismatch-test'
+      refute_equal(new_bucket, config.amazon.bucket)
+      config.amazon.bucket = new_bucket
+      bad_config_path = setup_s3_config(dir, config, '.config_s3_bad')
+      exception = assert_raises(Typingpool::Error::Shell) do
+        tp_assign(dir, bad_config_path)
+      end #assert_raises...
+      assert_match(exception.message, /\burls don't look right\b/i)
     ensure
       tp_finish(dir, good_config_path)
     end #begin

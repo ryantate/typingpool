@@ -379,18 +379,21 @@ module Typingpool
         assert_equal(count, noko(html).css('audio').size)
       end
 
-  def noko(html)
-    Nokogiri::HTML(html) 
-  end
+      def assert_all_assets_have_upload_status(assignment_csv, types, status)
+        types.each do |type|
+          recorded_uploads = assignment_csv.map{|assignment| assignment["#{type}_uploaded"] }
+          refute_empty(recorded_uploads)
+          assert_equal(recorded_uploads.count, recorded_uploads.select{|uploaded| uploaded == status }.count)
+        end
+      end
 
+      def noko(html)
+        Nokogiri::HTML(html) 
+      end
 
-  def vcr_dir
-    File.join(fixtures_dir, 'vcr')
-  end
-
-
-
-
+      def vcr_dir
+        File.join(fixtures_dir, 'vcr')
+      end
     end #Script
   end #Test
 end #Typingpool

@@ -11,13 +11,16 @@ class TestTpFinish < Typingpool::Test::Script
     skip_if_no_upload_credentials('tp-finish audio test')
     tp_make(dir, config_path)
     project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
-    urls = project.local.file('data', 'assignment.csv').as(:csv).map{|assignment| assignment['audio_url'] }
-    assert(not(urls.empty?))
+    csv = project.local.file('data', 'assignment.csv').as(:csv)
+    urls = csv.map{|assignment| assignment['audio_url'] }
+    refute_empty(urls)
+    assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
     assert_equal(urls.size, urls.select{|url| working_url? url}.size)
     assert_nothing_raised do
       tp_finish_outside_sandbox(dir, config_path)
     end
     assert_empty(urls.select{|url| working_url? url })
+    assert_all_assets_have_upload_status(csv, ['audio'], 'no')
   end
 
   def test_tp_finish_on_audio_files
@@ -43,9 +46,11 @@ class TestTpFinish < Typingpool::Test::Script
       tp_make(dir)
       tp_assign(dir)
       project = temp_tp_dir_project(dir)
+      sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
+      assert_all_assets_have_upload_status(sandbox_csv, ['audio', 'assignment'], 'yes')
       setup_amazon(dir)
       results = Typingpool::Amazon::HIT.all_for_project(project.local.id)
-      assert(not(results.empty?))
+      refute_empty(results)
       assert_nothing_raised do
         tp_finish(dir)
       end
@@ -59,8 +64,10 @@ class TestTpFinish < Typingpool::Test::Script
           assert_match(hit.status, /^dispos/i)
         rescue RTurk::InvalidRequest => exception
           assert_match(exception.message, /HITDoesNotExist/i)
-        end
-      end
+        end #begin
+      end #results.each...
+      refute(File.exists? sandbox_csv)
+      assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), ['audio'], 'no')
     end #in_temp_tp_dir
   end
 
@@ -89,5 +96,4 @@ class TestTpFinish < Typingpool::Test::Script
       assert_empty(project.local.file('data', 'assignment.csv').as(:csv).select{|assignment| working_url? assignment['audio_url'] })
     end #in_temp_tp_dir...
   end
-
 end #TestTpFinish

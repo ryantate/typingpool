@@ -161,17 +161,22 @@ module Typingpool
       # A count of how many items were actually removed from the
       # server.
       def updelete_assignment_assets(project,  assignments_file, assignments_updeleting=assignments_file, types=['audio', 'assignment'])
-        deleting = types.map do |type|
-          assignments_updeleting.select do |assignment| 
+        assignments_updeleting = assignments_updeleting.select do |assignment|
+          types.select do |type|
             assignment["#{type}_uploaded"] == 'yes' || assignment["#{type}_uploaded"] == 'maybe' 
-          end.map{|assignment| assignment["#{type}_url"] }
-        end.flatten
-        return 0 if deleting.empty?
+          end.count > 0
+        end.flatten #assignments_updeleting.select!...
+        urls_updeleting = assignments_updeleting.map do |assignment|
+          types.select do |type|
+            assignment["#{type}_uploaded"] == 'yes' || assignment["#{type}_uploaded"] == 'maybe'
+          end.map{|type| assignment["#{type}_url"] }
+        end.flatten #assignments_updeleting.map...
+        return 0 if urls_updeleting.empty?
         missing = []
-        record_assignment_upload_status(assignments_file, deleting, types, 'maybe')
+        record_assignment_upload_status(assignments_file, assignments_updeleting, types, 'maybe')
         begin
           with_abort_on_url_mismatch do
-            project.remote.remove_urls(deleting){|file| yield(file) if block_given? }
+            project.remote.remove_urls(urls_updeleting){|file| yield(file) if block_given? }
           end
         rescue Typingpool::Error::File::Remote => exception
           others = []
@@ -184,8 +189,8 @@ module Typingpool
           end #messages.each...
           raise Error, "Can't remove files: #{others.join('; ')}" if others.count > 0
         end #begin
-        record_assignment_upload_status(assignments_file, deleting, types, 'no')
-        deleting.count - missing.count
+        record_assignment_upload_status(assignments_file, assignments_updeleting, types, 'no')
+        urls_updeleting.count - missing.count
       end
 
       #Given a collection of Amazon::HITs, looks for Project folders
@@ -437,7 +442,7 @@ module Typingpool
       #protected
 
       def with_abort_on_url_mismatch(url_type='')
-        url_type = " #{url_type}"
+        url_type += ' '
         begin
           yield
         rescue Typingpool::Error => exception

@@ -247,7 +247,7 @@ module Typingpool
       #Given an URL, returns the file portion of the path, given the
       #configuration of this instance.
       def url_basename(url)
-        basename = url.split("#{self.url}/")[1] or raise Error "Could not find base url '#{self.url}' within longer url '#{url}'"
+        basename = url.split("#{self.url}/")[1] or raise Error, "Could not find base url '#{self.url}' within longer url '#{url}'"
         URI.unescape(basename)
       end
 
