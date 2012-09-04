@@ -187,7 +187,7 @@ end
 
 #we'll need to re-upload audio if we ran tp-finish on the project
 #or if our last attempt to upload audio failed partway through
-Typingpool::App.upload_audio_for_project(project, assignments) do |file, as|
+Typingpool::App.upload_audio_for_project(project) do |file, as|
   puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
 end
 

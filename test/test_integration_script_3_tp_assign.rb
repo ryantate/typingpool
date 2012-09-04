@@ -99,8 +99,7 @@ class TestTpAssign < Typingpool::Test::Script
          sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
          assert_equal(csv.count, sandbox_csv.count)
          assert_equal(sandbox_csv.count, sandbox_csv.select{|assignment| working_url? assignment['audio_url'] }.count)
-         assert_all_assets_have_upload_status(sandbox_csv, ['audio'], 'yes')
-#        TODO (bugfix): assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
+        assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
        ensure
          tp_finish(dir, good_config_path)
        end #begin

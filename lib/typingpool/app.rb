@@ -35,21 +35,17 @@ module Typingpool
       #files were uploaded, the array will be empty
       # ==== Params
       # [project]          A Project instance.
-      # [assignments_file] Optional. A Filer::CSV instance
-      #                    corresponding to a file like the default,
-      #                    Project#local#file('data',
-      #                    'assignment.csv'). Should already contain
-      #                    the URLs we'll be uploading to. The status
-      #                    of the uploads is written here s o we can
-      #                    later recover from an interrupted upload if
-      #                    need be.
       # [&block]           Optional. A block that will be called at the
       #                    beginning of each file upload and passed
       #                    the local path to the file and the remote
       #                    name of the file.
       # ==== Returns
       # An array of URLs of the uploaded audio files.
-      def upload_audio_for_project(project, assignments_file=project.local.file('data', 'assignment.csv').as(:csv))
+      def upload_audio_for_project(project)
+        #we don't make any provision for reading/writing from
+        #sandbox-assignment.csv because audio upload data in such files is
+        #effectively ignored
+        assignments_file = project.local.file('data', 'assignment.csv').as(:csv)
         check_interrupted_uploads(assignments_file, 'audio')
         uploading = assignments_file.reject{|assignment| assignment['audio_uploaded'] == 'yes' }
         return uploading if uploading.empty?
@@ -65,6 +61,7 @@ module Typingpool
         project.remote.put(files.to_streams, remote_files) do |file, as|
           yield(file, as) if block_given?
         end
+        assignments_files = [assignments_file]
         record_assignment_upload_status(assignments_file, uploading, ['audio'], 'yes')
         uploading.map{|assignment| assignment['audio_url'] }
       end
