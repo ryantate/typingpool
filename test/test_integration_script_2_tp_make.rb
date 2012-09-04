@@ -8,31 +8,25 @@ require 'csv'
 
 class TestTpMake < Typingpool::Test::Script                   
   def test_abort_with_no_files
-    exception = assert_raise(Typingpool::Error::Shell) do
-      call_tp_make('--title', 'Foo', '--chunks', '0:20')
-    end
-    assert_match(exception.message, /no files/i)
+    assert_tp_make_abort_match(['--title', 'Foo', '--chunks', '0:20'], /no files/i)
   end
 
   def test_abort_with_no_title
-    exception = assert_raise(Typingpool::Error::Shell) do
-      call_tp_make('--file', audio_files[0])
-    end
-    assert_match(exception.message, /no title/i)
+    assert_tp_make_abort_match(['--file', audio_files[0]], /no title/i)
   end
 
   def test_abort_with_invalid_title
-    exception = assert_raise(Typingpool::Error::Shell) do
-      call_tp_make('--file', audio_files[0], '--title', 'Foo/Bar')
-    end #assert_raise
-    assert_match(exception.message, /illegal character/i)
+    assert_tp_make_abort_match(['--file', audio_files[0], '--title', 'Foo/Bar'], /illegal character/i)
   end
 
   def test_abort_with_no_args
-    exception = assert_raise(Typingpool::Error::Shell) do
-      call_tp_make
+    assert_tp_make_abort_match([], /\bUSAGE:/)
+  end
+
+  def assert_tp_make_abort_match(args, regex)
+    assert_script_abort_match(args, regex) do |args|
+      call_tp_make(*args)
     end
-    assert_match(exception.message, /\bUSAGE:/)
   end
 
   def tp_make_with(dir, config_path, subdir='mp3')

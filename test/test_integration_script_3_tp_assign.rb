@@ -14,35 +14,26 @@ class TestTpAssign < Typingpool::Test::Script
   end
 
   def test_abort_with_no_template
-    exception = assert_raise(Typingpool::Error::Shell){call_tp_assign(project_default[:title])}
-    assert_match(exception.message, /Missing\b[^\n\r\f]*\btemplate/)
+    assert_tp_assign_abort_match([project_default[:title]], /Missing\b[^\n\r\f]*\btemplate/i)
   end
 
   def test_abort_with_bad_timespec
-    exception = assert_raise(Typingpool::Error::Shell) do
-      call_tp_assign(project_default[:title], assign_default[:template], '--lifetime', '4u')
-    end
-    assert_match(exception.message, /can't convert/i)
+    assert_tp_assign_abort_match([project_default[:title], assign_default[:template], '--lifetime', '4u'], /can't convert/i)
   end
 
   def test_abort_with_bad_qualification
-    exception = assert_raise(Typingpool::Error::Shell) do
-      call_tp_assign(project_default[:title], assign_default[:template], '--qualify', 'approval_rate &= 8')
-    end
-    assert_match(exception.message, /sense of --qualify/i)
-    assert_match(exception.message, /unknown comparator/i)
-    exception = assert_raise(Typingpool::Error::Shell) do
-      call_tp_assign(project_default[:title], assign_default[:template], '--qualify', 'fake_rate > 8', '--sandbox')
-    end
-    assert_match(exception.message, /sense of --qualify/i)
-    assert_match(exception.message, /unknown\b[^\n\r\f]*\btype/i)
+    assert_tp_assign_abort_match([project_default[:title], assign_default[:template], '--qualify', 'approval_rate &= 8'], /\bsense of --qualify.+\bunknown comparator\b/i)
+    assert_tp_assign_abort_match([project_default[:title], assign_default[:template], '--qualify', 'fake_rate > 8'], /\bsense of --qualify\b.+unknown\b[^\n\r\f]*\btype\b/i)
   end
 
   def test_abort_with_bad_reward
-    exception = assert_raise(Typingpool::Error::Shell) do
-      call_tp_assign(project_default[:title], assign_default[:template], '--reward', 'foo')
+    assert_tp_assign_abort_match([project_default[:title], assign_default[:template], '--reward', 'foo'], /sense of --reward/i)
+  end
+
+  def assert_tp_assign_abort_match(args, regex)
+    assert_script_abort_match(args, regex) do |args|
+      call_tp_assign(*args)
     end
-    assert_match(exception.message, /sense of --reward/i)
   end
 
   def test_tp_assign

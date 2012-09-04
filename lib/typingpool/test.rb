@@ -22,7 +22,11 @@ module Typingpool
     end
 
     def config
-      Config.file
+      if File.exists?(File.expand_path(Config.default_file))
+        Config.file
+      else
+        Config.from_bundled_template
+      end
     end
 
     def amazon_credentials?(config=self.config)
@@ -385,6 +389,21 @@ module Typingpool
           refute_empty(recorded_uploads)
           assert_equal(recorded_uploads.count, recorded_uploads.select{|uploaded| uploaded == status }.count)
         end
+      end
+
+      def assert_shell_error_match(regex)
+        exception = assert_raise(Typingpool::Error::Shell) do
+          yield
+        end
+        assert_match(exception.message, regex)
+      end
+
+      def assert_script_abort_match(args, regex)
+        in_temp_tp_dir do |dir|
+          assert_shell_error_match(regex) do 
+            yield([*args, '--config', config_path(dir)])
+          end
+        end #in_temp_tp_dir do...
       end
 
       def noko(html)
