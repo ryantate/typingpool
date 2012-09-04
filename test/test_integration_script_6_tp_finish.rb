@@ -96,4 +96,28 @@ class TestTpFinish < Typingpool::Test::Script
       assert_empty(project.local.file('data', 'assignment.csv').as(:csv).select{|assignment| working_url? assignment['audio_url'] })
     end #in_temp_tp_dir...
   end
+
+def test_abort_on_config_mismatch
+  skip_if_no_s3_credentials('tp-finish abort on config mismatch test')
+  in_temp_tp_dir do |dir|
+    config = config_from_dir(dir)
+    good_config_path = setup_s3_config(dir, config, '.config_s3_good')
+    tp_make(dir, good_config_path)
+    begin
+      assert(config.amazon.bucket)
+      new_bucket = 'configmismatch-test'
+      refute_equal(new_bucket, config.amazon.bucket)
+      config.amazon.bucket = new_bucket
+      bad_config_path = setup_s3_config(dir, config, '.config_s3_bad')
+      exception = assert_raises(Typingpool::Error::Shell) do
+        tp_finish_outside_sandbox(dir, bad_config_path)
+      end #assert_raises...
+      assert_match(exception.message, /\burls don't look right\b/i)
+    ensure
+      tp_finish_outside_sandbox(dir, good_config_path)
+    end #begin
+  end #in_temp_tp_dir do...
+
+end
+
 end #TestTpFinish

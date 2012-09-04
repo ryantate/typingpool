@@ -106,8 +106,8 @@ module Typingpool
         urls = remote_names.map{|name| project.remote.file_to_url(name) }
         #record upload URLs ahead of time so we can roll back later if the
         #upload fails halfway through
-        record_assignment_upload_status(assignments_file, assignments_uploading, ['assignment'], 'maybe')
         record_assignment_urls(assignments_file, assignments_uploading, 'assignment', urls)
+        record_assignment_upload_status(assignments_file, assignments_uploading, ['assignment'], 'maybe')
         project.remote.put(ios, remote_names)
         record_assignment_upload_status(assignments_file, assignments_uploading, ['assignment'], 'yes')
         urls
@@ -165,11 +165,11 @@ module Typingpool
           types.select do |type|
             assignment["#{type}_uploaded"] == 'yes' || assignment["#{type}_uploaded"] == 'maybe' 
           end.count > 0
-        end.flatten #assignments_updeleting.select!...
+        end.flatten #assignments_updeleting.select...
         urls_updeleting = assignments_updeleting.map do |assignment|
           types.select do |type|
             assignment["#{type}_uploaded"] == 'yes' || assignment["#{type}_uploaded"] == 'maybe'
-          end.map{|type| assignment["#{type}_url"] }
+          end.map{|type| assignment["#{type}_url"] }.select{|url| url }
         end.flatten #assignments_updeleting.map...
         return 0 if urls_updeleting.empty?
         missing = []
@@ -468,7 +468,7 @@ module Typingpool
       def record_assignment_upload_status(assignments, uploading, types, status)
         record_in_selected_assignments(assignments, uploading) do |assignment|
           types.each do |type|
-            assignment["#{type}_uploaded"] = status
+            assignment["#{type}_uploaded"] = status if assignment["#{type}_url"]
           end          
         end #record_in_selected_assignments...
       end
