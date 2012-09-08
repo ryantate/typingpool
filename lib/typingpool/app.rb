@@ -13,6 +13,7 @@ module Typingpool
   module App
     require 'vcr'
     require 'stringio'
+    require 'open3'
     class << self
 
       #Given a Project instance, figures out which audio chunks, if
@@ -405,6 +406,22 @@ module Typingpool
         record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
           unrecord_hit_details_in_csv_row(csv_row)
         end
+      end
+
+      #Checks for Typingpool's external dependencies. If they appear
+      #to missing, yields to the passed block an array containing the
+      #name of missing commands/packages (e.g. ffmpeg).
+      def if_missing_dependencies
+        #TODO: Test on Linux
+        missing = []
+        [['ffmpeg','-version'], ['mp3splt', '-v'], ['mp3wrap']].each do |cmdline|
+          begin
+            out, err, status = Open3.capture3(*cmdline)
+          rescue
+            missing.push(cmdline.first)
+          end #begin
+        end #...].each do |cmdline|
+        yield(missing) unless missing.empty?
       end
 
       #Begins recording of an HTTP mock fixture (for automated

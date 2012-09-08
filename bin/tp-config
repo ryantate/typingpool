@@ -6,6 +6,7 @@ require 'highline/import'
 require 'securerandom'
 require 'fileutils'
 require 'optparse'
+require 'open3'
 
 options = {
   :testing => false
@@ -102,3 +103,11 @@ File.open(config_path_full, 'w') do |out|
 end
 
 STDERR.puts "Successfully wrote config to '#{config_path}'."
+
+Typingpool::App.if_missing_dependencies do |missing|
+  missing.map!{|cmd| "`#{cmd}`" }
+  last = missing.pop
+  them = missing.empty? ? 'it' : 'them'
+  missing = missing.empty? ? last : [missing.join(', '), last].join(' and ')
+  STDERR.puts "By the way, it looks like you're missing #{missing}. You'll need to install #{them} before Typingpool can run."
+end
