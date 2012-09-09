@@ -78,6 +78,12 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+Typingpool::App.if_missing_dependencies do |missing|
+  missing.map!{|cmd| "`#{cmd}`" }
+  them = missing.count > 1 ? 'them' : 'it'
+  abort "It looks like you're missing #{Typingpool::Utility.join_in_english(missing)}. You'll need to install #{them} before Typingpool can run."
+end
+
 options[:title] ||= ARGV.shift if ARGV.count > 0
 options[:files].push(ARGV).flatten! if ARGV.count > 0
 options[:banner] += "\n#{Typingpool::App::CLI.help_arg_explanation}\n"

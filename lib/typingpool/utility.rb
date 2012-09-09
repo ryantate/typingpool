@@ -98,6 +98,21 @@ module Typingpool
         text
       end
 
+      #Takes an array, returns a string with the array elements joined
+      #with a comma, except for the last and second to last items,
+      #which are joined with ' and '. For example: ['foo','bar'] => "foo
+      #and bar"; ['foo','bar','baz'] => "foo, bar and baz"
+      #
+      #Also takes an optional flag which specifies whether to use an
+      #oxford comma. Default is false. If set to true, the last and
+      #second to last items will be joined with ', and'
+      def join_in_english(array, oxford_comma=false)
+        array = array.dup
+        oxford_comma = (oxford_comma && array.count > 2) ? ',' : ''
+        last = array.pop
+        array.empty? ? last : [array.join(', '), last].join("#{oxford_comma} and ")
+      end
+
       #Takes a block and calls that block with a path to a temporary
       #directory. Recursively deletes that directory when the block is
       #finished.
