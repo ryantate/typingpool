@@ -11,7 +11,7 @@ def test_abort_with_invalid_file
   exception = assert_raise(Typingpool::Error::Shell) do
     tp_config(File.join(fixtures_dir, 'not_yaml.txt'))
   end
-  assert_match(exception.message, /(valid YAML)|(not allowed)/i)
+  assert_match(exception.message, /not valid yaml/i)
 end
 
 def test_abort_with_directory_path
