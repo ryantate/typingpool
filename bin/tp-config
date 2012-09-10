@@ -36,7 +36,6 @@ if File.exists? config_path_full
     config = Typingpool::Config.file(config_path_full) 
   rescue ArgumentError, Psych::SyntaxError
     abort "The specified config file is not valid YAML"
-
   end #begin
 else
   abort "Invalid path '#{config_path}'" unless File.dirname(config_path_full) && File.directory?(File.dirname(config_path_full))
