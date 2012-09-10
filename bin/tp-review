@@ -95,10 +95,7 @@ catch :quitting do
           hit.assignment.submitted_at.localtime.to_s +
           cli_bold(" by ") +
           hit.assignment.worker_id)
-      say(hit.transcript.body_as_text do |formatter|
-            formatter.first_indent = 2
-            formatter.body_indent = 2
-          end)
+      say(hit.transcript.body_as_text(2))
       prompt = choices.map do |c| 
         cli_reverse('(') +
           cli_reverse(cli_bold(c.slice(0).upcase)) +

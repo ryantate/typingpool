@@ -60,7 +60,8 @@ module Typingpool
     #chunks, which know how to render themselves as text and HTML.
     class Chunk
       require 'cgi'
-      require 'text/format'
+      require 'rubygems/text'
+      include Gem::Text
 
       #Get/set the raw text of the transcript
       attr_accessor :body
@@ -127,52 +128,52 @@ module Typingpool
         @offset_seconds = (matches[3].to_i * 60) + matches[4].to_i
       end
 
-      #Takes an optional callback. If a callback is provided, it is
-      #passed a new Text::Format instance to configure, and then the
-      #text is wrapped and formatted by calling the 'format' method on
-      #that Text::Format instance. If no callbackis passed,
-      #Text::Format#format will NOT be used on the text.
+      #Takes an optional specification of how many spaces to indent
+      #the text by (default 0) and an optional specification of how
+      #many characters to wrap at (default no wrapping).
       #
       #Returns the text with newlines normalized to Unix format, runs
       #of newlines shortened to a maximum of two newlines, leading and
       #trailing whitespace removed from each line, and the text
-      #optionally wrapped/formatted (if a callback was provided)
-      def body_as_text
+      #wrapped/indented as specified.
+      def body_as_text(indent=nil, wrap=nil)
         text = self.body
         text = Utility.normalize_newlines(text)
         text.gsub!(/\n\n+/, "\n\n")
         text = text.split("\n").map{|line| line.strip }.join("\n")
-        if block_given?
-          text = text.split("\n\n").map{|line| wrap_text(line){|formatter| yield(formatter) }.chomp }.join("\n\n")
-        end
+        text = wrap_text(text, wrap) if wrap
+        text = indent_text(text, indent) if indent
         text
       end
       alias :to_s :body_as_text
       alias :to_str :body_as_text
 
-      #Returns the body, presumed to be raw text, as HTML. Any HTML
-      #tags in the body are escaped. Text blocks separated by double
-      #newlines are converted to HTML paragraphs, while single
-      #newlines are converted to HTML BR tags. Newlines are normalized
-      #as in body_as_text, and lines in the HTML source are
-      #automatically wrapped using the default Text::Format options,
-      #except without any indentation.
-      def body_as_html
+      #Takes an optional count of how many characters to wrap at
+      #(default 72). Returns the body, presumed to be raw text, as
+      #HTML. Any HTML tags in the body are escaped. Text blocks
+      #separated by double newlines are converted to HTML paragraphs,
+      #while single newlines are converted to HTML BR tags. Newlines
+      #are normalized as in body_as_text, and lines in the HTML source
+      #are automatically wrapped as specified.
+      def body_as_html(wrap=72)
         text = body_as_text
         text = CGI::escapeHTML(text)
         text = Utility.newlines_to_html(text)
         text = text.split("\n").map do |line| 
-          wrap_text(line){|formatter| formatter.first_indent = 0 }.chomp
+          wrap_text(line, 72).chomp
         end.join("\n") 
         text
       end
 
       protected
 
-      def wrap_text(text)
-        formatter = Text::Format.new
-        yield(formatter) if block_given?
-        formatter.format(text)
+      def indent_text(text, indent)
+        text.gsub!(/^/, " " * indent)
+        text
+      end
+
+      def wrap_text(text, wrap=72)
+        format_text(text, wrap)
       end
 
     end #Chunk 
