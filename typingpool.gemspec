@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
    s.add_runtime_dependency('aws-s3', '~> 0.6')
    s.add_runtime_dependency('net-sftp', '>= 2.0.5')
    s.add_runtime_dependency('vcr')
+   s.add_runtime_dependency('webmock')
    s.require_path = 'lib'
    s.bindir = 'bin'
    s.executables = ['tp-config',
