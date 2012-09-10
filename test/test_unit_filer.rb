@@ -69,6 +69,11 @@ class TestFiler < Typingpool::Test
     assert(mp3.mp3?)
     assert(not(wma.mp3?))
     in_temp_dir do |dir|
+      [mp3, wma].each do |file|
+        FileUtils.cp(file, dir)
+      end
+      mp3 = Typingpool::Filer::Audio.new(File.join(dir, File.basename(mp3)))
+      wma = Typingpool::Filer::Audio.new(File.join(dir, File.basename(wma)))
       dest = Typingpool::Filer::Audio.new(File.join(dir, 'filer-temp.mp3'))
       assert(converted = wma.to_mp3(dest))
       assert_equal(dest.path, converted.path)
