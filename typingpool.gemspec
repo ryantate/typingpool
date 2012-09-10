@@ -11,13 +11,13 @@ Gem::Specification.new do |s|
    s.homepage = 'http://github.com/ryantate/typingpool'
    s.required_ruby_version = '>= 1.9.2'
    s.requirements = ['ffmpeg', 'mp3splt', 'mp3wrap']
-   a.add_runtime_dependency('rturk', '~> 2.9')
-   a.add_runtime_dependency('highline', '>= 1.6')
-   a.add_runtime_dependency('nokogiri', '>= 1.5')
-   a.add_runtime_dependency('aws-s3', '~> 0.6')
-   a.add_runtime_dependency('net-sftp', '>= 2.0.5')
-   a.add_runtime_dependency('text-format', '~> 1.0')
-   a.add_runtime_dependency('vcr')
+   s.add_runtime_dependency('rturk', '~> 2.9')
+   s.add_runtime_dependency('highline', '>= 1.6')
+   s.add_runtime_dependency('nokogiri', '>= 1.5')
+   s.add_runtime_dependency('aws-s3', '~> 0.6')
+   s.add_runtime_dependency('net-sftp', '>= 2.0.5')
+   s.add_runtime_dependency('text-format', '~> 1.0')
+   s.add_runtime_dependency('vcr')
    s.require_path = 'lib'
    s.bindir = 'bin'
    s.executables = ['tp-config',
@@ -68,6 +68,9 @@ Gem::Specification.new do |s|
               'lib/typingpool/templates/assignment/partials/voices.html.erb',
               'lib/typingpool/templates/assignment/speech.html.erb',
               'lib/typingpool/templates/config.yml',
+              'lib/typingpool/templates/project/audio/chunks/.empty_directory',
+              'lib/typingpool/templates/project/audio/originals/.empty_directory',
+              'lib/typingpool/templates/project/data/.empty_directory',
               'lib/typingpool/templates/project/etc/ About these files - read me.txt',
               'lib/typingpool/templates/project/etc/audio-compat.js',
               'lib/typingpool/templates/project/etc/player/audio-player.js',
