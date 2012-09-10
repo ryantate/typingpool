@@ -2,7 +2,9 @@
 
 require 'optparse'
 require 'typingpool'
+require 'highline/import'
 include Typingpool::App::FriendlyExceptions
+include Typingpool::App::CLI::Formatter
 
 options = {
   :keyword => [],
@@ -13,7 +15,7 @@ OptionParser.new do |opts|
   options[:banner] += "  [--deadline 3h] [--lifetime 2d] [--approval 1d] \n"
   options[:banner] += "  [--qualify 'approval_rate >= 95' --qualify 'hits_approved > 10'...]\n"
   options[:banner] += "  [--keyword transcription --keyword mp3...]\n"
-  options[:banner] += "  [--sandbox] [--config PATH]\n"
+  options[:banner] += "  [--confirm] [--sandbox] [--config PATH]\n"
   opts.banner = options[:banner]
 
   opts.on('--project=PROJECT',
@@ -72,6 +74,13 @@ OptionParser.new do |opts|
           "An RTurk::Qualifications::TYPES +",
           ">|<|==|!=|true|exists|>=|<= [+ INT]") do |qualification|
     options[:qualify].push(qualification)
+  end
+
+  opts.on('--confirm',
+          "Confirm the total cost of the assignments",
+          "before assigning even if",
+          "$config:assign:confirm is set to 'no'") do
+    options[:confirm] = true
   end
 
   opts.on('--sandbox',
@@ -183,6 +192,12 @@ unless options[:sandbox]
   balance = RTurk.GetAccountBalance.amount
   cost = needed_assignments.count * options[:reward].to_f
   abort "Anticipated assignment cost of $#{cost} would exceed available balance of $#{balance}" if cost > balance
+  if options[:confirm] || config.assign.confirm
+    begin
+      input = ask("Assignment cost is $#{cost}. Proceed? [#{cli_bold('y')}es]/#{cli_bold('n')}o:") 
+    end until input.to_s.match(/(^y)|(^n)|(^\s*$)/i)
+    exit if input.match(/^n/i)
+  end
 end
 
 #we'll need to re-upload audio if we ran tp-finish on the project

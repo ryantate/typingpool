@@ -6,6 +6,7 @@ transcripts:
 templates:
 cache: ~/.typingpool.cache
 assign:
+  confirm: yes
   reward: 0.75
   deadline: 3h
   approval: 1d

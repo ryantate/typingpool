@@ -253,6 +253,13 @@ module Typingpool
           value
         end
 
+        define_reader(:confirm) do |value|
+          next false if value.to_s.match(/(^n)|(^0)|(^false)/i)
+          next true if value.to_s.match(/(^y)|(^1)|(^true)/i)
+          next if value.to_s.empty?
+          raise Error::Argument::Format, "Format should be 'yes' or 'no'"
+        end
+
         def qualify
           self.qualify = (@param['qualify'] || []) unless @qualify
           @qualify
