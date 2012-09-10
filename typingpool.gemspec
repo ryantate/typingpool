@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
    a.add_runtime_dependency('net-sftp', '>= 2.0.5')
    a.add_runtime_dependency('text-format', '~> 1.0')
    a.add_runtime_dependency('vcr')
-   a.add_runtime_dependency('highline', '~> 1.6')
    s.require_path = 'lib'
    s.bindir = 'bin'
    s.executables = ['tp-config',

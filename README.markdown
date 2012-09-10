@@ -1,4 +1,4 @@
-# Typingpool
+o# Typingpool
 
 Typingpool is an app for easily making transcripts of audio using
 Amazon's labor marketplace, Mechanical Turk.
@@ -324,24 +324,23 @@ Project, Transcript, Amazon, Config and Filer classes (the latter of
 interest mainly because of Filer::Audio, which handles splitting,
 merging, and conversion).
 
-The models in particular, along with the App class, are
-underdeveloped and not particularly clear or fully thought
-through. The Transcript model, for example, should almost certainly
-be folded into the Project model. Dividing Project into
-Project::Local and Project::Remote only makes sense on a superficial
-level; Project::Remote could probably be its own class or even part
-of Utility. Amazon will probably be simpler if I can get some patches
-into RTurk, and Amazon::HITshould probably be integrated more closely
-with Project.
+The models in particular, along with the App class, are underdeveloped
+and not particularly clear or fully thought through. The Transcript
+model, for example, should almost certainly be folded into the Project
+model. Dividing Project into Project::Local and Project::Remote only
+makes sense on a superficial level; Project::Remote could probably be
+its own class or even part of Utility. Amazon will probably be simpler
+if I can get some patches into RTurk, and Amazon::HIT should probably
+be integrated more closely with Project.
 
-One of the most frustrating things about the code is that there are
-so many subtly different ways a "chunk" of a transcript/project is
+One of the most frustrating things about the code is that there are so
+many subtly different ways a "chunk" of a transcript/project is
 represented: As a simple hash derived from a row in
 data/assignment.csv within a project folder, as an Amazon::HIT, as a
 Transcription::Chunk, as an audio file on a remote server, and as a
-local audio file (which has a different name from the remote
-file). So in future versions I'll probably reduce the number of
-different ways to represent a chunk.
+local audio file (which has a different name from the remote file). So
+in future versions I'll probably reduce the number of different ways
+to represent a chunk.
 
 Also in the future, it's very likely that App will evolve from a
 simple collection of class methods into a real class with a simple
@@ -423,7 +422,7 @@ various classes actually do:
  #Filter all HITs (not just Typingpool HITs) arbitrarily
  safe_to_delete = Typingpool::Amazon::HIT.all{|hit| hit.ours? && hit.full.expired_and_overdue? }
  #Filter all approved HITs arbitrarily
- ready_for_judgment = Typingpool::Amazon::HIT.all_approved{|hit| hit.submitted? && hit.ours? }
+ ready_for_judgment = Typingpool::Amazon::HIT.all_reviewable{|hit| hit.submitted? && hit.ours? }
  
  #Approve a HIT
  ready_for_judgment[0].at_amazon.approve! #at_amazon is an rturk instance
