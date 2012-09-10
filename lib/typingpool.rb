@@ -442,7 +442,15 @@
 #  #Get transcript chunk metadata
 #  puts "--#{transcript_chunk.url} (audio at #{transcript_chunk.offset})"
 #
+#==Author
+# Ryan Tate - ryantate@ryantate.com
+#
+#==License
+# Copyright (c) 2011-2012 Ryan Tate. Released under the terms of the MIT
+# license. See LICENSE for details.
+
 module Typingpool
+  VERSION = '0.7.0'
   require 'typingpool/error'
   require 'typingpool/utility'
   require 'typingpool/config'

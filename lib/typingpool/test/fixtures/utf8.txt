@@ -1,0 +1,8 @@
+﻿¡Héllö, wőrld!
+
+“This text is inside ‘smart’ quotes.”
+
+Here is a white on black cross: ✞
+
+Here is a sideways heart: ❥
+
