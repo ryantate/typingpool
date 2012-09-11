@@ -6,6 +6,7 @@ module Typingpool
   class Filer
     require 'fileutils'
     include Utility::Castable
+    include Comparable
 
     #Fully-expanded path to file
     attr_reader :path
@@ -15,6 +16,10 @@ module Typingpool
     #[path] Fully expanded path to file.
     def initialize(path)
       @path = path
+    end
+
+    def <=>(other)
+      path <=> other.path
     end
 
     #Returns contents of file or nil if the file does not exist.
@@ -191,7 +196,7 @@ module Typingpool
         if dest.path != dir.path
           files.mv!(dest)
         end
-        files
+        files.sort
       end
 
       #Extracts from the filename the offset time of the chunk
