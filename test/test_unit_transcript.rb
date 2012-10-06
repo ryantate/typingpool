@@ -71,7 +71,7 @@ class TestTranscript < Typingpool::Test
   end
 
   def dummy_assignments
-    Typingpool::Filer::CSV.new(File.join(fixtures_dir, 'transcript-chunks.csv')).read
+    Typingpool::Filer::CSV.new(File.join(fixtures_dir, 'transcript-chunks.csv')).read('UTF-8')
   end
 
 end #TestTranscript

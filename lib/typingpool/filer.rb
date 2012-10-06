@@ -23,9 +23,11 @@ module Typingpool
     end
 
     #Returns contents of file or nil if the file does not exist.
-    def read
+    def read(encoding=nil)
       if File.exists? @path
-        IO.read(@path)
+        args = [@path]
+        args.push(:encoding => encoding) if encoding
+        IO.read(*args)
       end
     end
 
@@ -88,7 +90,7 @@ module Typingpool
       #Reads into an array of hashes, with hash keys determined by the
       #first row of the CSV file. Parsing rules are the default for
       #CSV.parse. 
-      def read
+      def read(encoding=nil)
         raw = super or return []
         rows = ::CSV.parse(raw.to_s)
         headers = rows.shift or raise Error::File, "No CSV at #{@path}"
