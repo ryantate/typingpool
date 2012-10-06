@@ -22,7 +22,9 @@ module Typingpool
       path <=> other.path
     end
 
-    #Returns contents of file or nil if the file does not exist.
+    #Returns contents of file or nil if the file does not exist. Takes
+    #optional param specifying encoding of the file; should be a value
+    #compatible with IO#read's :encoding param.
     def read(encoding=nil)
       if File.exists? @path
         args = [@path]
@@ -89,7 +91,9 @@ module Typingpool
 
       #Reads into an array of hashes, with hash keys determined by the
       #first row of the CSV file. Parsing rules are the default for
-      #CSV.parse. 
+      #CSV.parse.  Takes optional param specifying encoding of the
+      #file; should be a value compatible with IO#read's :encoding
+      #param.
       def read(encoding=nil)
         raw = super or return []
         rows = ::CSV.parse(raw.to_s)
