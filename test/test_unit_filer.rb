@@ -63,6 +63,31 @@ class TestFiler < Typingpool::Test
     end #in_temp_dir
   end
 
+  #This might be more comprehensive if it looped and ran once with
+  #Encoding set to 'US-ASCII' - but we'd have to be carefult to reset
+  #Encoding back to orig value. For now I just run ruby -E 'US-ASCII'
+  #test_unit_filer.rb now and again.
+  def test_filer_csv_utf8
+    path = File.join(fixtures_dir, 'tp_review_sandbox-assignment.csv')
+    assert(filer = Typingpool::Filer::CSV.new(path))
+    assert(data = filer.read)
+    assert_instance_of(Array, data)
+    assert_instance_of(Hash, data.first)
+    in_temp_dir do |dir|
+      path = File.join(dir, 'filer-temp')
+      assert(filer2 = Typingpool::Filer::CSV.new(path))
+      assert_equal([], filer2.read)
+      assert(filer2.write(data))
+      assert_equal(Typingpool::Filer.new(filer.path).read, Typingpool::Filer.new(filer2.path).read)
+      refute_empty(assignments = filer2.read)
+      assert(assignment = assignments.pop)
+      assert(assignment['transcript'] = File.read(File.join(fixtures_dir, 'utf8_transcript.txt'), :encoding => 'UTF-8'))
+      assignments.push(assignment)
+      assert(filer2.write(assignments)) 
+      refute_empty(filer2.read) #will throw ArgumentError: invalid byte sequence in US-ASCII in degenerate case
+    end #in_temp_dir
+  end
+
   def test_filer_audio
     mp3 = Typingpool::Filer::Audio.new(files_from(File.join(audio_dir, 'mp3')).first)
     wma = Typingpool::Filer::Audio.new(files_from(File.join(audio_dir, 'wma')).first)

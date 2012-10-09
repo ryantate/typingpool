@@ -14,8 +14,9 @@ module Typingpool
     #Constructor.
     # ==== Params
     #[path] Fully expanded path to file.
-    def initialize(path)
+    def initialize(path, encoding='UTF-8')
       @path = path
+      @encoding = encoding
     end
 
     def <=>(other)
@@ -25,17 +26,15 @@ module Typingpool
     #Returns contents of file or nil if the file does not exist. Takes
     #optional param specifying encoding of the file; should be a value
     #compatible with IO#read's :encoding param.
-    def read(encoding=nil)
+    def read
       if File.exists? @path
-        args = [@path]
-        args.push(:encoding => encoding) if encoding
-        IO.read(*args)
+        IO.read(@path, :encoding => @encoding)
       end
     end
 
     #Write data to the file.
     def write(data, mode='w')
-      File.open(@path, mode) do |out|
+      File.open(@path, mode, :encoding => @encoding) do |out|
         out << data
       end
     end
@@ -49,6 +48,12 @@ module Typingpool
       @path = to
     end
 
+    #Returns the underlying file as an IO stream. Convenient for
+    #Project::Remote#put.
+    def to_stream(mode='r')
+      File.new(@path, mode, :encoding => @encoding)
+    end
+
     #Filer objects always stringify to their path. We might change
     #this later such that to_str gives the path but to_s gives the
     #content of the file as text.
@@ -56,12 +61,6 @@ module Typingpool
       @path
     end
     alias :to_str :to_s
-
-    #Returns the underlying file as an IO stream. Convenient for
-    #Project::Remote#put.
-    def to_stream(mode='r')
-      File.new(@path, mode)
-    end
 
     #Returns the parent dir of the underlying file as a Filer::Dir
     #instance.
@@ -94,7 +93,7 @@ module Typingpool
       #CSV.parse.  Takes optional param specifying encoding of the
       #file; should be a value compatible with IO#read's :encoding
       #param.
-      def read(encoding=nil)
+      def read
         raw = super or return []
         rows = ::CSV.parse(raw.to_s)
         headers = rows.shift or raise Error::File, "No CSV at #{@path}"
@@ -106,7 +105,12 @@ module Typingpool
       #hashes). Lines are written per the defaults of
       #CSV.generate_line.
       def write(hashes, headers=hashes.map{|h| h.keys}.flatten.uniq)
-        super(::CSV.generate_line(headers) + hashes.map{|hash| ::CSV.generate_line(headers.map{|header| hash[header] }) }.join )
+        super(
+              ::CSV.generate_line(headers, :encoding => @encoding) + 
+              hashes.map do |hash|
+                ::CSV.generate_line(headers.map{|header| hash[header] }, :encoding => @encoding)
+              end.join
+              )
       end
 
       #Takes an array of arrays, corresponding to the rows, and a list
