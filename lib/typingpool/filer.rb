@@ -14,6 +14,9 @@ module Typingpool
     #Constructor.
     # ==== Params
     #[path] Fully expanded path to file.
+    #[encoding] Optional. Encoding for all text operations on the
+    #           file. Should be compatiable with :encoding arg to
+    #           IO.read. Default is 'UTF-8'.
     def initialize(path, encoding='UTF-8')
       @path = path
       @encoding = encoding
@@ -23,9 +26,7 @@ module Typingpool
       path <=> other.path
     end
 
-    #Returns contents of file or nil if the file does not exist. Takes
-    #optional param specifying encoding of the file; should be a value
-    #compatible with IO#read's :encoding param.
+    #Returns contents of file or nil if the file does not exist. 
     def read
       if File.exists? @path
         IO.read(@path, :encoding => @encoding)
@@ -90,9 +91,7 @@ module Typingpool
 
       #Reads into an array of hashes, with hash keys determined by the
       #first row of the CSV file. Parsing rules are the default for
-      #CSV.parse.  Takes optional param specifying encoding of the
-      #file; should be a value compatible with IO#read's :encoding
-      #param.
+      #CSV.parse.
       def read
         raw = super or return []
         rows = ::CSV.parse(raw.to_s)
