@@ -130,11 +130,7 @@ module Typingpool
       #out to the underlying CSV file.
       def each!
         #each_with_index doesn't return the array, so we have to use each
-        i = 0
-        write(each do |hash| 
-                yield(hash, i)
-                i += 1 
-              end)
+        write(each{|hash| yield(hash) })
       end
     end #CSV
 
