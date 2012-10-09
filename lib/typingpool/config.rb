@@ -7,10 +7,12 @@ module Typingpool
   #  All listed defaults are populated when you run tp-install.
   #===Required
   #  [transcripts] Unexpanded path to working directory for
-  #transcripts. This is where tp-make creates new transcript projects,
-  #and where other scripts like tp-assign, tp-review and tp-finish
-  #look for them. Default: On Mac, ~/Desktop/Transcripts. Elsewhere,
-  #~/transcripts.
+  #                transcripts. This is where tp-make creates new
+  #                transcript projects, and where other scripts like
+  #                tp-assign, tp-review and tp-finish look for
+  #                them. Default: On systems with a ~/Desktop (like OS
+  #                X), ~/Desktop/Transcripts. Elsewhere,
+  #                ~/transcripts.
   #====amazon
   #  [key]    An Amazon Web Services "Access Key ID." Default: none.
   #  [secret] An Amazon Web Services "Secret Access Key." Default: none.
@@ -28,7 +30,8 @@ module Typingpool
   #              'Templates' (OS X) dir inside the transcripts dir.
   #====amazon
   #  [url] Base URL to use when linking to files uploaded to S3. You
-  #        may want to use this if you do custom domain mapping on S3.
+  #        may want to use this if you do custom domain mapping on
+  #        S3. Default is https://$bucket.s3.amazonaws.com.
   #====sftp
   #If you provide SFTP config, the specified SFTP server will be used
   #to host remote mp3 and html files rather than Amazon S3. At

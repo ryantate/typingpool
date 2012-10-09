@@ -64,10 +64,11 @@ if not(config.amazon.bucket || (config.sftp && config.sftp.user))
 end
 
 unless config.transcripts
-  if Typingpool::Utility.os_x?
-    config.transcripts = '~/Desktop/Transcripts'
+  desktop_path = File.expand_path(File.join('~', 'Desktop'))
+  if File.exists?(desktop_path) && File.directory?(desktop_path)
+    config.transcripts = File.join(desktop_path, 'Transcripts')
   else
-    config.transcripts = '~/transcripts'
+    config.transcripts = File.join('~', 'transcripts')
   end 
 end
 
@@ -89,13 +90,15 @@ end #loop do
 config.transcripts = transcripts
 
 unless config.templates
-  templates = Typingpool::Utility.os_x? ? 'Templates' : 'templates'
+  transcripts_dir = File.basename(File.expand_path(config.transcripts))
+  transcripts_dir_capitalized = (transcripts_dir[0].upcase == transcripts_dir[0])
+  templates =  transcripts_dir_capitalized ? 'Templates' : 'templates'
   config.templates = File.join(config['transcripts'], templates)
   FileUtils.mkdir(config.templates) unless File.exists? config.templates
 end
 
 unless config.cache
-  config.cache = '~/.typingpool.cache'
+  config.cache = File.join('~', '.typingpool.cache')
 end
 
 File.open(config_path_full, 'w') do |out|
