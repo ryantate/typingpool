@@ -95,6 +95,7 @@ Gem::Specification.new do |s|
               'lib/typingpool/test/fixtures/tp_review_id.txt',
               'lib/typingpool/test/fixtures/tp_review_sandbox-assignment.csv',
               'lib/typingpool/test/fixtures/transcript-chunks.csv',
+              'lib/typingpool/test/fixtures/utf8_transcript.txt',
               'lib/typingpool/test/fixtures/vcr/tp-collect-1.yml',
               'lib/typingpool/test/fixtures/vcr/tp-collect-2.yml',
               'lib/typingpool/test/fixtures/vcr/tp-collect-3.yml',
