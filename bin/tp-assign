@@ -187,14 +187,17 @@ Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 #Are there enough funds for this assignment?
 cost = 0
+cost_string = '0.00'
 unless options[:sandbox]
   STDERR.puts "Checking your balance"
   balance = RTurk.GetAccountBalance.amount
-  cost = needed_assignments.count * options[:reward].to_f
-  abort "Anticipated assignment cost of $#{cost} would exceed available balance of $#{balance}" if cost > balance
+  #"* 1.1" reflects 10% Amazon service surcharge
+  cost = (needed_assignments.count * options[:reward].to_f * 1.1).round(2)
+  cost_string = sprintf("%.2f", cost)
+  abort "Anticipated assignment cost of $#{cost_string} would exceed available balance of $#{balance}" if cost > balance
   if options[:confirm] || config.assign.confirm
     begin
-      input = ask("Assignment cost is $#{cost}. Proceed? [#{cli_bold('y')}es]/#{cli_bold('n')}o:") 
+      input = ask("Assignment cost is $#{cost_string}. Proceed? [#{cli_bold('y')}es]/#{cli_bold('n')}o:") 
     end until input.to_s.match(/(^y)|(^n)|(^\s*$)/i)
     exit if input.match(/^n/i)
   end
@@ -233,5 +236,5 @@ needed_assignments.each_with_index do |assignment, i|
   end #begin
   STDERR.puts "  Assigned transcription job for '#{project.class.local_basename_from_url(assignment['audio_url'])}'"
 end #needed_assignments.each_with_index do...
-STDERR.puts "Assigned #{needed_assignments.count} transcription jobs for $#{cost}"
+STDERR.puts "Assigned #{needed_assignments.count} transcription jobs for $#{cost_string}"
 STDERR.puts "Remaining balance: $#{RTurk.GetAccountBalance.amount}" unless options[:sandbox]
