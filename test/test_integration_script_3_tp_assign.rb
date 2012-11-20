@@ -42,9 +42,8 @@ class TestTpAssign < Typingpool::Test::Script
     in_temp_tp_dir do |dir|
       tp_make(dir)
       begin
-        assigning_started = Time.now
         tp_assign(dir)
-        assign_time = Time.now - assigning_started
+        assign_time = Time.now
         config = config_from_dir(dir)
         project = temp_tp_dir_project(dir)
         setup_amazon(dir)
@@ -54,7 +53,7 @@ class TestTpAssign < Typingpool::Test::Script
         assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].full.assignments_duration.to_i)
         #These numbers will be apart due to clock differences and
         #timing vagaries of the assignment.
-        assert_in_delta((assigning_started + assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60)
+        assert_in_delta((assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60)
         keywords = results[0].at_amazon.keywords
         assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
         sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
