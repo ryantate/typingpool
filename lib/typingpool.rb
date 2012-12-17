@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #= Typingpool
 #
 #Typingpool is an app for easily making transcripts of audio using
@@ -223,47 +224,79 @@
 #
 #
 #=== Workflow (additional)
+#  * When you want to preview your assignments, run tp-assign with the
+#    option --sandbox and with --qualify 'rejection_rate < 100' (to
+#    make sure you qualify to view your own HITs). Then visit
+#    http://workersandbox.mturk.com and find your assignments (a seach
+#    for "mp3" works if you left mp3 set as a keyword in your config
+#    file). When you are done previewing, run tp-finish with the
+#    name/path of your project and the --sandbox option.
 #
-#When you've rejected some submissions in tp-review and need to
-#re-assign these chunks to be transcribed, simply re-run tp-assign
-#with the name of your project. You may select the same template,
-#reward, deadlines, etc., or pick new ones. tp-assign will be careful
-#not to re-assign chunks for which you have approved a transcript, or
-#which are pending on Mechanical Turk.
+#  * When you assign your transcription jobs via tp-assign, you must
+#    supply a template name or relative path as the second
+#    argument. In the example above, the named template is
+#    “interview/nameless.”
+#    
+#    The template “interview/nameless” is a great general purpose
+#    template. It instructs the transcriber not to worry about the
+#    names of the speakers, and instead to use labels like “male 1,”
+#    “male 2,” etc. This allows the transcriber to work quickly and
+#    usually results in a viable transcript, since you can consult
+#    your memory or the original audio to figure out who is who.
+#    
+#    To find what other templates are available, navigate to the
+#    directory where typingpool is installed (`gem which typingpool`)
+#    and then go into typingpool/templates/assignment and its
+#    subdirectories. Anything that ends in ‘.html.erb’ is an available
+#    template. You may also create your own templates in the directory
+#    listed in the “templates” param of your config file.
+#    
+#    The templates interview, interview/phone, and interview/noisy
+#    require you to have passed the names of two voices to tp-make
+#    when you created your project. The first voice should be the name
+#    (and optional title) of the interviewer, and the second the name
+#    (and title) of the interviewee, like so:
+#      
+#       tp-make 'Chad Interview' chad1.WMA chad2.WMA –voice ‘Ryan,
+#         hack reporter’ --voice ‘Chad, a software engineer’ --unusual
+#         'Hack Day, Yahoo' --subtitle 'Phone interview re Yahoo Hack
+#         Day'
 #
-#When some chunks previously assigned via tp-assign have expired
-#without attracting submissions, simply re-run tp-assign as described
-#above to re-assign these chunks. Consider increasing the dollar
-#amount specified in your --reward argument.
 #
-#When some chunks previously assigned via tp-assign have been
-#submitted by workers but not approved or rejected in time for the
-#approval deadline (assign/approval in your config file or --approval
-#as passed to tp-assign), Mechanical Turk has automatically approved
-#these submissions for you and you'll need to run tp-collect to
-#collect them.
+#  * When you've rejected some submissions in tp-review and need to
+#    re-assign these chunks to be transcribed, simply re-run tp-assign
+#    with the name (or path) of your project. You may select the same
+#    template, reward, deadlines, etc., or pick new ones. tp-assign
+#    will be careful not to re-assign chunks for which you have
+#    approved a transcript, or which are pending on Mechanical Turk.
 #
-#When you want to cancel outstanding assignments, for example because
-#you realize you supplied the wrong parameter to tp-assign, simply run
-#tp-finish with the name of your project. If your assignments have
-#already attracted submissions, you may be prompted to run tp-review
-#first.
+#  * When some chunks previously assigned via tp-assign have expired
+#    without attracting submissions, simply re-run tp-assign as
+#    described above to re-assign these chunks. Consider increasing
+#    the dollar amount specified in your --reward argument.
 #
-#When tp-make, tp-assign, or tp-finish unsuccessfully attempts an
-#upload, deletion, or Amazon command, simply re-run the script with
-#the same arguments to re-attempt the upload, deletion or Amazon
-#command. Typingpool carefully records which network operations it is
-#attempting and which network operations have completed. It can
-#robustly handle network errors, including uncaught exceptions.
+#  * When some chunks previously assigned via tp-assign have been
+#    submitted by workers but not approved or rejected in time for the
+#    approval deadline (assign/approval in your config file or
+#    --approval as passed to tp-assign), Mechanical Turk has
+#    automatically approved these submissions for you and you'll need
+#    to run tp-collect to collect them. (Yes, it’s silly you need run
+#    a whole different script instead of just calling tp-review as
+#    usual. I’ll fix this in a future version.)
 #
-#When you want to preview your assignments, run tp-assign with the
-#--sandbox option and with --qualify 'rejection_rate < 100' (to make
-#sure you qualify to view your own HITs). Then visit
-#http://workersandbox.mturk.com and find your assignments (a seach for
-#"mp3" works if you left mp3 set as a keyword in your config
-#file). When you are done previewing, run tp-finish with the name/path
-#of your project and the --sandbox option.
+#  * When you want to cancel outstanding assignments, simply run
+#    tp-finish with the name of your project. If your assignments have
+#    already attracted submissions, you may be prompted to run
+#    tp-review first.
 #
+#  * When tp-make, tp-assign, or tp-finish tells you it failed an
+#    upload, deletion, or Amazon command, simply re-run the script
+#    with the same arguments to re-attempt the upload, deletion or
+#    Amazon command. Typingpool carefully records which network
+#    operations it is attempting and which network operations have
+#    completed. It can robustly handle network errors, including
+#    uncaught exceptions.
+##
 #
 #=== Maintenance
 #
@@ -297,20 +330,24 @@
 #
 #=== See also
 #
-#  - Run any script with the --help options for further details on how
+#  * Run any script with the --help options for further details on how
 #    to run the script.
 #
-#  - See the docs for Typingpool::Config for details of the config
+#  * See the docs for Typingpool::Config for details of the config
 #    file format.
 #
-#  - See Amazon's Mechanical Turk documentation for guides and
-#    overviews on how Mechanical Turk works.
+#  * See Amazon's Mechanical Turk documentation for guides and
+#    overviews on how Mechanical Turk
+#    works. https://requester.mturk.com/help
 #
-#  - See the documentation on ffmpeg and related libraries for clues
+#  * See the documentation on ffmpeg and related libraries for clues
 #    as to how to make Typingpool support additional file
 #    formats. Typingpool can work with any file format that ffmpeg can
 #    convert to mp3 (libmp3lame).
 #
+#  * For an overview of the concepts on which Typingpool is built, see
+#    Andy Baio’s guide to using Mechanical Turk for transcription:
+#    http://waxy.org/2008/09/audio_transcription_with_mechanical_turk/
 #
 #== Developer overview
 #

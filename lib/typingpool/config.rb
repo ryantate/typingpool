@@ -69,7 +69,6 @@ module Typingpool
   #             comparators: > >= < <= == != exists. The optional
   #             third part is a value. Default: ['approval_rate >=
   #             95'].
-
   #  [keywords] An array of keywords with which to tag each
   #             transcription job. Default: ['transcription', 'audio',
   #             'mp3'].
