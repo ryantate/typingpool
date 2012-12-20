@@ -1,4 +1,4 @@
-o# Typingpool
+# Typingpool
 
 Typingpool is an app for easily making transcripts of audio using
 Amazon's labor marketplace, Mechanical Turk.
