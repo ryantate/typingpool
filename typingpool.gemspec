@@ -2,8 +2,8 @@
 
 Gem::Specification.new do |s|
    s.name = 'typingpool'
-   s.version = '0.7.0'
-   s.date = '2012-09-09'
+   s.version = '0.7.1'
+   s.date = '2012-12-22'
    s.description = 'An app for transcribing audio using Mechanical Turk'
    s.summary = s.description
    s.authors = ['Ryan Tate']
@@ -35,6 +35,8 @@ Gem::Specification.new do |s|
                    'test/test_unit_template.rb',
                    'test/test_unit_transcript.rb']
    s.files = ['Rakefile', 
+              'LICENSE',
+              'README.markdown',
               'bin/tp-config',
               'bin/tp-make',
               'bin/tp-assign',
@@ -43,15 +45,39 @@ Gem::Specification.new do |s|
               'bin/tp-finish',
               'lib/typingpool.rb',
               'lib/typingpool/amazon.rb',
+              'lib/typingpool/amazon/question.rb',
+              'lib/typingpool/amazon/hit.rb',
+              'lib/typingpool/amazon/hit/full.rb',
+              'lib/typingpool/amazon/hit/full/fromsearchhits.rb',
+              'lib/typingpool/amaon/hit/assignment.rb',
+              'lib/typingpool/amaon/hit/assignment/empty.rb',
               'lib/typingpool/app.rb',
+              'lib/typingpool/app/cli.rb',
+              'lib/typingpool/app/cli/formatter.rb',
+              'lib/typingpool/app/friendlyexceptions.rb',
               'lib/typingpool/config.rb',
+              'lib/typingpool/config/root.rb',
               'lib/typingpool/error.rb',
               'lib/typingpool/filer.rb',
+              'lib/typingpool/filer/audio.rb',
+              'lib/typingpool/filer/csv.rb',
+              'lib/typingpool/filer/dir.rb',
+              'lib/typingpool/filer/files.rb',
+              'lib/typingpool/filer/files/audio.rb',
               'lib/typingpool/project.rb',
+              'lib/typingpool/project/local.rb',
+              'lib/typingpool/project/remote.rb',
+              'lib/typingpool/project/remote/s3.rb',
+              'lib/typingpool/project/remote/sftp.rb',
               'lib/typingpool/template.rb',
+              'lib/typingpool/template/assignment.rb',
+              'lib/typingpool/template/env.rb',
               'lib/typingpool/test.rb',
+              'lib/typingpool/test/script.rb',
               'lib/typingpool/transcript.rb',
+              'lib/typingpool/transcript/chunk.rb',
               'lib/typingpool/utility.rb',
+              'lib/typingpool/utility/castable.rb',
               'lib/typingpool/templates/assignment/amazon-init.js',
               'lib/typingpool/templates/assignment/interview.html.erb',
               'lib/typingpool/templates/assignment/interview/nameless.html.erb',
