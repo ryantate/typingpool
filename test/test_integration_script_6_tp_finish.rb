@@ -19,6 +19,7 @@ class TestTpFinish < Typingpool::Test::Script
     assert_nothing_raised do
       tp_finish_outside_sandbox(dir, config_path)
     end
+    sleep 1 #pause before checking URLs so remote server has time to fully delete 
     assert_empty(urls.select{|url| working_url? url })
     assert_all_assets_have_upload_status(csv, ['audio'], 'no')
   end
