@@ -158,29 +158,32 @@ module Typingpool
         end
       end
 
-      def define_reader(*syms)
+      def define_reader(*syms, &block)
+        #explicit block passing to avoid sefault in 1.9.3-p362
         syms.each do |sym|
           define_method(sym) do
             value = @param[sym.to_s]
-            yield(value)
+            block.call(value)
           end
         end
       end
 
-      def define_writer(*syms)
+      def define_writer(*syms, &block)
+        #explicit block passing to avoid sefault in 1.9.3-p362
         syms.each do |sym|
           define_method("#{sym.to_s}=".to_sym) do |value|
-            @param[sym.to_s] = yield(value)
+            @param[sym.to_s] = block.call(value)
           end
         end
       end
 
-      def define_accessor(*syms)
+      def define_accessor(*syms, &block)
+        #explicit block passing to avoid sefault in 1.9.3-p362
         define_reader(*syms) do |value|
-          yield(value) if value
+          block.call(value) if value
         end
         define_writer(*syms) do |value|
-          yield(value)
+          block.call(value)
         end
       end
 
