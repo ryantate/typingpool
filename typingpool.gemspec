@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
    s.name = 'typingpool'
-   s.version = '0.7.2'
+   s.version = '0.7.3'
    s.date = '2012-12-22'
    s.description = 'An app for transcribing audio using Mechanical Turk'
    s.summary = s.description

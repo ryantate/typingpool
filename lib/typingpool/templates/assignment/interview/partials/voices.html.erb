@@ -1,8 +1,8 @@
-<% if voices_count > 0 %>
+<% if voices_count.to_i > 0 %>
 <h3>Names</h3>
 <p>There are <%= voices_count %> speakers:
 <ul>
-  <% 1.upto(voices_count) do |i| %>
+  <% 1.upto(voices_count.to_i) do |i| %>
     <li><strong><%= send("voice#{i}") %></strong><% if send("voice#{i}title").to_s.empty? %><% if i == 1 %>, the person asking the questions<% end %><% else %>, <%= send("voice#{i}title") %><% end %>.
   <% end %>
 </ul>
