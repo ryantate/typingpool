@@ -448,5 +448,5 @@ Ryan Tate - ryantate@ryantate.com
 
 ##License
 
-Copyright (c) 2011-2012 Ryan Tate. Released under the terms of the MIT
+Copyright (c) 2011-2013 Ryan Tate. Released under the terms of the MIT
 license. See LICENSE for details.
