@@ -15,23 +15,26 @@ class TestTpFinish < Typingpool::Test::Script
     urls = csv.map{|assignment| assignment['audio_url'] }
     refute_empty(urls)
     assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
+    sleep 3 #pause before checking URLs so remote server has time to fully upload
     assert_equal(urls.size, urls.select{|url| working_url? url}.size)
     assert_nothing_raised do
       tp_finish_outside_sandbox(dir, config_path)
     end
-    sleep 1 #pause before checking URLs so remote server has time to fully delete 
+    sleep 3 #pause before checking URLs so remote server has time to fully delete 
     assert_empty(urls.select{|url| working_url? url })
     assert_all_assets_have_upload_status(csv, ['audio'], 'no')
   end
 
-  def test_tp_finish_on_audio_files
+  def test_tp_finish_on_audio_files_with_sftp
+    skip_if_no_sftp_credentials('tp-finish sftp test')
     in_temp_tp_dir do |dir|
       config_path = self.config_path(dir)
       tp_finish_on_audio_files_with(dir, config_path)
-    end
+    end 
   end
 
   def test_tp_finish_on_audio_files_with_s3
+    skip_if_no_s3_credentials('tp-finish sftp test')
     in_temp_tp_dir do |dir|
       config = config_from_dir(dir)
       config.to_hash.delete('sftp')

@@ -41,6 +41,7 @@ class TestTpMake < Typingpool::Test::Script
       assignments = project.local.file('data', 'assignment.csv').as(:csv)
       assert_equal(project.local.subdir('audio','chunks').to_a.size, assignments.count)
       assert_all_assets_have_upload_status(assignments, ['audio'], 'yes')
+      sleep 3 #pause before checking URLs so remote server has time to fully upload
       assignments.each do |assignment|
         assert_not_nil(assignment['audio_url'])
         assert(working_url? assignment['audio_url'])
@@ -108,6 +109,7 @@ class TestTpMake < Typingpool::Test::Script
         audio_urls.each_with_index do |original_url, i|
           assert_equal(original_url, audio_urls2[i])
         end
+        sleep 3 #pause before checking URLs so remote server has time to fully upload
         assert_equal(audio_urls.count, audio_urls2.select{|url| working_url? url }.count)
       ensure
         tp_finish_outside_sandbox(dir, good_config_path)
