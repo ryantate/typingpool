@@ -487,7 +487,7 @@
 # license. See LICENSE for details.
 
 module Typingpool
-  VERSION = '0.7.3'
+  VERSION = '0.7.4'
   require 'typingpool/error'
   require 'typingpool/utility'
   require 'typingpool/config'

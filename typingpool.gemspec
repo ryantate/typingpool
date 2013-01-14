@@ -2,8 +2,8 @@
 
 Gem::Specification.new do |s|
    s.name = 'typingpool'
-   s.version = '0.7.3'
-   s.date = '2012-12-22'
+   s.version = '0.7.4'
+   s.date = '2013-01-13'
    s.description = 'An app for transcribing audio using Mechanical Turk'
    s.summary = s.description
    s.authors = ['Ryan Tate']
