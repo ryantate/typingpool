@@ -60,7 +60,7 @@ unless options[:testing]
 end
 
 if not(config.amazon.bucket || (config.sftp && config.sftp.user))
-  config.amazon.bucket = ['typingpool', SecureRandom.hex(8)].join('-')
+  config.amazon.bucket = Typingpool::Project::Remote::S3.random_bucket_name
 end
 
 unless config.transcripts

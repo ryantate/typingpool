@@ -5,6 +5,8 @@ $:.unshift File.join(File.dirname(File.dirname($0)), 'lib')
 require 'typingpool'
 require 'typingpool/test'
 require 'stringio'
+require 'aws-sdk'
+require 'securerandom'
 
 class TestProjectRemote < Typingpool::Test
   def test_project_remote_from_config
@@ -22,10 +24,6 @@ class TestProjectRemote < Typingpool::Test
   def test_project_remote_s3_base
     config = dummy_config(1)
     assert(remote = Typingpool::Project::Remote::S3.new(project_default[:title], config.amazon))
-    %w(key secret bucket).each do |param|
-      refute_nil(remote.send(param.to_sym))
-      assert_equal(config.amazon.send(param.to_sym), remote.send(param.to_sym))
-    end #%w().each do...
     assert_nil(config.amazon.url)
     assert_includes(remote.url, config.amazon.bucket)
     custom_url = 'http://tp.example.com/tp-test/1/2/3'
@@ -36,6 +34,12 @@ class TestProjectRemote < Typingpool::Test
     assert_includes(remote.url, custom_url)
     assert_equal('tp.example.com', remote.host)
     assert_equal('/tp-test/1/2/3', remote.path)
+    assert_includes(Typingpool::Project::Remote::S3.random_bucket_name, 'typingpool-')
+    assert_equal(27, Typingpool::Project::Remote::S3.random_bucket_name.size)
+    assert_equal(21,Typingpool::Project::Remote::S3.random_bucket_name(10).size)
+    assert_equal(28,Typingpool::Project::Remote::S3.random_bucket_name(10, 'testing-typingpool').size)
+    assert_equal(34,Typingpool::Project::Remote::S3.random_bucket_name(16, 'testing-typingpool').size)
+    assert_match(Typingpool::Project::Remote::S3.random_bucket_name(16, ''), /^[a-z]/)
   end
 
   def test_project_remote_s3_networked
@@ -45,6 +49,23 @@ class TestProjectRemote < Typingpool::Test
     assert(project = Typingpool::Project.new(project_default[:title], config))
     assert_instance_of(Typingpool::Project::Remote::S3, remote = project.remote)
     standard_put_remove_tests(remote)
+  end
+
+  def test_project_remote_s3_networked_make_new_bucket_when_needed
+    assert(config = self.config)
+    skip_if_no_s3_credentials('Project::Remote::S3 upload and delete tests', config)
+    config.to_hash.delete('sftp')
+    config.amazon.bucket = Typingpool::Project::Remote::S3.random_bucket_name(16, 'typingpool-test-')
+    assert(s3 = AWS::S3.new(:access_key_id => config.amazon.key, :secret_access_key => config.amazon.secret))
+    refute(s3.buckets[config.amazon.bucket].exists?)
+    assert(project = Typingpool::Project.new(project_default[:title], config))
+    assert_instance_of(Typingpool::Project::Remote::S3, remote = project.remote)
+    begin
+      standard_put_remove_tests(remote)
+      assert(s3.buckets[config.amazon.bucket].exists?)
+    ensure
+      s3.buckets[config.amazon.bucket].delete
+    end #begin
   end
 
   def test_project_remote_sftp_base

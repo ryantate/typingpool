@@ -5,22 +5,24 @@ module Typingpool
       #Subclass for storing remote files on Amazon Simple Storage
       #Service (S3)
       class S3 < Remote
-        require 'aws/s3'
+        require 'aws-sdk'
 
-        #An Amazon Web Services "Access Key ID." Set from the
-        #Config#amazon value passed to Project::Remote::S3.new, but
-        #changeable.
-        attr_accessor :key
-
-        #An Amazon Web Services "Secret Access Key." Set from the
-        #Config#amazon value passed to Project::Remote::S3.new, but
-        #changeable.
-        attr_accessor :secret
-
-        #The S3 "bucket" where uploads will be stores. Set from the
-        #Config#amazon value passed to Project::Remote::S3.new, but
-        #changeable.
-        attr_accessor :bucket
+        #Takes an optional length for the random sequence, 16 by
+        #default, and an optional bucket name prefix, 'typingpool-' by
+        #default. Returns a string safe for use as both an S3 bucket
+        #and as a subdomain. Random charcters are drawn from [a-z0-9],
+        #though the first character in the returned string will always
+        #be a letter.
+        def self.random_bucket_name(length=16, prefix='typingpool-')
+          charset = [(0 .. 9).to_a, ('a' .. 'z').to_a].flatten
+          if prefix.to_s.empty? && (length > 0)
+            #ensure subdomain starts with a letter
+            prefix = ('a' .. 'z').to_a[SecureRandom.random_number(26)]
+            length -= 1
+          end
+          random_sequence = (1 .. length).map{ charset[ SecureRandom.random_number(charset.count) ] }
+          [prefix.to_s, random_sequence].join
+        end
 
         #Returns the base URL, which is prepended to the remote
         #files. This is either the 'url' attribute of the
@@ -37,7 +39,7 @@ module Typingpool
           @config = amazon_config
           @key = @config.key or raise Error::File::Remote::S3, "Missing Amazon key in config"
           @secret = @config.secret or raise Error::File::Remote::S3, "Missing Amazon secret in config"
-          @bucket = @config.bucket or raise Error::File::Remote::S3, "Missing Amazon bucket in config"
+          @bucket_name = @config.bucket or raise Error::File::Remote::S3, "Missing Amazon bucket in config"
           @url = @config.url || default_url
         end
 
@@ -54,11 +56,15 @@ module Typingpool
         #Upload files/strings to S3, optionally changing the names in the process.
         # ==== Params
         #[io_streams] Enumerable collection of IO objects, like a File
-        #             or StringIO instance.
+        #             or StringIO instance. Each IO object must repond
+        #             to the methods rewind, read, and eof? (so no
+        #             pipes, sockets, etc)
         #[as]         Optional if the io_streams are File instances. Array of
         #             file basenames, used to name the destination
         #             files. Default is the basename of the Files
         #             passed in as io_streams.
+        #[&block]     Optional. Passed an io_stream and destination name
+        #             just before each upload
         # ==== Returns
         #Array of URLs corresponding to the uploaded files.
         def put(io_streams, as=io_streams.map{|file| File.basename(file)})
@@ -66,27 +72,29 @@ module Typingpool
             dest = as[i]
             yield(stream, dest) if block_given?
             begin
-              AWS::S3::S3Object.store(dest, stream, @bucket,  :access => :public_read)
-            rescue AWS::S3::NoSuchBucket
-              make_bucket
+              s3.buckets[@bucket_name].objects[dest].write(stream, :acl => :public_read)
+            rescue AWS::S3::Errors::NoSuchBucket
+              s3.buckets.create(@bucket_name, :acl => :public_read)
+              stream.rewind
               retry
-            end
+            end #begin
             file_to_url(dest)
           end #batch
         end
 
         #Delete objects from S3.
         # ==== Params
-        #[files] Enumerable collection of file names. Should NOT
-        #        include the bucket name (path).
+        #[files]  Enumerable collection of file names. Should NOT
+        #         include the bucket name (path).
+        #[&block] Optional. Passed a file name before each delete.
         # ==== Returns
-        #Array of booleans corresponding to whether the delete call
-        #succeeded.
+        #Nil
         def remove(files)
           batch(files) do |file, i|
             yield(file) if block_given?
-            AWS::S3::S3Object.delete(file, @bucket)
+            s3.buckets[@bucket_name].objects[file].delete
           end
+          nil
         end
 
         protected
@@ -94,40 +102,28 @@ module Typingpool
         def batch(io_streams)
           results = []
           io_streams.each_with_index do |stream, i|
-            connect if i == 0
             begin
               results.push(yield(stream, i))
-            rescue AWS::S3::S3Exception => e
-              if e.message.match(/AWS::S3::SignatureDoesNotMatch/)
-                raise Error::File::Remote::S3::Credentials, "S3 operation failed with a signature error. This likely means your AWS key or secret is wrong. Error: #{e}"
-              else
-                raise Error::File::Remote::S3, "Your S3 operation failed with an Amazon error: #{e}"
-              end #if    
+            rescue AWS::S3::Errors::InvalidAccessKeyId
+              raise Error::File::Remote::S3::Credentials, "S3 operation failed because your AWS access key ID  is wrong. Double-check your config file."
+            rescue AWS::S3::Errors::SignatureDoesNotMatch
+              raise Error::File::Remote::S3::Credentials, "S3 operation failed with a signature error. This likely means your AWS secret access key is wrong."
+            rescue AWS::Errors::Base => e
+              raise Error::File::Remote::S3, "Your S3 operation failed with an Amazon error: #{e} (#{e.class})"
             end #begin
-          end #files.each
-          disconnect unless io_streams.empty?
+          end #io_streams.each_with_index
           results
         end
 
-        def connect
-          AWS::S3::Base.establish_connection!(
-                                              :access_key_id => @key,
-                                              :secret_access_key => @secret,
-                                              :persistent => false,
-                                              :use_ssl => true
-                                              )
-        end
-
-        def disconnect
-          AWS::S3::Base.disconnect
-        end
-
-        def make_bucket
-          AWS::S3::Bucket.create(@bucket)
+        def s3
+          AWS::S3.new(
+                     :access_key_id => @key,
+                     :secret_access_key => @secret
+                     )
         end
 
         def default_url
-          "https://#{@bucket}.s3.amazonaws.com"
+          "https://#{@bucket_name}.s3.amazonaws.com"
         end
       end #S3
     end #Remote
