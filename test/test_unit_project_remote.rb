@@ -10,25 +10,25 @@ require 'securerandom'
 
 class TestProjectRemote < Typingpool::Test
   def test_project_remote_from_config
-    assert(remote = Typingpool::Project::Remote.from_config(project_default[:title], dummy_config(1)))
+    assert(remote = Typingpool::Project::Remote.from_config(dummy_config(1)))
     assert_instance_of(Typingpool::Project::Remote::S3, remote)
-    assert(remote = Typingpool::Project::Remote.from_config(project_default[:title], dummy_config(2)))
+    assert(remote = Typingpool::Project::Remote.from_config(dummy_config(2)))
     assert_instance_of(Typingpool::Project::Remote::SFTP, remote)
     config = dummy_config(2)
     config.to_hash.delete('sftp')
     assert_raises(Typingpool::Error) do
-      Typingpool::Project::Remote.from_config(project_default[:title], config)
+      Typingpool::Project::Remote.from_config(config)
     end #assert_raises
   end
 
   def test_project_remote_s3_base
     config = dummy_config(1)
-    assert(remote = Typingpool::Project::Remote::S3.new(project_default[:title], config.amazon))
+    assert(remote = Typingpool::Project::Remote::S3.from_config(config.amazon))
     assert_nil(config.amazon.url)
     assert_includes(remote.url, config.amazon.bucket)
     custom_url = 'http://tp.example.com/tp-test/1/2/3'
     config.amazon.url = custom_url
-    assert(remote = Typingpool::Project::Remote::S3.new(project_default[:title], config.amazon))
+    assert(remote = Typingpool::Project::Remote::S3.from_config(config.amazon))
     refute_nil(remote.url)
     refute_includes(remote.url, config.amazon.bucket)
     assert_includes(remote.url, custom_url)
@@ -70,7 +70,7 @@ class TestProjectRemote < Typingpool::Test
 
   def test_project_remote_sftp_base
     config = dummy_config(2)
-    assert(remote = Typingpool::Project::Remote::SFTP.new(project_default[:title], config.sftp))
+    assert(remote = Typingpool::Project::Remote::SFTP.from_config(config.sftp))
     %w(host path user url).each do |param|
       refute_nil(remote.send(param.to_sym))
       assert_equal(config.sftp.send(param.to_sym), remote.send(param.to_sym))
@@ -161,6 +161,7 @@ class TestProjectRemote < Typingpool::Test
     assert(urls = args[:remote].put(*put_args))
     begin
       assert_equal(args[:streams].count, urls.count)
+      sleep 4
       urls.each{|url| assert(working_url?(url)) }
       args[:test_with].call(urls) if args[:test_with]
     ensure

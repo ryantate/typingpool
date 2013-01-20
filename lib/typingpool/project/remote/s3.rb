@@ -7,6 +7,18 @@ module Typingpool
       class S3 < Remote
         require 'aws-sdk'
 
+        #Takes a Config#amazon, extracts the needed params, and
+        #returns a Project::Remote::S3 instance. Raises an exception
+        #of type Error::File::Remote::S3 if any required params (key,
+        #secret, bucket) are missing from the config.
+        def self.from_config(config_amazon)
+          key = config_amazon.key or raise Error::File::Remote::S3, "Missing Amazon key in config"
+          secret = config_amazon.secret or raise Error::File::Remote::S3, "Missing Amazon secret in config"
+          bucket_name = config_amazon.bucket or raise Error::File::Remote::S3, "Missing Amazon bucket in config"
+          url = config_amazon.url
+          new(key, secret, bucket_name, url)
+        end
+
         #Takes an optional length for the random sequence, 16 by
         #default, and an optional bucket name prefix, 'typingpool-' by
         #default. Returns a string safe for use as both an S3 bucket
@@ -31,16 +43,13 @@ module Typingpool
         #'default_url' (e.g. "https://bucketname.s3.amazonaws.com").
         attr_reader :url
 
-        #Constructor. Takes the project name and the result of calling
-        #the 'amazon' method on a Config instance (i.e. the amazon
-        #section of a Config file).
-        def initialize(name, amazon_config)
-          @name = name
-          @config = amazon_config
-          @key = @config.key or raise Error::File::Remote::S3, "Missing Amazon key in config"
-          @secret = @config.secret or raise Error::File::Remote::S3, "Missing Amazon secret in config"
-          @bucket_name = @config.bucket or raise Error::File::Remote::S3, "Missing Amazon bucket in config"
-          @url = @config.url || default_url
+        #Constructor. Takes an Amazon AWS access key id, secret access
+        #key, bucket name, and optional URL prefix.
+        def initialize(key, secret, bucket, url=nil)
+          @key = key 
+          @secret = secret
+          @bucket_name = bucket 
+          @url = url || default_url
         end
 
         #The remote host (server) name, parsed from #url

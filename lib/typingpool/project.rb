@@ -39,7 +39,7 @@ module Typingpool
     #this Project instance. Takes an optional Config instance; default
     #is project.config.
     def remote(config=@config)
-      Remote.from_config(@name, config)
+      Remote.from_config(config)
     end
 
     #Constructs and returns a Project::Local instance associated with

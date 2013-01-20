@@ -9,6 +9,18 @@ module Typingpool
       class SFTP < Remote
         require 'net/sftp'
 
+        #Takes a Config#sftp, extracts the needed params, and returns
+        #a Project::Remote::SFTP instance. Raises an exception of type
+        #Error::File::Remote::SFTP if any required params (user, host,
+        #url) are missing from the config.
+        def self.from_config(config_sftp)
+          user = config_sftp.user or raise Error::File::Remote::SFTP, "No SFTP user specified in config"
+          host = config_sftp.host or raise Error::File::Remote::SFTP, "No SFTP host specified in config"
+          url = config_sftp.url or raise Error::File::Remote::SFTP, "No SFTP url specified in config"
+          path = config_sftp.path
+          new(user, host, url, path)
+        end
+
         #Returns the remote host (server) name. This is set from
         #Config#sftp#host.
         attr_reader :host
@@ -25,14 +37,14 @@ module Typingpool
         #files. This is set from Config#sftp#url.
         attr_reader :url
 
-        #Constructor. Takes the project name and a Config#sftp.
-        def initialize(name, sftp_config)
-          @name = name
-          @config = sftp_config   
-          @user = @config.user or raise Error::File::Remote::SFTP, "No SFTP user specified in config"
-          @host = @config.host or raise Error::File::Remote::SFTP, "No SFTP host specified in config"
-          @url = @config.url or raise Error::File::Remote::SFTP, "No SFTP url specified in config"
-          @path = @config.path || ''
+        #Constructor. Takes the project name, SFTP user, SFTP host,
+        #URL prefix to append to file names, and an optional SFTP path
+        #(for SFTP uploading, not appended to URL).
+        def initialize(user, host, url, path=nil)
+          @user = user 
+          @host = host 
+          @url = url 
+          @path = path || ''
         end
 
         #See docs for Project::Remote::S3#put.
