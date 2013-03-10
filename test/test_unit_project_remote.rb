@@ -161,7 +161,7 @@ class TestProjectRemote < Typingpool::Test
     assert(urls = args[:remote].put(*put_args))
     begin
       assert_equal(args[:streams].count, urls.count)
-      sleep 4
+      sleep 6
       urls.each{|url| assert(working_url?(url)) }
       args[:test_with].call(urls) if args[:test_with]
     ensure
