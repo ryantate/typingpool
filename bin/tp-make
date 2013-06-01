@@ -141,6 +141,7 @@ else
   converted_files = project.local.subdir('audio', 'originals').as(:audio).to_mp3(temp_conversion_dir, project.bitrate) do |file| 
     STDERR.puts "Converting #{File.basename(file) } to mp3" 
   end
+  converted_files = Typingpool::Filer::Files::Audio.new(converted_files.sort{|a,b| a.path <=> b.path})
 
   STDERR.puts "Merging audio" if converted_files.count > 1
   temp_merge_file = Tempfile.new(["#{project.name}.all.", ".mp3"])
