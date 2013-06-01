@@ -83,7 +83,7 @@ module Typingpool
       end
 
       def call_tp_make(*args)
-        call_script(path_to_tp_make, *args)
+        call_script(path_to_tp_make, *args, '--devtest')
       end
 
       def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3')

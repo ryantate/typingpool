@@ -71,6 +71,11 @@ OptionParser.new do |opts|
     options[:bitrate] = kbps
   end
 
+  opts.on('--devtest',
+          'Runs in a special development mode. Ignore.') do
+    options[:devtest] = true
+  end
+
   opts.on('--help',
           'Display this screen.') do
     puts opts
@@ -151,6 +156,9 @@ else
   assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :unusual => options[:unusual], :voices => options[:voices])
 
   temp_merge_file.close
+  if options[:devtest]
+    FileUtils.cp(temp_merge_file.path, project.local.subdir('audio', 'originals'))
+  end
   temp_merge_file.unlink
   FileUtils.remove_entry_secure(temp_conversion_dir)
 end #if project.local

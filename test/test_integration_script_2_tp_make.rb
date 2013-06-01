@@ -5,6 +5,7 @@ $:.unshift File.join(File.dirname(File.dirname($0)), 'lib')
 require 'typingpool'
 require 'typingpool/test'
 require 'csv'
+require 'open3'
 
 class TestTpMake < Typingpool::Test::Script                   
   def test_abort_with_no_files
@@ -116,6 +117,32 @@ class TestTpMake < Typingpool::Test::Script
       end #begin
       assert_all_assets_have_upload_status(assignment_csv, ['audio'], 'no')
     end #in_temp_tp_dir do...
+  end
+
+  def test_audio_files_sorted_correctly
+    in_temp_tp_dir do |dir|
+      config_path = self.config_path(dir)
+      skip_if_no_upload_credentials('tp-make audio file sorting test', Typingpool::Config.file(config_path))
+      assert(audio_files('mp3').count > 1)
+      correctly_ordered_paths = audio_files('mp3').sort
+      tp_make_with(dir, config_path, 'mp3')
+      assert(project = temp_tp_dir_project(dir))
+      assert(merged_audio_file = project.local.subdir('audio','originals').files.detect{|filer| filer.path.match(/.\.all\../)})
+      assert(File.exists? merged_audio_file)
+      actually_ordered_paths = originals_from_merged_audio_file(merged_audio_file)
+      assert_equal(correctly_ordered_paths.map{|path| File.basename(path) }, actually_ordered_paths.map{|path| File.basename(path) })
+    end #in_temp_tp_dir
+  end
+
+  def originals_from_merged_audio_file(path)
+    out, err, status = Open3.capture3('mp3splt', '-l', path)
+    refute_nil(out)
+    refute_empty(out)
+    paths = out.scan(/^\/.+\.mp3$/i)
+    refute_empty(paths)
+    assert(paths.count > 1)
+    paths.each{|path| assert(File.exists? path) }
+    paths
   end
 
 end #TestTpMake
