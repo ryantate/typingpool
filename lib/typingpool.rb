@@ -487,13 +487,13 @@
 # license. See LICENSE for details.
 
 module Typingpool
+  require 'typingpool/utility'
+  require 'typingpool/filer'
+  require 'typingpool/project'
   require 'typingpool/version'
   require 'typingpool/error'
-  require 'typingpool/utility'
   require 'typingpool/config'
-  require 'typingpool/filer'
   require 'typingpool/amazon'
-  require 'typingpool/project'
   require 'typingpool/transcript'
   require 'typingpool/template'
   require 'typingpool/app'
