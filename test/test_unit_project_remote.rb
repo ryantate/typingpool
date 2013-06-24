@@ -39,7 +39,7 @@ class TestProjectRemote < Typingpool::Test
     assert_equal(21,Typingpool::Project::Remote::S3.random_bucket_name(10).size)
     assert_equal(28,Typingpool::Project::Remote::S3.random_bucket_name(10, 'testing-typingpool').size)
     assert_equal(34,Typingpool::Project::Remote::S3.random_bucket_name(16, 'testing-typingpool').size)
-    assert_match(Typingpool::Project::Remote::S3.random_bucket_name(16, ''), /^[a-z]/)
+    assert_match(/^[a-z]/, Typingpool::Project::Remote::S3.random_bucket_name(16, ''))
   end
 
   def test_project_remote_s3_networked

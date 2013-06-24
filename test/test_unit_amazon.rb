@@ -11,7 +11,7 @@ class TestAmazon < Typingpool::Test
 
   def test_amazon_base
     setup_result = Typingpool::Amazon.setup(:sandbox => true, :config => dummy_config)
-    assert_match(setup_result, /amazonaws/)
+    assert_match(/amazonaws/, setup_result)
     assert(Typingpool::Amazon.cache)
     assert_instance_of(PStore, Typingpool::Amazon.cache)
     assert_equal(dummy_config.cache, Typingpool::Amazon.cache.path)
@@ -24,13 +24,13 @@ class TestAmazon < Typingpool::Test
     assert_instance_of(Typingpool::Amazon::Question, question)
     assert_equal(question_url, question.url)
     assert_equal(question_html, question.html)
-    assert_match(question.title, /Transcribe MP3 of/i)
-    assert_match(question.description, /telephone conversation/i)
-    assert_match(question.annotation, /\S/)
+    assert_match(/Transcribe MP3 of/i, question.title)
+    assert_match(/telephone conversation/i, question.description)
+    assert_match(/\S/, question.annotation)
     assert(decoded_annotation = URI.decode_www_form(CGI.unescapeHTML(question.annotation)))
     decoded_annotation = Hash[*decoded_annotation.flatten]
-    assert_match(decoded_annotation[Typingpool::Amazon::HIT.url_at], /^http/i)
-    assert_match(decoded_annotation[Typingpool::Amazon::HIT.id_at], /\S/)
+    assert_match(/^http/i, decoded_annotation[Typingpool::Amazon::HIT.url_at])
+    assert_match(/\S/, decoded_annotation[Typingpool::Amazon::HIT.id_at])
   end
 
   def test_amazon_hit_create
@@ -67,10 +67,10 @@ class TestAmazon < Typingpool::Test
   def test_amazon_hit_base
     with_dummy_hit_or_skip('test_amazon_hit_base') do |hit, config|
       assert_instance_of(Typingpool::Amazon::HIT, hit)
-      assert_match(hit.id, /\S/)
-      assert_match(hit.url, /^http/i)
-      assert_match(hit.project_id, /\S/)
-      assert_match(hit.project_title_from_url, /\S/)
+      assert_match(/\S/, hit.id)
+      assert_match(/^http/i, hit.url)
+      assert_match(/\S/, hit.project_id)
+      assert_match(/\S/, hit.project_title_from_url)
       assert(not(hit.approved?))
       assert(not(hit.rejected?))
       assert(not(hit.submitted?))
@@ -87,16 +87,16 @@ class TestAmazon < Typingpool::Test
     with_dummy_hit_or_skip('test_amazon_hit_full') do |hit, config|
       assert(full = hit.full)
       assert_instance_of(Typingpool::Amazon::HIT::Full, full)
-      [:id, :type_id].each{|attr| assert_match(full.send(attr), /\S/) }
+      [:id, :type_id].each{|attr| assert_match(/\S/, full.send(attr)) }
       assert(not(full.expired?))
       assert(not(full.expired_and_overdue?))
       assert_equal('Assignable', full.status)
-      assert_match(full.external_question_url, /^http/i)
-      [:assignments_completed, :assignments_pending].each{|attr| assert_match(full.send(attr).to_s, /^\d+$/) }
+      assert_match(/^http/i, full.external_question_url)
+      [:assignments_completed, :assignments_pending].each{|attr| assert_match(/^\d+$/, full.send(attr).to_s) }
       assert_kind_of(Time, full.expires_at)
       assert_instance_of(Hash, full.annotation)
-      assert_match(full.annotation[Typingpool::Amazon::HIT.url_at], /^http/i)
-      assert_match(full.annotation[Typingpool::Amazon::HIT.id_at], /\S/)
+      assert_match(/^http/i, full.annotation[Typingpool::Amazon::HIT.url_at])
+      assert_match(/\S/, full.annotation[Typingpool::Amazon::HIT.id_at])
     end #with_dummy_hit_or_skip
   end
 

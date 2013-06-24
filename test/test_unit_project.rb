@@ -152,7 +152,7 @@ class TestProject < Typingpool::Test
 
   def test_local_basename_from_url
     url = ['http://example.com/dir/', URI.escape('Example Title With Spaces & Ampersand.html')].join
-    assert_match(url, /%20/)
+    assert_match(/%20/, url)
 #assert(basename = Typingpool::Project.local_basename_from_url.u)
   end
 

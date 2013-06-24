@@ -13,9 +13,9 @@ class TestFiler < Typingpool::Test
     assert(filer = Typingpool::Filer.new(path))
     assert_equal(path, "#{filer}")
     assert(text = filer.read)
-    assert_match(text, /^amazon:\n/)
-    assert_match(text, /transcripts: ~\/Documents\/Transcripts\//)
-    assert_match(text, /- mp3\s*$/)
+    assert_match(/^amazon:\n/, text)
+    assert_match(/transcripts: ~\/Documents\/Transcripts\//, text)
+    assert_match(/- mp3\s*$/, text)
     assert_equal(fixtures_dir, filer.dir.path)
     in_temp_dir do |dir|
       path = File.join(dir, 'filer-temp')
@@ -43,7 +43,7 @@ class TestFiler < Typingpool::Test
     assert_respond_to(filer, :map)
     assert_respond_to(filer, :select)
     assert(data.first['audio_url'])
-    assert_match(data.first['audio_url'], /^https?:\/\/\w/)
+    assert_match(/^https?:\/\/\w/, data.first['audio_url'])
     assert(filer.select{|r| r['audio_url'] }.count > 0)
     in_temp_dir do |dir|
       path = File.join(dir, 'filer-temp')
@@ -111,8 +111,8 @@ class TestFiler < Typingpool::Test
       assert_equal(3, chunks.count)
       chunks.each{|chunk| assert(File.exists? chunk) }
       assert(chunks.first.offset)
-      assert_match(chunks.first.offset, /0\.00\b/)
-      assert_match(chunks.to_a[1].offset, /0\.25\b/)
+      assert_match(/0\.00\b/, chunks.first.offset)
+      assert_match(/0\.25\b/, chunks.to_a[1].offset)
     end #in_temp_dir
   end
 

@@ -10,13 +10,13 @@ class TestConfig < Typingpool::Test
   def test_config_regular_file
     assert(config = Typingpool::Config.file(File.join(fixtures_dir, 'config-1')))
     assert_equal('~/Documents/Transcripts/', config['transcripts'])
-    assert_match(config.transcripts, /Transcripts$/)
-    refute_match(config.transcripts, /~/)
+    assert_match(/Transcripts$/, config.transcripts)
+    refute_match(/~/, config.transcripts)
     %w(key secret).each do |param| 
       regex = /test101010/
-      assert_match(config.amazon.send(param), regex) 
-      assert_match(config.amazon[param], regex)
-      assert_match(config.amazon.to_hash[param], regex)
+      assert_match(regex, config.amazon.send(param)) 
+      assert_match(regex, config.amazon[param])
+      assert_match(regex, config.amazon.to_hash[param])
     end
     assert_equal(0.75, config.assign.reward.to_f)
     assert_equal(3*60*60, config.assign.deadline.to_i)
@@ -45,25 +45,25 @@ class TestConfig < Typingpool::Test
     exception = assert_raises(Typingpool::Error::Argument) do 
       config.assign.qualify
     end
-    assert_match(exception.message, /Unknown qualification type/i)
+    assert_match(/Unknown qualification type/i, exception.message)
 
     config.assign['qualify'] = [config.assign['qualify'].pop]
     exception = assert_raises(Typingpool::Error::Argument) do 
       config.assign.qualify
     end
-    assert_match(exception.message, /Unknown comparator/i)
+    assert_match(/Unknown comparator/i, exception.message)
 
     assert_equal('3z', config.assign['deadline'])
     exception = assert_raises(Typingpool::Error::Argument::Format) do
       config.assign.deadline
     end
-    assert_match(exception.message, /can't convert/i)
+    assert_match(/can't convert/i, exception.message)
 
     config.assign['reward'] = 'foo'
     exception = assert_raises(Typingpool::Error::Argument::Format) do
       config.assign.reward
     end
-    assert_match(exception.message, /\bformat should\b/i)
+    assert_match(/\bformat should\b/i, exception.message)
   end
 
   def test_config_regular_input
@@ -83,12 +83,12 @@ class TestConfig < Typingpool::Test
     exception = assert_raises(Typingpool::Error::Argument::Format) do
       config.assign.reward = 'foo'
     end
-    assert_match(exception.message, /\bformat should\b/i)
+    assert_match(/\bformat should\b/i, exception.message)
 
     exception = assert_raises(Typingpool::Error::Argument::Format) do
       config.assign.approval = '11f'
     end
-    assert_match(exception.message, /can't convert/i)
+    assert_match(/can't convert/i, exception.message)
 
   end
 end #TestConfig

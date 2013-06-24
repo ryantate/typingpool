@@ -13,9 +13,9 @@ class TestTemplate < Typingpool::Test
     assert(template2 = Typingpool::Template.new('template.html.erb', [fixtures_dir]))
     has_template_in_fixtures_dir_test(template2)
     signature = 'ffffffffff'
-    assert_match(template1.render({:title => signature}), /#{signature}/)
-    refute_match(template1.read, /#{signature}/)
-    assert_match(template1.read, /<h1><%= title/i)
+    assert_match(/#{signature}/, template1.render({:title => signature}))
+    refute_match(/#{signature}/, template1.read)
+    assert_match(/<h1><%= title/i, template1.read)
     in_temp_dir do |dir1|
       assert(template = Typingpool::Template.new('template', [dir1, fixtures_dir]))
       assert(template.look_in.detect{|path| path == dir1})
@@ -24,9 +24,9 @@ class TestTemplate < Typingpool::Test
         copy_template_fixture_into(dir2, '-2') do |path|
           assert(template = Typingpool::Template.new('template', [dir1, dir2, fixtures_dir]))
           assert_equal(path, template.full_path)
-          assert_match(template.render({:title => signature}), /#{signature}/)
-          refute_match(template.read, /#{signature}/)
-          assert_match(template.read, /<h2><%= title/i)
+          assert_match(/#{signature}/, template.render({:title => signature}))
+          refute_match(/#{signature}/, template.read)
+          assert_match(/<h2><%= title/i, template.read)
         end #copy_template_fixture_into do...
       end #in_temp_dir do |dir2|
     end #in_temp_dir do |dir1|
@@ -40,12 +40,12 @@ class TestTemplate < Typingpool::Test
           config.templates = dir2
           assert(template = Typingpool::Template.from_config('template', config))
           assert_equal(path, template.full_path)
-          assert_match(template.read, /<h2><%= title/i)
+          assert_match(/<h2><%= title/i, template.read)
           config.templates = dir1
           exception = assert_raise(Typingpool::Error) do 
             template = Typingpool::Template.from_config('template', config)
           end #assert_raises() do...
-          assert_match(exception.message, /could not find/i)
+          assert_match(/could not find/i, exception.message)
         end #copy_template_into do...
       end #in_temp_dir do |dir2|
     end #in_temp_dir do |dir1|
@@ -61,7 +61,7 @@ class TestTemplate < Typingpool::Test
           config.templates = dir
           assert(template = Typingpool::Template::Assignment.from_config('template', config))
           assert_equal(assignment_path, template.full_path)
-          assert_match(template.read, /<h2><%= title/i)
+          assert_match(/<h2><%= title/i, template.read)
         end #copy_template_fixture_into(assignment_subdir) do...
       end #copy_template_fixture_into(dir, '') do...
     end #in_temp_dir do...
@@ -71,9 +71,9 @@ class TestTemplate < Typingpool::Test
     assert(template = Typingpool::Template.new('template-3', [fixtures_dir]))
     signatures = [('g' * 9), ('h' * 11)]
     assert(rendered = template.render(:title => signatures[0], :new_title => signatures[1]))
-    assert_match(rendered, /<h1><%= title/i)
-    assert_match(rendered, /<h1>#{signatures[0]}/i)
-    assert_match(rendered, /<h1>#{signatures[1]}/i)
+    assert_match(/<h1><%= title/i, rendered)
+    assert_match(/<h1>#{signatures[0]}/i, rendered)
+    assert_match(/<h1>#{signatures[1]}/i, rendered)
     in_temp_dir do |dir|
       copy_template_fixture_into(dir) do |template_path|
         subdir = File.join(dir, 'closer')
@@ -83,12 +83,12 @@ class TestTemplate < Typingpool::Test
           FileUtils.cp(File.join(fixtures_dir, 'template-2.html.erb'), subdir)
           look_in = [dir, subdir]
           assert(template = Typingpool::Template.new('template', look_in))
-          assert_match(template.read, /<h1><%= title/i)
-          refute_match(template.read, /<h2><%= title/i)
+          assert_match(/<h1><%= title/i, template.read)
+          refute_match(/<h2><%= title/i, template.read)
           assert(calling_template = Typingpool::Template.new('template-3', look_in))
           assert(rendered = calling_template.render(:title => signatures[0], :new_title => signatures[1]))
-          assert_match(rendered, /<h2>/)
-          refute_match(rendered, /<h1>/)
+          assert_match(/<h2>/, rendered)
+          refute_match(/<h1>/, rendered)
         end #copy_template_fixture_into do...
       end #copy_template_fixture_into do...
     end #in_temp_dir do...

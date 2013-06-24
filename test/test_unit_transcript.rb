@@ -49,12 +49,12 @@ class TestTranscript < Typingpool::Test
       refute_equal(chunk.filename, chunk.filename_local)
       original_newline_count = chunk.body_as_text.scan(/\n/).count
       chunk.body = chunk.body + "\n\r\f" + ('foo bar baz' * 100) 
-      refute_match(chunk.body_as_text, /\r/) unless $/.match(/\r/)
+      refute_match(/\r/, chunk.body_as_text) unless $/.match(/\r/)
       assert_equal(original_newline_count + 2, chunk.body_as_text.scan(/\n/).count)
       original_p_count = chunk.body_as_html.scan(/<p>/i).count
       chunk.body = chunk.body + "One & two\n\n...and 3 < 4."
-      refute_match(chunk.body_as_html, /\s&\s/)
-      refute_match(chunk.body_as_html, /\s<\s/)
+      refute_match(/\s&\s/, chunk.body_as_html)
+      refute_match(/\s<\s/, chunk.body_as_html)
       assert_equal(original_p_count + 1, chunk.body_as_html.scan(/<p>/i).count)
     end
   end
