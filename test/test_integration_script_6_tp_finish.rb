@@ -65,9 +65,9 @@ class TestTpFinish < Typingpool::Test::Script
         #dead HITs yet
         begin 
           hit = RTurk::Hit.find(result.id)
-          assert_match(hit.status, /^dispos/i)
+          assert_match(/^dispos/i, hit.status)
         rescue RTurk::InvalidRequest => exception
-          assert_match(exception.message, /HITDoesNotExist/i)
+          assert_match(/HITDoesNotExist/i, exception.message)
         end #begin
       end #results.each...
       refute(File.exists? sandbox_csv)
@@ -116,7 +116,7 @@ def test_abort_on_config_mismatch
       exception = assert_raises(Typingpool::Error::Shell) do
         tp_finish_outside_sandbox(dir, bad_config_path)
       end #assert_raises...
-      assert_match(exception.message, /\burls don't look right\b/i)
+      assert_match(/\burls don't look right\b/i, exception.message)
     ensure
       tp_finish_outside_sandbox(dir, good_config_path)
     end #begin

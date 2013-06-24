@@ -287,7 +287,7 @@ module Typingpool
         exception = assert_raise(Typingpool::Error::Shell) do
           yield
         end
-        assert_match(exception.message, regex)
+        assert_match(regex, exception.message)
       end
 
       def assert_script_abort_match(args, regex)

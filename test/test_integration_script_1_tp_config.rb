@@ -11,7 +11,7 @@ def test_abort_with_invalid_file
   exception = assert_raise(Typingpool::Error::Shell) do
     tp_config(File.join(fixtures_dir, 'not_yaml.txt'))
   end
-  assert_match(exception.message, /not valid yaml/i)
+  assert_match(/not valid yaml/i, exception.message)
 end
 
 def test_abort_with_directory_path
@@ -21,7 +21,7 @@ def test_abort_with_directory_path
   exception = assert_raise(Typingpool::Error::Shell) do
     tp_config(dir)
   end
-  assert_match(exception.message, /not a file/i)
+  assert_match(/not a file/i, exception.message)
 end
 
 def test_abort_with_invalid_path
@@ -30,12 +30,12 @@ def test_abort_with_invalid_path
   exception = assert_raise(Typingpool::Error::Shell) do
     tp_config(path)
   end
-  assert_match(exception.message, /valid path/i)
+  assert_match(/valid path/i, exception.message)
 end
 
 def test_usage_message
   assert(output = tp_config('--help'))
-  assert_match(output, /\bUSAGE:/)
+  assert_match(/\bUSAGE:/, output)
 end
 
 def test_new_config_creation
@@ -46,7 +46,7 @@ def test_new_config_creation
     }
     path.values.each{|path| refute(File.exists? path) }
     assert(output = tp_config_with_input([path[:config], '--test'], ['keykey', 'secretsecret', path[:transcript_dir]]))
-    assert_match(output[:err], /wrote config to/i)
+    assert_match(/wrote config to/i, output[:err])
     path.values.each{|path| assert(File.exists? path) }
     assert(File.file? path[:config] )
     assert(File.directory? path[:transcript_dir] )
@@ -99,7 +99,7 @@ def test_skips_bucket_when_sftp_params_exist
     assert(original_config = Typingpool::Config.file(path[:config]))
     assert_empty(original_config.amazon.bucket.to_s)
     assert(output = tp_config_with_input([path[:config], '--test'], ['keykey', 'secretsecret', path[:transcript_dir]]))
-    assert_match(output[:err], /wrote config to/i)
+    assert_match(/wrote config to/i, output[:err])
     assert(edited_config = Typingpool::Config.file(path[:config]))
     assert_empty(edited_config.amazon.bucket.to_s)
   end #in_temp_dir do |dir|

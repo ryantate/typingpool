@@ -59,7 +59,7 @@ class TestTpAssign < Typingpool::Test::Script
         sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
         refute_empty(assignment_urls = sandbox_csv.map{|assignment| assignment['assignment_url'] })
         assert(assignment_html = fetch_url(assignment_urls.first).body)
-        assert_match(assignment_html, /\b20[\s-]+second\b/)
+        assert_match(/\b20[\s-]+second\b/, assignment_html)
         assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
       ensure
         tp_finish(dir)
@@ -111,7 +111,7 @@ def test_fixing_failed_assignment_html_upload
       exception = assert_raises(Typingpool::Error::Shell) do
         tp_assign(dir, bad_config_path)
       end #assert_raises...
-      assert_match(exception.message, /s3 operation fail/i)
+      assert_match(/s3 operation fail/i, exception.message)
       sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
       refute_empty(get_assignment_urls.call(sandbox_csv))
       check_assignment_urls = lambda{ get_assignment_urls.call(sandbox_csv).map{|url| Typingpool::Utility.working_url? url } }
@@ -142,7 +142,7 @@ def test_abort_on_config_mismatch
       exception = assert_raises(Typingpool::Error::Shell) do
         tp_assign(dir, bad_config_path)
       end #assert_raises...
-      assert_match(exception.message, /\burls don't look right\b/i)
+      assert_match(/\burls don't look right\b/i, exception.message)
     ensure
       tp_finish(dir, good_config_path)
     end #begin
