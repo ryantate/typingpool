@@ -6,6 +6,8 @@ require 'typingpool'
 require 'typingpool/test'
 require 'uri'
 require 'cgi'
+require 'rturk'
+require 'ostruct'
 
 class TestAmazon < Typingpool::Test
 
@@ -34,7 +36,7 @@ class TestAmazon < Typingpool::Test
   end
 
   def test_amazon_hit_create
-    with_dummy_hit_or_skip('test_amazon_hit_create') do |hit, config|
+    with_dummy_typingpool_hit_or_skip('test_amazon_hit_create') do |hit, config|
       assert_equal(hit.full.external_question_url, dummy_question.url)
       assert_equal(config.assign.deadline, hit.full.assignments_duration.to_i)
       assert(rturk_hit = hit.at_amazon)
@@ -48,7 +50,7 @@ class TestAmazon < Typingpool::Test
 
   #fails to test all_reviewable or all_approved - those require a VCR fixture (TODO)
   def test_amazon_hit_retrievers
-    with_dummy_hit_or_skip('test_amazon_hit_retrievers') do |hit, config|
+    with_dummy_typingpool_hit_or_skip('test_amazon_hit_retrievers') do |hit, config|
       assert(result = Typingpool::Amazon::HIT.with_ids([hit.id]))
       assert_equal(1, result.count)
       assert_equal(hit.id, result.first.id)
@@ -65,7 +67,7 @@ class TestAmazon < Typingpool::Test
 
   #fails to properly test approved?, rejected?, submitted?, assignment - those require a VCR ficture (TODO)
   def test_amazon_hit_base
-    with_dummy_hit_or_skip('test_amazon_hit_base') do |hit, config|
+    with_dummy_typingpool_hit_or_skip('test_amazon_hit_base') do |hit, config|
       assert_instance_of(Typingpool::Amazon::HIT, hit)
       assert_match(/\S/, hit.id)
       assert_match(/^http/i, hit.url)
@@ -84,7 +86,7 @@ class TestAmazon < Typingpool::Test
 
   #fails to test external_question* methods
   def test_amazon_hit_full
-    with_dummy_hit_or_skip('test_amazon_hit_full') do |hit, config|
+    with_dummy_typingpool_hit_or_skip('test_amazon_hit_full') do |hit, config|
       assert(full = hit.full)
       assert_instance_of(Typingpool::Amazon::HIT::Full, full)
       [:id, :type_id].each{|attr| assert_match(/\S/, full.send(attr)) }
@@ -101,7 +103,7 @@ class TestAmazon < Typingpool::Test
   end
 
   def test_amazon_hit_full_fromsearchhits
-    with_dummy_hit_or_skip('test_amazon_hit_full_fromsearchhits') do |hit, config|
+    with_dummy_typingpool_hit_or_skip('test_amazon_hit_full_fromsearchhits') do |hit, config|
       assert(full = hit.full)
       assert_instance_of(Typingpool::Amazon::HIT::Full, full)
       assert(hit2 = Typingpool::Amazon::HIT.all{|incoming_hit| incoming_hit.id == hit.id }.first)
@@ -111,6 +113,20 @@ class TestAmazon < Typingpool::Test
       assert_equal(full.annotation.to_s, full2.annotation.to_s)
       [:assignments_completed, :assignments_pending, :id, :type_id, :status, :expires_at, :assignments_duration, :external_question_url].each{|attr| assert_equal(full.send(attr).to_s, full2.send(attr).to_s) }
     end #with_dummy_hit_or_skip
+  end
+
+  def test_handles_hits_without_external_question
+    assert(dummy_response_xml = File.read(File.join(fixtures_dir, 'gethitresponse.xml')))
+    dummy_http_response = OpenStruct.new
+    dummy_http_response.body = dummy_response_xml
+    assert(dummy_rturk_response = RTurk::GetHITResponse.new(dummy_http_response))
+    assert(rturk_hit = RTurk::Hit.new(dummy_rturk_response.hit_id, dummy_rturk_response))
+    assert(typingpool_full_hit = Typingpool::Amazon::HIT::Full.new(rturk_hit))
+    refute(typingpool_full_hit.external_question_url)
+    refute(typingpool_full_hit.external_question)
+    assert(typingpool_hit = Typingpool::Amazon::HIT.new(rturk_hit))
+    typingpool_hit.full(typingpool_full_hit)
+    refute(typingpool_hit.ours?)
   end
 
   #Lacks test for HIT::Assignment - needs VCR fixture (TODO)
@@ -131,7 +147,8 @@ class TestAmazon < Typingpool::Test
     Typingpool::Amazon::HIT.create(dummy_question, config.assign)
   end
 
-  def with_dummy_hit_or_skip(skipping_what)
+
+  def with_dummy_typingpool_hit_or_skip(skipping_what)
     config = self.config
     skip_if_no_amazon_credentials(skipping_what, config)
     config.assign.reward = '0.01'

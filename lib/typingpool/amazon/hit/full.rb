@@ -95,9 +95,11 @@ module Typingpool
         end
 
         def external_question_url=(noko_xml)
-          if url = noko_xml.css('HIT Question eq|ExternalQuestion eq|ExternalURL', {'eq' => 'http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd'})[0].inner_text
-            @external_question_url = url
-          end
+          if node = noko_xml.css('HIT Question eq|ExternalQuestion eq|ExternalURL', {'eq' => 'http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd'})[0]
+            if url = node.inner_text
+              @external_question_url = url
+            end
+          end #if node =....
         end
       end #Full
     end #HIT
