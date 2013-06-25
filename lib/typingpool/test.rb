@@ -1,13 +1,9 @@
 module Typingpool
-  require 'test/unit' 
+  require 'minitest/autorun' 
 
-  class Test < ::Test::Unit::TestCase 
+  class Test < Minitest::Test 
     require 'nokogiri'
     require 'fileutils'
-
-    def MiniTest.filter_backtrace(bt)
-      bt
-    end
 
     def self.app_dir
       File.dirname(File.dirname(File.dirname(__FILE__)))

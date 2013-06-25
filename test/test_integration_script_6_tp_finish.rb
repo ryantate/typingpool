@@ -17,9 +17,7 @@ class TestTpFinish < Typingpool::Test::Script
     assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
     sleep 3 #pause before checking URLs so remote server has time to fully upload
     assert_equal(urls.size, urls.select{|url| working_url? url}.size)
-    assert_nothing_raised do
-      tp_finish_outside_sandbox(dir, config_path)
-    end
+    tp_finish_outside_sandbox(dir, config_path)
     sleep 3 #pause before checking URLs so remote server has time to fully delete 
     assert_empty(urls.select{|url| working_url? url })
     assert_all_assets_have_upload_status(csv, ['audio'], 'no')
@@ -55,9 +53,7 @@ class TestTpFinish < Typingpool::Test::Script
       setup_amazon(dir)
       results = Typingpool::Amazon::HIT.all_for_project(project.local.id)
       refute_empty(results)
-      assert_nothing_raised do
-        tp_finish(dir)
-      end
+      tp_finish(dir)
       assert_empty(Typingpool::Amazon::HIT.all_for_project(project.local.id))
       results.each do |result|
         #The original HIT might be gone, or there and marked

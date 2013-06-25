@@ -18,9 +18,7 @@ class TestTpReview < Typingpool::Test::Script
         assert_equal(7, project.local.file('data','sandbox-assignment.csv').as(:csv).reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
       begin
         output = nil
-        assert_nothing_raised do
-          output = tp_review_with_fixture(dir, File.join(fixtures_dir, 'vcr', 'tp-review-1'), %w(a r a r s q))
-        end
+        output = tp_review_with_fixture(dir, File.join(fixtures_dir, 'vcr', 'tp-review-1'), %w(a r a r s q))
         assert_equal(0, output[:status].to_i, "Bad exit code: #{output[:status]} err: #{output[:err]}")
         assert_equal(5, project.local.file('data','sandbox-assignment.csv').as(:csv).reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
         reviews = split_reviews(output[:out])
@@ -43,10 +41,7 @@ class TestTpReview < Typingpool::Test::Script
         transcript = assert_has_partial_transcript(dir)
         assert_html_has_audio_count(2, transcript)
         assert_assignment_csv_has_transcription_count(2, project, 'sandbox-assignment.csv')
-
-        assert_nothing_raised do
-          output = tp_review_with_fixture(dir, File.join(fixtures_dir, 'vcr', 'tp-review-2'), %w(a r))
-        end
+        output = tp_review_with_fixture(dir, File.join(fixtures_dir, 'vcr', 'tp-review-2'), %w(a r))
         assert_equal(0, output[:status].to_i, "Bad exit code: #{output[:status]} err: #{output[:err]}")
         assert_equal(4, project.local.file('data','sandbox-assignment.csv').as(:csv).reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
         reviews = split_reviews(output[:out])

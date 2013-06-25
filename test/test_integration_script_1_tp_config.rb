@@ -8,7 +8,7 @@ require 'typingpool/test'
 class TestTpConfig < Typingpool::Test::Script
 
 def test_abort_with_invalid_file
-  exception = assert_raise(Typingpool::Error::Shell) do
+  exception = assert_raises(Typingpool::Error::Shell) do
     tp_config(File.join(fixtures_dir, 'not_yaml.txt'))
   end
   assert_match(/not valid yaml/i, exception.message)
@@ -18,7 +18,7 @@ def test_abort_with_directory_path
   dir = File.join(fixtures_dir, 'vcr')
   assert(File.exists? dir)
   assert(File.directory? dir)
-  exception = assert_raise(Typingpool::Error::Shell) do
+  exception = assert_raises(Typingpool::Error::Shell) do
     tp_config(dir)
   end
   assert_match(/not a file/i, exception.message)
@@ -27,7 +27,7 @@ end
 def test_abort_with_invalid_path
   path = '/jksdljs/euwiroeuw'
   refute(File.exists? path)
-  exception = assert_raise(Typingpool::Error::Shell) do
+  exception = assert_raises(Typingpool::Error::Shell) do
     tp_config(path)
   end
   assert_match(/valid path/i, exception.message)

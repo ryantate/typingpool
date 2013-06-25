@@ -284,7 +284,7 @@ module Typingpool
       end
 
       def assert_shell_error_match(regex)
-        exception = assert_raise(Typingpool::Error::Shell) do
+        exception = assert_raises(Typingpool::Error::Shell) do
           yield
         end
         assert_match(regex, exception.message)

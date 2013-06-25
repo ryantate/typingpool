@@ -10,7 +10,7 @@ class TestTpAssign < Typingpool::Test::Script
   #(or at least some xml parsing) since rturk doesn't provide an
   #easy way to look at HIT qualifications)
   def test_abort_with_no_input
-    assert_raise(Typingpool::Error::Shell){call_tp_assign}
+    assert_raises(Typingpool::Error::Shell){call_tp_assign}
   end
 
   def test_abort_with_no_template

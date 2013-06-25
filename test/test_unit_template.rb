@@ -42,7 +42,7 @@ class TestTemplate < Typingpool::Test
           assert_equal(path, template.full_path)
           assert_match(/<h2><%= title/i, template.read)
           config.templates = dir1
-          exception = assert_raise(Typingpool::Error) do 
+          exception = assert_raises(Typingpool::Error) do 
             template = Typingpool::Template.from_config('template', config)
           end #assert_raises() do...
           assert_match(/could not find/i, exception.message)

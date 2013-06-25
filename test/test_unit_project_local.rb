@@ -38,7 +38,7 @@ class TestProjectLocal < Typingpool::Test
     in_temp_dir do |dir|
       assert(local = create_project_local(dir))
       refute_nil(local.id)
-      assert_raise(Typingpool::Error) do
+      assert_raises(Typingpool::Error) do
         local.create_id
       end
       assert_nil(local.subtitle)

@@ -34,8 +34,8 @@ class TestTpMake < Typingpool::Test::Script
     begin
       tp_make(dir, config_path, subdir)
       assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path)))
-      assert_not_nil(project.local)
-      assert_not_nil(project.local.id)
+      assert(project.local)
+      assert(project.local.id)
       assert(project.local.subdir('audio','chunks').to_a.size <= 7)
       assert(project.local.subdir('audio','chunks').to_a.size >= 6)
       assert_equal(project_default[:subtitle], project.local.subtitle)
@@ -44,7 +44,7 @@ class TestTpMake < Typingpool::Test::Script
       assert_all_assets_have_upload_status(assignments, ['audio'], 'yes')
       sleep 4 #pause before checking URLs so remote server has time to fully upload
       assignments.each do |assignment|
-        assert_not_nil(assignment['audio_url'])
+        assert(assignment['audio_url'])
         assert(working_url? assignment['audio_url'])
         assert_equal(assignment['project_id'], project.local.id)
         assert_equal(assignment['unusual'].split(/\s*,\s*/), project_default[:unusual])
