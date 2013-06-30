@@ -129,6 +129,17 @@ class TestAmazon < Typingpool::Test
     refute(typingpool_hit.ours?)
   end
 
+  def test_handles_hits_with_broken_external_question
+    config = self.config
+    dummy_project = Typingpool::Project.new('dummy', config)
+    url = dummy_project.remote.file_to_url(Typingpool::Project::Remote::S3.random_bucket_name(16,'dummy-missing-file-'))
+    refute(working_url? url)
+    with_dummy_typingpool_hit_or_skip('test_handles_hits_with_broken_external_question', url) do |hit, config|
+      assert_equal(hit.full.external_question_url, url)
+      refute(hit.full.external_question)
+    end #with_dummy....
+  end
+
   #Lacks test for HIT::Assignment - needs VCR fixture (TODO)
 
   def question_html
@@ -139,16 +150,16 @@ class TestAmazon < Typingpool::Test
     File.read(File.join(fixtures_dir, 'amazon-question-url.txt')).strip
   end
 
-  def dummy_question
-    Typingpool::Amazon::Question.new(question_url, question_html)
+  def dummy_question(url=question_url)
+    Typingpool::Amazon::Question.new(url, question_html)
   end
 
-  def dummy_hit(config)
-    Typingpool::Amazon::HIT.create(dummy_question, config.assign)
+  def dummy_hit(config, url=question_url)
+    Typingpool::Amazon::HIT.create(dummy_question(url), config.assign)
   end
 
 
-  def with_dummy_typingpool_hit_or_skip(skipping_what)
+  def with_dummy_typingpool_hit_or_skip(skipping_what, url=question_url)
     config = self.config
     skip_if_no_amazon_credentials(skipping_what, config)
     config.assign.reward = '0.01'
@@ -156,7 +167,7 @@ class TestAmazon < Typingpool::Test
     begin
       config.cache = cache.path
       Typingpool::Amazon.setup(:sandbox => true, :config => config)
-      hit = dummy_hit(config)
+      hit = dummy_hit(config, url)
       begin
         yield(hit, config)
       ensure

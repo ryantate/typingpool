@@ -56,9 +56,17 @@ module Typingpool
           if @external_question.nil?
             if external_question_url && external_question_url.match(/^http/)
               #expensive, obviously:
-              @external_question = open(external_question_url).read
-            end
-          end
+              begin
+                @external_question = open(external_question_url).read
+              rescue OpenURI::HTTPError => e
+                #we don't worry about missing questions because those
+                #should only be attached to HITs that aren't ours. we
+                #take both 403 and 404 to mean missing because S3
+                #never returns 404, only 403.
+                raise e unless e.message.match(/\b40[34]\b/)
+              end #begin
+            end #if external_question_url && external_question_url.match...
+          end #if @external_question.nil?
           @external_question
         end
 
