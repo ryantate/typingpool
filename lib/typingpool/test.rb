@@ -100,6 +100,23 @@ module Typingpool
       Typingpool::Utility.working_url?(*args)
     end
 
+    def working_url_eventually?(url, max_seconds=10, min_tries=2, max_redirects=6, seeking=true)
+      start = Time.now.to_i
+      tries = 0
+      wait = 0
+      loop do
+        sleep wait
+        return seeking if (working_url?(url, max_redirects) == seeking)
+        wait = wait > 0 ? wait * 2 : 1
+        tries += 1
+      end until (tries >= min_tries) && ((Time.now.to_i + wait - start) >= max_seconds)
+      not seeking
+    end
+
+    def broken_url_eventually?(url, max_seconds=10, min_tries=2, max_redirects=6)
+      not(working_url_eventually?(url, max_seconds, min_tries, max_redirects, false))
+    end
+
     def fetch_url(*args)
       Typingpool::Utility.fetch_url(*args)
     end

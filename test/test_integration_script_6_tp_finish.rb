@@ -15,11 +15,9 @@ class TestTpFinish < Typingpool::Test::Script
     urls = csv.map{|assignment| assignment['audio_url'] }
     refute_empty(urls)
     assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
-    sleep 3 #pause before checking URLs so remote server has time to fully upload
-    assert_equal(urls.size, urls.select{|url| working_url? url}.size)
+    assert_equal(urls.count, urls.select{|url| working_url_eventually? url}.count)
     tp_finish_outside_sandbox(dir, config_path)
-    sleep 3 #pause before checking URLs so remote server has time to fully delete 
-    assert_empty(urls.select{|url| working_url? url })
+    assert_equal(urls.count, urls.select{|url| broken_url_eventually? url }.count)
     assert_all_assets_have_upload_status(csv, ['audio'], 'no')
   end
 
@@ -81,7 +79,7 @@ class TestTpFinish < Typingpool::Test::Script
         project = temp_tp_dir_project(dir)
         assignments = project.local.file('data', 'assignment.csv').as(:csv).read
         urls = assignments.map{|assignment| assignment['audio_url'] }
-        assert_empty(urls.reject{|url| working_url? url })
+        assert_equal(urls.count, urls.select{|url| working_url_eventually? url }.count)
         bogus_url = urls.first.sub(/\.mp3/, '.foo.mp3')
         refute_equal(urls.first, bogus_url)
         refute(working_url? bogus_url)
@@ -89,11 +87,15 @@ class TestTpFinish < Typingpool::Test::Script
         bogus_assignment['audio_url'] = bogus_url
         assignments.insert(1, bogus_assignment)
         project.local.file('data', 'assignment.csv').as(:csv).write(assignments)
-        assert_equal(1, project.local.file('data', 'assignment.csv').as(:csv).reject{|assignment| working_url? assignment['audio_url'] }.count)
+        assignments = project.local.file('data', 'assignment.csv').as(:csv).read
+        assert(broken_url_eventually? assignments[1]['audio_url'])
+        assignments.delete_at(1)
+        assert_equal(assignments.count, assignments.select{|assignment| working_url_eventually? assignment['audio_url'] }.count) 
       ensure
         tp_finish_outside_sandbox(dir)
       end #begin
-      assert_empty(project.local.file('data', 'assignment.csv').as(:csv).select{|assignment| working_url? assignment['audio_url'] })
+      urls = project.local.file('data', 'assignment.csv').as(:csv).map{|assignment| assignment['audio_url'] }
+      assert_equal(urls.count, urls.select{|url| broken_url_eventually? url }.count)
     end #in_temp_tp_dir...
   end
 

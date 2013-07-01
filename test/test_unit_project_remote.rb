@@ -101,7 +101,6 @@ class TestProjectRemote < Typingpool::Test
                     :test_with => lambda{|urls| urls.each_with_index{|url, i| assert_includes(url, basenames[i]) } }
                     )
 
-    sleep 5
     #now with different basenames
     remote_basenames = basenames.map{|name| [File.basename(name, '.*'), pseudo_random_chars, File.extname(name)].join }
     base_args = {
@@ -116,7 +115,6 @@ class TestProjectRemote < Typingpool::Test
                                     )
                     )
 
-    sleep 5
     #now using remove_urls for removal
     put_remove_test(
                     base_args.merge(
@@ -125,7 +123,6 @@ class TestProjectRemote < Typingpool::Test
                                     )
                     )
 
-    sleep 5
     #now with stringio streams
     put_remove_test(
                     base_args.merge( 
@@ -164,14 +161,12 @@ class TestProjectRemote < Typingpool::Test
     assert(urls = args[:remote].put(*put_args))
     begin
       assert_equal(args[:streams].count, urls.count)
-      sleep 10
-      urls.each{|url| assert(working_url?(url)) }
+      urls.each{|url| assert(working_url_eventually?(url)) }
       args[:test_with].call(urls) if args[:test_with]
     ensure
       args[:remove_with].call(urls)
     end #begin
-    sleep 10
-    urls.each{|url| refute(working_url?(url)) }
+    urls.each{|url| assert(broken_url_eventually?(url)) }
     urls
   end
 

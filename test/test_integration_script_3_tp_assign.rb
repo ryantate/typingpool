@@ -88,7 +88,7 @@ class TestTpAssign < Typingpool::Test::Script
          tp_assign(dir, good_config_path)
          sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
          assert_equal(csv.count, sandbox_csv.count)
-         assert_equal(sandbox_csv.count, sandbox_csv.select{|assignment| working_url? assignment['audio_url'] }.count)
+         assert_equal(sandbox_csv.count, sandbox_csv.select{|assignment| working_url_eventually? assignment['audio_url'] }.count)
         assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
        ensure
          tp_finish(dir, good_config_path)
@@ -114,11 +114,10 @@ def test_fixing_failed_assignment_html_upload
       assert_match(/s3 operation fail/i, exception.message)
       sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
       refute_empty(get_assignment_urls.call(sandbox_csv))
-      check_assignment_urls = lambda{ get_assignment_urls.call(sandbox_csv).map{|url| Typingpool::Utility.working_url? url } }
-      check_assignment_urls.call.each{|checked_out| refute(checked_out) }
+      get_assignment_urls.call(sandbox_csv).each{|url| refute(working_url? url) }
       assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'maybe')
       tp_assign(dir, good_config_path)
-      check_assignment_urls.call.each{|checked_out| assert(checked_out) }
+      get_assignment_urls.call(sandbox_csv).each{|url| assert(working_url_eventually? url) }
       assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
     ensure
       tp_finish(dir, good_config_path)
