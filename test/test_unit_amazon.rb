@@ -137,7 +137,8 @@ class TestAmazon < Typingpool::Test
     with_dummy_typingpool_hit_or_skip('test_handles_hits_with_broken_external_question', url) do |hit, config|
       assert_equal(hit.full.external_question_url, url)
       refute(hit.full.external_question)
-    end #with_dummy....
+      refute(hit.full.external_question_param(hit.class.url_at))
+   end #with_dummy....
   end
 
   #Lacks test for HIT::Assignment - needs VCR fixture (TODO)
