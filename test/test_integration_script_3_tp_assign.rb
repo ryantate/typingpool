@@ -130,9 +130,8 @@ def test_abort_on_config_mismatch
   in_temp_tp_dir do |dir|
     config = config_from_dir(dir)
     good_config_path = setup_s3_config(dir, config, '.config_s3_good')
-    tp_make(dir, good_config_path)
+    tp_make(dir, good_config_path, 'mp3', true)
     begin
-      tp_finish_outside_sandbox(dir, good_config_path)
       assert(config.amazon.bucket)
       new_bucket = 'configmismatch-test'
       refute_equal(new_bucket, config.amazon.bucket)

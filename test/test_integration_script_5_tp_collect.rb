@@ -12,7 +12,7 @@ class TestTpCollect < Typingpool::Test::Script
     in_temp_tp_dir do |dir|
       skip_if_no_upload_credentials('tp-collect integration test')
       skip_if_no_amazon_credentials('tp-collect integration test')
-      tp_make(dir)
+      tp_make(dir, config_path(dir), 'mp3', true)
       copy_fixtures_to_temp_tp_dir(dir, 'tp_collect_')
       begin
         project = temp_tp_dir_project(dir)

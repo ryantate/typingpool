@@ -83,17 +83,19 @@ module Typingpool
       end
 
       def call_tp_make(*args)
-        call_script(path_to_tp_make, *args, '--devtest')
+        call_script(path_to_tp_make, *args)
       end
 
-      def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3')
-        call_tp_make(
+      def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3', devtest_mode_skipping_upload=false)
+        commands = [
                      '--config', config, 
                      '--chunks', project_default[:chunks],
                      *[:title, :subtitle].map{|param| ["--#{param}", project_default[param]] }.flatten,
                      *[:voice, :unusual].map{|param| project_default[param].map{|value| ["--#{param}", value] } }.flatten,
                      *audio_files(audio_subdir).map{|path| ['--file', path]}.flatten
-                     )
+                   ]
+        commands.push('--devtest') if devtest_mode_skipping_upload
+        call_tp_make(*commands)
       end
 
       def path_to_tp_finish

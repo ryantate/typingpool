@@ -11,7 +11,7 @@ class TestTpReview < Typingpool::Test::Script
     in_temp_tp_dir do |dir|
       skip_if_no_upload_credentials('tp-review integration test')
       skip_if_no_amazon_credentials('tp-review integration test')
-      tp_make(dir)
+      tp_make(dir, config_path(dir), 'mp3', true)
       copy_fixtures_to_temp_tp_dir(dir, 'tp_review_')
       assert(File.exists? File.join(temp_tp_dir_project_dir(dir), 'data','sandbox-assignment.csv'))
       project = temp_tp_dir_project(dir)

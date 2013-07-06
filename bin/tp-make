@@ -164,8 +164,10 @@ else
   FileUtils.remove_entry_secure(temp_conversion_dir)
 end #if project.local
 
-Typingpool::App.upload_audio_for_project(project) do |file, as|
-  STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
+unless options[:devtest]
+  Typingpool::App.upload_audio_for_project(project) do |file, as|
+    STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
+  end 
 end
 
 if STDOUT.tty? && Typingpool::Utility.os_x?
