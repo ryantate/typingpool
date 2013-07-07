@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 
-$:.unshift File.join(File.dirname(File.dirname($0)), 'lib')
+$LOAD_PATH.unshift File.join(File.dirname(File.dirname(__FILE__)), 'lib')
 
+require 'minitest/autorun'
 require 'typingpool'
 require 'typingpool/test'
 

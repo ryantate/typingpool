@@ -1,6 +1,5 @@
 module Typingpool
-  require 'minitest/autorun' 
-
+  require 'minitest'
   class Test < Minitest::Test 
     require 'nokogiri'
     require 'fileutils'
