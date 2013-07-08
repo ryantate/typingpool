@@ -7,13 +7,11 @@ require 'typingpool'
 require 'typingpool/test'
 
 class TestTpCollect < Typingpool::Test::Script
-  require 'fileutils'
 
   def test_tp_collect
-    in_temp_tp_dir do |dir|
+    with_temp_readymade_project do |dir|
       skip_if_no_upload_credentials('tp-collect integration test')
       skip_if_no_amazon_credentials('tp-collect integration test')
-      tp_make(dir, config_path(dir), 'mp3', true)
       copy_fixtures_to_temp_tp_dir(dir, 'tp_collect_')
       begin
         project = temp_tp_dir_project(dir)
@@ -31,9 +29,8 @@ class TestTpCollect < Typingpool::Test::Script
 #        assert_assignment_csv_has_transcription_count(7, project, 'sandbox-assignment.csv')
       ensure
         rm_fixtures_from_temp_tp_dir(dir, 'tp_collect_')
-        tp_finish(dir)
       end #begin
-    end #in_temp_tp_dir
+    end #with_temp_readymade_project do...
   end
 
 end #TestTpCollect

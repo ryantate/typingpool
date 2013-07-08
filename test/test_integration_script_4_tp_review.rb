@@ -9,14 +9,13 @@ require 'typingpool/test'
 class TestTpReview < Typingpool::Test::Script
 
   def test_tp_review
-    in_temp_tp_dir do |dir|
+    with_temp_readymade_project do |dir|
       skip_if_no_upload_credentials('tp-review integration test')
       skip_if_no_amazon_credentials('tp-review integration test')
-      tp_make(dir, config_path(dir), 'mp3', true)
       copy_fixtures_to_temp_tp_dir(dir, 'tp_review_')
       assert(File.exists? File.join(temp_tp_dir_project_dir(dir), 'data','sandbox-assignment.csv'))
       project = temp_tp_dir_project(dir)
-        assert_equal(7, project.local.file('data','sandbox-assignment.csv').as(:csv).reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
+      assert_equal(7, project.local.file('data','sandbox-assignment.csv').as(:csv).reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
       begin
         output = nil
         output = tp_review_with_fixture(dir, File.join(fixtures_dir, 'vcr', 'tp-review-1'), %w(a r a r s q))
@@ -56,9 +55,8 @@ class TestTpReview < Typingpool::Test::Script
         assert_assignment_csv_has_transcription_count(3, project, 'sandbox-assignment.csv')
       ensure
         rm_fixtures_from_temp_tp_dir(dir, 'tp_review_')
-        tp_finish(dir)
       end #begin
-    end #in_temp_tp_dir
+    end #with_temp_readymade_project do...
   end
 
   def split_reviews(output)

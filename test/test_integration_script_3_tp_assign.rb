@@ -40,8 +40,7 @@ class TestTpAssign < Typingpool::Test::Script
   def test_tp_assign
     skip_if_no_amazon_credentials('tp-assign integration test')
     skip_if_no_upload_credentials('tp-assign integration test')
-    in_temp_tp_dir do |dir|
-      tp_make(dir)
+    with_temp_readymade_project do |dir|
       begin
         tp_assign(dir)
         assign_time = Time.now
@@ -66,49 +65,49 @@ class TestTpAssign < Typingpool::Test::Script
         tp_finish(dir)
       end #begin
       assert_empty(Typingpool::Amazon::HIT.all_for_project(project.local.id))
-    end # in_temp_tp_dir
+    end #with_temp_readymade_project do...
   end
 
    def test_uploads_audio_when_needed
      skip_if_no_amazon_credentials('tp-assign unuploaded audio integration test')
      skip_if_no_s3_credentials('tp-assign unuploaded audio integration test')
-     in_temp_tp_dir do |dir|
-       good_config_path = setup_s3_config(dir)
-       bad_config_path = setup_s3_config_with_bad_password(dir)
-       assert_raises(Typingpool::Error::Shell) do
-         tp_make(dir, bad_config_path, 'mp3')
-       end
+     with_temp_readymade_project do |dir|
        project_dir = temp_tp_dir_project_dir(dir)
        assert(File.exists? project_dir)
        assert(File.directory? project_dir)
-       assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(bad_config_path)))
+       assert(project = temp_tp_dir_project(dir))
        csv = project.local.file('data', 'assignment.csv').as(:csv)
        assert_empty(csv.select{|assignment| working_url? assignment['audio_url']})
+       csv.each!{|a| a['audio_uploaded'] = 'maybe'}
        assert_all_assets_have_upload_status(csv, ['audio'], 'maybe')
        begin
-         tp_assign(dir, good_config_path)
+         tp_assign(dir)
          sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
          assert_equal(csv.count, sandbox_csv.count)
          assert_equal(sandbox_csv.count, sandbox_csv.select{|assignment| working_url_eventually? assignment['audio_url'] }.count)
         assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
        ensure
-         tp_finish(dir, good_config_path)
+         tp_finish(dir)
        end #begin
-     end # in_temp_tp_dir do...
+     end #with_temp_readymade_project do...
    end
 
 def test_fixing_failed_assignment_html_upload
   skip_if_no_amazon_credentials('tp-assign failed assignment upload integration test')
   skip_if_no_s3_credentials('tp-assign failed assignment upload integration test')
-  in_temp_tp_dir do |dir|
+  with_temp_readymade_project do |dir|
     good_config_path = setup_s3_config(dir)
+    reconfigure_readymade_project_in(good_config_path)
+    project = temp_tp_dir_project(dir, Typingpool::Config.file(good_config_path))
+    csv = project.local.file('data', 'assignment.csv').as(:csv)
+    csv.each!{|a| a['audio_uploaded'] = 'maybe'}
+    tp_make(dir, good_config_path)
+    assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
     bad_config_path = setup_s3_config_with_bad_password(dir)
-    tp_make(dir, good_config_path, 'mp3')
     begin
-      assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(good_config_path)))
       assert(project.local)
       get_assignment_urls = lambda{|csv| csv.map{|assignment| assignment['assignment_url'] }.select{|url| url } }
-      assert_empty(get_assignment_urls.call(project.local.file('data', 'assignment.csv').as(:csv)))
+      assert_empty(get_assignment_urls.call(csv))
       exception = assert_raises(Typingpool::Error::Shell) do
         tp_assign(dir, bad_config_path)
       end #assert_raises...
@@ -123,29 +122,31 @@ def test_fixing_failed_assignment_html_upload
     ensure
       tp_finish(dir, good_config_path)
     end #begin
-  end #in_temp_tp_dir do...
+  end #with_temp_readymade_project do...
 end
 
 def test_abort_on_config_mismatch
   skip_if_no_s3_credentials('tp-assign abort on config mismatch test')
-  in_temp_tp_dir do |dir|
+  with_temp_readymade_project do |dir|
     config = config_from_dir(dir)
     good_config_path = setup_s3_config(dir, config, '.config_s3_good')
-    tp_make(dir, good_config_path, 'mp3', true)
+    reconfigure_readymade_project_in(good_config_path)
+    assert(config.amazon.bucket)
+    new_bucket = 'configmismatch-test'
+    refute_equal(new_bucket, config.amazon.bucket)
+    config.amazon.bucket = new_bucket
+    bad_config_path = setup_s3_config(dir, config, '.config_s3_bad')
+    success = false
     begin
-      assert(config.amazon.bucket)
-      new_bucket = 'configmismatch-test'
-      refute_equal(new_bucket, config.amazon.bucket)
-      config.amazon.bucket = new_bucket
-      bad_config_path = setup_s3_config(dir, config, '.config_s3_bad')
       exception = assert_raises(Typingpool::Error::Shell) do
         tp_assign(dir, bad_config_path)
       end #assert_raises...
       assert_match(/\burls don't look right\b/i, exception.message)
+      success = true
     ensure
-      tp_finish(dir, good_config_path)
+      tp_finish(dir, good_config_path) unless success
     end #begin
-  end #in_temp_tp_dir do...
+  end #with_temp_readymade_project do...
 end
 
 end #TestTpAssign

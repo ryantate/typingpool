@@ -10,6 +10,7 @@ class TestTpFinish < Typingpool::Test::Script
   def tp_finish_on_audio_files_with(dir, config_path)
     skip_if_no_amazon_credentials('tp-finish audio test')
     skip_if_no_upload_credentials('tp-finish audio test')
+    simulate_failed_audio_upload_in(config_path)
     tp_make(dir, config_path)
     project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
     csv = project.local.file('data', 'assignment.csv').as(:csv)
@@ -24,7 +25,7 @@ class TestTpFinish < Typingpool::Test::Script
 
   def test_tp_finish_on_audio_files_with_sftp
     skip_if_no_sftp_credentials('tp-finish sftp test')
-    in_temp_tp_dir do |dir|
+    with_temp_readymade_project do |dir|
       config_path = self.config_path(dir)
       tp_finish_on_audio_files_with(dir, config_path)
     end 
@@ -32,10 +33,11 @@ class TestTpFinish < Typingpool::Test::Script
 
   def test_tp_finish_on_audio_files_with_s3
     skip_if_no_s3_credentials('tp-finish sftp test')
-    in_temp_tp_dir do |dir|
+    with_temp_readymade_project do |dir|
       config = config_from_dir(dir)
       config.to_hash.delete('sftp')
       config_path = write_config(config, dir)
+      reconfigure_readymade_project_in(config_path)
       tp_finish_on_audio_files_with(dir, config_path)
     end
   end
@@ -43,12 +45,13 @@ class TestTpFinish < Typingpool::Test::Script
   def test_tp_finish_on_amazon_hits
     skip_if_no_amazon_credentials('tp-finish Amazon test')
     skip_if_no_upload_credentials('tp-finish Amazon test')
-    in_temp_tp_dir do |dir|
-      tp_make(dir)
+    with_temp_readymade_project do |dir|
       tp_assign(dir)
       project = temp_tp_dir_project(dir)
+      csv = project.local.file('data', 'assignment.csv').as(:csv)
       sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
-      assert_all_assets_have_upload_status(sandbox_csv, ['audio', 'assignment'], 'yes')
+      assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
+      assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
       setup_amazon(dir)
       results = Typingpool::Amazon::HIT.all_for_project(project.local.id)
       refute_empty(results)
@@ -66,15 +69,16 @@ class TestTpFinish < Typingpool::Test::Script
         end #begin
       end #results.each...
       refute(File.exists? sandbox_csv)
-      assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), ['audio'], 'no')
-    end #in_temp_tp_dir
+      assert_all_assets_have_upload_status(csv, ['audio'], 'no')
+    end #with_temp_readymade_project do...
   end
 
   def test_tp_finish_with_missing_files
     skip_if_no_amazon_credentials('tp-finish missing files test')
     skip_if_no_upload_credentials('tp-finish missing files test')
-    in_temp_tp_dir do |dir|
+    with_temp_readymade_project do |dir|
       project = nil
+      simulate_failed_audio_upload_in(config_path(dir))
       tp_make(dir)
       begin
         project = temp_tp_dir_project(dir)
@@ -89,24 +93,22 @@ class TestTpFinish < Typingpool::Test::Script
         assignments.insert(1, bogus_assignment)
         project.local.file('data', 'assignment.csv').as(:csv).write(assignments)
         assignments = project.local.file('data', 'assignment.csv').as(:csv).read
-        assert(broken_url_eventually? assignments[1]['audio_url'])
-        assignments.delete_at(1)
-        assert_equal(assignments.count, assignments.select{|assignment| working_url_eventually? assignment['audio_url'] }.count) 
+        refute(working_url? assignments[1]['audio_url'])
       ensure
         tp_finish_outside_sandbox(dir)
       end #begin
       urls = project.local.file('data', 'assignment.csv').as(:csv).map{|assignment| assignment['audio_url'] }
       assert_equal(urls.count, urls.select{|url| broken_url_eventually? url }.count)
-    end #in_temp_tp_dir...
+    end #with_temp_readymade_project do...
   end
 
-def test_abort_on_config_mismatch
-  skip_if_no_s3_credentials('tp-finish abort on config mismatch test')
-  in_temp_tp_dir do |dir|
-    config = config_from_dir(dir)
-    good_config_path = setup_s3_config(dir, config, '.config_s3_good')
-    tp_make(dir, good_config_path)
-    begin
+  def test_abort_on_config_mismatch
+    skip_if_no_s3_credentials('tp-finish abort on config mismatch test')
+    with_temp_readymade_project do |dir|
+      config = config_from_dir(dir)
+      good_config_path = setup_s3_config(dir, config, '.config_s3_good')
+      reconfigure_readymade_project_in(good_config_path)
+      simulate_failed_audio_upload_in(good_config_path)
       assert(config.amazon.bucket)
       new_bucket = 'configmismatch-test'
       refute_equal(new_bucket, config.amazon.bucket)
@@ -116,11 +118,7 @@ def test_abort_on_config_mismatch
         tp_finish_outside_sandbox(dir, bad_config_path)
       end #assert_raises...
       assert_match(/\burls don't look right\b/i, exception.message)
-    ensure
-      tp_finish_outside_sandbox(dir, good_config_path)
-    end #begin
-  end #in_temp_tp_dir do...
-
-end
+    end #with_temp_readymade_project do...
+  end
 
 end #TestTpFinish

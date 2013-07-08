@@ -4,7 +4,64 @@ module Typingpool
       require 'typingpool'
       require 'yaml'
       require 'open3'
+      require 'fileutils'
 
+      @@readymade_project_path = nil
+
+      def self.readymade_project_container=(path)
+        @@readymade_project_path = path
+      end
+
+      def self.readymade_project_container
+        @@readymade_project_path
+      end
+
+      def with_temp_readymade_project
+        in_temp_tp_dir do |dir|
+          setup_readymade_project_into(config_path(dir))
+          yield(dir)
+        end
+      end
+
+      def setup_readymade_project_into(config_path)
+        init_readymade_project
+        copy_readymade_project_into(config_path)
+        reconfigure_readymade_project_in(config_path)
+      end
+
+      def init_readymade_project
+        unless Typingpool::Test::Script.readymade_project_container
+          dir = Typingpool::Test::Script.readymade_project_container = Dir.mktmpdir('typingpool_')
+          Minitest.after_run{ FileUtils.remove_entry_secure(dir) }
+          setup_temp_tp_dir(dir)
+          tp_make(dir, config_path(dir), 'mp3', true)
+        end 
+      end
+
+      def copy_readymade_project_into(config_path)
+        config = Typingpool::Config.file(config_path)
+        FileUtils.cp_r(temp_tp_dir_project_dir(Typingpool::Test::Script.readymade_project_container), config.transcripts)
+      end
+
+      def reconfigure_readymade_project_in(config_path)
+        #rewrite URLs in assignment.csv according to config at config_path
+        project = Project.new(project_default[:title], Config.file(config_path))
+        File.delete(project.local.file('data', 'id.txt'))
+        project.local.create_id
+        id = project.local.id
+        assignments = project.local.file('data', 'assignment.csv').as(:csv)
+        urls = project.create_remote_names(assignments.map{|assignment| Project.local_basename_from_url(assignment['audio_url']) }).map{|file| project.remote.file_to_url(file) }
+        assignments.each! do |assignment|
+          assignment['audio_url'] = urls.shift
+          assignment['project_id'] = id
+        end
+      end
+
+      def simulate_failed_audio_upload_in(config_path)
+        project = Project.new(project_default[:title], Config.file(config_path))
+        csv = project.local.file('data', 'assignment.csv').as(:csv)
+        csv.each!{|a| a['audio_uploaded'] = 'maybe'}
+      end
 
       def audio_files(subdir='mp3')
         dir = File.join(audio_dir, subdir)
@@ -26,7 +83,7 @@ module Typingpool
 
 
       def in_temp_tp_dir
-        ::Dir.mktmpdir('typingpool_') do |dir|
+        Dir.mktmpdir('typingpool_') do |dir|
           setup_temp_tp_dir(dir)
           yield(dir)
         end
