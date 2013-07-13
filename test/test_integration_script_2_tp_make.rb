@@ -31,34 +31,18 @@ class TestTpMake < Typingpool::Test::Script
     end
   end
 
-  def tp_make_with(dir, config_path, subdir='mp3', devtest_mode_skipping_upload=false)
+  def tp_make_and_upload_with(dir, config_path)
     begin
-      tp_make(dir, config_path, subdir, devtest_mode_skipping_upload)
+      tp_make(dir, config_path, 'mp3', false)
       assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path)))
-      assert(project.local)
-      assert(project.local.id)
-      assert(project.local.subdir('audio','chunks').to_a.size <= 7)
-      assert(project.local.subdir('audio','chunks').to_a.size >= 6)
-      assert_equal(project_default[:subtitle], project.local.subtitle)
-      assignments = project.local.file('data', 'assignment.csv').as(:csv)
-      assert_equal(project.local.subdir('audio','chunks').to_a.size, assignments.count)
-      assignments.each do |assignment|
-        assert_equal(assignment['project_id'], project.local.id)
-        assert_equal(assignment['unusual'].split(/\s*,\s*/), project_default[:unusual])
-        project_default[:voice].each_with_index do |voice, i|
-          name, description = voice.split(/\s*,\s*/)
-          assert_equal(name, assignment["voice#{i+1}"])
-          if not(description.to_s.empty?)
-            assert_equal(description, assignment["voice#{i+1}title"])
-          end
-        end #project_default[:voice].each_with_index...
-      end #assignments.each do....
-      check_project_uploads(project) unless devtest_mode_skipping_upload
+      check_project_files(project)
+      check_project_uploads(project)
     ensure
-      tp_finish_outside_sandbox(dir, config_path) unless devtest_mode_skipping_upload
+      tp_finish_outside_sandbox(dir, config_path)
     end #begin
-    assert_all_assets_have_upload_status(assignments, ['audio'], 'no') unless devtest_mode_skipping_upload
+    assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), ['audio'], 'no') 
   end
+
 
   def check_project_uploads(project)
     assignments = project.local.file('data', 'assignment.csv').as(:csv)
@@ -66,6 +50,28 @@ class TestTpMake < Typingpool::Test::Script
     assignments.each do |assignment|
       assert(assignment['audio_url'])
       assert(working_url_eventually? assignment['audio_url'])
+      assert_equal('yes', assignment['audio_uploaded'])
+    end #assignments.each do....
+  end
+
+  def check_project_files(project)
+    assert(project.local)
+    assert(project.local.id)
+    assert(project.local.subdir('audio','chunks').to_a.size <= 7)
+    assert(project.local.subdir('audio','chunks').to_a.size >= 6)
+    assert_equal(project_default[:subtitle], project.local.subtitle)
+    assignments = project.local.file('data', 'assignment.csv').as(:csv)
+    assert_equal(project.local.subdir('audio','chunks').to_a.size, assignments.count)
+    assignments.each do |assignment|
+      assert_equal(assignment['project_id'], project.local.id)
+      assert_equal(assignment['unusual'].split(/\s*,\s*/), project_default[:unusual])
+      project_default[:voice].each_with_index do |voice, i|
+        name, description = voice.split(/\s*,\s*/)
+        assert_equal(name, assignment["voice#{i+1}"])
+        if not(description.to_s.empty?)
+          assert_equal(description, assignment["voice#{i+1}title"])
+        end
+      end #project_default[:voice].each_with_index...
     end #assignments.each do....
   end
 
@@ -74,7 +80,9 @@ class TestTpMake < Typingpool::Test::Script
       in_temp_tp_dir do |dir|
         config_path = self.config_path(dir)
         skip_if_no_upload_credentials('tp-make audio handling test', Typingpool::Config.file(config_path))
-        tp_make_with(dir, config_path, subdir, true)
+        tp_make(dir, config_path, subdir, true)
+        assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path)))
+        check_project_files(project)
       end #in_temp_tp_dir
     end #Dir.entries
   end
@@ -82,7 +90,7 @@ class TestTpMake < Typingpool::Test::Script
   def test_tp_make_sftp
     in_temp_tp_dir do |dir|
       skip_if_no_sftp_credentials('tp-make SFTP upload test', config)
-      tp_make_with(dir, config_path(dir))
+      tp_make_and_upload_with(dir, config_path(dir))
     end #in_temp_tp_dir do...
   end
 
@@ -90,7 +98,7 @@ class TestTpMake < Typingpool::Test::Script
     in_temp_tp_dir do |dir|
       skip_if_no_s3_credentials('tp-make S3 integration test', config)
       config_path = setup_s3_config(dir)
-      tp_make_with(dir, config_path)
+      tp_make_and_upload_with(dir, config_path)
     end #in_temp_tp_dir do...
   end 
 
@@ -138,8 +146,9 @@ class TestTpMake < Typingpool::Test::Script
       skip_if_no_upload_credentials('tp-make audio file sorting test', Typingpool::Config.file(config_path))
       assert(audio_files('mp3').count > 1)
       correctly_ordered_paths = audio_files('mp3').sort
-      tp_make_with(dir, config_path, 'mp3', true)
+      tp_make(dir, config_path, 'mp3', true)
       assert(project = temp_tp_dir_project(dir))
+      check_project_files(project)
       assert(merged_audio_file = project.local.subdir('audio','originals').files.detect{|filer| filer.path.match(/.\.all\../)})
       assert(File.exists? merged_audio_file)
       actually_ordered_paths = originals_from_merged_audio_file(merged_audio_file)
