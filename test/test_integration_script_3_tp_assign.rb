@@ -39,21 +39,41 @@ class TestTpAssign < Typingpool::Test::Script
 
   def test_tp_assign
     skip_if_no_amazon_credentials('tp-assign integration test')
-    skip_if_no_upload_credentials('tp-assign integration test')
+    skip_if_no_s3_credentials('tp-assign integration test')
     with_temp_readymade_project do |dir|
+      vcr_name = 'tp_assign'
+      if Typingpool::Test.record
+        vcr_path = File.join(vcr_dir, [vcr_name, '.yml'].join)
+        File.delete(vcr_path) if File.exists? vcr_path
+      elsif not(Typingpool::Test.live)
+        copy_fixtures_to_temp_tp_dir(dir, "#{vcr_name}_")
+      end
+
       begin
-        tp_assign(dir)
+        tp_assign(dir, config_path(dir), ((Typingpool::Test.live && not(Typingpool::Test.record)) ? nil : File.join(vcr_dir, vcr_name)))
         assign_time = Time.now
-        config = config_from_dir(dir)
         project = temp_tp_dir_project(dir)
+        if Typingpool::Test.record
+          project.local.file('data', 'time.txt').write(assign_time.to_i)
+        elsif not(Typingpool::Test.live)
+          assign_time = Time.at(project.local.file('data', 'time.txt').read.to_i)
+        end
+        config = config_from_dir(dir)
         setup_amazon(dir)
+        hits = Typingpool::Amazon::HIT.all_for_project(project.local.id)
+        puts "DEBUG xml 1: #{hits.first.full.xml}"
+        unless (Typingpool::Test.live && not(Typingpool::Test.record))
+          Typingpool::App.vcr_record(File.join(vcr_dir, vcr_name), config, {:match_requests_on => [Typingpool::Utility.vcr_request_matcher]})
+          puts "DEBUG HERE"
+          at_exit{ Typingpool::App.vcr_stop }
+        end
         results = nil
         refute_empty(results = Typingpool::Amazon::HIT.all_for_project(project.local.id))
         assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
         assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].full.assignments_duration.to_i)
         #These numbers will be apart due to clock differences and
         #timing vagaries of the assignment.
-        assert_in_delta((assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60)
+        assert_in_delta((assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60) if Typingpool::Test.live
         keywords = results[0].at_amazon.keywords
         assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
         sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
@@ -62,9 +82,15 @@ class TestTpAssign < Typingpool::Test::Script
         assert_match(/\b20[\s-]+second\b/, assignment_html)
         assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
       ensure
-        tp_finish(dir)
+        tp_finish(dir) 
       end #begin
+      if Typingpool::Test.record
+        with_fixtures_in_temp_tp_dir(dir, "#{vcr_name}_") do |fixture_path, project_path|
+          FileUtils.cp(project_path, fixture_path)
+        end
+      end #if Typingpool::Test.record
       assert_empty(Typingpool::Amazon::HIT.all_for_project(project.local.id))
+      Typingpool::App.vcr_stop
     end #with_temp_readymade_project do...
   end
 

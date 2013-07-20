@@ -72,8 +72,14 @@ OptionParser.new do |opts|
   end
 
   opts.on('--devtest',
-          'Runs in a special development mode. Ignore.') do
+          'For testing purposes only. Ignore.') do
     options[:devtest] = true
+  end
+
+  opts.on('--testfixture=PATH',
+              'For testing purposes only. Ignore.',
+              'A VCR fixture for running with mock data.') do |fixture|
+    options[:fixture] = fixture
   end
 
   opts.on('--help',
@@ -165,9 +171,11 @@ else
 end #if project.local
 
 unless options[:devtest]
+  Typingpool::App.vcr_record(options[:fixture], config) if options[:fixture]
   Typingpool::App.upload_audio_for_project(project) do |file, as|
     STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
-  end 
+  end
+  Typingpool::App.vcr_stop if options [:fixture]
 end
 
 if STDOUT.tty? && Typingpool::Utility.os_x?

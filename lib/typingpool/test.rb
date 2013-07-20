@@ -4,9 +4,18 @@ module Typingpool
     require 'nokogiri'
     require 'fileutils'
 
-    def self.app_dir
-      File.dirname(File.dirname(File.dirname(__FILE__)))
-    end
+    class << self
+      attr_accessor :live
+      attr_accessor :record
+
+      def app_dir
+        File.dirname(File.dirname(File.dirname(__FILE__)))
+      end
+
+    end #class << self
+
+    self.record = ARGV.delete('--record')
+    self.live = ARGV.delete('--live') || self.record
 
     def fixtures_dir
       File.join(Utility.lib_dir, 'test', 'fixtures')
@@ -14,6 +23,17 @@ module Typingpool
 
     def audio_dir
       File.join(fixtures_dir, 'audio')
+    end
+
+    def vcr_dir
+      File.join(fixtures_dir, 'vcr')
+    end
+
+    def vcr_fixture_path_if_needed(filename)
+      return nil if (Typingpool::Test.live && not(Typingpool::Test.rerecord))
+      path = File.join(vcr_dir, filename)
+      File.delete(path) if Typingpool::Test.rerecord
+      path
     end
 
     def config

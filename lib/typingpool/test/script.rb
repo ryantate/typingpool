@@ -33,18 +33,19 @@ module Typingpool
         unless Typingpool::Test::Script.readymade_project_container
           dir = Typingpool::Test::Script.readymade_project_container = Dir.mktmpdir('typingpool_')
           Minitest.after_run{ FileUtils.remove_entry_secure(dir) }
-          setup_temp_tp_dir(dir)
+          setup_temp_tp_dir(dir, Config.file(setup_s3_config(dir, self.config)))
           tp_make(dir, config_path(dir), 'mp3', true)
         end 
       end
 
       def copy_readymade_project_into(config_path)
         config = Typingpool::Config.file(config_path)
-        FileUtils.cp_r(temp_tp_dir_project_dir(Typingpool::Test::Script.readymade_project_container), config.transcripts)
+        FileUtils.cp_r(File.join(Typingpool::Test::Script.readymade_project_container, '.'), File.dirname(config_path))
       end
 
       def reconfigure_readymade_project_in(config_path)
         #rewrite URLs in assignment.csv according to config at config_path
+        make_temp_tp_dir_config(File.dirname(config_path), Config.file(config_path))
         project = Project.new(project_default[:title], Config.file(config_path))
         File.delete(project.local.file('data', 'id.txt'))
         project.local.create_id
@@ -89,8 +90,8 @@ module Typingpool
         end
       end
 
-      def setup_temp_tp_dir(dir)
-        make_temp_tp_dir_config(dir)
+      def setup_temp_tp_dir(dir, config=self.config)
+        make_temp_tp_dir_config(dir, config)
         Dir.mkdir(File.join(dir, 'projects'))
       end
 
@@ -143,7 +144,7 @@ module Typingpool
         call_script(path_to_tp_make, *args)
       end
 
-      def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3', devtest_mode_skipping_upload=false)
+      def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3', devtest_mode_skipping_upload=false, fixture_path=nil)
         commands = [
                      '--config', config, 
                      '--chunks', project_default[:chunks],
@@ -152,6 +153,7 @@ module Typingpool
                      *audio_files(audio_subdir).map{|path| ['--file', path]}.flatten
                    ]
         commands.push('--devtest') if devtest_mode_skipping_upload
+        commands.push('--testfixture', fixture_path) if fixture_path
         call_tp_make(*commands)
       end
 
@@ -200,14 +202,16 @@ module Typingpool
             ]
       end
 
-      def tp_assign(dir, config_path=config_path(dir))
-        call_tp_assign(
-                       project_default[:title],
-                       assign_default[:template],
-                       '--config', config_path,
-                       *[:deadline, :lifetime, :approval].map{|param| ["--#{param}", assign_default[param]] }.flatten,
-                       *[:qualify, :keyword].map{|param| assign_default[param].map{|value| ["--#{param}", value] } }.flatten
-                       )
+      def tp_assign(dir, config_path=config_path(dir), fixture_path=nil)
+        args = [
+                project_default[:title],
+                assign_default[:template],
+                '--config', config_path,
+                *[:deadline, :lifetime, :approval].map{|param| ["--#{param}", assign_default[param]] }.flatten,
+                *[:qualify, :keyword].map{|param| assign_default[param].map{|value| ["--#{param}", value] } }.flatten
+               ]
+        args.push('--testfixture', fixture_path) if fixture_path
+        call_tp_assign(*args)
       end
 
       def path_to_tp_collect
@@ -286,6 +290,21 @@ module Typingpool
         FileUtils.remove_entry_secure(fixture_project_dir(name), :secure => true)
       end
 
+      def init_vcr_fixtures_if_needed(fixture_prefix, config_path)
+        Typingpool::Test.record or return
+        in_temp_tp_dir do |dir|
+          vcr_fixture_path = File.join(vcr_dir, fixture_prefix)
+          begin
+            tp_make(dir, config_path, 'mp3', false,  vcr_fixture_path)
+            with_fixtures_in_temp_tp_dir(dir, "#{fixture_prefix}_") do |fixture_path, project_path|
+              FileUtils.cp(project_path, fixture_path)
+            end
+          ensure
+            tp_finish_outside_sandbox(dir, config_path)
+          end #begin
+        end #in_temp_tp_dir do...
+      end
+
       def with_fixtures_in_temp_tp_dir(dir, fixture_prefix)
         fixtures = Dir.entries(fixtures_dir).select{|entry| entry.include?(fixture_prefix) && entry.index(fixture_prefix) == 0 }.select{|entry| File.file?(File.join(fixtures_dir, entry)) }
         fixtures.map!{|fixture| fixture[fixture_prefix.size .. -1] }
@@ -359,10 +378,6 @@ module Typingpool
 
       def noko(html)
         Nokogiri::HTML(html) 
-      end
-
-      def vcr_dir
-        File.join(fixtures_dir, 'vcr')
       end
     end #Script
   end #Test

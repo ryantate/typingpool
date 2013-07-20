@@ -435,18 +435,28 @@ module Typingpool
       # [config]       A Config instance, used to extract the
       #                Config#amazon#secret and Config#amazon#key that
       #                will be filtered from the fixture.
+      # [vcr_opts]     Default is nil. A hash of params to pass to
+      #                VCR.insert_cassette (same set of params that
+      #                can be passed to VCR.use_cassette), like
+      #                :preserve_exact_body_bytes or
+      #                :match_requests_on => [:url, :matcher]. If nil,
+      #                no extra params will be passed.
       # ==== Returns
       # Result of calling VCR.insert_cassette.
-      def vcr_record(fixture_path, config)
+      def vcr_record(fixture_path, config, vcr_params=nil)
         VCR.configure do |c|
           c.cassette_library_dir = File.dirname(fixture_path)
           c.hook_into :webmock 
           c.filter_sensitive_data('<AWS_KEY>'){ config.amazon.key }
           c.filter_sensitive_data('<AWS_SECRET>'){ config.amazon.secret }
         end
-        VCR.insert_cassette(File.basename(fixture_path, '.*'), :record => :new_episodes)
+        opts = {:record => :new_episodes}
+        opts.merge!(vcr_params) if vcr_params
+        VCR.insert_cassette(File.basename(fixture_path, '.*'), 
+                            opts
+                            )
       end
-
+      
       #Stops recording of the last call to vcr_record. Returns the
       #result of VCR.eject_cassette.
       def vcr_stop

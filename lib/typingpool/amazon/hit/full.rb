@@ -9,7 +9,7 @@ module Typingpool
 
         #See the RTurk documentation and Amazon Mechanical Turk API
         #documentation for more on these fields.
-        attr_reader :id, :type_id, :status, :external_question_url, :assignments_completed, :assignments_pending, :expires_at, :assignments_duration
+        attr_reader :id, :type_id, :status, :external_question_url, :assignments_completed, :assignments_pending, :expires_at, :assignments_duration, :xml
 
         #Constructor. Takes an RTurk::HIT instance.
         def initialize(rturk_hit)
@@ -18,6 +18,7 @@ module Typingpool
           @assignments_pending = rturk_hit.assignments_pending_count
           self.annotation = rturk_hit.annotation
           self.external_question_url = rturk_hit.xml
+          @xml = rturk_hit.xml.to_s #DEBUG
         end
 
         #Returns the HIT annotation as a hash. If the annotation
@@ -44,7 +45,19 @@ module Typingpool
         #(when the HIT is removed from the Mechanical Turk
         #marketplace).
         def expired_and_overdue?
-          (expires_at + assignments_duration) < Time.now
+            puts "DEBUG at #{id}"
+#            puts "DEBUG xml 2 #{xml}"
+
+          begin
+            (expires_at + assignments_duration) < Time.now
+          rescue ArgumentError => e
+            debug = %w(id type_id status expires_at assignments_duration).map{|a| [a, self.send(a), self.send(a).class]}.flatten.join(' ')
+            puts "DEBUG #{debug}"
+            raise e
+          else
+          end
+
+
         end
 
         #Returns the HTML of the external question associated with the

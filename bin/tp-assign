@@ -8,7 +8,8 @@ include Typingpool::App::CLI::Formatter
 
 options = {
   :keyword => [],
-  :qualify => []
+  :qualify => [],
+  :time => Time.now
 }
 OptionParser.new do |opts|
   options[:banner] = "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT TEMPLATE [--reward 0.75]\n"
@@ -93,6 +94,18 @@ OptionParser.new do |opts|
     options[:config] = path
   end
 
+  opts.on('--testfixture=PATH',
+          'For testing purposes only. Ignore.',
+          'A VCR fixture for running with mock data.') do |fixture|
+    options[:fixture] = fixture
+  end
+
+  opts.on('--testtime=EPOCH',
+              'For testing purposes only. Ignore.',
+              'Time to be used in place of Time.now.') do |epoch|
+    options[:time] = Time.at(epoch.to_i)
+  end
+
   opts.on('--help',
           'Display this screen') do
     STDERR.puts opts
@@ -167,7 +180,7 @@ assignments.each do |assignment|
     next
   end
   if assignment['hit_expires_at'].to_s.match(/\S/) #has been assigned previously
-    if ((Time.parse(assignment['hit_expires_at']) + assignment['hit_assignments_duration'].to_i) > Time.now)
+    if ((Time.parse(assignment['hit_expires_at']) + assignment['hit_assignments_duration'].to_i) > options[:time])
       #unexpired active HIT - do not reassign
       unneeded_assignments[:outstanding] += 1
       next
@@ -183,7 +196,13 @@ if needed_assignments.empty?
   exit
 end
 STDERR.puts "#{needed_assignments.count} assignments to assign"
+
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
+
+if options[:fixture]
+  Typingpool::App.vcr_record(options[:fixture], config)
+  at_exit{ Typingpool::App.vcr_stop }
+end
 
 #Are there enough funds for this assignment?
 cost = 0
@@ -202,6 +221,7 @@ unless options[:sandbox]
     exit if input.match(/^n/i)
   end
 end
+
 
 #we'll need to re-upload audio if we ran tp-finish on the project
 #or if our last attempt to upload audio failed partway through
