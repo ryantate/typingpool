@@ -1,5 +1,6 @@
 module Typingpool
   require 'minitest'
+  require 'typingpool/app/test'
   class Test < Minitest::Test 
     require 'nokogiri'
     require 'fileutils'
