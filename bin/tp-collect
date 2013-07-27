@@ -18,6 +18,7 @@ OptionParser.new do |commands|
   commands.on('--fixture=PATH',
               "Optional. For testing purposes only.",
               "A VCR ficture for running with mock data.") do |fixture|
+    require 'typingpool/app/test'
     options[:fixture] = fixture
   end
   commands.on('--help',
