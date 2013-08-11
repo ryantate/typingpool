@@ -50,11 +50,16 @@ module Typingpool
         File.delete(project.local.file('data', 'id.txt'))
         project.local.create_id
         id = project.local.id
+        reconfigure_project_csv_in(config_path)
+      end
+
+      def reconfigure_project_csv_in(config_path)
+        project = Project.new(project_default[:title], Config.file(config_path))
         assignments = project.local.file('data', 'assignment.csv').as(:csv)
         urls = project.create_remote_names(assignments.map{|assignment| Project.local_basename_from_url(assignment['audio_url']) }).map{|file| project.remote.file_to_url(file) }
         assignments.each! do |assignment|
           assignment['audio_url'] = urls.shift
-          assignment['project_id'] = id
+          assignment['project_id'] = project.local.id
         end
       end
 
@@ -244,6 +249,7 @@ module Typingpool
           end
         elsif not(Typingpool::Test.live)
           copy_fixtures_to_temp_tp_dir(dir, "#{fixture_prefix}_")
+          reconfigure_project_csv_in(config_path)
         end
       end
 
