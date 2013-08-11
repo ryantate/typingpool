@@ -58,7 +58,7 @@ module Typingpool
         end
       end
 
-      def simulate_failed_audio_upload_in(config_path)
+      def simulate_failed_audio_upload_in(dir, config_path=config_path(dir))
         project = Project.new(project_default[:title], Config.file(config_path))
         csv = project.local.file('data', 'assignment.csv').as(:csv)
         csv.each!{|a| a['audio_uploaded'] = 'maybe'}
@@ -136,6 +136,12 @@ module Typingpool
         Utility.system_quietly(*args)
       end
 
+      def add_vcr_arg(args, fixture_name)
+        fixture = cleared_vcr_fixture_path_for(fixture_name)
+        args.push(fixture) if fixture
+        args
+      end
+
       def path_to_tp_make
         ::File.join(self.class.app_dir, 'bin', 'tp-make')
       end
@@ -152,9 +158,14 @@ module Typingpool
                      *[:voice, :unusual].map{|param| project_default[param].map{|value| ["--#{param}", value] } }.flatten,
                      *audio_files(audio_subdir).map{|path| ['--file', path]}.flatten
                    ]
-        commands.push('--devtest') if devtest_mode_skipping_upload
+        commands.push('--testnoupload', '--testkeepmergefile') if devtest_mode_skipping_upload
         commands.push('--testfixture', fixture_path) if fixture_path
         call_tp_make(*commands)
+      end
+
+      def tp_make_with_vcr(dir, fixture_name, config_path=config_path(dir))
+        args = [dir, config_path, 'mp3', false]
+        tp_make(*add_vcr_arg(args, fixture_name))
       end
 
       def path_to_tp_finish
@@ -165,22 +176,21 @@ module Typingpool
         call_script(path_to_tp_finish, *args)
       end
 
-      def tp_finish(dir, config_path=self.config_path(dir))
-        tp_finish_inside_sandbox(dir, config_path)
-        tp_finish_outside_sandbox(dir, config_path)
+      def tp_finish(dir, config_path=config_path(dir), fixture_path=nil)
+        tp_finish_inside_sandbox(dir, config_path, fixture_path)
+        tp_finish_outside_sandbox(dir, config_path, fixture_path)
       end
 
 
-      def tp_finish_inside_sandbox(dir, config_path=self.config_path(dir))
-        tp_finish_outside_sandbox(dir, config_path, '--sandbox')
+      def tp_finish_inside_sandbox(dir, config_path=config_path(dir), fixture_path=nil)
+        tp_finish_outside_sandbox(dir, config_path, fixture_path, '--sandbox')
       end
 
-      def tp_finish_outside_sandbox(dir, config_path=self.config_path(dir), *args)
-        call_tp_finish(
-                       project_default[:title],
-                       '--config', config_path, 
-                       *args
-                       )
+      def tp_finish_outside_sandbox(dir, config_path=config_path(dir), fixture_path=nil, *extra_args)
+        args = [project_default[:title], '--config', config_path]
+        args.push('--testfixture', fixture_path) if fixture_path
+        args.push(*extra_args)
+        call_tp_finish(*args)
       end
 
       def path_to_tp_assign
@@ -202,7 +212,7 @@ module Typingpool
             ]
       end
 
-      def tp_assign(dir, config_path=config_path(dir), fixture_path=nil)
+      def tp_assign(dir, config_path=config_path(dir), fixture_path=nil, test_time=nil)
         args = [
                 project_default[:title],
                 assign_default[:template],
@@ -211,8 +221,42 @@ module Typingpool
                 *[:qualify, :keyword].map{|param| assign_default[param].map{|value| ["--#{param}", value] } }.flatten
                ]
         args.push('--testfixture', fixture_path) if fixture_path
+        args.push('--testtime', test_time) if test_time
         call_tp_assign(*args)
       end
+
+      def tp_assign_with_vcr(dir, fixture_name, config_path=config_path(dir))
+        project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
+        args = [dir, config_path]
+        args = add_vcr_arg(args, fixture_name)
+        unless (Typingpool::Test.record || Typingpool::Test.live)
+          args.push(project_time(project).to_i.to_s)
+        end
+        tp_assign(*args)
+      end
+
+      def copy_tp_assign_fixtures(dir, fixture_prefix, config_path=config_path(dir))
+        project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
+        if Typingpool::Test.record
+          project_time(project, Time.now)
+          with_fixtures_in_temp_tp_dir(dir, "#{fixture_prefix}_") do |fixture_path, project_path|
+            FileUtils.cp(project_path, fixture_path)
+          end
+        elsif not(Typingpool::Test.live)
+          copy_fixtures_to_temp_tp_dir(dir, "#{fixture_prefix}_")
+        end
+      end
+
+      def project_time(project, time=nil)
+        file = project.local.file('data', 'time.txt')
+        if time
+          file.write(time.to_i)
+        else
+          time = Time.at(file.read.to_i)
+        end
+        time
+      end
+
 
       def path_to_tp_collect
         File.join(self.class.app_dir, 'bin', 'tp-collect')
@@ -316,12 +360,16 @@ module Typingpool
       end
 
       def copy_fixtures_to_temp_tp_dir(dir, fixture_prefix)
+        copies = 0
         with_fixtures_in_temp_tp_dir(dir, fixture_prefix) do |fixture_path, project_path|
           if File.exists? project_path
             FileUtils.mv(project_path, File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}"))
           end
           FileUtils.cp(fixture_path, project_path)
+          copies += 1
         end
+        copies > 0 or raise Error, "No fixtures to copy with prefix #{fixture_prefix} from dir #{dir}"
+        copies
       end
 
       def rm_fixtures_from_temp_tp_dir(dir, fixture_prefix)

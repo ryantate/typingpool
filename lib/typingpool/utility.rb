@@ -181,19 +181,6 @@ module Typingpool
         end #if response.kind_of?
       end
 
-      require 'cgi'
-      def vcr_request_matcher
-        lambda do |request1, request2|
-          puts "DEBUG CGI req body #{request1.body}"
-          puts "DEBUG CGI param #{CGI.parse(request1.body)['Operation']}"
-          r = (request1.uri.to_s == request2.uri.to_s) &&
-            (request1.method.to_s == request2.method.to_s) &&
-            %w(Operation HITId Question PageNumber PageSize).reject{|param| CGI.parse(request1.body)[param] == CGI.parse(request2.body)[param] }.empty?
-          puts "DEBUG result #{r ? 'TRUE' : 'FALSE'}"
-          r
-        end #lambda
-      end
-
 
       #protected 
 

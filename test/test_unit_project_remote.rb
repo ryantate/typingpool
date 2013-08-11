@@ -42,13 +42,22 @@ class TestProjectRemote < Typingpool::Test
     assert_match(/^[a-z]/, Typingpool::Project::Remote::S3.random_bucket_name(16, ''))
   end
 
+  def vcr_opts
+    {
+      :preserve_exact_body_bytes => true,
+      :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+    }
+  end
+
   def test_project_remote_s3_networked
     assert(config = self.config)
     skip_if_no_s3_credentials('Project::Remote::S3 upload and delete tests', config)
     config.to_hash.delete('sftp')
     assert(project = Typingpool::Project.new(project_default[:title], config))
     assert_instance_of(Typingpool::Project::Remote::S3, remote = project.remote)
-    standard_put_remove_tests(remote)
+    with_vcr('test_unit_project_remote_s3_1', config, vcr_opts) do
+      standard_put_remove_tests(remote)
+    end
   end
 
   def test_project_remote_s3_networked_make_new_bucket_when_needed
@@ -56,16 +65,18 @@ class TestProjectRemote < Typingpool::Test
     skip_if_no_s3_credentials('Project::Remote::S3 upload and delete tests', config)
     config.to_hash.delete('sftp')
     config.amazon.bucket = Typingpool::Project::Remote::S3.random_bucket_name(16, 'typingpool-test-')
-    assert(s3 = AWS::S3.new(:access_key_id => config.amazon.key, :secret_access_key => config.amazon.secret))
-    refute(s3.buckets[config.amazon.bucket].exists?)
-    assert(project = Typingpool::Project.new(project_default[:title], config))
-    assert_instance_of(Typingpool::Project::Remote::S3, remote = project.remote)
-    begin
-      standard_put_remove_tests(remote)
-      assert(s3.buckets[config.amazon.bucket].exists?)
-    ensure
-      s3.buckets[config.amazon.bucket].delete rescue AWS::S3::Errors::NoSuchBucket
-    end #begin
+    with_vcr('test_unit_project_remote_s3_2', config, vcr_opts) do
+      assert(s3 = AWS::S3.new(:access_key_id => config.amazon.key, :secret_access_key => config.amazon.secret))
+      assert(works_eventually?{ not(s3.buckets[config.amazon.bucket].exists?) })
+      assert(project = Typingpool::Project.new(project_default[:title], config))
+      assert_instance_of(Typingpool::Project::Remote::S3, remote = project.remote)
+      begin
+        standard_put_remove_tests(remote)
+        assert(works_eventually?{s3.buckets[config.amazon.bucket].exists?})
+      ensure
+        s3.buckets[config.amazon.bucket].delete rescue AWS::S3::Errors::NoSuchBucket
+      end #begin
+    end #with_vcr...
   end
 
   def test_project_remote_sftp_base
@@ -81,7 +92,9 @@ class TestProjectRemote < Typingpool::Test
 
   def test_project_remote_sftp_networked
     assert(config = self.config)
-    skip_if_no_sftp_credentials('Project::Remote::SFTP upload and delete tests', config)
+    test_name = 'Project::Remote::SFTP upload and delete tests'
+    skip_if_no_sftp_credentials(test_name, config)
+    skip_during_vcr_playback(test_name)
     assert(project = Typingpool::Project.new(project_default[:title], config))
     assert_instance_of(Typingpool::Project::Remote::SFTP, remote = project.remote)
     standard_put_remove_tests(remote)
@@ -93,6 +106,7 @@ class TestProjectRemote < Typingpool::Test
     local_files.each{|path| assert(File.exists? path) }
     strings = local_files.map{|path| File.read(path) }
     strings.each{|string| refute_empty(string) }
+
 
     #with default basenames
     put_remove_test(
@@ -129,7 +143,6 @@ class TestProjectRemote < Typingpool::Test
                                     :streams => strings.map{|string| StringIO.new(string) },
                                     )
                     )
-
 
   end
 

@@ -25,31 +25,18 @@ class TestTpMake < Typingpool::Test::Script
   end
 
   def assert_tp_make_abort_match(args, regex)
-    args.push('--devtest')
+    args.push('--testnoupload')
     assert_script_abort_match(args, regex) do |args|
       call_tp_make(*args)
     end
   end
 
-  def tp_make_and_upload_with(dir, config_path)
-    begin
-      tp_make(dir, config_path, 'mp3', false)
-      assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path)))
-      check_project_files(project)
-      check_project_uploads(project)
-    ensure
-      tp_finish_outside_sandbox(dir, config_path)
-    end #begin
-    assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), ['audio'], 'no') 
-  end
-
-
-  def check_project_uploads(project)
+  def check_project_uploads(project, url_check=true)
     assignments = project.local.file('data', 'assignment.csv').as(:csv)
     assert_all_assets_have_upload_status(assignments, ['audio'], 'yes')
     assignments.each do |assignment|
       assert(assignment['audio_url'])
-      assert(working_url_eventually? assignment['audio_url'])
+      assert(working_url_eventually? assignment['audio_url']) if url_check
       assert_equal('yes', assignment['audio_uploaded'])
     end #assignments.each do....
   end
@@ -88,9 +75,18 @@ class TestTpMake < Typingpool::Test::Script
   end
 
   def test_tp_make_sftp
+    skip_during_vcr_playback('tp-make SFTP upload_test')
     in_temp_tp_dir do |dir|
       skip_if_no_sftp_credentials('tp-make SFTP upload test', config)
-      tp_make_and_upload_with(dir, config_path(dir))
+      begin
+        tp_make(dir)
+        assert(project = temp_tp_dir_project(dir))
+        check_project_files(project)
+        check_project_uploads(project)
+      ensure
+        tp_finish_outside_sandbox(dir)
+      end #begin
+      assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), ['audio'], 'no') 
     end #in_temp_tp_dir do...
   end
 
@@ -98,9 +94,18 @@ class TestTpMake < Typingpool::Test::Script
     in_temp_tp_dir do |dir|
       skip_if_no_s3_credentials('tp-make S3 integration test', config)
       config_path = setup_s3_config(dir)
-      tp_make_and_upload_with(dir, config_path)
+      begin
+        tp_make_with_vcr(dir, 'tp_make_1', config_path)
+        assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path)))
+        check_project_files(project)
+        check_project_uploads(project, (Typingpool::Test.live || Typingpool::Test.record))
+      ensure
+        tp_finish_outside_sandbox(dir, config_path) if (Typingpool::Test.live || Typingpool::Test.record)
+      end #begin
+      assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), ['audio'], 'no') if (Typingpool::Test.live || Typingpool::Test.record)
     end #in_temp_tp_dir do...
   end 
+
 
   def test_fixing_failed_tp_make
     in_temp_tp_dir do |dir|
@@ -125,18 +130,18 @@ class TestTpMake < Typingpool::Test::Script
       refute_empty(audio_urls)
       assert_empty(audio_urls.select{|url| working_url? url })
       begin
-        tp_make(dir, good_config_path, 'mp3')
+        tp_make_with_vcr(dir, 'tp_make_2', good_config_path)
         refute_empty(assignment_csv.read)
         assert_all_assets_have_upload_status(assignment_csv, ['audio'], 'yes')
         refute_empty(audio_urls2 = assignment_csv.map{|assignment| assignment['audio_url'] })
         audio_urls.each_with_index do |original_url, i|
           assert_equal(original_url, audio_urls2[i])
         end
-        assert_equal(audio_urls.count, audio_urls2.select{|url| working_url_eventually? url }.count)
+        assert_equal(audio_urls.count, audio_urls2.select{|url| working_url_eventually? url }.count) if (Typingpool::Test.live || Typingpool::Test.record)
       ensure
-        tp_finish_outside_sandbox(dir, good_config_path)
+        tp_finish_outside_sandbox(dir, good_config_path) if (Typingpool::Test.live || Typingpool::Test.record) 
       end #begin
-      assert_all_assets_have_upload_status(assignment_csv, ['audio'], 'no')
+      assert_all_assets_have_upload_status(assignment_csv, ['audio'], 'no') if (Typingpool::Test.live || Typingpool::Test.record)
     end #in_temp_tp_dir do...
   end
 
@@ -166,5 +171,6 @@ class TestTpMake < Typingpool::Test::Script
     paths.each{|path| assert(File.exists? path) }
     paths
   end
+
 
 end #TestTpMake

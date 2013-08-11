@@ -97,6 +97,7 @@ OptionParser.new do |opts|
   opts.on('--testfixture=PATH',
           'For testing purposes only. Ignore.',
           'A VCR fixture for running with mock data.') do |fixture|
+    require 'typingpool/app/test'
     options[:fixture] = fixture
   end
 
@@ -200,7 +201,10 @@ STDERR.puts "#{needed_assignments.count} assignments to assign"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 if options[:fixture]
-  Typingpool::App.vcr_record(options[:fixture], config)
+  Typingpool::App.vcr_record(options[:fixture], config, {
+                               :preserve_exact_body_bytes => true,
+                               :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                             })
   at_exit{ Typingpool::App.vcr_stop }
 end
 

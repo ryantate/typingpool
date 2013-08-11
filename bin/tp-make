@@ -71,14 +71,24 @@ OptionParser.new do |opts|
     options[:bitrate] = kbps
   end
 
-  opts.on('--devtest',
-          'For testing purposes only. Ignore.') do
-    options[:devtest] = true
+  opts.on('--testnoupload',
+          'For testing purposes only. Ignore.',
+          'Suppresses uploading.'
+          ) do
+    options[:noupload] = true
+  end
+
+  opts.on('--testkeepmergefile',
+          'For testing purposes only. Ignore.',
+          'Suppresses uploading.'
+          ) do
+    options[:keepmerge] = true
   end
 
   opts.on('--testfixture=PATH',
-              'For testing purposes only. Ignore.',
-              'A VCR fixture for running with mock data.') do |fixture|
+          'For testing purposes only. Ignore.',
+          'A VCR fixture for running with mock data.') do |fixture|
+    require 'typingpool/app/test'
     options[:fixture] = fixture
   end
 
@@ -163,15 +173,18 @@ else
   assignment_path = project.create_assignment_csv(:path => ['data', 'assignment.csv'], :urls => urls, :unusual => options[:unusual], :voices => options[:voices])
 
   temp_merge_file.close
-  if options[:devtest]
+  if options[:keepmerge]
     FileUtils.cp(temp_merge_file.path, project.local.subdir('audio', 'originals'))
   end
   temp_merge_file.unlink
   FileUtils.remove_entry_secure(temp_conversion_dir)
 end #if project.local
 
-unless options[:devtest]
-  Typingpool::App.vcr_record(options[:fixture], config) if options[:fixture]
+unless options[:noupload]
+  Typingpool::App.vcr_record(options[:fixture], config,  {
+                               :preserve_exact_body_bytes => true,
+                               :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                             }) if options[:fixture]
   Typingpool::App.upload_audio_for_project(project) do |file, as|
     STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
   end

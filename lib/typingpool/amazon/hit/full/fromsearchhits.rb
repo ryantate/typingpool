@@ -22,8 +22,7 @@ module Typingpool
             @assignments_completed = rturk_hit.completed_assignments
             @assignments_pending = rturk_hit.pending_assignments
             self.annotation = annotation
-            @xml = rturk_hit.instance_variable_get(:@xml_obj).to_s #DEBUG
-          end
+         end
 
           def external_question_url
             unless @checked_question

@@ -7,6 +7,7 @@ require 'typingpool'
 require 'typingpool/test'
 
 class TestTpAssign < Typingpool::Test::Script
+
   #TODO: test that qualifications are sent (will need heroic effort
   #(or at least some xml parsing) since rturk doesn't provide an
   #easy way to look at HIT qualifications)
@@ -41,138 +42,124 @@ class TestTpAssign < Typingpool::Test::Script
     skip_if_no_amazon_credentials('tp-assign integration test')
     skip_if_no_s3_credentials('tp-assign integration test')
     with_temp_readymade_project do |dir|
-      vcr_name = 'tp_assign'
-      if Typingpool::Test.record
-        vcr_path = File.join(vcr_dir, [vcr_name, '.yml'].join)
-        File.delete(vcr_path) if File.exists? vcr_path
-      elsif not(Typingpool::Test.live)
-        copy_fixtures_to_temp_tp_dir(dir, "#{vcr_name}_")
-      end
-
-      begin
-        tp_assign(dir, config_path(dir), ((Typingpool::Test.live && not(Typingpool::Test.record)) ? nil : File.join(vcr_dir, vcr_name)))
-        assign_time = Time.now
-        project = temp_tp_dir_project(dir)
-        if Typingpool::Test.record
-          project.local.file('data', 'time.txt').write(assign_time.to_i)
-        elsif not(Typingpool::Test.live)
-          assign_time = Time.at(project.local.file('data', 'time.txt').read.to_i)
-        end
-        config = config_from_dir(dir)
-        setup_amazon(dir)
-        hits = Typingpool::Amazon::HIT.all_for_project(project.local.id)
-        puts "DEBUG xml 1: #{hits.first.full.xml}"
-        unless (Typingpool::Test.live && not(Typingpool::Test.record))
-          Typingpool::App.vcr_record(File.join(vcr_dir, vcr_name), config, {:match_requests_on => [Typingpool::Utility.vcr_request_matcher]})
-          puts "DEBUG HERE"
-          at_exit{ Typingpool::App.vcr_stop }
-        end
-        results = nil
-        refute_empty(results = Typingpool::Amazon::HIT.all_for_project(project.local.id))
-        assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
-        assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].full.assignments_duration.to_i)
-        #These numbers will be apart due to clock differences and
-        #timing vagaries of the assignment.
-        assert_in_delta((assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60) if Typingpool::Test.live
-        keywords = results[0].at_amazon.keywords
-        assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
-        sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
-        refute_empty(assignment_urls = sandbox_csv.map{|assignment| assignment['assignment_url'] })
-        assert(assignment_html = fetch_url(assignment_urls.first).body)
-        assert_match(/\b20[\s-]+second\b/, assignment_html)
-        assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
+      project = temp_tp_dir_project(dir)
+      vcr_names = ['tp_assign_1', 'tp_assign_2']
+      copy_tp_assign_fixtures(dir, vcr_names[0])
+      assign_time = (Typingpool::Test.record || Typingpool::Test.live) ? Time.now : project_time(project)
+      config = config_from_dir(dir)
+      setup_amazon(dir)
+      with_vcr(vcr_names[1], config, {
+                 :preserve_exact_body_bytes => true,
+                 :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+               }) do
+        begin
+          tp_assign_with_vcr(dir, vcr_names[0])
+          results = nil
+          refute_empty(results = Typingpool::Amazon::HIT.all_for_project(project.local.id))
+          assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
+          assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].full.assignments_duration.to_i)
+          #These numbers will be apart due to clock differences and
+          #timing vagaries of the assignment.
+          assert_in_delta((assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60) if Typingpool::Test.live
+          keywords = results[0].at_amazon.keywords
+          assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
+          sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
+          refute_empty(assignment_urls = sandbox_csv.map{|assignment| assignment['assignment_url'] })
+          assert(assignment_html = fetch_url(assignment_urls.first).body)
+          assert_match(/\b20[\s-]+second\b/, assignment_html)
+          assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
       ensure
-        tp_finish(dir) 
+        tp_finish(dir) if (Typingpool::Test.record || Typingpool::Test.live)
       end #begin
-      if Typingpool::Test.record
-        with_fixtures_in_temp_tp_dir(dir, "#{vcr_name}_") do |fixture_path, project_path|
-          FileUtils.cp(project_path, fixture_path)
-        end
-      end #if Typingpool::Test.record
       assert_empty(Typingpool::Amazon::HIT.all_for_project(project.local.id))
-      Typingpool::App.vcr_stop
+      end #with_vcr do...
     end #with_temp_readymade_project do...
   end
 
-   def test_uploads_audio_when_needed
-     skip_if_no_amazon_credentials('tp-assign unuploaded audio integration test')
-     skip_if_no_s3_credentials('tp-assign unuploaded audio integration test')
-     with_temp_readymade_project do |dir|
-       project_dir = temp_tp_dir_project_dir(dir)
-       assert(File.exists? project_dir)
-       assert(File.directory? project_dir)
-       assert(project = temp_tp_dir_project(dir))
-       csv = project.local.file('data', 'assignment.csv').as(:csv)
-       assert_empty(csv.select{|assignment| working_url? assignment['audio_url']})
-       csv.each!{|a| a['audio_uploaded'] = 'maybe'}
-       assert_all_assets_have_upload_status(csv, ['audio'], 'maybe')
-       begin
-         tp_assign(dir)
-         sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
-         assert_equal(csv.count, sandbox_csv.count)
-         assert_equal(sandbox_csv.count, sandbox_csv.select{|assignment| working_url_eventually? assignment['audio_url'] }.count)
+  def test_uploads_audio_when_needed
+    skip_if_no_amazon_credentials('tp-assign unuploaded audio integration test')
+    skip_if_no_s3_credentials('tp-assign unuploaded audio integration test')
+    with_temp_readymade_project do |dir|
+      project = temp_tp_dir_project(dir)
+      vcr_name = 'tp_assign_3'
+      copy_tp_assign_fixtures(dir, vcr_name)
+      csv = project.local.file('data', 'assignment.csv').as(:csv)
+      if (Typingpool::Test.record || Typingpool::Test.live)
+        assert_empty(csv.select{|assignment| working_url? assignment['audio_url']})
+      end
+      csv.each{|assignment| assert_empty(assignment['audio_uploaded'].to_s) }
+      begin
+        tp_assign_with_vcr(dir, vcr_name)
+        sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
+        assert_equal(csv.count, sandbox_csv.count)
+        if (Typingpool::Test.record || Typingpool::Test.live)
+          assert_equal(sandbox_csv.count, sandbox_csv.select{|assignment| working_url_eventually? assignment['audio_url'] }.count) 
+        end
         assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
-       ensure
-         tp_finish(dir)
-       end #begin
-     end #with_temp_readymade_project do...
-   end
+      ensure
+        tp_finish(dir) if (Typingpool::Test.record || Typingpool::Test.live)
+      end #begin
+    end #with_temp_readymade_project do...
+  end
 
-def test_fixing_failed_assignment_html_upload
-  skip_if_no_amazon_credentials('tp-assign failed assignment upload integration test')
-  skip_if_no_s3_credentials('tp-assign failed assignment upload integration test')
-  with_temp_readymade_project do |dir|
-    good_config_path = setup_s3_config(dir)
-    reconfigure_readymade_project_in(good_config_path)
-    project = temp_tp_dir_project(dir, Typingpool::Config.file(good_config_path))
-    csv = project.local.file('data', 'assignment.csv').as(:csv)
-    csv.each!{|a| a['audio_uploaded'] = 'maybe'}
-    tp_make(dir, good_config_path)
-    assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
-    bad_config_path = setup_s3_config_with_bad_password(dir)
-    begin
-      assert(project.local)
+  def test_fixing_failed_assignment_html_upload
+    skip_if_no_amazon_credentials('tp-assign failed assignment upload integration test')
+    skip_if_no_s3_credentials('tp-assign failed assignment upload integration test')
+    with_temp_readymade_project do |dir|
+      good_config_path = setup_s3_config(dir)
+      reconfigure_readymade_project_in(good_config_path)
+      project = temp_tp_dir_project(dir, Typingpool::Config.file(good_config_path))
+      vcr_names = ['tp_assign_4', 'tp_assign_5']
+      copy_tp_assign_fixtures(dir, vcr_names[0], good_config_path)
+      csv = project.local.file('data', 'assignment.csv').as(:csv)
+      csv.each!{|a| a['audio_uploaded'] = 'yes'}
+      bad_config_path = setup_s3_config_with_bad_password(dir)
       get_assignment_urls = lambda{|csv| csv.map{|assignment| assignment['assignment_url'] }.select{|url| url } }
       assert_empty(get_assignment_urls.call(csv))
-      exception = assert_raises(Typingpool::Error::Shell) do
-        tp_assign(dir, bad_config_path)
-      end #assert_raises...
-      assert_match(/s3 operation fail/i, exception.message)
-      sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
-      refute_empty(get_assignment_urls.call(sandbox_csv))
-      get_assignment_urls.call(sandbox_csv).each{|url| refute(working_url? url) }
-      assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'maybe')
-      tp_assign(dir, good_config_path)
-      get_assignment_urls.call(sandbox_csv).each{|url| assert(working_url_eventually? url) }
-      assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
-    ensure
-      tp_finish(dir, good_config_path)
-    end #begin
-  end #with_temp_readymade_project do...
-end
+      begin
+        exception = assert_raises(Typingpool::Error::Shell) do
+          tp_assign_with_vcr(dir, vcr_names[0], bad_config_path)
+        end #assert_raises...
+        assert_match(/s3 operation fail/i, exception.message)
+        sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
+        refute_empty(get_assignment_urls.call(sandbox_csv))
+        if (Typingpool::Test.record || Typingpool::Test.live)
+          get_assignment_urls.call(sandbox_csv).each{|url| refute(working_url? url) }
+        end
+        assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'maybe')
+        tp_assign_with_vcr(dir, vcr_names[1], good_config_path)
+        if (Typingpool::Test.record || Typingpool::Test.live)
+          get_assignment_urls.call(sandbox_csv).each{|url| assert(working_url_eventually? url) }
+        end
+        assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
+      ensure
+        tp_finish(dir, good_config_path) if (Typingpool::Test.record || Typingpool::Test.live)
+      end #begin
+    end #with_temp_readymade_project do...
+  end
 
-def test_abort_on_config_mismatch
-  skip_if_no_s3_credentials('tp-assign abort on config mismatch test')
-  with_temp_readymade_project do |dir|
-    config = config_from_dir(dir)
-    good_config_path = setup_s3_config(dir, config, '.config_s3_good')
-    reconfigure_readymade_project_in(good_config_path)
-    assert(config.amazon.bucket)
-    new_bucket = 'configmismatch-test'
-    refute_equal(new_bucket, config.amazon.bucket)
-    config.amazon.bucket = new_bucket
-    bad_config_path = setup_s3_config(dir, config, '.config_s3_bad')
-    success = false
-    begin
-      exception = assert_raises(Typingpool::Error::Shell) do
-        tp_assign(dir, bad_config_path)
-      end #assert_raises...
-      assert_match(/\burls don't look right\b/i, exception.message)
-      success = true
-    ensure
-      tp_finish(dir, good_config_path) unless success
-    end #begin
-  end #with_temp_readymade_project do...
-end
+  def test_abort_on_config_mismatch
+    skip_if_no_s3_credentials('tp-assign abort on config mismatch test')
+    with_temp_readymade_project do |dir|
+      config = config_from_dir(dir)
+      good_config_path = setup_s3_config(dir, config, '.config_s3_good')
+      reconfigure_readymade_project_in(good_config_path)
+      assert(config.amazon.bucket)
+      new_bucket = 'configmismatch-test'
+      refute_equal(new_bucket, config.amazon.bucket)
+      config.amazon.bucket = new_bucket
+      bad_config_path = setup_s3_config(dir, config, '.config_s3_bad')
+      success = false
+      begin
+        exception = assert_raises(Typingpool::Error::Shell) do
+          tp_assign(dir, bad_config_path)
+        end #assert_raises...
+        assert_match(/\burls don't look right\b/i, exception.message)
+        success = true
+      ensure
+        tp_finish(dir, good_config_path) unless success
+      end #begin
+    end #with_temp_readymade_project do...
+  end
 
 end #TestTpAssign

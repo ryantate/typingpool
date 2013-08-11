@@ -16,7 +16,7 @@ module Typingpool
     end #class << self
 
     self.record = ARGV.delete('--record')
-    self.live = ARGV.delete('--live') || self.record
+    self.live = ARGV.delete('--live')
 
     def fixtures_dir
       File.join(Utility.lib_dir, 'test', 'fixtures')
@@ -30,11 +30,27 @@ module Typingpool
       File.join(fixtures_dir, 'vcr')
     end
 
-    def vcr_fixture_path_if_needed(filename)
-      return nil if (Typingpool::Test.live && not(Typingpool::Test.rerecord))
-      path = File.join(vcr_dir, filename)
-      File.delete(path) if Typingpool::Test.rerecord
-      path
+    def delete_vcr_fixture(fixture_name)
+      fixture_path = File.join(vcr_dir, [fixture_name, '.yml'].join)
+      File.delete(fixture_path) if File.exists? fixture_path
+    end
+
+    def cleared_vcr_fixture_path_for(fixture_name)
+      if Typingpool::Test.record
+        delete_vcr_fixture(fixture_name)
+      end
+      if (Typingpool::Test.record || not(Typingpool::Test.live))
+        File.join(vcr_dir, fixture_name)
+      end
+    end
+
+    def with_vcr(fixture_name, config, opts={})
+      if fixture = cleared_vcr_fixture_path_for(fixture_name)
+        Typingpool::App.vcr_record(fixture, config, opts)
+        at_exit{ Typingpool::App.vcr_stop }
+      end
+      yield
+      Typingpool::App.vcr_stop
     end
 
     def config
@@ -50,7 +66,7 @@ module Typingpool
     end
 
     def skip_with_message(reason, skipping_what='')
-      skipping_what = " #{skipping_what}" if not(skipping_what.empty?)
+      skipping_what = " #{skipping_what}" unless skipping_what.empty?
       skip ("Skipping#{skipping_what}: #{reason}")
       true
     end
@@ -81,6 +97,10 @@ module Typingpool
       if not(sftp_credentials?(config))
         skip_with_message('No SFTP credentials', skipping_what)
       end #if not(sftp_credentials?...
+    end
+
+    def skip_during_vcr_playback(skipping_what='')
+      skip_with_message("Runs only with --live or --record option", skipping_what) unless (Typingpool::Test.live || Typingpool::Test.record)
     end
 
     def skip_if_no_upload_credentials(skipping_what='', config=self.config)
@@ -120,21 +140,30 @@ module Typingpool
       Typingpool::Utility.working_url?(*args)
     end
 
-    def working_url_eventually?(url, max_seconds=10, min_tries=2, max_redirects=6, seeking=true)
+
+    def works_eventually?(max_seconds=10, min_tries=2)
       start = Time.now.to_i
       tries = 0
       wait = 0
-      loop do
+      until ((tries >= min_tries) && ((Time.now.to_i + wait - start) >= max_seconds)) do
         sleep wait
-        return seeking if (working_url?(url, max_redirects) == seeking)
+        return true if yield
         wait = wait > 0 ? wait * 2 : 1
         tries += 1
-      end until (tries >= min_tries) && ((Time.now.to_i + wait - start) >= max_seconds)
-      not seeking
+      end
+      false
+    end
+
+    def working_url_eventually?(url, max_seconds=10, min_tries=2, max_redirects=6)
+      works_eventually?(max_seconds, min_tries) do
+        working_url?(url, max_redirects)
+      end
     end
 
     def broken_url_eventually?(url, max_seconds=10, min_tries=2, max_redirects=6)
-      not(working_url_eventually?(url, max_seconds, min_tries, max_redirects, false))
+      works_eventually?(max_seconds, min_tries) do
+        not(working_url?(url, max_redirects))
+      end
     end
 
     def fetch_url(*args)

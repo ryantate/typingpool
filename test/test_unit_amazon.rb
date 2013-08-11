@@ -134,9 +134,9 @@ class TestAmazon < Typingpool::Test
     config = self.config
     dummy_project = Typingpool::Project.new('dummy', config)
     url = dummy_project.remote.file_to_url(Typingpool::Project::Remote::S3.random_bucket_name(16,'dummy-missing-file-'))
-    refute(working_url? url)
+    refute(working_url? url) if (Typingpool::Test.live || Typingpool::Test.record)
     with_dummy_typingpool_hit_or_skip('test_handles_hits_with_broken_external_question', url) do |hit, config|
-      assert_equal(hit.full.external_question_url, url)
+      assert_equal(hit.full.external_question_url, url) if (Typingpool::Test.live || Typingpool::Test.record)
       refute(hit.full.external_question)
       refute(hit.full.external_question_param(hit.class.url_at))
    end #with_dummy....
@@ -161,23 +161,27 @@ class TestAmazon < Typingpool::Test
   end
 
 
-  def with_dummy_typingpool_hit_or_skip(skipping_what, url=question_url)
+  def with_dummy_typingpool_hit_or_skip(test_handle, url=question_url)
     config = self.config
-    skip_if_no_amazon_credentials(skipping_what, config)
+    skip_if_no_amazon_credentials(test_handle, config)
     config.assign.reward = '0.01'
     cache = Tempfile.new('typingpool_cache')
-    begin
-      config.cache = cache.path
-      Typingpool::Amazon.setup(:sandbox => true, :config => config)
-      hit = dummy_hit(config, url)
+    with_vcr(test_handle, config, {
+               :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+             }) do
       begin
-        yield(hit, config)
+        config.cache = cache.path
+        Typingpool::Amazon.setup(:sandbox => true, :config => config)
+        hit = dummy_hit(config, url)
+        begin
+          yield(hit, config)
+        ensure
+          hit.remove_from_amazon
+        end #begin
       ensure
-        hit.remove_from_amazon
+        cache.close
+        cache.unlink
       end #begin
-    ensure
-      cache.close
-      cache.unlink
-    end #begin
+    end #with_vcr do...
   end
 end #TestAmazon
