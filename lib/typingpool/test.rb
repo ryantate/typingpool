@@ -125,7 +125,7 @@ module Typingpool
            :config_filename => '.config',
            :subtitle => "Typingpool's test interview transcription",
            :title => "Typingpool's Test & Interview",
-           :chunks => '0:20',
+           :chunks => '0:22',
            :unusual => ['Hack Day', 'Sunnyvale', 'Chad D'],
            :voice => ['Ryan', 'Havi, hacker'],
           ]

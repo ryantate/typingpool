@@ -56,11 +56,7 @@ class TestTpAssign < Typingpool::Test::Script
           tp_assign_with_vcr(dir, vcr_names[0])
           results = nil
           refute_empty(results = Typingpool::Amazon::HIT.all_for_project(project.local.id))
-          if (Typingpool::Test.live || Typingpool::Test.record)
-            assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
-          else
-            assert_in_delta(project.local.subdir('audio','chunks').to_a.size, results.size, 1)
-          end
+          assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
           assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].full.assignments_duration.to_i)
           #These numbers will be apart due to clock differences and
           #timing vagaries of the assignment.
@@ -70,7 +66,7 @@ class TestTpAssign < Typingpool::Test::Script
           sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
           refute_empty(assignment_urls = sandbox_csv.map{|assignment| assignment['assignment_url'] })
           assert(assignment_html = fetch_url(assignment_urls.first).body)
-          assert_match(/\b20[\s-]+second\b/, assignment_html)
+          assert_match(/\b22[\s-]+second\b/, assignment_html)
           assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
       ensure
         tp_finish(dir) if (Typingpool::Test.record || Typingpool::Test.live)

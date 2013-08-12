@@ -37,7 +37,7 @@ class TestTest < Typingpool::Test::Script
     assert(project = temp_tp_dir_project(dir))
     assert(project.local)
     assert_equal(3, project.local.subdir('audio', 'originals').files.count)
-    assert_in_delta(6, project.local.subdir('audio', 'chunks').files.count, 1)
+    assert_equal(6, project.local.subdir('audio', 'chunks').files.count)
   end
 
   def assert_has_proper_assignment_csv(dir)
