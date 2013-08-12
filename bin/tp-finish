@@ -54,6 +54,7 @@ end
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 if options[:fixture]
   Typingpool::App.vcr_record(options[:fixture], config, {
+                               :preserve_exact_body_bytes => true,
                                :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
                              })
   at_exit{ Typingpool::App.vcr_stop }

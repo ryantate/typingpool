@@ -56,7 +56,11 @@ class TestTpAssign < Typingpool::Test::Script
           tp_assign_with_vcr(dir, vcr_names[0])
           results = nil
           refute_empty(results = Typingpool::Amazon::HIT.all_for_project(project.local.id))
-          assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
+          if (Typingpool::Test.live || Typingpool::Test.record)
+            assert_equal(project.local.subdir('audio','chunks').to_a.size, results.size)
+          else
+            assert_in_delta(project.local.subdir('audio','chunks').to_a.size, results.size, 1)
+          end
           assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].full.assignments_duration.to_i)
           #These numbers will be apart due to clock differences and
           #timing vagaries of the assignment.

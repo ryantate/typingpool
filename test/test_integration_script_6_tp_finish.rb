@@ -83,6 +83,7 @@ class TestTpFinish < Typingpool::Test::Script
       sandbox_csv=nil
       csv=nil
       with_vcr('tp_finish_4', config, {
+                 :preserve_exact_body_bytes => true,
                  :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
                }) do
         begin
