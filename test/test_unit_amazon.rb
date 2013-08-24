@@ -9,6 +9,7 @@ require 'uri'
 require 'cgi'
 require 'rturk'
 require 'ostruct'
+require 'timecop'
 
 class TestAmazon < Typingpool::Test
 
@@ -87,7 +88,9 @@ class TestAmazon < Typingpool::Test
 
   #fails to test external_question* methods
   def test_amazon_hit_full
-    with_dummy_typingpool_hit_or_skip('test_amazon_hit_full') do |hit, config|
+    handle = 'test_amazon_hit_full'
+    with_dummy_typingpool_hit_or_skip(handle) do |hit, config|
+      time_travel(handle)
       assert(full = hit.full)
       assert_instance_of(Typingpool::Amazon::HIT::Full, full)
       [:id, :type_id].each{|attr| assert_match(/\S/, full.send(attr)) }
@@ -100,7 +103,22 @@ class TestAmazon < Typingpool::Test
       assert_instance_of(Hash, full.annotation)
       assert_match(/^http/i, full.annotation[Typingpool::Amazon::HIT.url_at])
       assert_match(/\S/, full.annotation[Typingpool::Amazon::HIT.id_at])
+      time_reset
     end #with_dummy_hit_or_skip
+  end
+  
+  def time_travel(handle)
+    time_path = File.join(fixtures_dir, "#{handle}_time.txt")
+    if Typingpool::Test.record
+      File.write(time_path, Time.now.to_i.to_s)
+    elsif not(Typingpool::Test.live)
+      File.exists? time_path or raise Typingpool::Error, "No time file at '#{time_path}'"
+      Timecop.travel(Time.at(File.read(time_path).to_i))
+    end
+  end
+
+  def time_reset
+    Timecop.return
   end
 
   def test_amazon_hit_full_fromsearchhits
@@ -165,6 +183,8 @@ class TestAmazon < Typingpool::Test
     config = self.config
     skip_if_no_amazon_credentials(test_handle, config)
     config.assign.reward = '0.01'
+    config.assign.deadline = '1m'
+    config.assign.lifetime = '2m'
     cache = Tempfile.new('typingpool_cache')
     with_vcr(test_handle, config, {
                :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
