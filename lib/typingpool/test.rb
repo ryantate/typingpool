@@ -47,10 +47,12 @@ module Typingpool
     def with_vcr(fixture_name, config, opts={})
       if fixture = cleared_vcr_fixture_path_for(fixture_name)
         Typingpool::App.vcr_record(fixture, config, opts)
-        at_exit{ Typingpool::App.vcr_stop }
       end
-      yield
-      Typingpool::App.vcr_stop
+      begin
+        yield
+      ensure
+        Typingpool::App.vcr_stop
+      end
     end
 
     def config
