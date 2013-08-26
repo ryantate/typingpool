@@ -31,7 +31,8 @@ end.parse!
 config = Typingpool::App::CLI.config_from_arg(options[:config]) or abort "No config file at '#{options[:config]}'"
 
 if options[:fixture]
-  Typingpool::App.vcr_record(options[:fixture], config)
+  Typingpool::App.vcr_load(options[:fixture], config, true)
+  at_exit{ Typingpool::App.vcr_stop }
 end
 
 STDERR.puts "Collecting results from Amazon"
@@ -44,8 +45,4 @@ Typingpool::App.find_projects_waiting_for_hits(hits, config) do |project, hits|
   Typingpool::App.record_approved_hits_in_assignments_file(assignments_file, hits)
   out_file = Typingpool::App.create_transcript(project, assignments_file)
   STDERR.puts "Wrote #{out_file} to local folder #{project.name}."
-end
-
-if options[:fixture]
-  Typingpool::App.vcr_stop
 end

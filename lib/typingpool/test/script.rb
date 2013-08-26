@@ -141,9 +141,15 @@ module Typingpool
         Utility.system_quietly(*args)
       end
 
-      def add_vcr_arg(args, fixture_name)
-        fixture = cleared_vcr_fixture_path_for(fixture_name)
-        args.push(fixture) if fixture
+
+      def vcr_args(fixture_name)
+        args = []
+        if fixture = cleared_vcr_fixture_path_for(fixture_name)
+          args.push('--testfixture', fixture)
+          if Typingpool::Test.record
+            args.push('--testfixturerecord') 
+          end
+        end #if fixture = ...
         args
       end
 
@@ -155,22 +161,21 @@ module Typingpool
         call_script(path_to_tp_make, *args)
       end
 
-      def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3', devtest_mode_skipping_upload=false, fixture_path=nil)
+      def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3', devtest_mode_skipping_upload=false, *args)
         commands = [
                      '--config', config, 
                      '--chunks', project_default[:chunks],
                      *[:title, :subtitle].map{|param| ["--#{param}", project_default[param]] }.flatten,
                      *[:voice, :unusual].map{|param| project_default[param].map{|value| ["--#{param}", value] } }.flatten,
-                     *audio_files(audio_subdir).map{|path| ['--file', path]}.flatten
+                     *audio_files(audio_subdir).map{|path| ['--file', path]}.flatten, 
+                    *args
                    ]
         commands.push('--testnoupload', '--testkeepmergefile') if devtest_mode_skipping_upload
-        commands.push('--testfixture', fixture_path) if fixture_path
         call_tp_make(*commands)
       end
 
       def tp_make_with_vcr(dir, fixture_name, config_path=config_path(dir))
-        args = [dir, config_path, 'mp3', false]
-        tp_make(*add_vcr_arg(args, fixture_name))
+        tp_make(dir, config_path, 'mp3', false, *vcr_args(fixture_name))
       end
 
       def path_to_tp_finish
@@ -181,21 +186,18 @@ module Typingpool
         call_script(path_to_tp_finish, *args)
       end
 
-      def tp_finish(dir, config_path=config_path(dir), fixture_path=nil)
-        tp_finish_inside_sandbox(dir, config_path, fixture_path)
-        tp_finish_outside_sandbox(dir, config_path, fixture_path)
+      def tp_finish(dir, config_path=config_path(dir), *args)
+        tp_finish_inside_sandbox(dir, config_path, *args)
+        tp_finish_outside_sandbox(dir, config_path, *args)
       end
 
 
-      def tp_finish_inside_sandbox(dir, config_path=config_path(dir), fixture_path=nil)
-        tp_finish_outside_sandbox(dir, config_path, fixture_path, '--sandbox')
+      def tp_finish_inside_sandbox(dir, config_path=config_path(dir), *args)
+        tp_finish_outside_sandbox(dir, config_path, '--sandbox', *args)
       end
 
-      def tp_finish_outside_sandbox(dir, config_path=config_path(dir), fixture_path=nil, *extra_args)
-        args = [project_default[:title], '--config', config_path]
-        args.push('--testfixture', fixture_path) if fixture_path
-        args.push(*extra_args)
-        call_tp_finish(*args)
+      def tp_finish_outside_sandbox(dir, config_path=config_path(dir), *args)
+        call_tp_finish(project_default[:title], '--config', config_path, *args)
       end
 
       def path_to_tp_assign
@@ -217,25 +219,22 @@ module Typingpool
             ]
       end
 
-      def tp_assign(dir, config_path=config_path(dir), fixture_path=nil, test_time=nil)
-        args = [
-                project_default[:title],
-                assign_default[:template],
-                '--config', config_path,
-                *[:deadline, :lifetime, :approval].map{|param| ["--#{param}", assign_default[param]] }.flatten,
-                *[:qualify, :keyword].map{|param| assign_default[param].map{|value| ["--#{param}", value] } }.flatten
-               ]
-        args.push('--testfixture', fixture_path) if fixture_path
-        args.push('--testtime', test_time) if test_time
-        call_tp_assign(*args)
+      def tp_assign(dir, config_path=config_path(dir), *args)
+        call_tp_assign(
+                       project_default[:title],
+                       assign_default[:template],
+                       '--config', config_path,
+                       *[:deadline, :lifetime, :approval].map{|param| ["--#{param}", assign_default[param]] }.flatten,
+                       *[:qualify, :keyword].map{|param| assign_default[param].map{|value| ["--#{param}", value] } }.flatten,
+                       *args)
+               
       end
 
       def tp_assign_with_vcr(dir, fixture_name, config_path=config_path(dir))
         project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
-        args = [dir, config_path]
-        args = add_vcr_arg(args, fixture_name)
-        unless (Typingpool::Test.record || Typingpool::Test.live)
-          args.push(project_time(project).to_i.to_s)
+        args = [dir, config_path, *vcr_args(fixture_name)]
+        unless (Typingpool::Test.live || Typingpool::Test.record)
+          args.push('--testtime', project_time(project).to_i.to_s)
         end
         tp_assign(*args)
       end

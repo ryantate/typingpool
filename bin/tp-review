@@ -55,7 +55,8 @@ if options[:project]
 end
 
 if options[:fixture]
-  Typingpool::App.vcr_record(options[:fixture], config)
+  Typingpool::App.vcr_load(options[:fixture], config, true)
+  at_exit{ Typingpool::App.vcr_stop }
 end
 
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
@@ -169,8 +170,4 @@ end #catch :quitting do
 #`tp-review Foo | tp-finish`
 if options[:project]
   puts options[:project].local.path
-end
-
-if options[:fixture]
-  Typingpool::App.vcr_stop
 end

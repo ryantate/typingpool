@@ -56,8 +56,7 @@ class TestTpFinish < Typingpool::Test::Script
   end
 
   def script_with_vcr(dir, fixture_name, config_path=config_path(dir))
-    args = [dir, config_path]
-    yield(add_vcr_arg(args, fixture_name))
+    yield([dir, config_path, *vcr_args(fixture_name)])
   end
 
   def tp_finish_with_vcr(*args)

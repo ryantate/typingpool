@@ -46,7 +46,8 @@ module Typingpool
 
     def with_vcr(fixture_name, config, opts={})
       if fixture = cleared_vcr_fixture_path_for(fixture_name)
-        Typingpool::App.vcr_record(fixture, config, opts)
+        read_only = not(Typingpool::Test.record)
+        Typingpool::App.vcr_load(fixture, config, read_only, opts)
       end
       begin
         yield

@@ -80,7 +80,7 @@ OptionParser.new do |opts|
 
   opts.on('--testkeepmergefile',
           'For testing purposes only. Ignore.',
-          'Suppresses uploading.'
+          'Preserves merge file.'
           ) do
     options[:keepmerge] = true
   end
@@ -90,6 +90,13 @@ OptionParser.new do |opts|
           'A VCR fixture for running with mock data.') do |fixture|
     require 'typingpool/app/test'
     options[:fixture] = fixture
+  end
+
+  opts.on('--testfixturerecord',
+          'For testing purposes only. Ignore.',
+          'Allows recording of a new fixture',
+          'to --testfixture path.') do
+    options[:fixturerecord] = true
   end
 
   opts.on('--help',
@@ -181,10 +188,10 @@ else
 end #if project.local
 
 unless options[:noupload]
-  Typingpool::App.vcr_record(options[:fixture], config,  {
-                               :preserve_exact_body_bytes => true,
-                               :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
-                             }) if options[:fixture]
+  Typingpool::App.vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
+                             :preserve_exact_body_bytes => true,
+                             :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                           }) if options[:fixture]
   Typingpool::App.upload_audio_for_project(project) do |file, as|
     STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
   end

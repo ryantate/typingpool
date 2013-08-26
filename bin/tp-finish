@@ -9,31 +9,43 @@ OptionParser.new do |commands|
   options[:banner] =  "USAGE: #{File.basename($PROGRAM_NAME)} PROJECT | --dead\n"
   options[:banner] += "  [--sandbox]\n  [--config PATH]\n"
   commands.banner = options[:banner]
+
   commands.on('--dead',
               "Remove ALL expired and rejected results, regardless of project.",
               "Use in leiu of PROJECT.",
               "Removes only Mechanical Turk HITs, not remote audio files") do
     options[:dead] = true
   end
+
   commands.on('--sandbox',
               "Test in Mechanical Turk's sandbox") do
     options[:sandbox] = true
   end
+
   commands.on('--config=PATH',
               "Default: #{Typingpool::Config.default_file}.",
               "A config file") do |path|
     options[:config] = path
   end
-  commands.on('--help',
-              'Display this screen') do
-    STDERR.puts commands 
-    exit
-  end
+
   commands.on('--testfixture=PATH',
               'For testing purposes only. Ignore.',
               'A VCR fixture for running with mock data.') do |fixture|
     require 'typingpool/app/test'
     options[:fixture] = fixture
+  end
+
+  commands.on('--testfixturerecord',
+              'For testing purposes only. Ignore.',
+              'Allows recording of a new fixture',
+              'to --testfixture path.') do
+    options[:fixturerecord] = true
+  end
+
+  commands.on('--help',
+              'Display this screen') do
+    STDERR.puts commands 
+    exit
   end
 end.parse!
 options[:banner] += "\n#{Typingpool::App::CLI.help_arg_explanation}\n"
@@ -53,10 +65,10 @@ end
 
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 if options[:fixture]
-  Typingpool::App.vcr_record(options[:fixture], config, {
-                               :preserve_exact_body_bytes => true,
-                               :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
-                             })
+  Typingpool::App.vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
+                             :preserve_exact_body_bytes => true,
+                             :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                           })
   at_exit{ Typingpool::App.vcr_stop }
 end
 STDERR.puts "Removing from Amazon"

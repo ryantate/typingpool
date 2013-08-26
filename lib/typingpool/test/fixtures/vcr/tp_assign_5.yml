@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.00.651334b58e7fdc1347af38ced84f686d.YHXXXS.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.00.1eb9274927f6d40fa7134e9030cbeb6e.GNIOTI.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -14,9 +14,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:24 GMT
+      - Sun, 25 Aug 2013 23:26:59 GMT
       Authorization:
-      - AWS <AWS_KEY>:NSMjvvKk4gHvv9I+XwHauZzxpWg=
+      - AWS <AWS_KEY>:yl/EVTda5Ws6aiy8U9J2etttAPY=
       Accept:
       - '*/*'
   response:
@@ -25,21 +25,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - 9pkudRWbfp01+RJhps+lp9Pk7kF1EZHnftB1mt1WdzPVSJUlOluDcmv9qXY5y87w
+      - C1ZJ3wMJe8X7IbLT0re6KfC6eHx3dHLyLrvSM87CmPqCV+EJms5eN+JJ0AS/sgxX
       X-Amz-Request-Id:
-      - 399043E9F59CB2AC
+      - CDD3A045673A74C8
       Date:
-      - Mon, 12 Aug 2013 01:38:25 GMT
+      - Sun, 25 Aug 2013 23:27:00 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:24 GMT
+  recorded_at: Sun, 25 Aug 2013 23:26:59 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.22.651334b58e7fdc1347af38ced84f686d.PVHYDO.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.22.1eb9274927f6d40fa7134e9030cbeb6e.JFEYHR.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -51,9 +51,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:24 GMT
+      - Sun, 25 Aug 2013 23:26:59 GMT
       Authorization:
-      - AWS <AWS_KEY>:1pWFSF4EmZxDA4OurJfkWnN//Dw=
+      - AWS <AWS_KEY>:H32qT6oGEUqMcjj8Q6IzdV1cfZA=
       Accept:
       - '*/*'
   response:
@@ -62,21 +62,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - P4PRlu4Cz/34f6VNpwMmXKAatDBHFGMRJjvVdqB9/+gFgi4xZwqfFzVHfyF9P1s2
+      - 8g6BmEfewBdfxLCFePfSJfvLFS/gsqwtW+Yu9gISh+j/u9ed14Ri6nDUBq5mgET4
       X-Amz-Request-Id:
-      - 0C938613B020D16E
+      - 3027EC591B6E5A2D
       Date:
-      - Mon, 12 Aug 2013 01:38:26 GMT
+      - Sun, 25 Aug 2013 23:27:01 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:25 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:00 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.44.651334b58e7fdc1347af38ced84f686d.QQUDBC.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.44.1eb9274927f6d40fa7134e9030cbeb6e.OCXPUF.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -88,9 +88,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:25 GMT
+      - Sun, 25 Aug 2013 23:27:00 GMT
       Authorization:
-      - AWS <AWS_KEY>:Zuu+JOqUPbFeL9ufNYFu+WVgc24=
+      - AWS <AWS_KEY>:tm6VJRu//tjTUy50/J8uYgT/xDE=
       Accept:
       - '*/*'
   response:
@@ -99,21 +99,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - isQtSM+Oa2fnA9CSPrkCkgldUN3f3NGZfB/wzF0IOMoEcyZLiVN46A52HQu+3lxJ
+      - XFPhCvPoIINmd+pdB/vCW1nUX4acxlq3x60HS1dAj8UXZTXCyGt0PogEOGeu7Scl
       X-Amz-Request-Id:
-      - CAA6085A15D53106
+      - B14E97296ADE87A2
       Date:
-      - Mon, 12 Aug 2013 01:38:27 GMT
+      - Sun, 25 Aug 2013 23:27:01 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:26 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:00 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.06.651334b58e7fdc1347af38ced84f686d.JCSKRX.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.06.1eb9274927f6d40fa7134e9030cbeb6e.DTKWLX.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -125,9 +125,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:26 GMT
+      - Sun, 25 Aug 2013 23:27:00 GMT
       Authorization:
-      - AWS <AWS_KEY>:SuvfSSC72N0YlaGl2J6Ry+zugnk=
+      - AWS <AWS_KEY>:Sk8nD+famwnpv4wsQ9iztSFAPss=
       Accept:
       - '*/*'
   response:
@@ -136,21 +136,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - xskw+DoZsWHOO8jdDEtHIN3gMkYEt41IxTAu9ekVX7j6XzwJn5QEzaTJsoAtCAVD
+      - uXtp92A4TYxWIjlZhbIVv9K0DI855Temfal/78aDNQbSLkUCGy7ra9mvZ2xS1FHC
       X-Amz-Request-Id:
-      - CB4FC2FA54930E54
+      - 99F1D04E76BDA028
       Date:
-      - Mon, 12 Aug 2013 01:38:27 GMT
+      - Sun, 25 Aug 2013 23:27:01 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:26 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:01 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.28.651334b58e7fdc1347af38ced84f686d.FHDFOM.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.28.1eb9274927f6d40fa7134e9030cbeb6e.IGDCTH.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -162,9 +162,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:26 GMT
+      - Sun, 25 Aug 2013 23:27:01 GMT
       Authorization:
-      - AWS <AWS_KEY>:a+ma/gtVtfPj0dlwr+/utGrnzHQ=
+      - AWS <AWS_KEY>:THO7eX/b569z52mjzxMOQLKpdt0=
       Accept:
       - '*/*'
   response:
@@ -173,21 +173,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - QXREdrjUPVYLgKXdyyeteWJHB8oC8wJCsN7hh4gxp42f/2HgQTsxcpNh/ABdWuCy
+      - /vqOjAgj1ZOxl0otvLsnVWTKE7u0HK55jeaBTWgslKheZq8zYGjJ7Wk4slk2uIYb
       X-Amz-Request-Id:
-      - 94277AFCA054BCB3
+      - 6481A625F959C6E0
       Date:
-      - Mon, 12 Aug 2013 01:38:28 GMT
+      - Sun, 25 Aug 2013 23:27:02 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:27 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:01 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.50.651334b58e7fdc1347af38ced84f686d.CVBSLH.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.50.1eb9274927f6d40fa7134e9030cbeb6e.GISYFJ.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -199,9 +199,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:27 GMT
+      - Sun, 25 Aug 2013 23:27:01 GMT
       Authorization:
-      - AWS <AWS_KEY>:NYfYVx4VMQf1Yw0tgFJ9Nb6X9j8=
+      - AWS <AWS_KEY>:fAOWpAhf80pUZUbZIZegbXoSLMw=
       Accept:
       - '*/*'
   response:
@@ -210,21 +210,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - 5X8H5050lNB8PpVcTzLlyZAnJT1C6c1pD384euugG4j3AHkjanl+3djazU3BT/W+
+      - 9awnxRI8HeWrhrovodrZKLOTIFB+CBbIA9CroWk9wLuD5yieX6KbMgaAQAoSGzKH
       X-Amz-Request-Id:
-      - 5CEA8B298C5A1A01
+      - 10E30AAF037934D8
       Date:
-      - Mon, 12 Aug 2013 01:38:28 GMT
+      - Sun, 25 Aug 2013 23:27:02 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:27 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:01 GMT
 - request:
     method: put
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.00.651334b58e7fdc1347af38ced84f686d.HENXAU.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.00.1eb9274927f6d40fa7134e9030cbeb6e.UVFRQH.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -299,21 +299,21 @@ http_interactions:
         c2Vjb25kIE1QMzogPGEgdGFyZ2V0PSJfYmxhbmsiIGhyZWY9Imh0dHBzOi8v
         dHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3Mu
         Y29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2aWV3LjAwLjAw
-        LjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLkpMVVNTQS5tcDMi
+        LjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLlJSTEVNTS5tcDMi
         Pmh0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
         bWF6b25hd3MuY29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2
-        aWV3LjAwLjAwLjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLkpM
-        VVNTQS5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
+        aWV3LjAwLjAwLjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLlJS
+        TEVNTS5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
         dXJrLmNvbS9tdHVyay9leHRlcm5hbFN1Ym1pdCIgbWV0aG9kPSJQT1NUIiBp
         ZD0idHVya0Zvcm0iPgogIDxwPjxpbnB1dCBuYW1lPSJhc3NpZ25tZW50SWQi
         IHR5cGU9ImhpZGRlbiIgaWQ9ImFzc2lnbm1lbnRJZCI+PGlucHV0IG5hbWU9
         InR5cGluZ3Bvb2xfdXJsIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSJodHRwczov
         L3R5cGluZ3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdz
         LmNvbS9UeXBpbmdwb29sJ3MlMjBUZXN0JTIwJiUyMEludGVydmlldy4wMC4w
-        MC42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5KTFVTU0EubXAz
+        MC4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5SUkxFTU0ubXAz
         IiAvPjxpbnB1dCBuYW1lPSJ0eXBpbmdwb29sX3Byb2plY3RfaWQiIHR5cGU9
-        ImhpZGRlbiIgdmFsdWU9IjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2
-        ODZkIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
+        ImhpZGRlbiIgdmFsdWU9IjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2Jl
+        YjZlIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
         PHA+PHRleHRhcmVhIG5hbWU9InRyYW5zY3JpcHRpb24iIGNvbHM9IjgwIiBy
         b3dzPSIxNSI+PC90ZXh0YXJlYT48L3A+CiAgPHA+PGlucHV0IHR5cGU9InN1
         Ym1pdCIgdmFsdWU9IlN1Ym1pdCIgaWQ9ImRpc2FibGVfb25fcHJldmlldyI+
@@ -330,9 +330,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:28 GMT
+      - Sun, 25 Aug 2013 23:27:02 GMT
       Authorization:
-      - AWS <AWS_KEY>:F09qDTbQmn0nP9Ka1K/2imMOXtQ=
+      - AWS <AWS_KEY>:kdMXA5vnf76xsp+DnEi/4R4bdW4=
       Accept:
       - '*/*'
   response:
@@ -341,13 +341,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - wrLmAG/T+AWAe1PRl+LV0LT6dg0h/R0pSwhsLGb5W1+vSfx5Jq/Y+jeeSEnLBSmw
+      - +p/dUBcML2zEzrV2uaKRHJUBAdkgN52/DHda3TGxpm2Y8QCQBDbYP0O16z6QFO6c
       X-Amz-Request-Id:
-      - 5E23C36A871684EC
+      - C83CF16EAAFF0550
       Date:
-      - Mon, 12 Aug 2013 01:38:29 GMT
+      - Sun, 25 Aug 2013 23:27:03 GMT
       Etag:
-      - '"e640828b69a063ae004cf7470a359c80"'
+      - '"f0afeb06afee93620c78382d8bcedda8"'
       Content-Length:
       - '0'
       Server:
@@ -356,10 +356,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:28 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:02 GMT
 - request:
     method: put
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.22.651334b58e7fdc1347af38ced84f686d.NEMFIS.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.22.1eb9274927f6d40fa7134e9030cbeb6e.MSYXGN.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -434,21 +434,21 @@ http_interactions:
         c2Vjb25kIE1QMzogPGEgdGFyZ2V0PSJfYmxhbmsiIGhyZWY9Imh0dHBzOi8v
         dHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3Mu
         Y29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2aWV3LjAwLjIy
-        LjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLktMUkFYTi5tcDMi
+        LjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkFMTldSTS5tcDMi
         Pmh0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
         bWF6b25hd3MuY29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2
-        aWV3LjAwLjIyLjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLktM
-        UkFYTi5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
+        aWV3LjAwLjIyLjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkFM
+        TldSTS5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
         dXJrLmNvbS9tdHVyay9leHRlcm5hbFN1Ym1pdCIgbWV0aG9kPSJQT1NUIiBp
         ZD0idHVya0Zvcm0iPgogIDxwPjxpbnB1dCBuYW1lPSJhc3NpZ25tZW50SWQi
         IHR5cGU9ImhpZGRlbiIgaWQ9ImFzc2lnbm1lbnRJZCI+PGlucHV0IG5hbWU9
         InR5cGluZ3Bvb2xfdXJsIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSJodHRwczov
         L3R5cGluZ3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdz
         LmNvbS9UeXBpbmdwb29sJ3MlMjBUZXN0JTIwJiUyMEludGVydmlldy4wMC4y
-        Mi42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5LTFJBWE4ubXAz
+        Mi4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5BTE5XUk0ubXAz
         IiAvPjxpbnB1dCBuYW1lPSJ0eXBpbmdwb29sX3Byb2plY3RfaWQiIHR5cGU9
-        ImhpZGRlbiIgdmFsdWU9IjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2
-        ODZkIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
+        ImhpZGRlbiIgdmFsdWU9IjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2Jl
+        YjZlIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
         PHA+PHRleHRhcmVhIG5hbWU9InRyYW5zY3JpcHRpb24iIGNvbHM9IjgwIiBy
         b3dzPSIxNSI+PC90ZXh0YXJlYT48L3A+CiAgPHA+PGlucHV0IHR5cGU9InN1
         Ym1pdCIgdmFsdWU9IlN1Ym1pdCIgaWQ9ImRpc2FibGVfb25fcHJldmlldyI+
@@ -465,9 +465,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:28 GMT
+      - Sun, 25 Aug 2013 23:27:02 GMT
       Authorization:
-      - AWS <AWS_KEY>:/kh3ZKAKZl6phpgXYV0mlp+OXYc=
+      - AWS <AWS_KEY>:D0dL0rW2b3WOCDZhO6IPFf5/m/w=
       Accept:
       - '*/*'
   response:
@@ -476,13 +476,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - y2i/+T8P7PrQnQx4RZ+LvAJa2QN62XRvXQLtFUfXKP78ucEPegQzivLxJqiVz+sP
+      - +0/LZRqrkfahyP24BtaMkNEpOvsQVDTlgBVEfMmWT5EtzczSM7MUVr+tYAprOztO
       X-Amz-Request-Id:
-      - EE487A8EA903FE3D
+      - D37F3B6F2E4CBABA
       Date:
-      - Mon, 12 Aug 2013 01:38:30 GMT
+      - Sun, 25 Aug 2013 23:27:03 GMT
       Etag:
-      - '"de491a7687e426b2ce4645d682115182"'
+      - '"db6e2f1318fa08a496c0f1f3f049ee07"'
       Content-Length:
       - '0'
       Server:
@@ -491,10 +491,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:30 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:03 GMT
 - request:
     method: put
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.44.651334b58e7fdc1347af38ced84f686d.XIVDKJ.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.44.1eb9274927f6d40fa7134e9030cbeb6e.VJWXYC.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -569,21 +569,21 @@ http_interactions:
         c2Vjb25kIE1QMzogPGEgdGFyZ2V0PSJfYmxhbmsiIGhyZWY9Imh0dHBzOi8v
         dHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3Mu
         Y29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2aWV3LjAwLjQ0
-        LjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLkJUVU1BQy5tcDMi
+        LjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkJDVFZSSS5tcDMi
         Pmh0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
         bWF6b25hd3MuY29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2
-        aWV3LjAwLjQ0LjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLkJU
-        VU1BQy5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
+        aWV3LjAwLjQ0LjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkJD
+        VFZSSS5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
         dXJrLmNvbS9tdHVyay9leHRlcm5hbFN1Ym1pdCIgbWV0aG9kPSJQT1NUIiBp
         ZD0idHVya0Zvcm0iPgogIDxwPjxpbnB1dCBuYW1lPSJhc3NpZ25tZW50SWQi
         IHR5cGU9ImhpZGRlbiIgaWQ9ImFzc2lnbm1lbnRJZCI+PGlucHV0IG5hbWU9
         InR5cGluZ3Bvb2xfdXJsIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSJodHRwczov
         L3R5cGluZ3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdz
         LmNvbS9UeXBpbmdwb29sJ3MlMjBUZXN0JTIwJiUyMEludGVydmlldy4wMC40
-        NC42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5CVFVNQUMubXAz
+        NC4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5CQ1RWUkkubXAz
         IiAvPjxpbnB1dCBuYW1lPSJ0eXBpbmdwb29sX3Byb2plY3RfaWQiIHR5cGU9
-        ImhpZGRlbiIgdmFsdWU9IjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2
-        ODZkIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
+        ImhpZGRlbiIgdmFsdWU9IjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2Jl
+        YjZlIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
         PHA+PHRleHRhcmVhIG5hbWU9InRyYW5zY3JpcHRpb24iIGNvbHM9IjgwIiBy
         b3dzPSIxNSI+PC90ZXh0YXJlYT48L3A+CiAgPHA+PGlucHV0IHR5cGU9InN1
         Ym1pdCIgdmFsdWU9IlN1Ym1pdCIgaWQ9ImRpc2FibGVfb25fcHJldmlldyI+
@@ -600,9 +600,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:30 GMT
+      - Sun, 25 Aug 2013 23:27:03 GMT
       Authorization:
-      - AWS <AWS_KEY>:v1Vid10tTVwzaZzSUSDW/0gi2n8=
+      - AWS <AWS_KEY>:ZXAPMWgJ7cPl3kWXu8s7bOnfWVc=
       Accept:
       - '*/*'
   response:
@@ -611,13 +611,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - p+exw53dpKs06G8d7KILFarhmmYwP2G+tjGU7ZdDzoqbkY2IaZUX1OZikFiCZH/6
+      - Lr50VildUY0pact5N6Bfe91JzbU1M13t5ywO4H0me+hQBJ8iPvIXGWVX7/qzr3Kq
       X-Amz-Request-Id:
-      - 04E0E2322EFFBF44
+      - 2DAA34E984E1E904
       Date:
-      - Mon, 12 Aug 2013 01:38:31 GMT
+      - Sun, 25 Aug 2013 23:27:04 GMT
       Etag:
-      - '"8c94016b2f9a6e87171cdfc2b932d7bd"'
+      - '"5dc65518890c554293a6938f80295f68"'
       Content-Length:
       - '0'
       Server:
@@ -626,10 +626,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:31 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:03 GMT
 - request:
     method: put
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.06.651334b58e7fdc1347af38ced84f686d.ADMQKB.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.06.1eb9274927f6d40fa7134e9030cbeb6e.YNOKQN.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -704,21 +704,21 @@ http_interactions:
         c2Vjb25kIE1QMzogPGEgdGFyZ2V0PSJfYmxhbmsiIGhyZWY9Imh0dHBzOi8v
         dHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3Mu
         Y29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2aWV3LjAxLjA2
-        LjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLlFVVkFLSS5tcDMi
+        LjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLktVTVhRVi5tcDMi
         Pmh0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
         bWF6b25hd3MuY29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2
-        aWV3LjAxLjA2LjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLlFV
-        VkFLSS5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
+        aWV3LjAxLjA2LjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLktV
+        TVhRVi5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
         dXJrLmNvbS9tdHVyay9leHRlcm5hbFN1Ym1pdCIgbWV0aG9kPSJQT1NUIiBp
         ZD0idHVya0Zvcm0iPgogIDxwPjxpbnB1dCBuYW1lPSJhc3NpZ25tZW50SWQi
         IHR5cGU9ImhpZGRlbiIgaWQ9ImFzc2lnbm1lbnRJZCI+PGlucHV0IG5hbWU9
         InR5cGluZ3Bvb2xfdXJsIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSJodHRwczov
         L3R5cGluZ3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdz
         LmNvbS9UeXBpbmdwb29sJ3MlMjBUZXN0JTIwJiUyMEludGVydmlldy4wMS4w
-        Ni42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5RVVZBS0kubXAz
+        Ni4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5LVU1YUVYubXAz
         IiAvPjxpbnB1dCBuYW1lPSJ0eXBpbmdwb29sX3Byb2plY3RfaWQiIHR5cGU9
-        ImhpZGRlbiIgdmFsdWU9IjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2
-        ODZkIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
+        ImhpZGRlbiIgdmFsdWU9IjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2Jl
+        YjZlIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
         PHA+PHRleHRhcmVhIG5hbWU9InRyYW5zY3JpcHRpb24iIGNvbHM9IjgwIiBy
         b3dzPSIxNSI+PC90ZXh0YXJlYT48L3A+CiAgPHA+PGlucHV0IHR5cGU9InN1
         Ym1pdCIgdmFsdWU9IlN1Ym1pdCIgaWQ9ImRpc2FibGVfb25fcHJldmlldyI+
@@ -735,9 +735,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:31 GMT
+      - Sun, 25 Aug 2013 23:27:03 GMT
       Authorization:
-      - AWS <AWS_KEY>:vep3yuF4z19zgxdnYjaiM1zmnGk=
+      - AWS <AWS_KEY>:HSISbKK/SXHjGWmJddyrUvWzEzM=
       Accept:
       - '*/*'
   response:
@@ -746,13 +746,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - oYXOYKSw+InLeyE75OALlIw3eGVU+T7YdrQQGOrMXRjY5sMFWj40cW1AFzZjxHVN
+      - 5cFPynjd8tLyQ1noxR2Vl4GFurim3XFGicUlq1iKFlaAVzpWr2C5aHoChBRC6Mso
       X-Amz-Request-Id:
-      - FA8B125E7DF209BB
+      - 3A7460DE26E3AF28
       Date:
-      - Mon, 12 Aug 2013 01:38:32 GMT
+      - Sun, 25 Aug 2013 23:27:04 GMT
       Etag:
-      - '"80bd6a991d4f178cd43632c2f10d18dd"'
+      - '"a1eb1f0703817e435902f4c6fe0247ea"'
       Content-Length:
       - '0'
       Server:
@@ -761,10 +761,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:32 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:03 GMT
 - request:
     method: put
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.28.651334b58e7fdc1347af38ced84f686d.OJKGSL.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.28.1eb9274927f6d40fa7134e9030cbeb6e.KTHBFB.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -839,21 +839,21 @@ http_interactions:
         c2Vjb25kIE1QMzogPGEgdGFyZ2V0PSJfYmxhbmsiIGhyZWY9Imh0dHBzOi8v
         dHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3Mu
         Y29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2aWV3LjAxLjI4
-        LjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLktHS0NTRC5tcDMi
+        LjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkdBVUZDQy5tcDMi
         Pmh0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
         bWF6b25hd3MuY29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2
-        aWV3LjAxLjI4LjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLktH
-        S0NTRC5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
+        aWV3LjAxLjI4LjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkdB
+        VUZDQy5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
         dXJrLmNvbS9tdHVyay9leHRlcm5hbFN1Ym1pdCIgbWV0aG9kPSJQT1NUIiBp
         ZD0idHVya0Zvcm0iPgogIDxwPjxpbnB1dCBuYW1lPSJhc3NpZ25tZW50SWQi
         IHR5cGU9ImhpZGRlbiIgaWQ9ImFzc2lnbm1lbnRJZCI+PGlucHV0IG5hbWU9
         InR5cGluZ3Bvb2xfdXJsIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSJodHRwczov
         L3R5cGluZ3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdz
         LmNvbS9UeXBpbmdwb29sJ3MlMjBUZXN0JTIwJiUyMEludGVydmlldy4wMS4y
-        OC42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5LR0tDU0QubXAz
+        OC4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5HQVVGQ0MubXAz
         IiAvPjxpbnB1dCBuYW1lPSJ0eXBpbmdwb29sX3Byb2plY3RfaWQiIHR5cGU9
-        ImhpZGRlbiIgdmFsdWU9IjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2
-        ODZkIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
+        ImhpZGRlbiIgdmFsdWU9IjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2Jl
+        YjZlIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
         PHA+PHRleHRhcmVhIG5hbWU9InRyYW5zY3JpcHRpb24iIGNvbHM9IjgwIiBy
         b3dzPSIxNSI+PC90ZXh0YXJlYT48L3A+CiAgPHA+PGlucHV0IHR5cGU9InN1
         Ym1pdCIgdmFsdWU9IlN1Ym1pdCIgaWQ9ImRpc2FibGVfb25fcHJldmlldyI+
@@ -870,9 +870,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:32 GMT
+      - Sun, 25 Aug 2013 23:27:03 GMT
       Authorization:
-      - AWS <AWS_KEY>:RfnQQUMbj5I0KXE0tEgZHp7a63A=
+      - AWS <AWS_KEY>:3MTR3+xLyuDvpxFe/ZTTofKHEsY=
       Accept:
       - '*/*'
   response:
@@ -881,13 +881,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - ca9l/zD6nEEvMZKJ4Xb/82lKqlBfEU7PDHu8+Cohn09+90xi0J2qdWQG1zLZn2p0
+      - 9vKX6QFBIL4VnYjkVK7aiydJ6gsLch+ZO4bGOREOSRzrys7gdmeHyCu4GEq/QHR7
       X-Amz-Request-Id:
-      - 215E70DCB8287FDF
+      - 381EF05A7655B1DF
       Date:
-      - Mon, 12 Aug 2013 01:38:33 GMT
+      - Sun, 25 Aug 2013 23:27:05 GMT
       Etag:
-      - '"f82ef9177b6b16cf64caf3362d80960e"'
+      - '"5afba01b4f8e76f419ff3b7788d998f0"'
       Content-Length:
       - '0'
       Server:
@@ -896,10 +896,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:32 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:04 GMT
 - request:
     method: put
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.50.651334b58e7fdc1347af38ced84f686d.OIVJXH.html
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.50.1eb9274927f6d40fa7134e9030cbeb6e.OAQPCF.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -974,21 +974,21 @@ http_interactions:
         c2Vjb25kIE1QMzogPGEgdGFyZ2V0PSJfYmxhbmsiIGhyZWY9Imh0dHBzOi8v
         dHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3Mu
         Y29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2aWV3LjAxLjUw
-        LjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLklRRUFORC5tcDMi
+        LjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkdVQVRUUC5tcDMi
         Pmh0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
         bWF6b25hd3MuY29tL1R5cGluZ3Bvb2wncyUyMFRlc3QlMjAmJTIwSW50ZXJ2
-        aWV3LjAxLjUwLjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLklR
-        RUFORC5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
+        aWV3LjAxLjUwLjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkdV
+        QVRUUC5tcDM8L2E+PC9wPgo8Zm9ybSBhY3Rpb249Imh0dHBzOi8vd3d3Lm10
         dXJrLmNvbS9tdHVyay9leHRlcm5hbFN1Ym1pdCIgbWV0aG9kPSJQT1NUIiBp
         ZD0idHVya0Zvcm0iPgogIDxwPjxpbnB1dCBuYW1lPSJhc3NpZ25tZW50SWQi
         IHR5cGU9ImhpZGRlbiIgaWQ9ImFzc2lnbm1lbnRJZCI+PGlucHV0IG5hbWU9
         InR5cGluZ3Bvb2xfdXJsIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSJodHRwczov
         L3R5cGluZ3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdz
         LmNvbS9UeXBpbmdwb29sJ3MlMjBUZXN0JTIwJiUyMEludGVydmlldy4wMS41
-        MC42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5JUUVBTkQubXAz
+        MC4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5HVUFUVFAubXAz
         IiAvPjxpbnB1dCBuYW1lPSJ0eXBpbmdwb29sX3Byb2plY3RfaWQiIHR5cGU9
-        ImhpZGRlbiIgdmFsdWU9IjY1MTMzNGI1OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2
-        ODZkIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
+        ImhpZGRlbiIgdmFsdWU9IjFlYjkyNzQ5MjdmNmQ0MGZhNzEzNGU5MDMwY2Jl
+        YjZlIiAvPkVudGVyIHlvdXIgdHJhbnNjcmlwdGlvbiBiZWxvdzo8L3A+CiAg
         PHA+PHRleHRhcmVhIG5hbWU9InRyYW5zY3JpcHRpb24iIGNvbHM9IjgwIiBy
         b3dzPSIxNSI+PC90ZXh0YXJlYT48L3A+CiAgPHA+PGlucHV0IHR5cGU9InN1
         Ym1pdCIgdmFsdWU9IlN1Ym1pdCIgaWQ9ImRpc2FibGVfb25fcHJldmlldyI+
@@ -1005,9 +1005,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Mon, 12 Aug 2013 01:38:32 GMT
+      - Sun, 25 Aug 2013 23:27:04 GMT
       Authorization:
-      - AWS <AWS_KEY>:4tgYKoaWkLr6ucVdmwBVirbIMZo=
+      - AWS <AWS_KEY>:0GiG0kSTJT76YOJHquzEWJXkcgU=
       Accept:
       - '*/*'
   response:
@@ -1016,13 +1016,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - a3gTvdtf85XSKTNnybQ8Zasi3fcwHThoP/xQDmu7FF/5Y1XOk/qGGCoBWAWIcny2
+      - h+20Zwz44nInyIPqKFkO0SIVJWR+E0mg68TEqoKT5SmP75LCr+QbDSl4YzEjIt1b
       X-Amz-Request-Id:
-      - B325699D32E6CE91
+      - EE5E273C321B6107
       Date:
-      - Mon, 12 Aug 2013 01:38:34 GMT
+      - Sun, 25 Aug 2013 23:27:05 GMT
       Etag:
-      - '"d6ed1b3ef346d7b216a6b49041bc0adc"'
+      - '"d315ff2430813b0707132ef0e55f5245"'
       Content-Length:
       - '0'
       Server:
@@ -1031,7 +1031,7 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:33 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:04 GMT
 - request:
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
@@ -1052,632 +1052,20 @@ http_interactions:
         eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
         ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
         NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
-        ZXcuMDAuMDAuNjUxMzM0YjU4ZTdmZGMxMzQ3YWYzOGNlZDg0ZjY4NmQuSEVO
-        WEFVLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
+        ZXcuMDAuMDAuMWViOTI3NDkyN2Y2ZDQwZmE3MTM0ZTkwMzBjYmViNmUuVVZG
+        UlFILmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
         ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
         bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
         dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
         MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
         bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
-        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAwLjAwLjY1MTMzNGI1OGU3
-        ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLkpMVVNTQS5tcDMlMjZhbXAlM0J0eXBp
-        bmdwb29sX3Byb2plY3RfaWQlM0Q2NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2Vk
-        ODRmNjg2ZCZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
+        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAwLjAwLjFlYjkyNzQ5Mjdm
+        NmQ0MGZhNzEzNGU5MDMwY2JlYjZlLlJSTEVNTS5tcDMlMjZhbXAlM0J0eXBp
+        bmdwb29sX3Byb2plY3RfaWQlM0QxZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAz
+        MGNiZWI2ZSZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
         aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
-        bWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0EzM1omVmVyc2lvbj0yMDEy
-        LTAzLTI1JlNpZ25hdHVyZT1wZjBzSWYzJTJCek5qdE8yWTNEeU55ZFRmJTJC
-        S21zJTNE
-    headers:
-      Accept:
-      - '*/*; q=0.5, application/xml'
-      Accept-Encoding:
-      - gzip, deflate
-      Content-Length:
-      - '1277'
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - text/xml
-      Transfer-Encoding:
-      - chunked
-      Date:
-      - Mon, 12 Aug 2013 01:38:34 GMT
-      Server:
-      - MTurk
-    body:
-      encoding: UTF-8
-      base64_string: |
-        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
-        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPmM2NDIxMTAzLWY2MDktNGFkMS1h
-        ZTE3LTA1ODlmNDZlNDAxODwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
-        dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
-        ZXN0PjxISVRJZD4yNUwzRkRFWTVDT1dFNFgzQkZaQ1VGTENHMEtUMlI8L0hJ
-        VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
-        PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
-    http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:34 GMT
-- request:
-    method: post
-    uri: https://mechanicalturk.sandbox.amazonaws.com/
-    body:
-      encoding: UTF-8
-      base64_string: |
-        SElUSWQ9MjVMM0ZERVk1Q09XRTRYM0JGWkNVRkxDRzBLVDJSJlJlc3BvbnNl
-        R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
-        JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
-        c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
-        TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
-        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0EzNFomVmVyc2lv
-        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT1XdzQyTDR5M29PRE9jZ2plWmg5Q2tm
-        QzQ1dlElM0Q=
-    headers:
-      Accept:
-      - '*/*; q=0.5, application/xml'
-      Accept-Encoding:
-      - gzip, deflate
-      Content-Length:
-      - '334'
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - text/xml
-      Transfer-Encoding:
-      - chunked
-      Date:
-      - Mon, 12 Aug 2013 01:38:35 GMT
-      Server:
-      - MTurk
-    body:
-      encoding: UTF-8
-      base64_string: |
-        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
-        aW9uUmVxdWVzdD48UmVxdWVzdElkPmExMDM3OTYyLWI2ODQtNDdjMi05ZDBi
-        LTZhOWU2ZDk4OGM4MzwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
-        SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
-        PjxISVRJZD4yNUwzRkRFWTVDT1dFNFgzQkZaQ1VGTENHMEtUMlI8L0hJVElk
-        PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
-        SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
-        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0xMlQw
-        MTozODozNFo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
-        b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
-        IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
-        Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
-        MjIgc2Vjb25kIHBhcnQuPC9EZXNjcmlwdGlvbj48UXVlc3Rpb24+Jmx0O0V4
-        dGVybmFsUXVlc3Rpb24geG1sbnM9Imh0dHA6Ly9tZWNoYW5pY2FsdHVyay5h
-        bWF6b25hd3MuY29tL0FXU01lY2hhbmljYWxUdXJrRGF0YVNjaGVtYXMvMjAw
-        Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
-        bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
-        LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
-        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMC4wMC42NTEzMzRiNThl
-        N2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5IRU5YQVUuaHRtbCZsdDsvRXh0ZXJu
-        YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
-        SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
-        b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
-        cmRzPjxISVRTdGF0dXM+QXNzaWduYWJsZTwvSElUU3RhdHVzPjxNYXhBc3Np
-        Z25tZW50cz4xPC9NYXhBc3NpZ25tZW50cz48UmV3YXJkPjxBbW91bnQ+MC4w
-        MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
-        cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
-        QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
-        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMTJUMTE6Mzg6
-        MzRaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
-        MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
-        QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
-        Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
-        RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
-        dy4wMC4wMC42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5KTFVT
-        U0EubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTY1MTMzNGI1
-        OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
-        PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
-        cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
-        Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
-        MTwvTnVtYmVyT2ZBc3NpZ25tZW50c0F2YWlsYWJsZT48TnVtYmVyT2ZBc3Np
-        Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
-        dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
-    http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:35 GMT
-- request:
-    method: post
-    uri: https://mechanicalturk.sandbox.amazonaws.com/
-    body:
-      encoding: UTF-8
-      base64_string: |
-        VGl0bGU9VHJhbnNjcmliZStNUDMrb2YrMjIrc2Vjb25kK3Bob25lK2NhbGwm
-        RGVzY3JpcHRpb249SStzcGxpdCt1cCthK3RlbGVwaG9uZStjb252ZXJzYXRp
-        b24raW50bysyMitzZWNvbmQrcGFydHMlMkMreW91K3RyYW5zY3JpYmUrdGhl
-        K2F1ZGlvK2ZvcitvbmUrMjIrc2Vjb25kK3BhcnQuJkFzc2lnbm1lbnREdXJh
-        dGlvbkluU2Vjb25kcz0xODAwMCZSZXdhcmQuQW1vdW50PTAuMDImUmV3YXJk
-        LkN1cnJlbmN5Q29kZT1VU0QmS2V5d29yZHM9dGVzdCUyQyttcDMlMkMrdHlw
-        aW5ncG9vbHRlc3QmQXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM9MzYwMDAm
-        TWF4QXNzaWdubWVudHM9MSZRdWVzdGlvbj0lM0NFeHRlcm5hbFF1ZXN0aW9u
-        K3htbG5zJTNEJTIyaHR0cCUzQSUyRiUyRm1lY2hhbmljYWx0dXJrLmFtYXpv
-        bmF3cy5jb20lMkZBV1NNZWNoYW5pY2FsVHVya0RhdGFTY2hlbWFzJTJGMjAw
-        Ni0wNy0xNCUyRkV4dGVybmFsUXVlc3Rpb24ueHNkJTIyJTNFJTBBKyslM0NF
-        eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
-        ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
-        NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
-        ZXcuMDAuMjIuNjUxMzM0YjU4ZTdmZGMxMzQ3YWYzOGNlZDg0ZjY4NmQuTkVN
-        RklTLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
-        ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
-        bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
-        dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
-        MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
-        bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
-        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAwLjIyLjY1MTMzNGI1OGU3
-        ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLktMUkFYTi5tcDMlMjZhbXAlM0J0eXBp
-        bmdwb29sX3Byb2plY3RfaWQlM0Q2NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2Vk
-        ODRmNjg2ZCZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
-        aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
-        bWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0EzNVomVmVyc2lvbj0yMDEy
-        LTAzLTI1JlNpZ25hdHVyZT1pdHZ4b2s4WkxLJTJCMVl2cDF3aUtJWXk4YVhr
-        QSUzRA==
-    headers:
-      Accept:
-      - '*/*; q=0.5, application/xml'
-      Accept-Encoding:
-      - gzip, deflate
-      Content-Length:
-      - '1275'
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - text/xml
-      Transfer-Encoding:
-      - chunked
-      Date:
-      - Mon, 12 Aug 2013 01:38:35 GMT
-      Server:
-      - MTurk
-    body:
-      encoding: UTF-8
-      base64_string: |
-        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
-        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPmIxZjU4Nzc2LTg2NDUtNDI0YS1i
-        MjJjLWJlMmJjOGVkNzA3ZDwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
-        dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
-        ZXN0PjxISVRJZD4yUEFWN1dHS0NDVkxaTVRNRkZESERQUTRNRUtUMzI8L0hJ
-        VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
-        PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
-    http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:35 GMT
-- request:
-    method: post
-    uri: https://mechanicalturk.sandbox.amazonaws.com/
-    body:
-      encoding: UTF-8
-      base64_string: |
-        SElUSWQ9MlBBVjdXR0tDQ1ZMWk1UTUZGREhEUFE0TUVLVDMyJlJlc3BvbnNl
-        R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
-        JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
-        c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
-        TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
-        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0EzNVomVmVyc2lv
-        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT1xZVBMTzh4RnhTaXhKdWZPRXhaN2xR
-        em92cG8lM0Q=
-    headers:
-      Accept:
-      - '*/*; q=0.5, application/xml'
-      Accept-Encoding:
-      - gzip, deflate
-      Content-Length:
-      - '334'
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - text/xml
-      Transfer-Encoding:
-      - chunked
-      Date:
-      - Mon, 12 Aug 2013 01:38:36 GMT
-      Server:
-      - MTurk
-    body:
-      encoding: UTF-8
-      base64_string: |
-        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
-        aW9uUmVxdWVzdD48UmVxdWVzdElkPmY0ZTJkMjQyLTNkMTktNDU0Mi1hZmVi
-        LWI0ZjQ3MDgyZTQ3YjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
-        SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
-        PjxISVRJZD4yUEFWN1dHS0NDVkxaTVRNRkZESERQUTRNRUtUMzI8L0hJVElk
-        PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
-        SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
-        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0xMlQw
-        MTozODozNVo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
-        b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
-        IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
-        Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
-        MjIgc2Vjb25kIHBhcnQuPC9EZXNjcmlwdGlvbj48UXVlc3Rpb24+Jmx0O0V4
-        dGVybmFsUXVlc3Rpb24geG1sbnM9Imh0dHA6Ly9tZWNoYW5pY2FsdHVyay5h
-        bWF6b25hd3MuY29tL0FXU01lY2hhbmljYWxUdXJrRGF0YVNjaGVtYXMvMjAw
-        Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
-        bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
-        LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
-        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMC4yMi42NTEzMzRiNThl
-        N2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5ORU1GSVMuaHRtbCZsdDsvRXh0ZXJu
-        YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
-        SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
-        b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
-        cmRzPjxISVRTdGF0dXM+QXNzaWduYWJsZTwvSElUU3RhdHVzPjxNYXhBc3Np
-        Z25tZW50cz4xPC9NYXhBc3NpZ25tZW50cz48UmV3YXJkPjxBbW91bnQ+MC4w
-        MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
-        cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
-        QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
-        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMTJUMTE6Mzg6
-        MzVaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
-        MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
-        QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
-        Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
-        RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
-        dy4wMC4yMi42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5LTFJB
-        WE4ubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTY1MTMzNGI1
-        OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
-        PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
-        cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
-        Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
-        MTwvTnVtYmVyT2ZBc3NpZ25tZW50c0F2YWlsYWJsZT48TnVtYmVyT2ZBc3Np
-        Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
-        dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
-    http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:36 GMT
-- request:
-    method: post
-    uri: https://mechanicalturk.sandbox.amazonaws.com/
-    body:
-      encoding: UTF-8
-      base64_string: |
-        VGl0bGU9VHJhbnNjcmliZStNUDMrb2YrMjIrc2Vjb25kK3Bob25lK2NhbGwm
-        RGVzY3JpcHRpb249SStzcGxpdCt1cCthK3RlbGVwaG9uZStjb252ZXJzYXRp
-        b24raW50bysyMitzZWNvbmQrcGFydHMlMkMreW91K3RyYW5zY3JpYmUrdGhl
-        K2F1ZGlvK2ZvcitvbmUrMjIrc2Vjb25kK3BhcnQuJkFzc2lnbm1lbnREdXJh
-        dGlvbkluU2Vjb25kcz0xODAwMCZSZXdhcmQuQW1vdW50PTAuMDImUmV3YXJk
-        LkN1cnJlbmN5Q29kZT1VU0QmS2V5d29yZHM9dGVzdCUyQyttcDMlMkMrdHlw
-        aW5ncG9vbHRlc3QmQXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM9MzYwMDAm
-        TWF4QXNzaWdubWVudHM9MSZRdWVzdGlvbj0lM0NFeHRlcm5hbFF1ZXN0aW9u
-        K3htbG5zJTNEJTIyaHR0cCUzQSUyRiUyRm1lY2hhbmljYWx0dXJrLmFtYXpv
-        bmF3cy5jb20lMkZBV1NNZWNoYW5pY2FsVHVya0RhdGFTY2hlbWFzJTJGMjAw
-        Ni0wNy0xNCUyRkV4dGVybmFsUXVlc3Rpb24ueHNkJTIyJTNFJTBBKyslM0NF
-        eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
-        ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
-        NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
-        ZXcuMDAuNDQuNjUxMzM0YjU4ZTdmZGMxMzQ3YWYzOGNlZDg0ZjY4NmQuWElW
-        REtKLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
-        ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
-        bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
-        dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
-        MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
-        bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
-        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAwLjQ0LjY1MTMzNGI1OGU3
-        ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLkJUVU1BQy5tcDMlMjZhbXAlM0J0eXBp
-        bmdwb29sX3Byb2plY3RfaWQlM0Q2NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2Vk
-        ODRmNjg2ZCZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
-        aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
-        bWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0EzNlomVmVyc2lvbj0yMDEy
-        LTAzLTI1JlNpZ25hdHVyZT01ZGxvdnFSJTJGMmliQjRMakh2RHJkaHVLWWNi
-        cyUzRA==
-    headers:
-      Accept:
-      - '*/*; q=0.5, application/xml'
-      Accept-Encoding:
-      - gzip, deflate
-      Content-Length:
-      - '1275'
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - text/xml
-      Transfer-Encoding:
-      - chunked
-      Date:
-      - Mon, 12 Aug 2013 01:38:36 GMT
-      Server:
-      - MTurk
-    body:
-      encoding: UTF-8
-      base64_string: |
-        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
-        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPjQ1NjJlMTgwLTA5OTQtNGQ5ZC1h
-        NWVjLTg2ZjMzZDMzNDU5ZTwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
-        dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
-        ZXN0PjxISVRJZD4yUU5TVzZORzFGUzMxSDRWTkE2MUlaU1pWN1VYSjE8L0hJ
-        VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
-        PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
-    http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:37 GMT
-- request:
-    method: post
-    uri: https://mechanicalturk.sandbox.amazonaws.com/
-    body:
-      encoding: UTF-8
-      base64_string: |
-        SElUSWQ9MlFOU1c2TkcxRlMzMUg0Vk5BNjFJWlNaVjdVWEoxJlJlc3BvbnNl
-        R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
-        JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
-        c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
-        TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
-        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0EzN1omVmVyc2lv
-        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT15cCUyRnNkZ3Qxc2pTOSUyQjkzSDlI
-        JTJCemI1d0JoYmclM0Q=
-    headers:
-      Accept:
-      - '*/*; q=0.5, application/xml'
-      Accept-Encoding:
-      - gzip, deflate
-      Content-Length:
-      - '340'
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - text/xml
-      Transfer-Encoding:
-      - chunked
-      Date:
-      - Mon, 12 Aug 2013 01:38:37 GMT
-      Server:
-      - MTurk
-    body:
-      encoding: UTF-8
-      base64_string: |
-        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
-        aW9uUmVxdWVzdD48UmVxdWVzdElkPmUyYWEzOWMxLTM4MDMtNDRjYi1iODc3
-        LWJkMjA0MTY2ZTlkNjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
-        SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
-        PjxISVRJZD4yUU5TVzZORzFGUzMxSDRWTkE2MUlaU1pWN1VYSjE8L0hJVElk
-        PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
-        SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
-        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0xMlQw
-        MTozODozN1o8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
-        b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
-        IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
-        Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
-        MjIgc2Vjb25kIHBhcnQuPC9EZXNjcmlwdGlvbj48UXVlc3Rpb24+Jmx0O0V4
-        dGVybmFsUXVlc3Rpb24geG1sbnM9Imh0dHA6Ly9tZWNoYW5pY2FsdHVyay5h
-        bWF6b25hd3MuY29tL0FXU01lY2hhbmljYWxUdXJrRGF0YVNjaGVtYXMvMjAw
-        Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
-        bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
-        LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
-        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMC40NC42NTEzMzRiNThl
-        N2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5YSVZES0ouaHRtbCZsdDsvRXh0ZXJu
-        YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
-        SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
-        b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
-        cmRzPjxISVRTdGF0dXM+QXNzaWduYWJsZTwvSElUU3RhdHVzPjxNYXhBc3Np
-        Z25tZW50cz4xPC9NYXhBc3NpZ25tZW50cz48UmV3YXJkPjxBbW91bnQ+MC4w
-        MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
-        cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
-        QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
-        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMTJUMTE6Mzg6
-        MzdaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
-        MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
-        QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
-        Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
-        RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
-        dy4wMC40NC42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5CVFVN
-        QUMubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTY1MTMzNGI1
-        OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
-        PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
-        cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
-        Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
-        MTwvTnVtYmVyT2ZBc3NpZ25tZW50c0F2YWlsYWJsZT48TnVtYmVyT2ZBc3Np
-        Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
-        dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
-    http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:37 GMT
-- request:
-    method: post
-    uri: https://mechanicalturk.sandbox.amazonaws.com/
-    body:
-      encoding: UTF-8
-      base64_string: |
-        VGl0bGU9VHJhbnNjcmliZStNUDMrb2YrMjIrc2Vjb25kK3Bob25lK2NhbGwm
-        RGVzY3JpcHRpb249SStzcGxpdCt1cCthK3RlbGVwaG9uZStjb252ZXJzYXRp
-        b24raW50bysyMitzZWNvbmQrcGFydHMlMkMreW91K3RyYW5zY3JpYmUrdGhl
-        K2F1ZGlvK2ZvcitvbmUrMjIrc2Vjb25kK3BhcnQuJkFzc2lnbm1lbnREdXJh
-        dGlvbkluU2Vjb25kcz0xODAwMCZSZXdhcmQuQW1vdW50PTAuMDImUmV3YXJk
-        LkN1cnJlbmN5Q29kZT1VU0QmS2V5d29yZHM9dGVzdCUyQyttcDMlMkMrdHlw
-        aW5ncG9vbHRlc3QmQXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM9MzYwMDAm
-        TWF4QXNzaWdubWVudHM9MSZRdWVzdGlvbj0lM0NFeHRlcm5hbFF1ZXN0aW9u
-        K3htbG5zJTNEJTIyaHR0cCUzQSUyRiUyRm1lY2hhbmljYWx0dXJrLmFtYXpv
-        bmF3cy5jb20lMkZBV1NNZWNoYW5pY2FsVHVya0RhdGFTY2hlbWFzJTJGMjAw
-        Ni0wNy0xNCUyRkV4dGVybmFsUXVlc3Rpb24ueHNkJTIyJTNFJTBBKyslM0NF
-        eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
-        ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
-        NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
-        ZXcuMDEuMDYuNjUxMzM0YjU4ZTdmZGMxMzQ3YWYzOGNlZDg0ZjY4NmQuQURN
-        UUtCLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
-        ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
-        bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
-        dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
-        MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
-        bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
-        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAxLjA2LjY1MTMzNGI1OGU3
-        ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLlFVVkFLSS5tcDMlMjZhbXAlM0J0eXBp
-        bmdwb29sX3Byb2plY3RfaWQlM0Q2NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2Vk
-        ODRmNjg2ZCZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
-        aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
-        bWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0EzN1omVmVyc2lvbj0yMDEy
-        LTAzLTI1JlNpZ25hdHVyZT10YmtiNiUyQmEzNVlibmdvZVhZbE91NkZ3VFMl
-        MkI4JTNE
-    headers:
-      Accept:
-      - '*/*; q=0.5, application/xml'
-      Accept-Encoding:
-      - gzip, deflate
-      Content-Length:
-      - '1277'
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - text/xml
-      Transfer-Encoding:
-      - chunked
-      Date:
-      - Mon, 12 Aug 2013 01:38:38 GMT
-      Server:
-      - MTurk
-    body:
-      encoding: UTF-8
-      base64_string: |
-        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
-        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPjY1NTFlMDcwLWJlZjYtNGNlZC05
-        YzdiLTIzYWU2ZjY5MmJmODwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
-        dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
-        ZXN0PjxISVRJZD4yQ1BXR0tDQ1ZMTDNRVEtGWVQxUFQ0QzlYVlJWNUE8L0hJ
-        VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
-        PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
-    http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:38 GMT
-- request:
-    method: post
-    uri: https://mechanicalturk.sandbox.amazonaws.com/
-    body:
-      encoding: UTF-8
-      base64_string: |
-        SElUSWQ9MkNQV0dLQ0NWTEwzUVRLRllUMVBUNEM5WFZSVjVBJlJlc3BvbnNl
-        R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
-        JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
-        c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
-        TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
-        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0EzOFomVmVyc2lv
-        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT1nY2c4RDhZekN6aCUyQkRKbEolMkZZ
-        Tm9SM3k4ZUtVJTNE
-    headers:
-      Accept:
-      - '*/*; q=0.5, application/xml'
-      Accept-Encoding:
-      - gzip, deflate
-      Content-Length:
-      - '338'
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - text/xml
-      Transfer-Encoding:
-      - chunked
-      Date:
-      - Mon, 12 Aug 2013 01:38:38 GMT
-      Server:
-      - MTurk
-    body:
-      encoding: UTF-8
-      base64_string: |
-        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
-        aW9uUmVxdWVzdD48UmVxdWVzdElkPjM4ZTc1ZjI4LTRlYjktNGJkMS05YzQy
-        LTdkMzk0Njc0Y2ZlMjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
-        SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
-        PjxISVRJZD4yQ1BXR0tDQ1ZMTDNRVEtGWVQxUFQ0QzlYVlJWNUE8L0hJVElk
-        PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
-        SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
-        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0xMlQw
-        MTozODozOFo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
-        b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
-        IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
-        Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
-        MjIgc2Vjb25kIHBhcnQuPC9EZXNjcmlwdGlvbj48UXVlc3Rpb24+Jmx0O0V4
-        dGVybmFsUXVlc3Rpb24geG1sbnM9Imh0dHA6Ly9tZWNoYW5pY2FsdHVyay5h
-        bWF6b25hd3MuY29tL0FXU01lY2hhbmljYWxUdXJrRGF0YVNjaGVtYXMvMjAw
-        Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
-        bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
-        LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
-        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMS4wNi42NTEzMzRiNThl
-        N2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5BRE1RS0IuaHRtbCZsdDsvRXh0ZXJu
-        YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
-        SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
-        b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
-        cmRzPjxISVRTdGF0dXM+QXNzaWduYWJsZTwvSElUU3RhdHVzPjxNYXhBc3Np
-        Z25tZW50cz4xPC9NYXhBc3NpZ25tZW50cz48UmV3YXJkPjxBbW91bnQ+MC4w
-        MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
-        cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
-        QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
-        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMTJUMTE6Mzg6
-        MzhaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
-        MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
-        QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
-        Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
-        RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
-        dy4wMS4wNi42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5RVVZB
-        S0kubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTY1MTMzNGI1
-        OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
-        PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
-        cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
-        Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
-        MTwvTnVtYmVyT2ZBc3NpZ25tZW50c0F2YWlsYWJsZT48TnVtYmVyT2ZBc3Np
-        Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
-        dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
-    http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:39 GMT
-- request:
-    method: post
-    uri: https://mechanicalturk.sandbox.amazonaws.com/
-    body:
-      encoding: UTF-8
-      base64_string: |
-        VGl0bGU9VHJhbnNjcmliZStNUDMrb2YrMjIrc2Vjb25kK3Bob25lK2NhbGwm
-        RGVzY3JpcHRpb249SStzcGxpdCt1cCthK3RlbGVwaG9uZStjb252ZXJzYXRp
-        b24raW50bysyMitzZWNvbmQrcGFydHMlMkMreW91K3RyYW5zY3JpYmUrdGhl
-        K2F1ZGlvK2ZvcitvbmUrMjIrc2Vjb25kK3BhcnQuJkFzc2lnbm1lbnREdXJh
-        dGlvbkluU2Vjb25kcz0xODAwMCZSZXdhcmQuQW1vdW50PTAuMDImUmV3YXJk
-        LkN1cnJlbmN5Q29kZT1VU0QmS2V5d29yZHM9dGVzdCUyQyttcDMlMkMrdHlw
-        aW5ncG9vbHRlc3QmQXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM9MzYwMDAm
-        TWF4QXNzaWdubWVudHM9MSZRdWVzdGlvbj0lM0NFeHRlcm5hbFF1ZXN0aW9u
-        K3htbG5zJTNEJTIyaHR0cCUzQSUyRiUyRm1lY2hhbmljYWx0dXJrLmFtYXpv
-        bmF3cy5jb20lMkZBV1NNZWNoYW5pY2FsVHVya0RhdGFTY2hlbWFzJTJGMjAw
-        Ni0wNy0xNCUyRkV4dGVybmFsUXVlc3Rpb24ueHNkJTIyJTNFJTBBKyslM0NF
-        eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
-        ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
-        NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
-        ZXcuMDEuMjguNjUxMzM0YjU4ZTdmZGMxMzQ3YWYzOGNlZDg0ZjY4NmQuT0pL
-        R1NMLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
-        ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
-        bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
-        dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
-        MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
-        bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
-        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAxLjI4LjY1MTMzNGI1OGU3
-        ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLktHS0NTRC5tcDMlMjZhbXAlM0J0eXBp
-        bmdwb29sX3Byb2plY3RfaWQlM0Q2NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2Vk
-        ODRmNjg2ZCZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
-        aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
-        bWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0EzOVomVmVyc2lvbj0yMDEy
-        LTAzLTI1JlNpZ25hdHVyZT1wWmtDdFRqek1RSkJ0ckFpRHIyN1p0bnMlMkZZ
+        bWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0EwNFomVmVyc2lvbj0yMDEy
+        LTAzLTI1JlNpZ25hdHVyZT1URnduTEJRYk54cDNWQUlhSGl4WiUyRlZHT0Vm
         OCUzRA==
     headers:
       Accept:
@@ -1698,35 +1086,35 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Mon, 12 Aug 2013 01:38:39 GMT
+      - Sun, 25 Aug 2013 23:27:05 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       base64_string: |
         PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
-        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPjUyMTNjOGRhLWExYzktNGZiNi1i
-        ZDEzLTk0NDJhMWNlM2RlYzwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
+        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPjFhYjE4YWQ1LTQzNDItNDNhNS05
+        M2ZiLTkxMDlmYjZkMWY2NzwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
         dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
-        ZXN0PjxISVRJZD4yNDhZMlJDSks2M1o5WEtUM0NCVUxBUTlUUTJWNlE8L0hJ
+        ZXN0PjxISVRJZD4yWU43RFpLUEZFNEVVV1lQWUVXTEJJOU45OFk1RjU8L0hJ
         VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
         PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:40 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:05 GMT
 - request:
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body:
       encoding: UTF-8
       base64_string: |
-        SElUSWQ9MjQ4WTJSQ0pLNjNaOVhLVDNDQlVMQVE5VFEyVjZRJlJlc3BvbnNl
+        SElUSWQ9MllON0RaS1BGRTRFVVdZUFlFV0xCSTlOOThZNUY1JlJlc3BvbnNl
         R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
         JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
         c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
         TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
-        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0E0MFomVmVyc2lv
-        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT1lYjAwVTkxS096dTJMQVpSTzJWYVFF
-        U3klMkZ2OCUzRA==
+        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0EwNVomVmVyc2lv
+        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT00ejBTSjI3JTJCUXFHZVBvNUZNTXRD
+        T3BxQU9scyUzRA==
     headers:
       Accept:
       - '*/*; q=0.5, application/xml'
@@ -1746,21 +1134,21 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Mon, 12 Aug 2013 01:38:39 GMT
+      - Sun, 25 Aug 2013 23:27:05 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       base64_string: |
         PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
-        aW9uUmVxdWVzdD48UmVxdWVzdElkPmRlYTY2NTc1LWRkZmEtNGMwYi1iNzY3
-        LTQ4YzcyM2NmODY2NDwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
+        aW9uUmVxdWVzdD48UmVxdWVzdElkPjQyNGQ5MmUyLTA2NmQtNDE5MS04ZTU4
+        LWM4MDVlNGRjNmM2ZTwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
         SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
-        PjxISVRJZD4yNDhZMlJDSks2M1o5WEtUM0NCVUxBUTlUUTJWNlE8L0hJVElk
+        PjxISVRJZD4yWU43RFpLUEZFNEVVV1lQWUVXTEJJOU45OFk1RjU8L0hJVElk
         PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
         SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
-        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0xMlQw
-        MTozODozOVo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
+        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0yNVQy
+        MzoyNzowNVo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
         b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
         IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
         Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
@@ -1770,8 +1158,8 @@ http_interactions:
         Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
         bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
         LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
-        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMS4yOC42NTEzMzRiNThl
-        N2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5PSktHU0wuaHRtbCZsdDsvRXh0ZXJu
+        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMC4wMC4xZWI5Mjc0OTI3
+        ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5VVkZSUUguaHRtbCZsdDsvRXh0ZXJu
         YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
         SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
         b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
@@ -1780,15 +1168,15 @@ http_interactions:
         MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
         cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
         QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
-        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMTJUMTE6Mzg6
-        MzlaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
+        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMjZUMDk6Mjc6
+        MDVaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
         MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
         QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
         Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
         RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
-        dy4wMS4yOC42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5LR0tD
-        U0QubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTY1MTMzNGI1
-        OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
+        dy4wMC4wMC4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5SUkxF
+        TU0ubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTFlYjkyNzQ5
+        MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
         PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
         cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
         Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
@@ -1796,7 +1184,7 @@ http_interactions:
         Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
         dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:40 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:06 GMT
 - request:
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
@@ -1817,20 +1205,173 @@ http_interactions:
         eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
         ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
         NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
-        ZXcuMDEuNTAuNjUxMzM0YjU4ZTdmZGMxMzQ3YWYzOGNlZDg0ZjY4NmQuT0lW
-        SlhILmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
+        ZXcuMDAuMjIuMWViOTI3NDkyN2Y2ZDQwZmE3MTM0ZTkwMzBjYmViNmUuTVNZ
+        WEdOLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
         ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
         bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
         dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
         MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
         bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
-        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAxLjUwLjY1MTMzNGI1OGU3
-        ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkLklRRUFORC5tcDMlMjZhbXAlM0J0eXBp
-        bmdwb29sX3Byb2plY3RfaWQlM0Q2NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2Vk
-        ODRmNjg2ZCZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
+        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAwLjIyLjFlYjkyNzQ5Mjdm
+        NmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkFMTldSTS5tcDMlMjZhbXAlM0J0eXBp
+        bmdwb29sX3Byb2plY3RfaWQlM0QxZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAz
+        MGNiZWI2ZSZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
         aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
-        bWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0E0MFomVmVyc2lvbj0yMDEy
-        LTAzLTI1JlNpZ25hdHVyZT1uRjJTRFIwcUVlR0didG1WUVJiSjhDZDJqOXcl
+        bWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0EwNlomVmVyc2lvbj0yMDEy
+        LTAzLTI1JlNpZ25hdHVyZT03ekhtT3BBaEJ4VCUyRllaQlclMkJydVUlMkJk
+        N2xjUDQlM0Q=
+    headers:
+      Accept:
+      - '*/*; q=0.5, application/xml'
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '1279'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sun, 25 Aug 2013 23:27:06 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      base64_string: |
+        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
+        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPmYwZjBkZmJmLTQ5NTUtNGM2ZS1i
+        YWRjLThjYWEwNGVjYTYxOTwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
+        dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
+        ZXN0PjxISVRJZD4yWDdHU05UTDBYVUw1WjQ1TlZVTVBEWDVQMVowTU08L0hJ
+        VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
+        PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
+    http_version: 
+  recorded_at: Sun, 25 Aug 2013 23:27:06 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      base64_string: |
+        SElUSWQ9Mlg3R1NOVEwwWFVMNVo0NU5WVU1QRFg1UDFaME1NJlJlc3BvbnNl
+        R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
+        JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
+        c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
+        TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
+        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0EwNlomVmVyc2lv
+        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT1Hc0ZJdGgwZXRQS1MzTE9QYVVXY0Nx
+        M051Nk0lM0Q=
+    headers:
+      Accept:
+      - '*/*; q=0.5, application/xml'
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '334'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sun, 25 Aug 2013 23:27:07 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      base64_string: |
+        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
+        aW9uUmVxdWVzdD48UmVxdWVzdElkPjAwNDE3YzQyLTgxY2YtNGY0Zi04ZGYw
+        LTk1NjY4ZWY2NzVhMTwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
+        SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
+        PjxISVRJZD4yWDdHU05UTDBYVUw1WjQ1TlZVTVBEWDVQMVowTU08L0hJVElk
+        PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
+        SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
+        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0yNVQy
+        MzoyNzowNlo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
+        b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
+        IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
+        Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
+        MjIgc2Vjb25kIHBhcnQuPC9EZXNjcmlwdGlvbj48UXVlc3Rpb24+Jmx0O0V4
+        dGVybmFsUXVlc3Rpb24geG1sbnM9Imh0dHA6Ly9tZWNoYW5pY2FsdHVyay5h
+        bWF6b25hd3MuY29tL0FXU01lY2hhbmljYWxUdXJrRGF0YVNjaGVtYXMvMjAw
+        Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
+        bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
+        LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
+        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMC4yMi4xZWI5Mjc0OTI3
+        ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5NU1lYR04uaHRtbCZsdDsvRXh0ZXJu
+        YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
+        SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
+        b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
+        cmRzPjxISVRTdGF0dXM+QXNzaWduYWJsZTwvSElUU3RhdHVzPjxNYXhBc3Np
+        Z25tZW50cz4xPC9NYXhBc3NpZ25tZW50cz48UmV3YXJkPjxBbW91bnQ+MC4w
+        MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
+        cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
+        QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
+        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMjZUMDk6Mjc6
+        MDZaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
+        MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
+        QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
+        Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
+        RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
+        dy4wMC4yMi4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5BTE5X
+        Uk0ubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTFlYjkyNzQ5
+        MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
+        PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
+        cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
+        Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
+        MTwvTnVtYmVyT2ZBc3NpZ25tZW50c0F2YWlsYWJsZT48TnVtYmVyT2ZBc3Np
+        Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
+        dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
+    http_version: 
+  recorded_at: Sun, 25 Aug 2013 23:27:07 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      base64_string: |
+        VGl0bGU9VHJhbnNjcmliZStNUDMrb2YrMjIrc2Vjb25kK3Bob25lK2NhbGwm
+        RGVzY3JpcHRpb249SStzcGxpdCt1cCthK3RlbGVwaG9uZStjb252ZXJzYXRp
+        b24raW50bysyMitzZWNvbmQrcGFydHMlMkMreW91K3RyYW5zY3JpYmUrdGhl
+        K2F1ZGlvK2ZvcitvbmUrMjIrc2Vjb25kK3BhcnQuJkFzc2lnbm1lbnREdXJh
+        dGlvbkluU2Vjb25kcz0xODAwMCZSZXdhcmQuQW1vdW50PTAuMDImUmV3YXJk
+        LkN1cnJlbmN5Q29kZT1VU0QmS2V5d29yZHM9dGVzdCUyQyttcDMlMkMrdHlw
+        aW5ncG9vbHRlc3QmQXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM9MzYwMDAm
+        TWF4QXNzaWdubWVudHM9MSZRdWVzdGlvbj0lM0NFeHRlcm5hbFF1ZXN0aW9u
+        K3htbG5zJTNEJTIyaHR0cCUzQSUyRiUyRm1lY2hhbmljYWx0dXJrLmFtYXpv
+        bmF3cy5jb20lMkZBV1NNZWNoYW5pY2FsVHVya0RhdGFTY2hlbWFzJTJGMjAw
+        Ni0wNy0xNCUyRkV4dGVybmFsUXVlc3Rpb24ueHNkJTIyJTNFJTBBKyslM0NF
+        eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
+        ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
+        NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
+        ZXcuMDAuNDQuMWViOTI3NDkyN2Y2ZDQwZmE3MTM0ZTkwMzBjYmViNmUuVkpX
+        WFlDLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
+        ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
+        bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
+        dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
+        MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
+        bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
+        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAwLjQ0LjFlYjkyNzQ5Mjdm
+        NmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkJDVFZSSS5tcDMlMjZhbXAlM0J0eXBp
+        bmdwb29sX3Byb2plY3RfaWQlM0QxZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAz
+        MGNiZWI2ZSZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
+        aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
+        bWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0EwN1omVmVyc2lvbj0yMDEy
+        LTAzLTI1JlNpZ25hdHVyZT1EbFg3d0NkdnllSldMaHhZWE1sQnpJTGJhbTAl
         M0Q=
     headers:
       Accept:
@@ -1851,35 +1392,341 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Mon, 12 Aug 2013 01:38:41 GMT
+      - Sun, 25 Aug 2013 23:27:07 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       base64_string: |
         PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
-        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPmIzZGEwZDdjLTczOTgtNGUzMC1h
-        NzI0LWZmNThjMDMxNTk5MjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
+        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPmFlZjNjMmI4LThiODAtNDcwZS1i
+        MTQzLTllOWRjMzg3ZjViYjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
         dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
-        ZXN0PjxISVRJZD4yNFNCNkJGTUZGT1lDMUFENVY2REpFU0NBV1VYSzA8L0hJ
+        ZXN0PjxISVRJZD4yVkc1Q09XMExHUlpIUlQzUlgzNllOVVo2UElZNzk8L0hJ
         VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
         PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:41 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:08 GMT
 - request:
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body:
       encoding: UTF-8
       base64_string: |
-        SElUSWQ9MjRTQjZCRk1GRk9ZQzFBRDVWNkRKRVNDQVdVWEswJlJlc3BvbnNl
+        SElUSWQ9MlZHNUNPVzBMR1JaSFJUM1JYMzZZTlVaNlBJWTc5JlJlc3BvbnNl
         R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
         JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
         c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
         TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
-        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTEyVDAxJTNBMzglM0E0MVomVmVyc2lv
-        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT1LbHVsa1p6YlFxTlprazdOeENWeHRn
-        UmdKbzQlM0Q=
+        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0EwOFomVmVyc2lv
+        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT10anNBTW1nZUlCc2duTG9sQU9McCUy
+        Rk9FczMlMkZvJTNE
+    headers:
+      Accept:
+      - '*/*; q=0.5, application/xml'
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '338'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sun, 25 Aug 2013 23:27:08 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      base64_string: |
+        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
+        aW9uUmVxdWVzdD48UmVxdWVzdElkPjU0MzQ1NjRhLTkzNTQtNDAzMy05Mzdl
+        LTE1MWZiZjdmMjIxNjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
+        SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
+        PjxISVRJZD4yVkc1Q09XMExHUlpIUlQzUlgzNllOVVo2UElZNzk8L0hJVElk
+        PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
+        SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
+        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0yNVQy
+        MzoyNzowOFo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
+        b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
+        IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
+        Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
+        MjIgc2Vjb25kIHBhcnQuPC9EZXNjcmlwdGlvbj48UXVlc3Rpb24+Jmx0O0V4
+        dGVybmFsUXVlc3Rpb24geG1sbnM9Imh0dHA6Ly9tZWNoYW5pY2FsdHVyay5h
+        bWF6b25hd3MuY29tL0FXU01lY2hhbmljYWxUdXJrRGF0YVNjaGVtYXMvMjAw
+        Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
+        bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
+        LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
+        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMC40NC4xZWI5Mjc0OTI3
+        ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5WSldYWUMuaHRtbCZsdDsvRXh0ZXJu
+        YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
+        SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
+        b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
+        cmRzPjxISVRTdGF0dXM+QXNzaWduYWJsZTwvSElUU3RhdHVzPjxNYXhBc3Np
+        Z25tZW50cz4xPC9NYXhBc3NpZ25tZW50cz48UmV3YXJkPjxBbW91bnQ+MC4w
+        MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
+        cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
+        QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
+        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMjZUMDk6Mjc6
+        MDhaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
+        MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
+        QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
+        Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
+        RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
+        dy4wMC40NC4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5CQ1RW
+        UkkubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTFlYjkyNzQ5
+        MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
+        PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
+        cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
+        Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
+        MTwvTnVtYmVyT2ZBc3NpZ25tZW50c0F2YWlsYWJsZT48TnVtYmVyT2ZBc3Np
+        Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
+        dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
+    http_version: 
+  recorded_at: Sun, 25 Aug 2013 23:27:08 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      base64_string: |
+        VGl0bGU9VHJhbnNjcmliZStNUDMrb2YrMjIrc2Vjb25kK3Bob25lK2NhbGwm
+        RGVzY3JpcHRpb249SStzcGxpdCt1cCthK3RlbGVwaG9uZStjb252ZXJzYXRp
+        b24raW50bysyMitzZWNvbmQrcGFydHMlMkMreW91K3RyYW5zY3JpYmUrdGhl
+        K2F1ZGlvK2ZvcitvbmUrMjIrc2Vjb25kK3BhcnQuJkFzc2lnbm1lbnREdXJh
+        dGlvbkluU2Vjb25kcz0xODAwMCZSZXdhcmQuQW1vdW50PTAuMDImUmV3YXJk
+        LkN1cnJlbmN5Q29kZT1VU0QmS2V5d29yZHM9dGVzdCUyQyttcDMlMkMrdHlw
+        aW5ncG9vbHRlc3QmQXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM9MzYwMDAm
+        TWF4QXNzaWdubWVudHM9MSZRdWVzdGlvbj0lM0NFeHRlcm5hbFF1ZXN0aW9u
+        K3htbG5zJTNEJTIyaHR0cCUzQSUyRiUyRm1lY2hhbmljYWx0dXJrLmFtYXpv
+        bmF3cy5jb20lMkZBV1NNZWNoYW5pY2FsVHVya0RhdGFTY2hlbWFzJTJGMjAw
+        Ni0wNy0xNCUyRkV4dGVybmFsUXVlc3Rpb24ueHNkJTIyJTNFJTBBKyslM0NF
+        eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
+        ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
+        NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
+        ZXcuMDEuMDYuMWViOTI3NDkyN2Y2ZDQwZmE3MTM0ZTkwMzBjYmViNmUuWU5P
+        S1FOLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
+        ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
+        bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
+        dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
+        MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
+        bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
+        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAxLjA2LjFlYjkyNzQ5Mjdm
+        NmQ0MGZhNzEzNGU5MDMwY2JlYjZlLktVTVhRVi5tcDMlMjZhbXAlM0J0eXBp
+        bmdwb29sX3Byb2plY3RfaWQlM0QxZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAz
+        MGNiZWI2ZSZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
+        aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
+        bWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0EwOFomVmVyc2lvbj0yMDEy
+        LTAzLTI1JlNpZ25hdHVyZT13Z3VDVkxYQ3lsYUs4Ym04Qm8yRExnS09WM3Ml
+        M0Q=
+    headers:
+      Accept:
+      - '*/*; q=0.5, application/xml'
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '1273'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sun, 25 Aug 2013 23:27:08 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      base64_string: |
+        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
+        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPjVlYzdlZjI2LWY5MWYtNDViMC04
+        ZjE2LTMwOGRjOTQ0MzI5NjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
+        dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
+        ZXN0PjxISVRJZD4yREFCUkk4SVVCMlk4U1BWVDRLTEUzTDBQTkI1SDM8L0hJ
+        VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
+        PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
+    http_version: 
+  recorded_at: Sun, 25 Aug 2013 23:27:09 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      base64_string: |
+        SElUSWQ9MkRBQlJJOElVQjJZOFNQVlQ0S0xFM0wwUE5CNUgzJlJlc3BvbnNl
+        R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
+        JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
+        c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
+        TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
+        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0EwOVomVmVyc2lv
+        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT1GSU1yUCUyRkxvSEJCUWhXZ2wxSjhw
+        MmtoOVBPTSUzRA==
+    headers:
+      Accept:
+      - '*/*; q=0.5, application/xml'
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '336'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sun, 25 Aug 2013 23:27:09 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      base64_string: |
+        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
+        aW9uUmVxdWVzdD48UmVxdWVzdElkPmNjNTRhMGU5LTg3N2UtNDVhMy1hZjBj
+        LWQ5YjZjNTVhZjk3ZDwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
+        SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
+        PjxISVRJZD4yREFCUkk4SVVCMlk4U1BWVDRLTEUzTDBQTkI1SDM8L0hJVElk
+        PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
+        SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
+        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0yNVQy
+        MzoyNzowOVo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
+        b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
+        IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
+        Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
+        MjIgc2Vjb25kIHBhcnQuPC9EZXNjcmlwdGlvbj48UXVlc3Rpb24+Jmx0O0V4
+        dGVybmFsUXVlc3Rpb24geG1sbnM9Imh0dHA6Ly9tZWNoYW5pY2FsdHVyay5h
+        bWF6b25hd3MuY29tL0FXU01lY2hhbmljYWxUdXJrRGF0YVNjaGVtYXMvMjAw
+        Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
+        bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
+        LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
+        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMS4wNi4xZWI5Mjc0OTI3
+        ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5ZTk9LUU4uaHRtbCZsdDsvRXh0ZXJu
+        YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
+        SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
+        b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
+        cmRzPjxISVRTdGF0dXM+QXNzaWduYWJsZTwvSElUU3RhdHVzPjxNYXhBc3Np
+        Z25tZW50cz4xPC9NYXhBc3NpZ25tZW50cz48UmV3YXJkPjxBbW91bnQ+MC4w
+        MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
+        cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
+        QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
+        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMjZUMDk6Mjc6
+        MDlaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
+        MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
+        QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
+        Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
+        RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
+        dy4wMS4wNi4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5LVU1Y
+        UVYubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTFlYjkyNzQ5
+        MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
+        PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
+        cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
+        Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
+        MTwvTnVtYmVyT2ZBc3NpZ25tZW50c0F2YWlsYWJsZT48TnVtYmVyT2ZBc3Np
+        Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
+        dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
+    http_version: 
+  recorded_at: Sun, 25 Aug 2013 23:27:10 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      base64_string: |
+        VGl0bGU9VHJhbnNjcmliZStNUDMrb2YrMjIrc2Vjb25kK3Bob25lK2NhbGwm
+        RGVzY3JpcHRpb249SStzcGxpdCt1cCthK3RlbGVwaG9uZStjb252ZXJzYXRp
+        b24raW50bysyMitzZWNvbmQrcGFydHMlMkMreW91K3RyYW5zY3JpYmUrdGhl
+        K2F1ZGlvK2ZvcitvbmUrMjIrc2Vjb25kK3BhcnQuJkFzc2lnbm1lbnREdXJh
+        dGlvbkluU2Vjb25kcz0xODAwMCZSZXdhcmQuQW1vdW50PTAuMDImUmV3YXJk
+        LkN1cnJlbmN5Q29kZT1VU0QmS2V5d29yZHM9dGVzdCUyQyttcDMlMkMrdHlw
+        aW5ncG9vbHRlc3QmQXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM9MzYwMDAm
+        TWF4QXNzaWdubWVudHM9MSZRdWVzdGlvbj0lM0NFeHRlcm5hbFF1ZXN0aW9u
+        K3htbG5zJTNEJTIyaHR0cCUzQSUyRiUyRm1lY2hhbmljYWx0dXJrLmFtYXpv
+        bmF3cy5jb20lMkZBV1NNZWNoYW5pY2FsVHVya0RhdGFTY2hlbWFzJTJGMjAw
+        Ni0wNy0xNCUyRkV4dGVybmFsUXVlc3Rpb24ueHNkJTIyJTNFJTBBKyslM0NF
+        eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
+        ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
+        NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
+        ZXcuMDEuMjguMWViOTI3NDkyN2Y2ZDQwZmE3MTM0ZTkwMzBjYmViNmUuS1RI
+        QkZCLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
+        ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
+        bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
+        dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
+        MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
+        bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
+        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAxLjI4LjFlYjkyNzQ5Mjdm
+        NmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkdBVUZDQy5tcDMlMjZhbXAlM0J0eXBp
+        bmdwb29sX3Byb2plY3RfaWQlM0QxZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAz
+        MGNiZWI2ZSZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
+        aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
+        bWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0ExMFomVmVyc2lvbj0yMDEy
+        LTAzLTI1JlNpZ25hdHVyZT0lMkZPcFFYYUh0V1AlMkIlMkZQWWdvOG41dzNh
+        blI1Q1klM0Q=
+    headers:
+      Accept:
+      - '*/*; q=0.5, application/xml'
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '1279'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sun, 25 Aug 2013 23:27:10 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      base64_string: |
+        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
+        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPjNkZTkwYTFmLWFjMTItNDE3OC1i
+        ZDBmLWYwM2IwNDJjYTI0YjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
+        dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
+        ZXN0PjxISVRJZD4yOTJNVDZZVFdYNEhIMEoxTkc0OUNHSTZTVklXMUI8L0hJ
+        VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
+        PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
+    http_version: 
+  recorded_at: Sun, 25 Aug 2013 23:27:10 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      base64_string: |
+        SElUSWQ9MjkyTVQ2WVRXWDRISDBKMU5HNDlDR0k2U1ZJVzFCJlJlc3BvbnNl
+        R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
+        JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
+        c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
+        TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
+        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0ExMFomVmVyc2lv
+        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT0yeWFpYWRmVW1WZUZxS21Ya2ZCVnA2
+        Zkg1V0klM0Q=
     headers:
       Accept:
       - '*/*; q=0.5, application/xml'
@@ -1899,21 +1746,21 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Mon, 12 Aug 2013 01:38:41 GMT
+      - Sun, 25 Aug 2013 23:27:11 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       base64_string: |
         PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
-        aW9uUmVxdWVzdD48UmVxdWVzdElkPjhhNzFmODdkLTVjYWItNDg3Zi05Mzg5
-        LTU3MmYwYTYzZjNiMjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
+        aW9uUmVxdWVzdD48UmVxdWVzdElkPjhmZjdkZDVhLWE4NGItNDBlMS1iZjQy
+        LTgyMWIzNjRhZDcxNDwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
         SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
-        PjxISVRJZD4yNFNCNkJGTUZGT1lDMUFENVY2REpFU0NBV1VYSzA8L0hJVElk
+        PjxISVRJZD4yOTJNVDZZVFdYNEhIMEoxTkc0OUNHSTZTVklXMUI8L0hJVElk
         PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
         SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
-        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0xMlQw
-        MTozODo0MVo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
+        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0yNVQy
+        MzoyNzoxMFo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
         b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
         IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
         Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
@@ -1923,8 +1770,8 @@ http_interactions:
         Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
         bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
         LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
-        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMS41MC42NTEzMzRiNThl
-        N2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5PSVZKWEguaHRtbCZsdDsvRXh0ZXJu
+        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMS4yOC4xZWI5Mjc0OTI3
+        ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5LVEhCRkIuaHRtbCZsdDsvRXh0ZXJu
         YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
         SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
         b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
@@ -1933,15 +1780,15 @@ http_interactions:
         MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
         cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
         QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
-        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMTJUMTE6Mzg6
-        NDFaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
+        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMjZUMDk6Mjc6
+        MTBaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
         MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
         QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
         Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
         RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
-        dy4wMS41MC42NTEzMzRiNThlN2ZkYzEzNDdhZjM4Y2VkODRmNjg2ZC5JUUVB
-        TkQubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTY1MTMzNGI1
-        OGU3ZmRjMTM0N2FmMzhjZWQ4NGY2ODZkPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
+        dy4wMS4yOC4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5HQVVG
+        Q0MubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTFlYjkyNzQ5
+        MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
         PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
         cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
         Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
@@ -1949,5 +1796,158 @@ http_interactions:
         Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
         dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
     http_version: 
-  recorded_at: Mon, 12 Aug 2013 01:38:42 GMT
+  recorded_at: Sun, 25 Aug 2013 23:27:11 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      base64_string: |
+        VGl0bGU9VHJhbnNjcmliZStNUDMrb2YrMjIrc2Vjb25kK3Bob25lK2NhbGwm
+        RGVzY3JpcHRpb249SStzcGxpdCt1cCthK3RlbGVwaG9uZStjb252ZXJzYXRp
+        b24raW50bysyMitzZWNvbmQrcGFydHMlMkMreW91K3RyYW5zY3JpYmUrdGhl
+        K2F1ZGlvK2ZvcitvbmUrMjIrc2Vjb25kK3BhcnQuJkFzc2lnbm1lbnREdXJh
+        dGlvbkluU2Vjb25kcz0xODAwMCZSZXdhcmQuQW1vdW50PTAuMDImUmV3YXJk
+        LkN1cnJlbmN5Q29kZT1VU0QmS2V5d29yZHM9dGVzdCUyQyttcDMlMkMrdHlw
+        aW5ncG9vbHRlc3QmQXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM9MzYwMDAm
+        TWF4QXNzaWdubWVudHM9MSZRdWVzdGlvbj0lM0NFeHRlcm5hbFF1ZXN0aW9u
+        K3htbG5zJTNEJTIyaHR0cCUzQSUyRiUyRm1lY2hhbmljYWx0dXJrLmFtYXpv
+        bmF3cy5jb20lMkZBV1NNZWNoYW5pY2FsVHVya0RhdGFTY2hlbWFzJTJGMjAw
+        Ni0wNy0xNCUyRkV4dGVybmFsUXVlc3Rpb24ueHNkJTIyJTNFJTBBKyslM0NF
+        eHRlcm5hbFVSTCUzRWh0dHBzJTNBJTJGJTJGdHlwaW5ncG9vbC10b2t5by10
+        ZXN0LWZmYTYwLXp6ei5zMy5hbWF6b25hd3MuY29tJTJGVHlwaW5ncG9vbCUy
+        NiUyMzM5JTNCcyUyNTIwVGVzdCUyNTIwJTI2YW1wJTNCJTI1MjBJbnRlcnZp
+        ZXcuMDEuNTAuMWViOTI3NDkyN2Y2ZDQwZmE3MTM0ZTkwMzBjYmViNmUuT0FR
+        UENGLmh0bWwlM0MlMkZFeHRlcm5hbFVSTCUzRSUwOSUwQSsrJTNDRnJhbWVI
+        ZWlnaHQlM0U0MDAlM0MlMkZGcmFtZUhlaWdodCUzRSUwQSUzQyUyRkV4dGVy
+        bmFsUXVlc3Rpb24lM0UlMEEmTGlmZXRpbWVJblNlY29uZHM9MzYwMDAmUmVx
+        dWVzdGVyQW5ub3RhdGlvbj10eXBpbmdwb29sX3VybCUzRGh0dHBzJTI1M0El
+        MjUyRiUyNTJGdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYwLXp6ei5zMy5h
+        bWF6b25hd3MuY29tJTI1MkZUeXBpbmdwb29sJTI1MjdzJTI1MjUyMFRlc3Ql
+        MjUyNTIwJTI1MjYlMjUyNTIwSW50ZXJ2aWV3LjAxLjUwLjFlYjkyNzQ5Mjdm
+        NmQ0MGZhNzEzNGU5MDMwY2JlYjZlLkdVQVRUUC5tcDMlMjZhbXAlM0J0eXBp
+        bmdwb29sX3Byb2plY3RfaWQlM0QxZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAz
+        MGNiZWI2ZSZPcGVyYXRpb249Q3JlYXRlSElUJlNlcnZpY2U9QVdTTWVjaGFu
+        aWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19LRVk+JlRp
+        bWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0ExMVomVmVyc2lvbj0yMDEy
+        LTAzLTI1JlNpZ25hdHVyZT1DWDNuSUIlMkZRbUpEWnNRaHdsQ2hCUW8lMkYx
+        VTcwJTNE
+    headers:
+      Accept:
+      - '*/*; q=0.5, application/xml'
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '1277'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sun, 25 Aug 2013 23:27:11 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      base64_string: |
+        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxDcmVhdGVISVRSZXNwb25zZT48T3Bl
+        cmF0aW9uUmVxdWVzdD48UmVxdWVzdElkPjEwMTNjYmEwLWMwOTMtNGQ5NC05
+        Zjg2LTVhNmY5MzFjMDY2YTwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVz
+        dD48SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1
+        ZXN0PjxISVRJZD4yNkxUVk9LNVVGSjVGSE8yUTBRRjFRUzFNNEw4NVI8L0hJ
+        VElkPjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJ
+        PC9ISVRUeXBlSWQ+PC9ISVQ+PC9DcmVhdGVISVRSZXNwb25zZT4=
+    http_version: 
+  recorded_at: Sun, 25 Aug 2013 23:27:12 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      base64_string: |
+        SElUSWQ9MjZMVFZPSzVVRko1RkhPMlEwUUYxUVMxTTRMODVSJlJlc3BvbnNl
+        R3JvdXAuMD1ISVREZXRhaWwmUmVzcG9uc2VHcm91cC4xPUhJVFF1ZXN0aW9u
+        JlJlc3BvbnNlR3JvdXAuMj1NaW5pbWFsJlJlc3BvbnNlR3JvdXAuMz1ISVRB
+        c3NpZ25tZW50U3VtbWFyeSZPcGVyYXRpb249R2V0SElUJlNlcnZpY2U9QVdT
+        TWVjaGFuaWNhbFR1cmtSZXF1ZXN0ZXImQVdTQWNjZXNzS2V5SWQ9PEFXU19L
+        RVk+JlRpbWVzdGFtcD0yMDEzLTA4LTI1VDIzJTNBMjclM0ExMlomVmVyc2lv
+        bj0yMDEyLTAzLTI1JlNpZ25hdHVyZT1rQjRscTA3ZG84TlhYYkFFY3ZibTNl
+        MjJKMEklM0Q=
+    headers:
+      Accept:
+      - '*/*; q=0.5, application/xml'
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Length:
+      - '334'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sun, 25 Aug 2013 23:27:12 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      base64_string: |
+        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxHZXRISVRSZXNwb25zZT48T3BlcmF0
+        aW9uUmVxdWVzdD48UmVxdWVzdElkPmExOWIzZmE5LTIyOWQtNDk3OS05MDcz
+        LWFlZTgxY2U2ODZlMjwvUmVxdWVzdElkPjwvT3BlcmF0aW9uUmVxdWVzdD48
+        SElUPjxSZXF1ZXN0PjxJc1ZhbGlkPlRydWU8L0lzVmFsaWQ+PC9SZXF1ZXN0
+        PjxISVRJZD4yNkxUVk9LNVVGSjVGSE8yUTBRRjFRUzFNNEw4NVI8L0hJVElk
+        PjxISVRUeXBlSWQ+MkpVTzNXNVhIMEpQM0JaRVdBNVBPU1A3NTdFSkRJPC9I
+        SVRUeXBlSWQ+PEhJVEdyb3VwSWQ+MktMWE9LNVVGSjUxQ1E3UTBCNllUUzJE
+        VFVQNjlSPC9ISVRHcm91cElkPjxDcmVhdGlvblRpbWU+MjAxMy0wOC0yNVQy
+        MzoyNzoxMVo8L0NyZWF0aW9uVGltZT48VGl0bGU+VHJhbnNjcmliZSBNUDMg
+        b2YgMjIgc2Vjb25kIHBob25lIGNhbGw8L1RpdGxlPjxEZXNjcmlwdGlvbj5J
+        IHNwbGl0IHVwIGEgdGVsZXBob25lIGNvbnZlcnNhdGlvbiBpbnRvIDIyIHNl
+        Y29uZCBwYXJ0cywgeW91IHRyYW5zY3JpYmUgdGhlIGF1ZGlvIGZvciBvbmUg
+        MjIgc2Vjb25kIHBhcnQuPC9EZXNjcmlwdGlvbj48UXVlc3Rpb24+Jmx0O0V4
+        dGVybmFsUXVlc3Rpb24geG1sbnM9Imh0dHA6Ly9tZWNoYW5pY2FsdHVyay5h
+        bWF6b25hd3MuY29tL0FXU01lY2hhbmljYWxUdXJrRGF0YVNjaGVtYXMvMjAw
+        Ni0wNy0xNC9FeHRlcm5hbFF1ZXN0aW9uLnhzZCImZ3Q7CiAgJmx0O0V4dGVy
+        bmFsVVJMJmd0O2h0dHBzOi8vdHlwaW5ncG9vbC10b2t5by10ZXN0LWZmYTYw
+        LXp6ei5zMy5hbWF6b25hd3MuY29tL1R5cGluZ3Bvb2wmYW1wOyMzOTtzJTIw
+        VGVzdCUyMCZhbXA7YW1wOyUyMEludGVydmlldy4wMS41MC4xZWI5Mjc0OTI3
+        ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5PQVFQQ0YuaHRtbCZsdDsvRXh0ZXJu
+        YWxVUkwmZ3Q7CQogICZsdDtGcmFtZUhlaWdodCZndDs0MDAmbHQ7L0ZyYW1l
+        SGVpZ2h0Jmd0OwombHQ7L0V4dGVybmFsUXVlc3Rpb24mZ3Q7CjwvUXVlc3Rp
+        b24+PEtleXdvcmRzPnRlc3QsIG1wMywgdHlwaW5ncG9vbHRlc3Q8L0tleXdv
+        cmRzPjxISVRTdGF0dXM+QXNzaWduYWJsZTwvSElUU3RhdHVzPjxNYXhBc3Np
+        Z25tZW50cz4xPC9NYXhBc3NpZ25tZW50cz48UmV3YXJkPjxBbW91bnQ+MC4w
+        MjwvQW1vdW50PjxDdXJyZW5jeUNvZGU+VVNEPC9DdXJyZW5jeUNvZGU+PEZv
+        cm1hdHRlZFByaWNlPiQwLjAyPC9Gb3JtYXR0ZWRQcmljZT48L1Jld2FyZD48
+        QXV0b0FwcHJvdmFsRGVsYXlJblNlY29uZHM+MzYwMDA8L0F1dG9BcHByb3Zh
+        bERlbGF5SW5TZWNvbmRzPjxFeHBpcmF0aW9uPjIwMTMtMDgtMjZUMDk6Mjc6
+        MTFaPC9FeHBpcmF0aW9uPjxBc3NpZ25tZW50RHVyYXRpb25JblNlY29uZHM+
+        MTgwMDA8L0Fzc2lnbm1lbnREdXJhdGlvbkluU2Vjb25kcz48UmVxdWVzdGVy
+        QW5ub3RhdGlvbj50eXBpbmdwb29sX3VybD1odHRwcyUzQSUyRiUyRnR5cGlu
+        Z3Bvb2wtdG9reW8tdGVzdC1mZmE2MC16enouczMuYW1hem9uYXdzLmNvbSUy
+        RlR5cGluZ3Bvb2wlMjdzJTI1MjBUZXN0JTI1MjAlMjYlMjUyMEludGVydmll
+        dy4wMS41MC4xZWI5Mjc0OTI3ZjZkNDBmYTcxMzRlOTAzMGNiZWI2ZS5HVUFU
+        VFAubXAzJmFtcDthbXA7dHlwaW5ncG9vbF9wcm9qZWN0X2lkPTFlYjkyNzQ5
+        MjdmNmQ0MGZhNzEzNGU5MDMwY2JlYjZlPC9SZXF1ZXN0ZXJBbm5vdGF0aW9u
+        PjxISVRSZXZpZXdTdGF0dXM+Tm90UmV2aWV3ZWQ8L0hJVFJldmlld1N0YXR1
+        cz48TnVtYmVyT2ZBc3NpZ25tZW50c1BlbmRpbmc+MDwvTnVtYmVyT2ZBc3Np
+        Z25tZW50c1BlbmRpbmc+PE51bWJlck9mQXNzaWdubWVudHNBdmFpbGFibGU+
+        MTwvTnVtYmVyT2ZBc3NpZ25tZW50c0F2YWlsYWJsZT48TnVtYmVyT2ZBc3Np
+        Z25tZW50c0NvbXBsZXRlZD4wPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxl
+        dGVkPjwvSElUPjwvR2V0SElUUmVzcG9uc2U+
+    http_version: 
+  recorded_at: Sun, 25 Aug 2013 23:27:12 GMT
 recorded_with: VCR 2.5.0

@@ -107,6 +107,13 @@ OptionParser.new do |opts|
     options[:time] = Time.at(epoch.to_i)
   end
 
+  opts.on('--testfixturerecord',
+          'For testing purposes only. Ignore.',
+          'Allows recording of a new fixture',
+          'to --testfixture path.') do
+    options[:fixturerecord] = true
+  end
+
   opts.on('--help',
           'Display this screen') do
     STDERR.puts opts
@@ -201,10 +208,10 @@ STDERR.puts "#{needed_assignments.count} assignments to assign"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 if options[:fixture]
-  Typingpool::App.vcr_record(options[:fixture], config, {
-                               :preserve_exact_body_bytes => true,
-                               :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
-                             })
+  Typingpool::App.vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
+                             :preserve_exact_body_bytes => true,
+                             :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                           })
   at_exit{ Typingpool::App.vcr_stop }
 end
 
