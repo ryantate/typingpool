@@ -12,9 +12,9 @@ class TestTpCollect < Typingpool::Test::Script
     with_temp_readymade_project do |dir|
       skip_if_no_upload_credentials('tp-collect integration test')
       skip_if_no_amazon_credentials('tp-collect integration test')
-      copy_fixtures_to_temp_tp_dir(dir, 'tp_collect_')
+      copy_fixtures_to_transcripts_dir(dir, 'tp_collect_')
       begin
-        project = temp_tp_dir_project(dir)
+        project = transcripts_dir_project(dir)
         tp_collect_with_fixture(dir, File.join(vcr_dir, 'tp-collect-1'))
         transcript = assert_has_partial_transcript(dir)
         assert_html_has_audio_count(2, transcript)
@@ -28,7 +28,7 @@ class TestTpCollect < Typingpool::Test::Script
 #        assert_html_has_audio_count(7, transcript)
 #        assert_assignment_csv_has_transcription_count(7, project, 'sandbox-assignment.csv')
       ensure
-        rm_fixtures_from_temp_tp_dir(dir, 'tp_collect_')
+        rm_fixtures_from_transcripts_dir(dir, 'tp_collect_')
       end #begin
     end #with_temp_readymade_project do...
   end

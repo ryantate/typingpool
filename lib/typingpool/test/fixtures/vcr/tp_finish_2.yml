@@ -8,9 +8,9 @@ http_interactions:
       base64_string: |
         UGFnZVNpemU9MTAwJlBhZ2VOdW1iZXI9MSZPcGVyYXRpb249U2VhcmNoSElU
         cyZTZXJ2aWNlPUFXU01lY2hhbmljYWxUdXJrUmVxdWVzdGVyJkFXU0FjY2Vz
-        c0tleUlkPTxBV1NfS0VZPiZUaW1lc3RhbXA9MjAxMy0wOC0yNVQyMyUzQTM2
-        JTNBNTdaJlZlcnNpb249MjAxMi0wMy0yNSZTaWduYXR1cmU9SUYwWTI0N1Rx
-        OE5uRjZ4Q0xGNkpFaSUyRkJjU0ElM0Q=
+        c0tleUlkPTxBV1NfS0VZPiZUaW1lc3RhbXA9MjAxMy0wOC0zMVQxOCUzQTAw
+        JTNBMzlaJlZlcnNpb249MjAxMi0wMy0yNSZTaWduYXR1cmU9NDNXS3FEY0RE
+        RktRRmd5NWR3T0RuWUQlMkZQNk0lM0Q=
     headers:
       Accept:
       - '*/*; q=0.5, application/xml'
@@ -30,15 +30,15 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Sun, 25 Aug 2013 23:36:58 GMT
+      - Sat, 31 Aug 2013 18:00:40 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       base64_string: |
         PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxTZWFyY2hISVRzUmVzcG9uc2U+PE9w
-        ZXJhdGlvblJlcXVlc3Q+PFJlcXVlc3RJZD5iNDJkYmE5OS0wMmQxLTQxNWEt
-        YjZjYS0wOTUzOWIzMDkyYmQ8L1JlcXVlc3RJZD48L09wZXJhdGlvblJlcXVl
+        ZXJhdGlvblJlcXVlc3Q+PFJlcXVlc3RJZD42ZjBmMTNlNi1kMTAwLTQ2ZWIt
+        ODY2Mi1hNjg5NzY4ZjA4NTI8L1JlcXVlc3RJZD48L09wZXJhdGlvblJlcXVl
         c3Q+PFNlYXJjaEhJVHNSZXN1bHQ+PFJlcXVlc3Q+PElzVmFsaWQ+VHJ1ZTwv
         SXNWYWxpZD48L1JlcXVlc3Q+PE51bVJlc3VsdHM+MTAwPC9OdW1SZXN1bHRz
         PjxUb3RhbE51bVJlc3VsdHM+MTAxPC9Ub3RhbE51bVJlc3VsdHM+PFBhZ2VO
@@ -3830,7 +3830,7 @@ http_interactions:
         c0NvbXBsZXRlZD4xPC9OdW1iZXJPZkFzc2lnbm1lbnRzQ29tcGxldGVkPjwv
         SElUPjwvU2VhcmNoSElUc1Jlc3VsdD48L1NlYXJjaEhJVHNSZXNwb25zZT4=
     http_version: 
-  recorded_at: Sun, 25 Aug 2013 23:36:59 GMT
+  recorded_at: Sat, 31 Aug 2013 18:00:41 GMT
 - request:
     method: post
     uri: https://mechanicalturk.amazonaws.com/
@@ -3839,16 +3839,16 @@ http_interactions:
       base64_string: |
         UGFnZVNpemU9MTAwJlBhZ2VOdW1iZXI9MiZPcGVyYXRpb249U2VhcmNoSElU
         cyZTZXJ2aWNlPUFXU01lY2hhbmljYWxUdXJrUmVxdWVzdGVyJkFXU0FjY2Vz
-        c0tleUlkPTxBV1NfS0VZPiZUaW1lc3RhbXA9MjAxMy0wOC0yNVQyMyUzQTM2
-        JTNBNTlaJlZlcnNpb249MjAxMi0wMy0yNSZTaWduYXR1cmU9YVZ0QmN1WEVZ
-        SnU1dGhkbUdZSEhuZXNDNzgwJTNE
+        c0tleUlkPTxBV1NfS0VZPiZUaW1lc3RhbXA9MjAxMy0wOC0zMVQxOCUzQTAw
+        JTNBNDFaJlZlcnNpb249MjAxMi0wMy0yNSZTaWduYXR1cmU9WVVvbEFJZzF3
+        eHBQWVJ1TGolMkI4dnc3VDFUNG8lM0Q=
     headers:
       Accept:
       - '*/*; q=0.5, application/xml'
       Accept-Encoding:
       - gzip, deflate
       Content-Length:
-      - '212'
+      - '214'
       User-Agent:
       - Ruby
   response:
@@ -3861,15 +3861,15 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Sun, 25 Aug 2013 23:36:59 GMT
+      - Sat, 31 Aug 2013 18:00:41 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       base64_string: |
         PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxTZWFyY2hISVRzUmVzcG9uc2U+PE9w
-        ZXJhdGlvblJlcXVlc3Q+PFJlcXVlc3RJZD5hZmFiYjk0MC1lZjdlLTQwZWYt
-        YTZhMi01MTIzOTFiMmExZTQ8L1JlcXVlc3RJZD48L09wZXJhdGlvblJlcXVl
+        ZXJhdGlvblJlcXVlc3Q+PFJlcXVlc3RJZD45MzUwNzVmMi04NGZmLTQxYTYt
+        OGUwNC0zMzc0Y2ZmNThiYzQ8L1JlcXVlc3RJZD48L09wZXJhdGlvblJlcXVl
         c3Q+PFNlYXJjaEhJVHNSZXN1bHQ+PFJlcXVlc3Q+PElzVmFsaWQ+VHJ1ZTwv
         SXNWYWxpZD48L1JlcXVlc3Q+PE51bVJlc3VsdHM+MTwvTnVtUmVzdWx0cz48
         VG90YWxOdW1SZXN1bHRzPjEwMTwvVG90YWxOdW1SZXN1bHRzPjxQYWdlTnVt
@@ -3914,7 +3914,7 @@ http_interactions:
         dGVkPjwvSElUPjwvU2VhcmNoSElUc1Jlc3VsdD48L1NlYXJjaEhJVHNSZXNw
         b25zZT4=
     http_version: 
-  recorded_at: Sun, 25 Aug 2013 23:37:00 GMT
+  recorded_at: Sat, 31 Aug 2013 18:00:42 GMT
 - request:
     method: post
     uri: https://mechanicalturk.amazonaws.com/
@@ -3923,16 +3923,16 @@ http_interactions:
       base64_string: |
         UGFnZVNpemU9MTAwJlBhZ2VOdW1iZXI9MyZPcGVyYXRpb249U2VhcmNoSElU
         cyZTZXJ2aWNlPUFXU01lY2hhbmljYWxUdXJrUmVxdWVzdGVyJkFXU0FjY2Vz
-        c0tleUlkPTxBV1NfS0VZPiZUaW1lc3RhbXA9MjAxMy0wOC0yNVQyMyUzQTM3
-        JTNBMDBaJlZlcnNpb249MjAxMi0wMy0yNSZTaWduYXR1cmU9ck16bWJNdDlw
-        JTJGTTM3ZVFzcHlybiUyQk5Mb3pkYyUzRA==
+        c0tleUlkPTxBV1NfS0VZPiZUaW1lc3RhbXA9MjAxMy0wOC0zMVQxOCUzQTAw
+        JTNBNDJaJlZlcnNpb249MjAxMi0wMy0yNSZTaWduYXR1cmU9cklIZkklMkZM
+        cUNDMyUyQlc2cyUyRjFDQUdaMGhHdlJVJTNE
     headers:
       Accept:
       - '*/*; q=0.5, application/xml'
       Accept-Encoding:
       - gzip, deflate
       Content-Length:
-      - '216'
+      - '218'
       User-Agent:
       - Ruby
   response:
@@ -3945,25 +3945,25 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Sun, 25 Aug 2013 23:37:00 GMT
+      - Sat, 31 Aug 2013 18:00:42 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       base64_string: |
         PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxTZWFyY2hISVRzUmVzcG9uc2U+PE9w
-        ZXJhdGlvblJlcXVlc3Q+PFJlcXVlc3RJZD41YmJkMmVlZS01ODc3LTRhNjMt
-        YjZmNi01YmVlN2U5YzI2MGI8L1JlcXVlc3RJZD48L09wZXJhdGlvblJlcXVl
+        ZXJhdGlvblJlcXVlc3Q+PFJlcXVlc3RJZD42MmViMGI3ZC1mNTgxLTRiYjIt
+        OTAxZS1lZDBhMmVkMWI5NzI8L1JlcXVlc3RJZD48L09wZXJhdGlvblJlcXVl
         c3Q+PFNlYXJjaEhJVHNSZXN1bHQ+PFJlcXVlc3Q+PElzVmFsaWQ+VHJ1ZTwv
         SXNWYWxpZD48L1JlcXVlc3Q+PE51bVJlc3VsdHM+MDwvTnVtUmVzdWx0cz48
         VG90YWxOdW1SZXN1bHRzPjEwMTwvVG90YWxOdW1SZXN1bHRzPjxQYWdlTnVt
         YmVyPjM8L1BhZ2VOdW1iZXI+PC9TZWFyY2hISVRzUmVzdWx0PjwvU2VhcmNo
         SElUc1Jlc3BvbnNlPg==
     http_version: 
-  recorded_at: Sun, 25 Aug 2013 23:37:01 GMT
+  recorded_at: Sat, 31 Aug 2013 18:00:42 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.00.87ebc6a9f89abe6f9e12815bb2560799.IANLBR.mp3
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.00.007e4be19fc2a68540255933f45b5013.PIFXBL.mp3
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -3975,9 +3975,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sun, 25 Aug 2013 23:37:01 GMT
+      - Sat, 31 Aug 2013 18:00:43 GMT
       Authorization:
-      - AWS <AWS_KEY>:ENrN0Xqir47JJ5Q2qZxwgQI4NSo=
+      - AWS <AWS_KEY>:bHLwWpamxf58wDsNp1tFNA74DKU=
       Accept:
       - '*/*'
   response:
@@ -3986,21 +3986,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - oMUzavACiDf7jkErcjD2OxHEon2NkOcnMIBndOEDq7dhYpW1NlUgHQSxSOUP0s0T
+      - 43kW+hVwI6leXpNezhWbKS0QBxoh6WmsMpPtt3PlXmpMn4ZEegg/KS1UKiw9ASqj
       X-Amz-Request-Id:
-      - 90491EB3CA36018A
+      - 84C94A182A36EF04
       Date:
-      - Sun, 25 Aug 2013 23:37:03 GMT
+      - Sat, 31 Aug 2013 18:00:44 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sun, 25 Aug 2013 23:37:02 GMT
+  recorded_at: Sat, 31 Aug 2013 18:00:44 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.22.87ebc6a9f89abe6f9e12815bb2560799.TIQSHA.mp3
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.22.007e4be19fc2a68540255933f45b5013.QGOJLW.mp3
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -4012,9 +4012,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sun, 25 Aug 2013 23:37:02 GMT
+      - Sat, 31 Aug 2013 18:00:44 GMT
       Authorization:
-      - AWS <AWS_KEY>:kfep1GvBOppfWieZUU/I6CfplxY=
+      - AWS <AWS_KEY>:nDtz6bvdRNLyXeGuIr9+aqnEl8c=
       Accept:
       - '*/*'
   response:
@@ -4023,21 +4023,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - no6QETeOG9LyZVwhttadd+T7Hi+1Owx7lSUH+EZttLv2TyC6NvCLw3U4H1400War
+      - cbabHClCloEVAA6yfrfpRLHhPS45dpyiQSfvf7DkmhBt+1sH+q8UKJ6p5vUQUA/E
       X-Amz-Request-Id:
-      - CA54E605D0E6A11E
+      - 954DFB84FCC8918F
       Date:
-      - Sun, 25 Aug 2013 23:37:03 GMT
+      - Sat, 31 Aug 2013 18:00:45 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sun, 25 Aug 2013 23:37:02 GMT
+  recorded_at: Sat, 31 Aug 2013 18:00:44 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.44.87ebc6a9f89abe6f9e12815bb2560799.JBLPLN.mp3
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.00.44.007e4be19fc2a68540255933f45b5013.MIJMEG.mp3
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -4049,9 +4049,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sun, 25 Aug 2013 23:37:02 GMT
+      - Sat, 31 Aug 2013 18:00:44 GMT
       Authorization:
-      - AWS <AWS_KEY>:g1+CFjTiZxaGJZ/C2LAfQqMvR/U=
+      - AWS <AWS_KEY>:gZdAAEu1851Cj8fEMMDCS/qcSSI=
       Accept:
       - '*/*'
   response:
@@ -4060,21 +4060,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - XcWTaKekP2cVij98ZTQ5gCm4cubKCGTUpRkotoLg/rearJJrYGvVqZpbmOCnP2e1
+      - dPbIeN1H9ggR+Fabech7eLao9k2qRDlnZ/ET5fdD0yySdqFcYooXQRxXwGYm3G64
       X-Amz-Request-Id:
-      - 92E0A730E01364B9
+      - 85E3453CB3BEAB14
       Date:
-      - Sun, 25 Aug 2013 23:37:04 GMT
+      - Sat, 31 Aug 2013 18:00:46 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sun, 25 Aug 2013 23:37:03 GMT
+  recorded_at: Sat, 31 Aug 2013 18:00:45 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.06.87ebc6a9f89abe6f9e12815bb2560799.VBMNOS.mp3
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.06.007e4be19fc2a68540255933f45b5013.XJRGFG.mp3
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -4086,9 +4086,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sun, 25 Aug 2013 23:37:03 GMT
+      - Sat, 31 Aug 2013 18:00:45 GMT
       Authorization:
-      - AWS <AWS_KEY>:9mtt/sstma3TfTLWVXgyMK/LHG8=
+      - AWS <AWS_KEY>:MVPVYg84H86bShiKvYyk1ONOMbg=
       Accept:
       - '*/*'
   response:
@@ -4097,21 +4097,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - BOM91rCchK1WYh5PsWUTagN15ZVcl+MlNEX5Y315N/j3goF9rMlPS+hqLZgngkwO
+      - IhkUbrlx4GENnF3k1+S9Ew+dFy2IpzrE5MMOSaEVLLidEa3rSQj+9r2r1DDJXKhl
       X-Amz-Request-Id:
-      - 68CC22B597544A91
+      - F28A3075418B8D72
       Date:
-      - Sun, 25 Aug 2013 23:37:04 GMT
+      - Sat, 31 Aug 2013 18:00:46 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sun, 25 Aug 2013 23:37:04 GMT
+  recorded_at: Sat, 31 Aug 2013 18:00:45 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.28.87ebc6a9f89abe6f9e12815bb2560799.WLVEDR.mp3
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.28.007e4be19fc2a68540255933f45b5013.YGXYIC.mp3
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -4123,9 +4123,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sun, 25 Aug 2013 23:37:04 GMT
+      - Sat, 31 Aug 2013 18:00:45 GMT
       Authorization:
-      - AWS <AWS_KEY>:zwGevgXHV0R81YUmIKNRcUcD2zg=
+      - AWS <AWS_KEY>:HJqBdHgdFUvIgyer2Ua8AqyhCOc=
       Accept:
       - '*/*'
   response:
@@ -4134,21 +4134,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - 8mzQhejr7KZ+9UQsP0cVnC5BVqVFkjhx4euaYCMBsLjkoUYIX4/STV+UK+5vFxmJ
+      - vzBnsxUTnDlmt3gBvkS3Tjv5Wo3ASPhI6GWYlhfY/hGusKPkA4CZghIwOqTUTzl9
       X-Amz-Request-Id:
-      - 19FE89B4D3EC1DF3
+      - AD9D92FCF68C99BA
       Date:
-      - Sun, 25 Aug 2013 23:37:05 GMT
+      - Sat, 31 Aug 2013 18:00:47 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sun, 25 Aug 2013 23:37:04 GMT
+  recorded_at: Sat, 31 Aug 2013 18:00:46 GMT
 - request:
     method: delete
-    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.50.87ebc6a9f89abe6f9e12815bb2560799.ANFKLK.mp3
+    uri: https://typingpool-tokyo-test-ffa60-zzz.s3.amazonaws.com/Typingpool's%20Test%20&%20Interview.01.50.007e4be19fc2a68540255933f45b5013.RPLQWX.mp3
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -4160,9 +4160,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sun, 25 Aug 2013 23:37:04 GMT
+      - Sat, 31 Aug 2013 18:00:46 GMT
       Authorization:
-      - AWS <AWS_KEY>:nP07akDVnICLWEITO5fDd4jgJeE=
+      - AWS <AWS_KEY>:qgYnnaX6TLAxw923f/4PeYjF1y0=
       Accept:
       - '*/*'
   response:
@@ -4171,16 +4171,16 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - a8Rq9PwRMwnNR0U9+9NmCff+7RZHHBb7lD2xKFR2uKKOAeBwAD9BGqCAfB3vpWxO
+      - 38A/CFlOHCSIHAMn5Ib9mWodzXnwypiKLDDcoltbKazOXyW7ZTjdwPA293d1X3/0
       X-Amz-Request-Id:
-      - 9C93C208DE530E9C
+      - F38E4A631D84F953
       Date:
-      - Sun, 25 Aug 2013 23:37:06 GMT
+      - Sat, 31 Aug 2013 18:00:47 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sun, 25 Aug 2013 23:37:05 GMT
+  recorded_at: Sat, 31 Aug 2013 18:00:46 GMT
 recorded_with: VCR 2.5.0

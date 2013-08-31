@@ -12,9 +12,9 @@ class TestTpReview < Typingpool::Test::Script
     with_temp_readymade_project do |dir|
       skip_if_no_upload_credentials('tp-review integration test')
       skip_if_no_amazon_credentials('tp-review integration test')
-      copy_fixtures_to_temp_tp_dir(dir, 'tp_review_')
-      assert(File.exists? File.join(temp_tp_dir_project_dir(dir), 'data','sandbox-assignment.csv'))
-      project = temp_tp_dir_project(dir)
+      copy_fixtures_to_transcripts_dir(dir, 'tp_review_')
+      project = transcripts_dir_project(dir)
+      assert(File.exists? File.join(project.local, 'data','sandbox-assignment.csv'))
       assert_equal(7, project.local.file('data','sandbox-assignment.csv').as(:csv).reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
       begin
         output = nil
@@ -54,7 +54,7 @@ class TestTpReview < Typingpool::Test::Script
         assert_html_has_audio_count(3, transcript)
         assert_assignment_csv_has_transcription_count(3, project, 'sandbox-assignment.csv')
       ensure
-        rm_fixtures_from_temp_tp_dir(dir, 'tp_review_')
+        rm_fixtures_from_transcripts_dir(dir, 'tp_review_')
       end #begin
     end #with_temp_readymade_project do...
   end

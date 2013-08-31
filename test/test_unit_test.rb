@@ -10,7 +10,7 @@ require 'set'
 class TestTest < Typingpool::Test::Script
 
   def test_readymade_project
-    in_temp_tp_dir do |dir|
+    with_temp_transcripts_dir do |dir|
       tp_make(dir, config_path(dir), 'mp3', true)
       assert_is_proper_tp_dir(dir)
       assert_has_proper_assignment_csv(dir)
@@ -21,7 +21,7 @@ class TestTest < Typingpool::Test::Script
     end
     with_temp_readymade_project do |dir|
       with_temp_readymade_project do |dir2|
-        projects = [temp_tp_dir_project(dir), temp_tp_dir_project(dir2)]
+        projects = [transcripts_dir_project(dir), transcripts_dir_project(dir2)]
         refute_equal(projects[0].local.id, projects[1].local.id)
         ['audio_url', 'project_id'].each do |csv_param|
           param_set = projects.map{|project| Set.new project.local.file('data', 'assignment.csv').as(:csv).select{|a| a[csv_param] } }
@@ -32,16 +32,16 @@ class TestTest < Typingpool::Test::Script
   end
 
   def assert_is_proper_tp_dir(dir)
-    assert(File.exists? temp_tp_dir_project_dir(dir))
-    assert(File.directory? temp_tp_dir_project_dir(dir))
-    assert(project = temp_tp_dir_project(dir))
+    assert(project = transcripts_dir_project(dir))
     assert(project.local)
+    assert(File.exists? project.local)
+    assert(File.directory? project.local)
     assert_equal(3, project.local.subdir('audio', 'originals').files.count)
     assert_equal(6, project.local.subdir('audio', 'chunks').files.count)
   end
 
   def assert_has_proper_assignment_csv(dir)
-    assert(project = temp_tp_dir_project(dir))
+    assert(project = transcripts_dir_project(dir))
     assert(File.exists? project.local.file('data', 'assignment.csv').path)
     assert(assignments = project.local.file('data', 'assignment.csv').as(:csv).read)
     assert_equal(project.local.subdir('audio', 'chunks').files.count, assignments.count)

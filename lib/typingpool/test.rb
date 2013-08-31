@@ -2,9 +2,6 @@ module Typingpool
   require 'minitest'
   require 'typingpool/app/test'
   class Test < Minitest::Test 
-    require 'nokogiri'
-    require 'fileutils'
-
     class << self
       attr_accessor :live
       attr_accessor :record

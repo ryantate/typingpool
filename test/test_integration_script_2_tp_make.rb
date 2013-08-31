@@ -33,7 +33,7 @@ class TestTpMake < Typingpool::Test::Script
 
   def check_project_uploads(project, url_check=true)
     assignments = project.local.file('data', 'assignment.csv').as(:csv)
-    assert_all_assets_have_upload_status(assignments, ['audio'], 'yes')
+    assert_all_assets_have_upload_status(assignments, 'audio', 'yes')
     assignments.each do |assignment|
       assert(assignment['audio_url'])
       assert(working_url_eventually? assignment['audio_url']) if url_check
@@ -65,75 +65,75 @@ class TestTpMake < Typingpool::Test::Script
 
   def test_tp_make_audio_handling
     Dir.entries(audio_dir).select{|entry| File.directory?(File.join(audio_dir, entry))}.reject{|entry| entry.match(/^\./) }.each do |subdir|
-      in_temp_tp_dir do |dir|
+      with_temp_transcripts_dir do |dir|
         config_path = self.config_path(dir)
         skip_if_no_upload_credentials('tp-make audio handling test', Typingpool::Config.file(config_path))
         tp_make(dir, config_path, subdir, true)
-        assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path)))
+        assert(project = transcripts_dir_project(dir, Typingpool::Config.file(config_path)))
         check_project_files(project)
-      end #in_temp_tp_dir
+      end #with_temp_transcripts_dir
     end #Dir.entries
   end
 
   def test_tp_make_sftp
     skip_during_vcr_playback('tp-make SFTP upload_test')
-    in_temp_tp_dir do |dir|
+    with_temp_transcripts_dir do |dir|
       skip_if_no_sftp_credentials('tp-make SFTP upload test', config)
       begin
         tp_make(dir)
-        assert(project = temp_tp_dir_project(dir))
+        assert(project = transcripts_dir_project(dir))
         check_project_files(project)
         check_project_uploads(project)
       ensure
         tp_finish_outside_sandbox(dir)
       end #begin
-      assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), ['audio'], 'no') 
-    end #in_temp_tp_dir do...
+      assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), 'audio', 'no') 
+    end #with_temp_transcripts_dir do...
   end
 
   def test_tp_make_s3
-    in_temp_tp_dir do |dir|
+    with_temp_transcripts_dir do |dir|
       skip_if_no_s3_credentials('tp-make S3 integration test', config)
       config_path = setup_s3_config(dir)
       begin
         tp_make_with_vcr(dir, 'tp_make_1', config_path)
-        assert(project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path)))
+        assert(project = transcripts_dir_project(dir, Typingpool::Config.file(config_path)))
         check_project_files(project)
         check_project_uploads(project, (Typingpool::Test.live || Typingpool::Test.record))
       ensure
         tp_finish_outside_sandbox(dir, config_path) if (Typingpool::Test.live || Typingpool::Test.record)
       end #begin
-      assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), ['audio'], 'no') if (Typingpool::Test.live || Typingpool::Test.record)
-    end #in_temp_tp_dir do...
+      assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), 'audio', 'no') if (Typingpool::Test.live || Typingpool::Test.record)
+    end #with_temp_transcripts_dir do...
   end 
 
 
   def test_fixing_failed_tp_make
-    in_temp_tp_dir do |dir|
-      config = config_from_dir(dir)
+    with_temp_transcripts_dir do |dir|
+      config = Typingpool::Config.file(config_path(dir))
       skip_if_no_s3_credentials('tp-make failed upload integration test', config)
       good_config_path = setup_s3_config(dir)
       bad_config_path = setup_s3_config_with_bad_password(dir)
       assert_raises(Typingpool::Error::Shell) do
         tp_make(dir, bad_config_path, 'mp3')
       end
-      project_dir = temp_tp_dir_project_dir(dir)
+      assert(project = transcripts_dir_project(dir))
+      project_dir = project.local.path
       assert(File.exists? project_dir)
       assert(File.directory? project_dir)
       assert(File.exists? File.join(project_dir, 'data', 'assignment.csv'))
       originals_dir = File.join(project_dir, 'audio', 'originals')
       refute_empty(Dir.entries(originals_dir).reject{|entry| entry.match(/^\./) }.map{|entry| File.join(originals_dir, entry) }.select{|path| File.file? path })
-      assert(project = temp_tp_dir_project(dir))
       assert(assignment_csv = project.local.file('data', 'assignment.csv').as(:csv))
       refute_empty(assignment_csv.to_a)
-      assert_all_assets_have_upload_status(assignment_csv, ['audio'], 'maybe')
+      assert_all_assets_have_upload_status(assignment_csv, 'audio', 'maybe')
       assert(audio_urls = assignment_csv.map{|assignment| assignment['audio_url'] })
       refute_empty(audio_urls)
       assert_empty(audio_urls.select{|url| working_url? url })
       begin
         tp_make_with_vcr(dir, 'tp_make_2', good_config_path)
         refute_empty(assignment_csv.read)
-        assert_all_assets_have_upload_status(assignment_csv, ['audio'], 'yes')
+        assert_all_assets_have_upload_status(assignment_csv, 'audio', 'yes')
         refute_empty(audio_urls2 = assignment_csv.map{|assignment| assignment['audio_url'] })
         audio_urls.each_with_index do |original_url, i|
           assert_equal(original_url, audio_urls2[i])
@@ -142,24 +142,24 @@ class TestTpMake < Typingpool::Test::Script
       ensure
         tp_finish_outside_sandbox(dir, good_config_path) if (Typingpool::Test.live || Typingpool::Test.record) 
       end #begin
-      assert_all_assets_have_upload_status(assignment_csv, ['audio'], 'no') if (Typingpool::Test.live || Typingpool::Test.record)
-    end #in_temp_tp_dir do...
+      assert_all_assets_have_upload_status(assignment_csv, 'audio', 'no') if (Typingpool::Test.live || Typingpool::Test.record)
+    end #with_temp_transcripts_dir do...
   end
 
   def test_audio_files_sorted_correctly
-    in_temp_tp_dir do |dir|
+    with_temp_transcripts_dir do |dir|
       config_path = self.config_path(dir)
       skip_if_no_upload_credentials('tp-make audio file sorting test', Typingpool::Config.file(config_path))
       assert(audio_files('mp3').count > 1)
       correctly_ordered_paths = audio_files('mp3').sort
       tp_make(dir, config_path, 'mp3', true)
-      assert(project = temp_tp_dir_project(dir))
+      assert(project = transcripts_dir_project(dir))
       check_project_files(project)
       assert(merged_audio_file = project.local.subdir('audio','originals').files.detect{|filer| filer.path.match(/.\.all\../)})
       assert(File.exists? merged_audio_file)
       actually_ordered_paths = originals_from_merged_audio_file(merged_audio_file)
       assert_equal(correctly_ordered_paths.map{|path| File.basename(path) }, actually_ordered_paths.map{|path| File.basename(path) })
-    end #in_temp_tp_dir
+    end #with_temp_transcripts_dir
   end
 
   def originals_from_merged_audio_file(path)

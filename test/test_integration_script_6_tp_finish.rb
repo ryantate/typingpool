@@ -17,17 +17,17 @@ class TestTpFinish < Typingpool::Test::Script
       begin
         #get audio uploaded by calling tp-make on existing project
         tp_make(dir)
-        project = temp_tp_dir_project(dir)
+        project = transcripts_dir_project(dir)
         csv = project.local.file('data', 'assignment.csv').as(:csv)
         urls = csv.map{|assignment| assignment['audio_url'] }
         refute_empty(urls)
-        assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
+        assert_all_assets_have_upload_status(csv, 'audio', 'yes')
         assert_equal(urls.count, urls.select{|url| working_url_eventually? url}.count)
       ensure
         tp_finish_outside_sandbox(dir)
       end #begin
       assert_equal(urls.count, urls.select{|url| broken_url_eventually? url }.count)
-      assert_all_assets_have_upload_status(csv, ['audio'], 'no')
+      assert_all_assets_have_upload_status(csv, 'audio', 'no')
     end #with_temp_readymade_project do |dir|
   end
 
@@ -41,17 +41,17 @@ class TestTpFinish < Typingpool::Test::Script
       begin
         #get audio uploaded by calling tp-make on existing project
         tp_make_with_vcr(dir, 'tp_finish_1', s3_config_path)
-        project = temp_tp_dir_project(dir, Typingpool::Config.file(s3_config_path))
+        project = transcripts_dir_project(dir, Typingpool::Config.file(s3_config_path))
         csv = project.local.file('data', 'assignment.csv').as(:csv)
         urls = csv.map{|assignment| assignment['audio_url'] }
         refute_empty(urls)
-        assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
+        assert_all_assets_have_upload_status(csv, 'audio', 'yes')
         assert_equal(urls.count, urls.select{|url| working_url_eventually? url}.count) if (Typingpool::Test.live || Typingpool::Test.record)
       ensure
         tp_finish_outside_sandbox_with_vcr(dir, 'tp_finish_2', s3_config_path)
       end #begin
       assert_equal(urls.count, urls.select{|url| broken_url_eventually? url }.count) if (Typingpool::Test.live || Typingpool::Test.record)
-      assert_all_assets_have_upload_status(csv, ['audio'], 'no')
+      assert_all_assets_have_upload_status(csv, 'audio', 'no')
     end #with_temp_readymade_project do |dir|
   end
 
@@ -87,12 +87,12 @@ class TestTpFinish < Typingpool::Test::Script
                }) do
         begin
           tp_assign_with_vcr(dir, 'tp_finish_3', s3_config_path)
-          project = temp_tp_dir_project(dir, config)
+          project = transcripts_dir_project(dir, config)
           csv = project.local.file('data', 'assignment.csv').as(:csv)
           sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
-          assert_all_assets_have_upload_status(sandbox_csv, ['assignment'], 'yes')
-          assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
-          setup_amazon(dir)
+          assert_all_assets_have_upload_status(sandbox_csv, 'assignment', 'yes')
+          assert_all_assets_have_upload_status(csv, 'audio', 'yes')
+          Typingpool::Amazon.setup(:sandbox => true, :config => Typingpool::Config.file(config_path(dir)))
           results = Typingpool::Amazon::HIT.all_for_project(project.local.id)
           refute_empty(results)
         ensure
@@ -112,7 +112,7 @@ class TestTpFinish < Typingpool::Test::Script
         end #results.each...
       end #with_vcr do...
       refute(File.exists? sandbox_csv)
-      assert_all_assets_have_upload_status(csv, ['audio'], 'no')
+      assert_all_assets_have_upload_status(csv, 'audio', 'no')
     end #with_temp_readymade_project do...
   end
 
@@ -126,12 +126,12 @@ class TestTpFinish < Typingpool::Test::Script
       simulate_failed_audio_upload_in(dir, s3_config_path)
       begin
         tp_make_with_vcr(dir, 'tp_finish_6', s3_config_path)
-        project = temp_tp_dir_project(dir, Typingpool::Config.file(s3_config_path))
+        project = transcripts_dir_project(dir, Typingpool::Config.file(s3_config_path))
         csv = project.local.file('data', 'assignment.csv').as(:csv)
         assignments = csv.read
         urls = assignments.map{|assignment| assignment['audio_url'] }
         assert_equal(urls.count, urls.select{|url| working_url_eventually? url }.count) if (Typingpool::Test.live || Typingpool::Test.record)
-        assert_all_assets_have_upload_status(csv, ['audio'], 'yes')
+        assert_all_assets_have_upload_status(csv, 'audio', 'yes')
         bogus_url = urls.first.sub(/\.mp3/, '.foo.mp3')
         refute_equal(urls.first, bogus_url)
         refute(working_url? bogus_url) if (Typingpool::Test.live || Typingpool::Test.record)
@@ -144,7 +144,7 @@ class TestTpFinish < Typingpool::Test::Script
       ensure
         tp_finish_outside_sandbox_with_vcr(dir, 'tp_finish_7', s3_config_path)
       end #begin
-      assert_all_assets_have_upload_status(csv, ['audio'], 'no')
+      assert_all_assets_have_upload_status(csv, 'audio', 'no')
       urls = csv.map{|assignment| assignment['audio_url'] }
       assert_equal(urls.count, urls.select{|url| broken_url_eventually? url }.count) if (Typingpool::Test.live || Typingpool::Test.record)
     end #with_temp_readymade_project do...
@@ -153,7 +153,7 @@ class TestTpFinish < Typingpool::Test::Script
   def test_abort_on_config_mismatch
     skip_if_no_s3_credentials('tp-finish abort on config mismatch test')
     with_temp_readymade_project do |dir|
-      config = config_from_dir(dir)
+      config = Typingpool::Config.file(config_path(dir))
       good_config_path = setup_s3_config(dir, config, '.config_s3_good')
       reconfigure_readymade_project_in(good_config_path)
       simulate_failed_audio_upload_in(dir, good_config_path)

@@ -5,19 +5,12 @@ module Typingpool
       require 'yaml'
       require 'open3'
       require 'fileutils'
+      require 'nokogiri'
 
       @@readymade_project_path = nil
 
-      def self.readymade_project_container=(path)
-        @@readymade_project_path = path
-      end
-
-      def self.readymade_project_container
-        @@readymade_project_path
-      end
-
       def with_temp_readymade_project
-        in_temp_tp_dir do |dir|
+        with_temp_transcripts_dir do |dir|
           setup_readymade_project_into(config_path(dir))
           yield(dir)
         end
@@ -30,22 +23,22 @@ module Typingpool
       end
 
       def init_readymade_project
-        unless Typingpool::Test::Script.readymade_project_container
-          dir = Typingpool::Test::Script.readymade_project_container = Dir.mktmpdir('typingpool_')
+        unless @@readymade_project_path
+          dir = @@readymade_project_path = Dir.mktmpdir('typingpool_')
           Minitest.after_run{ FileUtils.remove_entry_secure(dir) }
-          setup_temp_tp_dir(dir, Config.file(setup_s3_config(dir, self.config)))
+          make_transcripts_dir_config(dir, Config.file(setup_s3_config(dir, self.config)))
           tp_make(dir, config_path(dir), 'mp3', true)
         end 
       end
 
       def copy_readymade_project_into(config_path)
         config = Typingpool::Config.file(config_path)
-        FileUtils.cp_r(File.join(Typingpool::Test::Script.readymade_project_container, '.'), File.dirname(config_path))
+        FileUtils.cp_r(File.join(@@readymade_project_path, '.'), File.dirname(config_path))
       end
 
       def reconfigure_readymade_project_in(config_path)
         #rewrite URLs in assignment.csv according to config at config_path
-        make_temp_tp_dir_config(File.dirname(config_path), Config.file(config_path))
+        make_transcripts_dir_config(File.dirname(config_path), Config.file(config_path))
         project = Project.new(project_default[:title], Config.file(config_path))
         File.delete(project.local.file('data', 'id.txt'))
         project.local.create_id
@@ -75,46 +68,31 @@ module Typingpool
       end
 
       def config_path(dir)
-        ::File.join(dir, project_default[:config_filename])   
+        File.join(dir, project_default[:config_filename])   
       end
 
-      def config_from_dir(dir)
-        Config.file(config_path(dir))
-      end
-
-
-      def setup_amazon(dir)
-        Amazon.setup(:sandbox => true, :config => config_from_dir(dir))
-      end
-
-
-      def in_temp_tp_dir
+      def with_temp_transcripts_dir
         Dir.mktmpdir('typingpool_') do |dir|
-          setup_temp_tp_dir(dir)
+          make_transcripts_dir_config(dir, self.config)
           yield(dir)
         end
       end
 
-      def setup_temp_tp_dir(dir, config=self.config)
-        make_temp_tp_dir_config(dir, config)
-        Dir.mkdir(File.join(dir, 'projects'))
-      end
-
-      def setup_s3_config(dir, config=config_from_dir(dir), filename='.config_s3')
+      def setup_s3_config(dir, config=Config.file(config_path(dir)), filename='.config_s3')
         return unless s3_credentials?(config)
         config.to_hash.delete('sftp')
         write_config(config, dir, filename)
       end
 
-      def setup_s3_config_with_bad_password(dir, config=config_from_dir(dir))
+      def setup_s3_config_with_bad_password(dir, config=Config.file(config_path(dir)))
         bad_password = 'f'
         refute_equal(config.to_hash['amazon']['secret'], bad_password)
         config.to_hash['amazon']['secret'] = bad_password
         setup_s3_config(dir, config, '.config_s3_bad')
       end
 
-      def make_temp_tp_dir_config(dir, config=self.config)
-        config.transcripts = File.join(dir, 'projects')
+      def make_transcripts_dir_config(dir, config=self.config)
+        config.transcripts = dir
         config.cache = File.join(dir, '.cache')
         config['assign']['reward'] = '0.02'
         config.assign.to_hash.delete('qualify')
@@ -122,25 +100,22 @@ module Typingpool
       end
 
       def write_config(config, dir, filename=project_default[:config_filename])
-        path = ::File.join(dir, filename)
-        ::File.open(path, 'w') do |out|
-          out << YAML.dump(config.to_hash)
-        end
+        path = File.join(dir, filename)
+        File.write(path, YAML.dump(config.to_hash))
         path
       end
 
-      def temp_tp_dir_project_dir(temp_tp_dir)
-        ::File.join(temp_tp_dir, 'projects', project_default[:title])
-      end
-
-      def temp_tp_dir_project(dir, config=config_from_dir(dir))
+      def transcripts_dir_project(dir, config=Config.file(config_path(dir)))
         Project.new(project_default[:title], config)
       end
 
-      def call_script(*args)
-        Utility.system_quietly(*args)
+      def call_script(script_name, *args)
+        Utility.system_quietly(path_to_script(script_name), *args)
       end
 
+      def path_to_script(script_name)
+        File.join(self.class.app_dir, 'bin', script_name)
+      end
 
       def vcr_args(fixture_name)
         args = []
@@ -153,12 +128,8 @@ module Typingpool
         args
       end
 
-      def path_to_tp_make
-        ::File.join(self.class.app_dir, 'bin', 'tp-make')
-      end
-
       def call_tp_make(*args)
-        call_script(path_to_tp_make, *args)
+        call_script('tp-make', *args)
       end
 
       def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3', devtest_mode_skipping_upload=false, *args)
@@ -178,12 +149,8 @@ module Typingpool
         tp_make(dir, config_path, 'mp3', false, *vcr_args(fixture_name))
       end
 
-      def path_to_tp_finish
-        ::File.join(self.class.app_dir, 'bin', 'tp-finish')
-      end
-
       def call_tp_finish(*args)
-        call_script(path_to_tp_finish, *args)
+        call_script('tp-finish', *args)
       end
 
       def tp_finish(dir, config_path=config_path(dir), *args)
@@ -200,12 +167,8 @@ module Typingpool
         call_tp_finish(project_default[:title], '--config', config_path, *args)
       end
 
-      def path_to_tp_assign
-        File.join(self.class.app_dir, 'bin', 'tp-assign')
-      end
-
       def call_tp_assign(*args)
-        call_script(path_to_tp_assign, '--sandbox', *args)
+        call_script('tp-assign', '--sandbox', *args)
       end
 
       def assign_default
@@ -231,7 +194,7 @@ module Typingpool
       end
 
       def tp_assign_with_vcr(dir, fixture_name, config_path=config_path(dir))
-        project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
+        project = transcripts_dir_project(dir, Typingpool::Config.file(config_path))
         args = [dir, config_path, *vcr_args(fixture_name)]
         unless (Typingpool::Test.live || Typingpool::Test.record)
           args.push('--testtime', project_time(project).to_i.to_s)
@@ -240,14 +203,14 @@ module Typingpool
       end
 
       def copy_tp_assign_fixtures(dir, fixture_prefix, config_path=config_path(dir))
-        project = temp_tp_dir_project(dir, Typingpool::Config.file(config_path))
+        project = transcripts_dir_project(dir, Typingpool::Config.file(config_path))
         if Typingpool::Test.record
           project_time(project, Time.now)
-          with_fixtures_in_temp_tp_dir(dir, "#{fixture_prefix}_") do |fixture_path, project_path|
+          with_fixtures_in_transcripts_dir(dir, "#{fixture_prefix}_") do |fixture_path, project_path|
             FileUtils.cp(project_path, fixture_path)
           end
         elsif not(Typingpool::Test.live)
-          copy_fixtures_to_temp_tp_dir(dir, "#{fixture_prefix}_")
+          copy_fixtures_to_transcripts_dir(dir, "#{fixture_prefix}_")
           reconfigure_project_csv_in(config_path)
         end
       end
@@ -262,13 +225,8 @@ module Typingpool
         time
       end
 
-
-      def path_to_tp_collect
-        File.join(self.class.app_dir, 'bin', 'tp-collect')
-      end
-
       def call_tp_collect(fixture_path, *args)
-        call_script(path_to_tp_collect, '--sandbox', '--fixture', fixture_path, *args)
+        call_script('tp-collect', '--sandbox', '--fixture', fixture_path, *args)
       end
 
       def tp_collect_with_fixture(dir, fixture_path)
@@ -279,13 +237,9 @@ module Typingpool
       end
 
 
-      def path_to_tp_review
-        File.join(self.class.app_dir, 'bin', 'tp-review')
-      end
-
       def tp_review_with_fixture(dir, fixture_path, choices)
         output = {}
-        Open3.popen3(path_to_tp_review, '--sandbox', '--fixture', fixture_path, '--config', config_path(dir), project_default[:title]) do |stdin, stdout, stderr, wait_thr|
+        Open3.popen3(File.join(self.class.app_dir, 'bin', 'tp-review'), '--sandbox', '--fixture', fixture_path, '--config', config_path(dir), project_default[:title]) do |stdin, stdout, stderr, wait_thr|
           choices.each do |choice|
             stdin.puts(choice)
             if choice.strip.match(/^r/i)
@@ -300,17 +254,13 @@ module Typingpool
         output
       end
 
-      def path_to_tp_config
-        File.join(self.class.app_dir, 'bin', 'tp-config')
-      end
-
       def tp_config(*args)
-        call_script(path_to_tp_config, *args)
+        call_script('tp-config', *args)
       end
 
       def tp_config_with_input(args, input)
         output = {}
-        Open3.popen3(path_to_tp_config, *args) do |stdin, stdout, stderr, wait_thr|
+        Open3.popen3(path_to_script('tp-config'), *args) do |stdin, stdout, stderr, wait_thr|
           input.each do |sending|
             stdin.puts(sending)
           end
@@ -331,7 +281,7 @@ module Typingpool
         if File.exists? dir
           raise Error::Test, "Fixture project already exists for #{name} at #{dir}"
         end
-        ::Dir.mkdir(dir)
+        Dir.mkdir(dir)
         dir
       end
 
@@ -339,34 +289,19 @@ module Typingpool
         FileUtils.remove_entry_secure(fixture_project_dir(name), :secure => true)
       end
 
-      def init_vcr_fixtures_if_needed(fixture_prefix, config_path)
-        Typingpool::Test.record or return
-        in_temp_tp_dir do |dir|
-          vcr_fixture_path = File.join(vcr_dir, fixture_prefix)
-          begin
-            tp_make(dir, config_path, 'mp3', false,  vcr_fixture_path)
-            with_fixtures_in_temp_tp_dir(dir, "#{fixture_prefix}_") do |fixture_path, project_path|
-              FileUtils.cp(project_path, fixture_path)
-            end
-          ensure
-            tp_finish_outside_sandbox(dir, config_path)
-          end #begin
-        end #in_temp_tp_dir do...
-      end
-
-      def with_fixtures_in_temp_tp_dir(dir, fixture_prefix)
+      def with_fixtures_in_transcripts_dir(dir, fixture_prefix)
         fixtures = Dir.entries(fixtures_dir).select{|entry| entry.include?(fixture_prefix) && entry.index(fixture_prefix) == 0 }.select{|entry| File.file?(File.join(fixtures_dir, entry)) }
         fixtures.map!{|fixture| fixture[fixture_prefix.size .. -1] }
         fixtures.each do |fixture|
-          project_path = File.join(temp_tp_dir_project_dir(dir), 'data', fixture)
+          project_path = File.join(transcripts_dir_project(dir).local, 'data', fixture)
           fixture_path = File.join(fixtures_dir, [fixture_prefix, fixture].join )
           yield(fixture_path, project_path)
         end
       end
 
-      def copy_fixtures_to_temp_tp_dir(dir, fixture_prefix)
+      def copy_fixtures_to_transcripts_dir(dir, fixture_prefix)
         copies = 0
-        with_fixtures_in_temp_tp_dir(dir, fixture_prefix) do |fixture_path, project_path|
+        with_fixtures_in_transcripts_dir(dir, fixture_prefix) do |fixture_path, project_path|
           if File.exists? project_path
             FileUtils.mv(project_path, File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}"))
           end
@@ -377,8 +312,8 @@ module Typingpool
         copies
       end
 
-      def rm_fixtures_from_temp_tp_dir(dir, fixture_prefix)
-        with_fixtures_in_temp_tp_dir(dir, fixture_prefix) do |fixture_path, project_path|
+      def rm_fixtures_from_transcripts_dir(dir, fixture_prefix)
+        with_fixtures_in_transcripts_dir(dir, fixture_prefix) do |fixture_path, project_path|
           FileUtils.rm(project_path)
           path_to_orig = File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}")
           if File.exists?(path_to_orig)
@@ -388,7 +323,7 @@ module Typingpool
       end
 
       def assert_has_transcript(dir, transcript_file='transcript.html')
-        transcript_path = File.join(temp_tp_dir_project_dir(dir), transcript_file)
+        transcript_path = File.join(transcripts_dir_project(dir).local, transcript_file)
         assert(File.exists?(transcript_path))
         assert(not((transcript = IO.read(transcript_path)).empty?))
         transcript
@@ -403,34 +338,22 @@ module Typingpool
       end
 
       def assert_html_has_audio_count(count, html)
-        assert_equal(count, noko(html).css('audio').size)
+        assert_equal(count, Nokogiri::HTML(html).css('audio').size)
       end
 
-      def assert_all_assets_have_upload_status(assignment_csv, types, status)
-        types.each do |type|
-          recorded_uploads = assignment_csv.map{|assignment| assignment["#{type}_uploaded"] }
-          refute_empty(recorded_uploads)
-          assert_equal(recorded_uploads.count, recorded_uploads.select{|uploaded| uploaded == status }.count)
-        end
-      end
-
-      def assert_shell_error_match(regex)
-        exception = assert_raises(Typingpool::Error::Shell) do
-          yield
-        end
-        assert_match(regex, exception.message)
+      def assert_all_assets_have_upload_status(assignment_csv, type, status)
+        recorded_uploads = assignment_csv.map{|assignment| assignment["#{type}_uploaded"] }
+        refute_empty(recorded_uploads)
+        assert_equal(recorded_uploads.count, recorded_uploads.select{|uploaded| uploaded == status }.count)
       end
 
       def assert_script_abort_match(args, regex)
-        in_temp_tp_dir do |dir|
-          assert_shell_error_match(regex) do 
+        with_temp_transcripts_dir do |dir|
+          exception = assert_raises(Typingpool::Error::Shell) do
             yield([*args, '--config', config_path(dir)])
           end
-        end #in_temp_tp_dir do...
-      end
-
-      def noko(html)
-        Nokogiri::HTML(html) 
+          assert_match(regex, exception.message)
+        end #with_temp_transcripts_dir do...
       end
     end #Script
   end #Test
