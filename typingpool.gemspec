@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
    s.date = Time.now.strftime("%Y-%m-%d")
    s.description = 'An app for transcribing audio using Mechanical Turk'
    s.summary = s.description
+   s.license = 'MIT'
    s.authors = ['Ryan Tate']
    s.email = 'ryantate@ryantate.com'
    s.homepage = 'http://github.com/ryantate/typingpool'
