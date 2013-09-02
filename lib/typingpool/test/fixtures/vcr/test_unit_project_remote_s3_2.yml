@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/?versioning
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/?versioning
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -14,9 +14,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:38 GMT
+      - Mon, 02 Sep 2013 20:38:43 GMT
       Authorization:
-      - AWS <AWS_KEY>:VCBmUFsOzNct17DZTPJfzd7Z/GY=
+      - AWS <AWS_KEY>:4EWpal/sbpqzLHfRHWPI83aiB4U=
       Accept:
       - '*/*'
   response:
@@ -25,15 +25,15 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 8729109AC8F6F10E
+      - 1109906FD9C68ADB
       X-Amz-Id-2:
-      - g5NxpqzSXkofpAgeL+l6IqbtgCVpETXTZxnSwYOZGsStqcH/WMDg/FJFAjD15JM1
+      - G4w/p3Y40XvXD+ymsQuu4axMU7C+5LtNZvy5gPvQB7ntaOgeJ0koGnO3s20SIPpG
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:38 GMT
+      - Mon, 02 Sep 2013 20:38:44 GMT
       Server:
       - AmazonS3
     body:
@@ -42,15 +42,15 @@ http_interactions:
         PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPEVycm9y
         PjxDb2RlPk5vU3VjaEJ1Y2tldDwvQ29kZT48TWVzc2FnZT5UaGUgc3BlY2lm
         aWVkIGJ1Y2tldCBkb2VzIG5vdCBleGlzdDwvTWVzc2FnZT48QnVja2V0TmFt
-        ZT50eXBpbmdwb29sLXRlc3QtYW02OG42eTducHkwMnMzNDwvQnVja2V0TmFt
-        ZT48UmVxdWVzdElkPjg3MjkxMDlBQzhGNkYxMEU8L1JlcXVlc3RJZD48SG9z
-        dElkPmc1TnhwcXpTWGtvZnBBZ2VMK2w2SXFidGdDVnBFVFhUWnhuU3dZT1pH
-        c1N0cWNIL1dNRGcvRkpGQWpEMTVKTTE8L0hvc3RJZD48L0Vycm9yPg==
+        ZT50eXBpbmdwb29sLXRlc3QtZHFxNXAwNzlqNjc2dDg0ZDwvQnVja2V0TmFt
+        ZT48UmVxdWVzdElkPjExMDk5MDZGRDlDNjhBREI8L1JlcXVlc3RJZD48SG9z
+        dElkPkc0dy9wM1k0MFh2WEQreW1zUXV1NGF4TVU3Qys1THROWnZ5NWdQdlFC
+        N250YU9nZUowa29Hbk8zczIwU0lQcEc8L0hvc3RJZD48L0Vycm9yPg==
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:39 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:44 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-html.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-html.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -151,9 +151,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:39 GMT
+      - Mon, 02 Sep 2013 20:38:44 GMT
       Authorization:
-      - AWS <AWS_KEY>:oJz5mfCZVViuJp/t/OTkyd21HRs=
+      - AWS <AWS_KEY>:VHUoG6ozQEjC70Y0TdXHYQ+XT7U=
       Accept:
       - '*/*'
   response:
@@ -162,15 +162,15 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 616A6D557E6970C8
+      - 587DAF318AA917C4
       X-Amz-Id-2:
-      - HKvN7CZJAs8+HtwpMrBH2jEDZ4SG0yAeaHWkiW6lssp5rlWojato3w9T8dBrr+g9
+      - 1otB86DKwCv2YzlV+3pgOQ6ylzTJB0Inr6UdKFh73jj1/5oM/0Js/yHLXc2gQ+9U
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:39 GMT
+      - Mon, 02 Sep 2013 20:38:44 GMT
       Connection:
       - close
       Server:
@@ -181,15 +181,15 @@ http_interactions:
         PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPEVycm9y
         PjxDb2RlPk5vU3VjaEJ1Y2tldDwvQ29kZT48TWVzc2FnZT5UaGUgc3BlY2lm
         aWVkIGJ1Y2tldCBkb2VzIG5vdCBleGlzdDwvTWVzc2FnZT48QnVja2V0TmFt
-        ZT50eXBpbmdwb29sLXRlc3QtYW02OG42eTducHkwMnMzNDwvQnVja2V0TmFt
-        ZT48UmVxdWVzdElkPjYxNkE2RDU1N0U2OTcwQzg8L1JlcXVlc3RJZD48SG9z
-        dElkPkhLdk43Q1pKQXM4K0h0d3BNckJIMmpFRFo0U0cweUFlYUhXa2lXNmxz
-        c3A1cmxXb2phdG8zdzlUOGRCcnIrZzk8L0hvc3RJZD48L0Vycm9yPg==
+        ZT50eXBpbmdwb29sLXRlc3QtZHFxNXAwNzlqNjc2dDg0ZDwvQnVja2V0TmFt
+        ZT48UmVxdWVzdElkPjU4N0RBRjMxOEFBOTE3QzQ8L1JlcXVlc3RJZD48SG9z
+        dElkPjFvdEI4NkRLd0N2Mll6bFYrM3BnT1E2eWx6VEpCMElucjZVZEtGaDcz
+        amoxLzVvTS8wSnMveUhMWGMyZ1ErOVU8L0hvc3RJZD48L0Vycm9yPg==
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:39 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:45 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/
     body:
       encoding: UTF-8
       base64_string: ''
@@ -203,9 +203,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:39 GMT
+      - Mon, 02 Sep 2013 20:38:45 GMT
       Authorization:
-      - AWS <AWS_KEY>:vktgd3Hdj1F7NDj3i1dVC262MyQ=
+      - AWS <AWS_KEY>:Xc++7ZAuyYPaWU0rpVotMrsuDHY=
       Accept:
       - '*/*'
   response:
@@ -214,13 +214,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - 4j/714xv25uRkEWNQeAtib/otfA/QLufaxhtBgZXeY2b5ndtfet42i2WE2eLw1SK
+      - pSQ+nQo0Y/wYXH76jiIX76MLMgcRhouxh4N4rZi3NzYg8t6XJLI50B9MFhhy1Axs
       X-Amz-Request-Id:
-      - 316E3CE4AA59B09C
+      - 819A99FD969BC18B
       Date:
-      - Sat, 31 Aug 2013 18:11:40 GMT
+      - Mon, 02 Sep 2013 20:38:46 GMT
       Location:
-      - /typingpool-test-am68n6y7npy02s34
+      - /typingpool-test-dqq5p079j676t84d
       Content-Length:
       - '0'
       Server:
@@ -229,10 +229,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:39 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:45 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-html.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-html.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -333,9 +333,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:39 GMT
+      - Mon, 02 Sep 2013 20:38:45 GMT
       Authorization:
-      - AWS <AWS_KEY>:oJz5mfCZVViuJp/t/OTkyd21HRs=
+      - AWS <AWS_KEY>:Qef/PuaUL4/ijs6jf9b0tiVZ9PU=
       Accept:
       - '*/*'
   response:
@@ -344,11 +344,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - GAcK6GiQyr2jChN5LW1RLMOfMsdGblyzSa4uV/JnrXxQJM3JCIUx1YC4KoeP2ULZ
+      - XTcB2CX4SfAJOYAK3Fp/CdWgeWE44BYwBNW6jMwyis7pYx7blP9A9FHpkFZNbXNP
       X-Amz-Request-Id:
-      - 4C646C17617B187A
+      - 103BCD126D5181C9
       Date:
-      - Sat, 31 Aug 2013 18:11:40 GMT
+      - Mon, 02 Sep 2013 20:38:47 GMT
       Etag:
       - '"40fb78bc8dd4a24c94bbc15c16b11eed"'
       Content-Length:
@@ -359,10 +359,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:40 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:46 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-url.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-url.txt
     body:
       encoding: UTF-8
       base64_string: |
@@ -379,9 +379,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:40 GMT
+      - Mon, 02 Sep 2013 20:38:46 GMT
       Authorization:
-      - AWS <AWS_KEY>:KzPaReuGtV9imrW+WEy92RpWQJU=
+      - AWS <AWS_KEY>:27uZ8u67+LKGO6HuEte16oKwqns=
       Accept:
       - '*/*'
   response:
@@ -390,11 +390,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - bHByAENDs7Hw4qq0z8SN+9aWM1E0dl92njPxU55hNsUMI5M1Ne0lwWCzireGxacu
+      - /Kc6V2HTG8RGW1bJ5HVCsy78G0GZ3yzBL6qwUGJle9VLXOYuYAlkwfXEpvAyH2xM
       X-Amz-Request-Id:
-      - 72B24BDD10DB6E4B
+      - 31FFDB23B4D3E551
       Date:
-      - Sat, 31 Aug 2013 18:11:41 GMT
+      - Mon, 02 Sep 2013 20:38:48 GMT
       Etag:
       - '"5ea29c46e8ed41a4c5506583d14f0f3b"'
       Content-Length:
@@ -405,10 +405,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:40 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:47 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-html.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-html.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -423,13 +423,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - zKCWmSYjF3Cxa7dUql1JzR//QBovdqYxyXQkhCj2sjIbiONJLBobAZMvahcv+ymL
+      - bQYnXvX4azUfNbH5omTFMJDnW6C9fafbv4Z6pd9m6nfD5UfuBg/LOU9qmMe7fSPZ
       X-Amz-Request-Id:
-      - D30556396B9325FE
+      - 0C0AE464C8A55607
       Date:
-      - Sat, 31 Aug 2013 18:11:41 GMT
+      - Mon, 02 Sep 2013 20:38:48 GMT
       Last-Modified:
-      - Sat, 31 Aug 2013 18:11:40 GMT
+      - Mon, 02 Sep 2013 20:38:47 GMT
       Etag:
       - '"40fb78bc8dd4a24c94bbc15c16b11eed"'
       Accept-Ranges:
@@ -444,10 +444,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:40 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:47 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-url.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-url.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -462,13 +462,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - ASG/CaV8w2DEcpUOf5bAj3yHdTppIo/1oyS9Rmth6unY0LOZmLzhGUs+o3TxbbfT
+      - bDRWcz0HB7owfdf5G6DnwEaYsEulcY4RCAfLPMQkY2N3QWBWzTXq10oUe59+BBnr
       X-Amz-Request-Id:
-      - 701C17A0D102A84F
+      - F42AA65972C0FFD5
       Date:
-      - Sat, 31 Aug 2013 18:11:41 GMT
+      - Mon, 02 Sep 2013 20:38:49 GMT
       Last-Modified:
-      - Sat, 31 Aug 2013 18:11:41 GMT
+      - Mon, 02 Sep 2013 20:38:48 GMT
       Etag:
       - '"5ea29c46e8ed41a4c5506583d14f0f3b"'
       Accept-Ranges:
@@ -483,10 +483,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:40 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:48 GMT
 - request:
     method: delete
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-html.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-html.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -498,9 +498,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:40 GMT
+      - Mon, 02 Sep 2013 20:38:48 GMT
       Authorization:
-      - AWS <AWS_KEY>:5/m+cjV9zxnMpaDB5hqy/INZsPQ=
+      - AWS <AWS_KEY>:c/d9bvyU0GiyGnM+4chQtk3fEIQ=
       Accept:
       - '*/*'
   response:
@@ -509,21 +509,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - 3r5s/3VnfuTXiB+It9nD2snZNb4RzS5UhmcxCxVSRZ3MQHc8pwk3NAcMBnr14Qi9
+      - xp8VqMU4SUO+OtYvMUBmpM/A+Kln1nwxMsiagxcuNAsnD4sasaIKdcyizmsjui+G
       X-Amz-Request-Id:
-      - 55E0BB649F77A619
+      - 4E63CE4BEF847F8E
       Date:
-      - Sat, 31 Aug 2013 18:11:41 GMT
+      - Mon, 02 Sep 2013 20:38:49 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:40 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:48 GMT
 - request:
     method: delete
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-url.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-url.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -535,9 +535,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:40 GMT
+      - Mon, 02 Sep 2013 20:38:48 GMT
       Authorization:
-      - AWS <AWS_KEY>:C30v375uNt843cpZIGxza4EbE/g=
+      - AWS <AWS_KEY>:PVyyb+soJlYNm4p8g9ViqG/bnBE=
       Accept:
       - '*/*'
   response:
@@ -546,21 +546,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - j7DIz+rDFEo8/yYPZH0W2X4sWgBpUWLq6sljvPEoXmgdgPo5f7ZY5BZzW9+Vsq2J
+      - BR3VMIkys79uhK5ExjpOCz7CVsI0xGgpe8mJDK9AQo5SxJm8meOagWuiPIvQmolt
       X-Amz-Request-Id:
-      - 8F5C213C98C9DA6F
+      - 13BF3C054F268EAE
       Date:
-      - Sat, 31 Aug 2013 18:11:41 GMT
+      - Mon, 02 Sep 2013 20:38:50 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:40 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:49 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-html.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-html.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -575,25 +575,25 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 038E18F35D6B103E
+      - 3AA0D57C7FAD2A50
       X-Amz-Id-2:
-      - ZLMZoUr00efagdUQFOEvA3VIB7xmtymH7aGXULHNdhfKs1WQrbXSqdarwdfvImTn
+      - ObilzHg0p77fghTROTnUbxw8IFJCV+OX/DBoJL0yCZzjti/GuDrVMOBngC2gAi+K
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:40 GMT
+      - Mon, 02 Sep 2013 20:38:49 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:41 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:49 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-url.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-url.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -608,25 +608,25 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 9C10C109218E7800
+      - 9810A36E3969DD09
       X-Amz-Id-2:
-      - Nf5oGH9xGdZwstj7q+xfiZTtyBZJY0pxAPQKQAU96j8x+54hpuFoz1fgQyjzSIGg
+      - mZFTgfuzbgJGYgmrYnduhjAnIYorrPFGR1II8tRyj2wqXmhyhwPBUsah33S0NPEL
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:40 GMT
+      - Mon, 02 Sep 2013 20:38:49 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:41 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:50 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -727,9 +727,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:41 GMT
+      - Mon, 02 Sep 2013 20:38:50 GMT
       Authorization:
-      - AWS <AWS_KEY>:WYKjB0/Qs0cbib/YtA3Rb19TOGQ=
+      - AWS <AWS_KEY>:bkS21uweCh3mQdGAD5bvaIdHL2I=
       Accept:
       - '*/*'
   response:
@@ -738,11 +738,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - RUCBd1OltTw52JWQQM1/0bhihHVMh4oLAhstgoWPhGpI8fg4fACRgc/KbgKQf6K0
+      - VhpqjYt50mtKBgDQLGoE5s3YEeBtrtXFw1N58fLAafKWK6hK1KsQQa+x88+g5rJq
       X-Amz-Request-Id:
-      - EB5E01FFB87DC4E7
+      - 61CF80C9F19D4DA0
       Date:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:52 GMT
       Etag:
       - '"40fb78bc8dd4a24c94bbc15c16b11eed"'
       Content-Length:
@@ -753,10 +753,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:41 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:51 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: UTF-8
       base64_string: |
@@ -773,9 +773,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:41 GMT
+      - Mon, 02 Sep 2013 20:38:51 GMT
       Authorization:
-      - AWS <AWS_KEY>:M+FpEzjAnfc38bGtM9aKu8GZ5IY=
+      - AWS <AWS_KEY>:yWBrytJl2KtvFj1FWgi9lBT23xs=
       Accept:
       - '*/*'
   response:
@@ -784,11 +784,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - OUidx+dQyZKWc2fGIvBE22EOWhf6w4xRtSt35OWWifBUCDvIC4NG9t6cDxNc63gR
+      - DEN8PFod4SNXjy4w8dKwfEdwSSgpyDGPONf/dDy4HrULdULWAB+xJ8h9ppGPfohT
       X-Amz-Request-Id:
-      - DCB9EE6E2F27604F
+      - 6F18670FCD2E35C5
       Date:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:52 GMT
       Etag:
       - '"5ea29c46e8ed41a4c5506583d14f0f3b"'
       Content-Length:
@@ -799,10 +799,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:41 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:51 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -817,13 +817,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - V73NUZKiYzc4vQyDi9vJ6DgWKwnILyXmuFq++dKeV3ZvUVcNsyjtJu/cN2k1N9VZ
+      - zYDudLzoXsT9pNLqQFHwkfIpEAtn3TBtzaCLws7KuQakfjKPiuT61Wr3SsBS8lV8
       X-Amz-Request-Id:
-      - D7C1D3D694684873
+      - DB3081BEEF476326
       Date:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:53 GMT
       Last-Modified:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:52 GMT
       Etag:
       - '"40fb78bc8dd4a24c94bbc15c16b11eed"'
       Accept-Ranges:
@@ -838,10 +838,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:42 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:52 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -856,13 +856,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - 5/2sHizVn9+Y4wBhaz2f3eMCL/iZ15VYE75uSmA+7vDmWd0O1tRLwItD/5BIpZoN
+      - 75fzKQ7CYkkOKNqi64obWk4EHE9bz8v7wTjLNsvFywdfoi69EYllk65hoIcffNH+
       X-Amz-Request-Id:
-      - 9E98304EFC5F3B74
+      - 02AF7ED29A5EE67A
       Date:
-      - Sat, 31 Aug 2013 18:11:43 GMT
+      - Mon, 02 Sep 2013 20:38:54 GMT
       Last-Modified:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:52 GMT
       Etag:
       - '"5ea29c46e8ed41a4c5506583d14f0f3b"'
       Accept-Ranges:
@@ -877,10 +877,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:42 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:53 GMT
 - request:
     method: delete
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -892,9 +892,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:53 GMT
       Authorization:
-      - AWS <AWS_KEY>:9R0gPRd9eveqMoiAY1xLa3yROPw=
+      - AWS <AWS_KEY>:jfjg7l3MUR9R+cbUJEM2Uzs3Kbo=
       Accept:
       - '*/*'
   response:
@@ -903,21 +903,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - ZKWAvVB7zmgNiNj58iJLCRw84NynJRvaFNA81JsmSrYwlOlqgl4/6QR7YOtkCrKL
+      - 4pIPgWDg88LAFR0NBHdQrAUkCTz2DsIqf0lViZ7Jz9kevhAQTBD0dWBRgvMKQhp2
       X-Amz-Request-Id:
-      - 2F153D5EAE69A157
+      - 0D2395F633CE35A3
       Date:
-      - Sat, 31 Aug 2013 18:11:43 GMT
+      - Mon, 02 Sep 2013 20:38:54 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:42 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:53 GMT
 - request:
     method: delete
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -929,9 +929,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:53 GMT
       Authorization:
-      - AWS <AWS_KEY>:3Gitc4+NDVlZ2L3r4wEgoToSheI=
+      - AWS <AWS_KEY>:yRswJ2txsRMcByxRdrgNPHTlibs=
       Accept:
       - '*/*'
   response:
@@ -940,21 +940,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - /OeGLpISh2SbZS2SnJZ2XZbGiAe3K2QmhSAr50IVeZ7H36/mLNmAmv5DOTvuc5UW
+      - gWpZzj8EJhoDvZVhwC7WBIo0/kJi6cy4GJyyCiCoGO+Ant+xFpG+4zwgfFxwcOCd
       X-Amz-Request-Id:
-      - 87F21CA4B5CA748E
+      - E2C8219D2980128F
       Date:
-      - Sat, 31 Aug 2013 18:11:43 GMT
+      - Mon, 02 Sep 2013 20:38:55 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:42 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:54 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -969,25 +969,25 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 8D3458F4F5E4D9D8
+      - B3E8C377C3F408FA
       X-Amz-Id-2:
-      - 8NOqCj2alzNq70EEqy6rl/Hwog1c+L40g+5SZlPC0oJJflp8xRV23AW+nZlpLesk
+      - pCjBiw+keEevqypfey+vdYQrETGWPNPdjuZhTYnUxiv/Xv9Y0DM866+VUGy4p2r0
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:53 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:42 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:54 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1002,25 +1002,25 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 79635EE81B782442
+      - B4FB90E3D898B433
       X-Amz-Id-2:
-      - ccjX5Cj4XTzYCr671FXHrDYbyfnalhVnya2a0vgh4zcCpj971TkNpYe5nZ/qRcWE
+      - Z8Hqa47m5ACXr0lePfsUpMWd55JbE/XV/ZxRDQAuf5IQpt8zNYSiQ/DveKrzoKHf
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:54 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:42 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:55 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -1121,9 +1121,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:42 GMT
+      - Mon, 02 Sep 2013 20:38:55 GMT
       Authorization:
-      - AWS <AWS_KEY>:j6HcI+we6UeQz8R90lc+UU6vAVE=
+      - AWS <AWS_KEY>:y0aBGHj05FJylyR7pYveZ9qCju4=
       Accept:
       - '*/*'
   response:
@@ -1132,11 +1132,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - 16lOletdm3obxUvo4U3W+7WEUluGOSGtyKCs3aPNQxXP2sMRwWAzC1Fty4I0nDSv
+      - YcTgTWCLDIpg4MX8DGaLSeNNEefvGIsTzoLSd6+LxKKUhZi3aRVtaV9trah7IqVj
       X-Amz-Request-Id:
-      - E47A6E8EF71D566E
+      - 0D7603D832338E63
       Date:
-      - Sat, 31 Aug 2013 18:11:44 GMT
+      - Mon, 02 Sep 2013 20:38:56 GMT
       Etag:
       - '"40fb78bc8dd4a24c94bbc15c16b11eed"'
       Content-Length:
@@ -1147,10 +1147,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:43 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:56 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: UTF-8
       base64_string: |
@@ -1167,9 +1167,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:43 GMT
+      - Mon, 02 Sep 2013 20:38:56 GMT
       Authorization:
-      - AWS <AWS_KEY>:DE2gco9LDiK75ZNlthS5Gt6YseY=
+      - AWS <AWS_KEY>:ymC9rR0HYmjuoNQKP3pLBI4sjq8=
       Accept:
       - '*/*'
   response:
@@ -1178,11 +1178,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - SprFWVlgLTAWe9WD92G2U8gQWpImlijA8eC8C04pIjpyjhexWVa3Gxc53sPMtNJh
+      - oKQ5KK8dWPn3mNK4E5HpnzMBegkuBUjI/lNTkIaD7ZZjp/Ohc/cC4M4ggSBOGHbL
       X-Amz-Request-Id:
-      - 552168B44CC341F0
+      - E45D91C14D6B61A5
       Date:
-      - Sat, 31 Aug 2013 18:11:44 GMT
+      - Mon, 02 Sep 2013 20:38:57 GMT
       Etag:
       - '"5ea29c46e8ed41a4c5506583d14f0f3b"'
       Content-Length:
@@ -1193,10 +1193,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:43 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:56 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1211,13 +1211,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - 0QMppGpTSpNMwl2pxf1cnU0bY8NhOgrIf87Viz8B49z7ANnSl2drA95STSh3HD6l
+      - 8cgqn7ZnVuALaxT5N7+YWoJzPGEYotsP8unxizLXf3jNgxm52zQweoBhjk6PXUsC
       X-Amz-Request-Id:
-      - 9126C7DB2995CA0A
+      - 45730EBC4DA882D0
       Date:
-      - Sat, 31 Aug 2013 18:11:44 GMT
+      - Mon, 02 Sep 2013 20:38:58 GMT
       Last-Modified:
-      - Sat, 31 Aug 2013 18:11:44 GMT
+      - Mon, 02 Sep 2013 20:38:56 GMT
       Etag:
       - '"40fb78bc8dd4a24c94bbc15c16b11eed"'
       Accept-Ranges:
@@ -1232,10 +1232,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:43 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:57 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1250,13 +1250,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - AZBMMImRJvcPaX+Na5HqiD+poZcVV+kP5QyMOgN9lSrHQzbAMAB+U42F+srD2IXQ
+      - ZVroxqEBB/qRXECzvw2bjp9ftRmv5n0ZzePBbOw03U1wiDlDYJntpfxgQ7X938DW
       X-Amz-Request-Id:
-      - 90DD86F8F86E9FCB
+      - FD3168E625330F01
       Date:
-      - Sat, 31 Aug 2013 18:11:44 GMT
+      - Mon, 02 Sep 2013 20:38:58 GMT
       Last-Modified:
-      - Sat, 31 Aug 2013 18:11:44 GMT
+      - Mon, 02 Sep 2013 20:38:57 GMT
       Etag:
       - '"5ea29c46e8ed41a4c5506583d14f0f3b"'
       Accept-Ranges:
@@ -1271,10 +1271,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:43 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:57 GMT
 - request:
     method: delete
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1286,9 +1286,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:43 GMT
+      - Mon, 02 Sep 2013 20:38:57 GMT
       Authorization:
-      - AWS <AWS_KEY>:5eLJXRwPDmKdSUj1madx9sEqX04=
+      - AWS <AWS_KEY>:DdZ6xkgzFnv1QQfUNvvKU3sKtog=
       Accept:
       - '*/*'
   response:
@@ -1297,21 +1297,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - Dr02c6hsWaiu7b4uMl9ejeLnCDY0eRzjnjWRCfFQF7U0kzzMbUGROswGqu8rouOo
+      - zvdfy+jMMgUkme2+BA/6HpEtnuFHXlLUJPlLjXnkKWH1OuXbwjRulWQ+7ZkSSp0g
       X-Amz-Request-Id:
-      - BE9E271F42C0232A
+      - 5E6B72F7DE0176D5
       Date:
-      - Sat, 31 Aug 2013 18:11:44 GMT
+      - Mon, 02 Sep 2013 20:38:59 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:43 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:58 GMT
 - request:
     method: delete
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1323,9 +1323,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:43 GMT
+      - Mon, 02 Sep 2013 20:38:58 GMT
       Authorization:
-      - AWS <AWS_KEY>:jSUjIDvLtTNf6yQJLpoZnyD/rbQ=
+      - AWS <AWS_KEY>:Nx3Og6Og+dD3Jp3//cIL4RXtuhw=
       Accept:
       - '*/*'
   response:
@@ -1334,21 +1334,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - S7xoxFxnvYwnc7sXlAInIGOi0bzp6KqVE2tu7rLgm/DlSMVZY4IS4t2WLOp9CKpF
+      - 2hexMPoqQysNYHziIPgHWwsUFGI/kN9vmsY7iW8QvBSrccOl5MooLzDy7mGwjuTJ
       X-Amz-Request-Id:
-      - 305C32796FB5BA84
+      - CE6BAE1A723E3C63
       Date:
-      - Sat, 31 Aug 2013 18:11:45 GMT
+      - Mon, 02 Sep 2013 20:38:59 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:44 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:58 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1363,25 +1363,25 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 63F7FCE782F2F6BE
+      - EDB4283102B803E5
       X-Amz-Id-2:
-      - valXYzbKAbmC3GhQ677DEBxsyvCYGZ4EoEMhW3BVU8ccp/v+CKLPdCOprWPFxnE8
+      - N9JdxRXM7LkC3Mxt7dZ8qpO1rGDDFCi/mOVXBrIxt2mz0ox2YsdDm+1K2FcAPabx
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:43 GMT
+      - Mon, 02 Sep 2013 20:38:59 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:44 GMT
+  recorded_at: Mon, 02 Sep 2013 20:38:59 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1396,25 +1396,25 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 96A402D445832A80
+      - DF1348B96D7D8C1B
       X-Amz-Id-2:
-      - 1HCzW+1NsUH8AT0F2MdWwTHLfAosELaKi6pI9RfWtdOBPepujevAFnE+L/VQbm0E
+      - 6ix2VbdlWkdBgx3rK591R3GdxInllGwX54xavgRxKOPwlQbG+wKJcbxb4Op7HRlc
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:43 GMT
+      - Mon, 02 Sep 2013 20:38:59 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:44 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:00 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: UTF-8
       base64_string: |
@@ -1515,9 +1515,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:44 GMT
+      - Mon, 02 Sep 2013 20:39:00 GMT
       Authorization:
-      - AWS <AWS_KEY>:5b/nAr6LHTRyIpbE6p8xvFM1fqA=
+      - AWS <AWS_KEY>:pUAARiCERTfynkCs5/sySzg9dts=
       Accept:
       - '*/*'
   response:
@@ -1526,11 +1526,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - QN5KU1A+dUGMdufDL6AiPbMqs24GPZc3wcn4oiqRzxTAz6Sm8M+AROoUdvUgHFPZ
+      - P9QE5n2O79QAkeRsY/2CTYFFL6Sp1xUfjBXnT9j0iuotw0Tu7DV0CTsa6qLs3LnV
       X-Amz-Request-Id:
-      - 887CA6F17D97B984
+      - 139976168826FC3E
       Date:
-      - Sat, 31 Aug 2013 18:11:45 GMT
+      - Mon, 02 Sep 2013 20:39:01 GMT
       Etag:
       - '"40fb78bc8dd4a24c94bbc15c16b11eed"'
       Content-Length:
@@ -1541,10 +1541,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:44 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:00 GMT
 - request:
     method: put
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: UTF-8
       base64_string: |
@@ -1561,9 +1561,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:44 GMT
+      - Mon, 02 Sep 2013 20:39:00 GMT
       Authorization:
-      - AWS <AWS_KEY>:J83QSfhYkcLob5wcL0/wlKmuXoI=
+      - AWS <AWS_KEY>:U2pyvjw/YHIb9HfgsDRiLSAHusk=
       Accept:
       - '*/*'
   response:
@@ -1572,11 +1572,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - T7eMZdtZMF007Jl75s6ibempmDzbGsSooeRZ0G/uBtSm7GZFCP0BOUiXfm4HCU/C
+      - oc7e5n79HdkZok+Gl6hMTQsL9XmDlBo2OGHWldB+vIkRAxfPgQzSJ7nch90a2zWp
       X-Amz-Request-Id:
-      - 01F7550AFC5EA2F3
+      - 7663BD86250FF8B9
       Date:
-      - Sat, 31 Aug 2013 18:11:45 GMT
+      - Mon, 02 Sep 2013 20:39:02 GMT
       Etag:
       - '"5ea29c46e8ed41a4c5506583d14f0f3b"'
       Content-Length:
@@ -1587,10 +1587,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:45 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:01 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1605,13 +1605,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - FbKvIiyqK0oGAeguElrwxFbRLBMoylBGHDFwCbLntBlvgSKpjkjYU353YsF8GoRU
+      - HygU8sarc2uD0xvLGt7QRfFiOVB+fbH4eWPugtAmKzzQpMj5O62in3kYoXHuisI5
       X-Amz-Request-Id:
-      - 26560F63D72397F2
+      - 1E16F6DFEBE2CDDC
       Date:
-      - Sat, 31 Aug 2013 18:11:46 GMT
+      - Mon, 02 Sep 2013 20:39:03 GMT
       Last-Modified:
-      - Sat, 31 Aug 2013 18:11:45 GMT
+      - Mon, 02 Sep 2013 20:39:01 GMT
       Etag:
       - '"40fb78bc8dd4a24c94bbc15c16b11eed"'
       Accept-Ranges:
@@ -1626,10 +1626,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:45 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:02 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1644,13 +1644,13 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - iy0XJeHzY5mdgdk1x75fiUirCrhGWBY6DyLwHVIomBqpiB0u2kPpN++laqvVGHAC
+      - piHZyAkvAs3DkpjokWnkmhtoOPXU+igcHoEPvURoWPgqzZaf+mGJ4WAOMjtNn4cp
       X-Amz-Request-Id:
-      - F613850C27EA0329
+      - C098312224CFE9E9
       Date:
-      - Sat, 31 Aug 2013 18:11:46 GMT
+      - Mon, 02 Sep 2013 20:39:04 GMT
       Last-Modified:
-      - Sat, 31 Aug 2013 18:11:45 GMT
+      - Mon, 02 Sep 2013 20:39:02 GMT
       Etag:
       - '"5ea29c46e8ed41a4c5506583d14f0f3b"'
       Accept-Ranges:
@@ -1665,10 +1665,10 @@ http_interactions:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:45 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:03 GMT
 - request:
     method: delete
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1680,9 +1680,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:45 GMT
+      - Mon, 02 Sep 2013 20:39:03 GMT
       Authorization:
-      - AWS <AWS_KEY>:c4CGA/OHy1ARNlTpTM5hfucaI+8=
+      - AWS <AWS_KEY>:lYDve/cNiE8nvWYKZVHoiF2Ymjw=
       Accept:
       - '*/*'
   response:
@@ -1691,21 +1691,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - PIzDwl+mCkOKeQay7+exfRfhBX6yXO46YGbhxYprKZLqd2IQRJIpIc9X7EjUL1kY
+      - A1Psa7YtXv3I2ZLkeKLYPaQRNVtzklUW1R+644fN8UYOTQI0126hWXdbvc/jS5ef
       X-Amz-Request-Id:
-      - 52B6CD8F995DA99C
+      - 50C0FB8A1F2329DB
       Date:
-      - Sat, 31 Aug 2013 18:11:46 GMT
+      - Mon, 02 Sep 2013 20:39:05 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:45 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:04 GMT
 - request:
     method: delete
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1717,9 +1717,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:45 GMT
+      - Mon, 02 Sep 2013 20:39:04 GMT
       Authorization:
-      - AWS <AWS_KEY>:fsRE8u0LoX8V2ENYyUCV+F9pkN4=
+      - AWS <AWS_KEY>:HgbHPuek+maCqYzWNYr0ReyYhbA=
       Accept:
       - '*/*'
   response:
@@ -1728,21 +1728,21 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - +F9UYI52Kp/CnWoAFoVNgsZOwUW77CUE2LaRgEhfZ6YGAA51MRyojXmCr8h+Y40Z
+      - fyGalX+Bn2HnhCZR1L3pGtZ9giS8cGqfVyHV+J2EbuHtX0aKNL3ZI5Tcv57SIOrv
       X-Amz-Request-Id:
-      - CF9FE77EC6F5497A
+      - 4EA0F71F85753C42
       Date:
-      - Sat, 31 Aug 2013 18:11:46 GMT
+      - Mon, 02 Sep 2013 20:39:05 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:45 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:04 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-htmlDUMCBL.html
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-htmlKCVIMS.html
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1757,25 +1757,25 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 1683E284655AF32A
+      - 20BA8B1DF15022BF
       X-Amz-Id-2:
-      - 4n0XIQyEfjCHLxu9n0etpG1RBKlIVDFH3tVJnmi1tth9AL91IiyIgjTUjtmqmwCE
+      - 2CIRjFxtTeBPb2/tpsM0tMYmy/nwx+rGAgRtK/XhJOqHzIevBZVA1l3D2eDjHb0Z
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:45 GMT
+      - Mon, 02 Sep 2013 20:39:04 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:46 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:05 GMT
 - request:
     method: head
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/amazon-question-urlTDEQEQ.txt
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/amazon-question-urlXIJSAE.txt
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1790,25 +1790,25 @@ http_interactions:
       message: Not Found
     headers:
       X-Amz-Request-Id:
-      - 664ED326837B0533
+      - 1DD8DC2C72F256CF
       X-Amz-Id-2:
-      - J1quVHg7j5GKafTf8WQ1lvJil11EtQoOlOh3V9LkOyRLYe2bOwc69/RI9ANFCAWd
+      - tdmw3Pe9B264IttI/PHi12g86a/QHJsRHp2pgPXe8ZGopVo2aL8SbeoHnnKnRWo/
       Content-Type:
       - application/xml
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Aug 2013 18:11:45 GMT
+      - Mon, 02 Sep 2013 20:39:05 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:46 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:05 GMT
 - request:
     method: get
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/?versioning
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/?versioning
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1820,9 +1820,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:46 GMT
+      - Mon, 02 Sep 2013 20:39:05 GMT
       Authorization:
-      - AWS <AWS_KEY>:GmFgYPSDoisd2SGes23L4qigqhM=
+      - AWS <AWS_KEY>:4opEOyyBdqwd5NiLODD1LAlE5O8=
       Accept:
       - '*/*'
   response:
@@ -1831,11 +1831,11 @@ http_interactions:
       message: OK
     headers:
       X-Amz-Id-2:
-      - t3EfWBUeFo1I+PjIsaTGr8BN/j7C5h4liwV1LTFO2uVJHjGokgD7siYtporAelzm
+      - rBuCSY0aXyIRG3J/lTmhsm9RPa1c60ix+19oszmSQaJS539op3UdvdLFEQxK8vN9
       X-Amz-Request-Id:
-      - 198C01BCABFFFB23
+      - B01FDF34B461E9AA
       Date:
-      - Sat, 31 Aug 2013 18:11:47 GMT
+      - Mon, 02 Sep 2013 20:39:07 GMT
       Transfer-Encoding:
       - chunked
       Server:
@@ -1847,10 +1847,10 @@ http_interactions:
         b25pbmdDb25maWd1cmF0aW9uIHhtbG5zPSJodHRwOi8vczMuYW1hem9uYXdz
         LmNvbS9kb2MvMjAwNi0wMy0wMS8iLz4=
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:46 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:06 GMT
 - request:
     method: delete
-    uri: https://typingpool-test-am68n6y7npy02s34.s3.amazonaws.com/
+    uri: https://typingpool-test-dqq5p079j676t84d.s3.amazonaws.com/
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -1862,9 +1862,9 @@ http_interactions:
       User-Agent:
       - aws-sdk-ruby/1.12.0 ruby/2.0.0 x86_64-darwin10.8.0
       Date:
-      - Sat, 31 Aug 2013 18:11:46 GMT
+      - Mon, 02 Sep 2013 20:39:06 GMT
       Authorization:
-      - AWS <AWS_KEY>:rN+k+C8S6oIdUc5UCtKtfcoUZ2g=
+      - AWS <AWS_KEY>:vplSl+cJaFgrXThS2h45nZHBMcs=
       Accept:
       - '*/*'
   response:
@@ -1873,16 +1873,16 @@ http_interactions:
       message: No Content
     headers:
       X-Amz-Id-2:
-      - A+BRuyzMQmG9LwRstnoVwlPHtQZzqJXARuGyXUmhogr5bC9pZj44KQ8hPfUg//h2
+      - pNB7zH48Pqi7egg5fCeTVyyz8z6/foBAJIgM4zZtmfNhojsbT+VRxP8sCTiEX9aF
       X-Amz-Request-Id:
-      - D6476C37D0382259
+      - 8ED92C77D9F63104
       Date:
-      - Sat, 31 Aug 2013 18:11:47 GMT
+      - Mon, 02 Sep 2013 20:39:07 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 31 Aug 2013 18:11:47 GMT
+  recorded_at: Mon, 02 Sep 2013 20:39:07 GMT
 recorded_with: VCR 2.5.0

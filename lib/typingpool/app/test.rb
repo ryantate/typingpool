@@ -30,8 +30,14 @@ module Typingpool
         VCR.configure do |c|
           c.cassette_library_dir = File.dirname(fixture_path)
           c.hook_into :webmock 
+          c.debug_logger = File.open(File.expand_path('~/Downloads/vcrDEBUG.txt'), 'w')
           c.filter_sensitive_data('<AWS_KEY>'){ config.amazon.key }
           c.filter_sensitive_data('<AWS_SECRET>'){ config.amazon.secret }
+          c.before_record do |interaction|
+            if interaction.request.body.size > 10000
+              interaction.request.body = '<BIG_UPLOAD>'
+            end
+          end #c.before_record do...
         end
         WebMock.allow_net_connect! 
         opts = {:record => (read_only ? :none : :new_episodes)}
