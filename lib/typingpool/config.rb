@@ -63,7 +63,7 @@ module Typingpool
   #  [qualify]  An array of qualifications with which to filter workers
   #             who may accept a transcript job. The first part of the
   #             qualification should be the string form of a key in
-  #             RTurk::Qualifications::TYPES (see
+  #             RTurk::Qualifications.types (see
   #             https://github.com/mdp/rturk/blob/master/lib/rturk/builders/qualification_builder.rb
   #             ). The second part should be one of the following
   #             comparators: > >= < <= == != exists. The optional

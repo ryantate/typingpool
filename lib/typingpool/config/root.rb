@@ -71,7 +71,7 @@ module Typingpool
 
           def type
             type = @raw.split(/\s+/)[0]
-            if RTurk::Qualification::TYPES[type.to_sym]
+            if RTurk::Qualification.types[type.to_sym]
               return type.to_sym
             elsif (type.match(/\d/) || type.size >= 25)
               return type

@@ -75,12 +75,12 @@ module Typingpool
           new(RTurk::Hit.create(:title => config_assign.title || question.title) do |hit|
                 hit.description = config_assign.description || question.description
                 hit.question(question.url)
-                hit.note = question.annotation or raise Error, "Missing annotation from question"
+                hit.annotation = question.annotation or raise Error, "Missing annotation from question"
                 hit.reward = config_assign.reward or raise Error, "Missing reward config"
-                hit.assignments = 1
+                hit.max_assignments = 1
                 hit.lifetime = config_assign.lifetime or raise Error, "Missing lifetime config"
                 hit.duration = config_assign.deadline or raise Error, "Missing deadline config"
-                hit.auto_approval = config_assign.approval or raise Error, "Missing approval config"
+                hit.auto_approval_delay = config_assign.approval or raise Error, "Missing approval config"
                 hit.keywords = config_assign.keywords if config_assign.keywords
                 config_assign.qualify.each{|q| hit.qualifications.add(*q.to_arg)} if config_assign.qualify
               end)
