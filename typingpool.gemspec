@@ -25,20 +25,7 @@ Gem::Specification.new do |s|
    s.add_development_dependency('vcr')
    s.add_development_dependency('webmock', '>= 1.13.0')
    s.require_path = 'lib'
-   s.executables = ['tp-config',
-                    'tp-make',
-                    'tp-assign',
-                    'tp-review',
-                    'tp-collect',
-                    'tp-finish']
-   s.test_files = ['test/test_unit_amazon.rb',
-                   'test/test_unit_config.rb',
-                   'test/test_unit_filer.rb',
-                   'test/test_unit_project.rb',
-                   'test/test_unit_project_local.rb',
-                   'test/test_unit_project_remote.rb',
-                   'test/test_unit_template.rb',
-                   'test/test_unit_transcript.rb']
+   s.test_files = `git ls-files -- test/test*`.split("\n")
    s.bindir = 'bin'
    s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
    s.files = `git ls-files`.split("\n")
