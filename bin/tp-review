@@ -97,7 +97,14 @@ catch :quitting do
           hit.assignment.submitted_at.localtime.to_s +
           cli_bold(" by ") +
           hit.assignment.worker_id)
-      say(hit.transcript.body_as_text(4, 68))
+      formatted = hit.transcript.body_as_text(4, 68)
+
+      #work around apparent encoding bug in Highline
+      unless (formatted.encoding.to_s == Encoding.default_external.to_s)
+        formatted.encode!(Encoding.default_external, :invalid => :replace, :undef => :replace, :replace => "?")
+      end
+
+      say(formatted)
       prompt = choices.map do |c| 
         cli_reverse('(') +
           cli_reverse(cli_bold(c.slice(0).upcase)) +
