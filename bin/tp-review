@@ -92,19 +92,12 @@ catch :quitting do
       if project.local.subtitle
         project_info += ": #{project.local.subtitle}"
       end
-      say(project_info)
+      say(cli_encode(project_info))
       say(cli_bold("Submitted at: ") +
           hit.assignment.submitted_at.localtime.to_s +
           cli_bold(" by ") +
           hit.assignment.worker_id)
-      formatted = hit.transcript.body_as_text(4, 68)
-
-      #work around apparent encoding bug in Highline
-      unless (formatted.encoding.to_s == Encoding.default_external.to_s)
-        formatted.encode!(Encoding.default_external, :invalid => :replace, :undef => :replace, :replace => "?")
-      end
-
-      say(formatted)
+      say(cli_encode(hit.transcript.body_as_text(4, 68)))
       prompt = choices.map do |c| 
         cli_reverse('(') +
           cli_reverse(cli_bold(c.slice(0).upcase)) +
@@ -140,7 +133,7 @@ catch :quitting do
         end #begin
         Typingpool::App.record_approved_hits_in_assignments_file(assignments, [hit])
         Typingpool::App.create_transcript(project, assignments)
-        say(cli_bold("Approved. ") + "#{project.name} transcript updated.\n")
+        say(cli_bold("Approved. ") + "#{cli_encode(project.name)} transcript updated.\n")
       when 'reject'
         reason=nil
         until reason.to_s.match(/\S/)
