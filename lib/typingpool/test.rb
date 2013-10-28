@@ -7,7 +7,7 @@ module Typingpool
       attr_accessor :record
 
       def app_dir
-        File.dirname(File.dirname(File.dirname(__FILE__)))
+        Utility.app_dir
       end
 
     end #class << self

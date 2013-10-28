@@ -125,10 +125,16 @@ module Typingpool
         end # begin
       end
 
-      #Returns Typingpool's lib/ root, usually for purposes of
-      #locating templates or test fixtures.
+      #Returns Typingpool's lib/typingpool/ root, usually for purposes
+      #of locating templates or test fixtures.
       def lib_dir
         File.dirname(__FILE__)
+      end
+
+      #Returns Typingpool's root dir, that is, the root dir of the gem
+      #from which this library is being loaded.
+      def app_dir
+        File.dirname(File.dirname(lib_dir))
       end
 
       #Returns true if this Ruby was built on Mac OS X
