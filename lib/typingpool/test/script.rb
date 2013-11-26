@@ -110,7 +110,17 @@ module Typingpool
       end
 
       def call_script(script_name, *args)
-        Utility.system_quietly(path_to_script(script_name), *args)
+        out, err, status = Open3.capture3(path_to_script(script_name), *args)
+        if status.success?
+          return [out.to_s.chomp, err.to_s.chomp]
+        else
+          if err
+            raise Error::Shell, err.chomp
+          else
+            raise Error::Shell
+          end
+        end
+        #Utility.system_quietly(path_to_script(script_name), *args)
       end
 
       def path_to_script(script_name)

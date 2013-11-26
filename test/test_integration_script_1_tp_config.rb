@@ -35,8 +35,9 @@ def test_abort_with_invalid_path
 end
 
 def test_usage_message
-  assert(output = tp_config('--help'))
-  assert_match(/\bUSAGE:/, output)
+  out, err = tp_config('--help')
+  assert(out)
+  assert_match(/\bUSAGE:/, out)
 end
 
 def test_new_config_creation
