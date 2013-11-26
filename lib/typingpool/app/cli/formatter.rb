@@ -10,6 +10,13 @@ module Typingpool
         def cli_reverse(text)
           HighLine.color(text, :reverse)
         end
+
+        def cli_encode(text)
+          unless (text.encoding.to_s == Encoding.default_external.to_s)
+            text.encode!(Encoding.default_external, :invalid => :replace, :undef => :replace, :replace => "?")
+          end
+          text
+        end
       end #Formatter
     end #CLI
   end #App
