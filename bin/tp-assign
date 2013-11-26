@@ -217,13 +217,17 @@ end
 
 #Are there enough funds for this assignment?
 cost = 0
-cost_string = '0.00'
-unless options[:sandbox]
+amazon_minimum_fee = 0.005
+amazon_fee_per_assignment = config.assign.reward.to_f * 0.1
+amazon_fee_per_assignment = amazon_minimum_fee if amazon_fee_per_assignment < amazon_minimum_fee
+cost = (needed_assignments.count * (config.assign.reward.to_f + amazon_fee_per_assignment) * 100).ceil.to_f / 100
+cost_string = sprintf("%.2f", cost)
+if options[:sandbox]
+  STDERR.puts "(Cost is $0 (nothing) since you're in the sandbox. Outside the sandbox this assignment would cost $#{cost_string}.)"
+else
   STDERR.puts "Checking your balance"
   balance = RTurk.GetAccountBalance.amount
   #"* 1.1" reflects 10% Amazon service surcharge
-  cost = (needed_assignments.count * options[:reward].to_f * 1.1).round(2)
-  cost_string = sprintf("%.2f", cost)
   abort "Anticipated assignment cost of $#{cost_string} would exceed available balance of $#{balance}" if cost > balance
   if options[:confirm] || config.assign.confirm
     begin
@@ -231,7 +235,7 @@ unless options[:sandbox]
     end until input.to_s.match(/(^y)|(^n)|(^\s*$)/i)
     exit if input.match(/^n/i)
   end
-end
+end #if options[:sandbox]
 
 
 #we'll need to re-upload audio if we ran tp-finish on the project
