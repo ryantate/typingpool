@@ -265,7 +265,7 @@ needed_assignments.each_with_index do |assignment, i|
       goodbye += "To retry, run tp-assign again with the same arguments."
     else
       goodbye += "To cancel #{i} successful assignments, run `tp-finish '#{options[:project]}'`.\n\n"
-      goodbye += "To try and assign remaining #{neeeded_assignments.count - i} jobs, run tp-assign again with the same arguments."
+      goodbye += "To try and assign remaining #{needed_assignments.count - i} jobs, run tp-assign again with the same arguments."
     end #if i == 0
     abort goodbye
   end #begin
