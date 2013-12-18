@@ -45,7 +45,6 @@ class TestTpAssign < Typingpool::Test::Script
       project = transcripts_dir_project(dir)
       vcr_names = ['tp_assign_1', 'tp_assign_2']
       copy_tp_assign_fixtures(dir, vcr_names[0])
-      assign_time = (Typingpool::Test.record || Typingpool::Test.live) ? Time.now : project_time(project)
       config = Typingpool::Config.file(config_path(dir))
       Typingpool::Amazon.setup(:sandbox => true, :config => Typingpool::Config.file(config_path(dir)))
       with_vcr(vcr_names[1], config, {
@@ -53,6 +52,7 @@ class TestTpAssign < Typingpool::Test::Script
                  :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
                }) do
         begin
+          assign_time = (Typingpool::Test.record || Typingpool::Test.live) ? Time.now : project_time(project)
           tp_assign_with_vcr(dir, vcr_names[0])
           results = nil
           refute_empty(results = Typingpool::Amazon::HIT.all_for_project(project.local.id))
@@ -60,7 +60,7 @@ class TestTpAssign < Typingpool::Test::Script
           assert_equal(Typingpool::Utility.timespec_to_seconds(assign_default[:deadline]), results[0].full.assignments_duration.to_i)
           #These numbers will be apart due to clock differences and
           #timing vagaries of the assignment.
-          assert_in_delta((assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 60) if Typingpool::Test.live
+          assert_in_delta((assign_time + Typingpool::Utility.timespec_to_seconds(assign_default[:lifetime])).to_f, results[0].full.expires_at.to_f, 360) if Typingpool::Test.live
           keywords = results[0].at_amazon.keywords
           assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
           sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)

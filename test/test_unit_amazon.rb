@@ -183,8 +183,8 @@ class TestAmazon < Typingpool::Test
     config = self.config
     skip_if_no_amazon_credentials(test_handle, config)
     config.assign.reward = '0.01'
-    config.assign.deadline = '1m'
-    config.assign.lifetime = '2m'
+    config.assign.deadline = '10m'
+    config.assign.lifetime = '20m'
     cache = Tempfile.new('typingpool_cache')
     with_vcr(test_handle, config, {
                :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
