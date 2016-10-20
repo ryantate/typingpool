@@ -5,6 +5,7 @@ module Typingpool
     require 'tmpdir'
     require 'set'
     require 'net/http'
+    require 'fcntl'
 
     class << self
       #Much like Kernel#system, except it doesn't spew STDERR and
