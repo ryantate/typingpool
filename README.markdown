@@ -21,6 +21,8 @@ included in the gem since they are external to Ruby:
   * [mp3splt]    An audio file-splitting utility.
   * [mp3wrap]    An audio file-merging utility.
 
+E.g. to install all dependencies on a Mac using [Homebrew](http://brew.sh/), try running `brew update && brew install ffmpeg libmp3lame mp3splt mp3wrap`.
+
 ## User overview
 
 ### Setup
