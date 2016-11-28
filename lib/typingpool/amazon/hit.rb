@@ -235,6 +235,9 @@ module Typingpool
       #Constructor. Takes an RTurk::Hit instance.
       def initialize(rturk_hit)
         @id = rturk_hit.id
+        @full = nil
+        @assignment = nil
+        @ours = nil
       end
 
       #URL of the audio file associated with this HIT (the audio file
@@ -256,7 +259,7 @@ module Typingpool
       #by parsing the #url. May be dropped in a future release.
       def project_title_from_url(url=self.url)
         matches = Project.url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
-        URI.unescape(matches[2])
+        URI.decode_www_form_component(matches[2])
       end
 
       #Returns true if this HIT has an approved assignment associated

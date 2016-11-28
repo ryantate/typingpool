@@ -19,7 +19,8 @@ module Typingpool
     class Remote
       require 'typingpool/project/remote/s3'
       require 'typingpool/project/remote/sftp'
-
+      require 'erb'
+      
       #Constructor. Takes a Config
       #instance. Returns a Project::Remote::S3 or
       #Project::Remote::SFTP instance, depending on the particulars of
@@ -47,14 +48,14 @@ module Typingpool
       #Given a file path, returns the URL to the file path were it to
       #be uploaded by this instance.
       def file_to_url(file)
-        "#{url}/#{URI.escape(file)}"
+        "#{url}/#{ERB::Util.url_encode(file)}"
       end
 
       #Given an URL, returns the file portion of the path, given the
       #configuration of this instance.
       def url_basename(url)
         basename = url.split("#{self.url}/")[1] or raise Error, "Could not find base url '#{self.url}' within longer url '#{url}'"
-        URI.unescape(basename)
+        URI.decode_www_form_component(basename)
       end
 
 

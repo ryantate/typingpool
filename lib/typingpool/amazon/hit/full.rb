@@ -53,7 +53,8 @@ module Typingpool
         #return something. In first use, must make an HTTP request to
         #obtain the HTML.
         def external_question
-          if @external_question.nil?
+          @external_question ||= nil
+          unless @external_question
             if external_question_url && external_question_url.match(/^http/)
               #expensive, obviously:
               begin
@@ -66,7 +67,7 @@ module Typingpool
                 raise e unless e.message.match(/\b40[34]\b/)
               end #begin
             end #if external_question_url && external_question_url.match...
-          end #if @external_question.nil?
+          end #unless @external_question
           @external_question
         end
 

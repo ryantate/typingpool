@@ -33,6 +33,7 @@ module Typingpool
         end
 
         def qualify
+          @qualify ||= nil
           self.qualify = (@param['qualify'] || []) unless @qualify
           @qualify
         end

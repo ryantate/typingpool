@@ -5,7 +5,7 @@ $LOAD_PATH.unshift File.join(File.dirname(File.dirname(__FILE__)), 'lib')
 require 'minitest/autorun'
 require 'typingpool'
 require 'typingpool/test'
-require 'uri'
+require 'erb'
 
 class TestProject < Typingpool::Test
   def test_project_base_new
@@ -150,7 +150,7 @@ class TestProject < Typingpool::Test
   end
 
   def test_local_basename_from_url
-    url = ['http://example.com/dir/', URI.escape('Example Title With Spaces & Ampersand.html')].join
+    url = ['http://example.com/dir/', ERB::Util.url_encode('Example Title With Spaces & Ampersand.html')].join
     assert_match(/%20/, url)
 #assert(basename = Typingpool::Project.local_basename_from_url.u)
   end

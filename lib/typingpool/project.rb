@@ -166,7 +166,7 @@ module Typingpool
     #Make this unneccesary.)
     def self.local_basename_from_url(url)
       matches = Project.url_regex.match(url) or raise Error::Argument::Format, "Unexpected format to url '#{url}'"
-      URI.unescape([matches[2..4].join('.'), matches[5]].join)
+      URI.decode_www_form_component([matches[2..4].join('.'), matches[5]].join)
     end
 
     protected
