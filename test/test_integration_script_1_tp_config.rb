@@ -35,7 +35,7 @@ def test_abort_with_invalid_path
 end
 
 def test_usage_message
-  out, err = tp_config('--help')
+  out, _ = tp_config('--help')
   assert(out)
   assert_match(/\bUSAGE:/, out)
 end
@@ -46,10 +46,10 @@ def test_new_config_creation
       :config => File.join(dir, 'config.yml'),
       :transcript_dir => File.join(dir, 'transcriptionz')
     }
-    path.values.each{|path| refute(File.exists? path) }
+    path.values.each{|a_path| refute(File.exists? a_path) }
     assert(output = tp_config_with_input([path[:config], '--test'], ['keykey', 'secretsecret', path[:transcript_dir]]))
     assert_match(/wrote config to/i, output[:err])
-    path.values.each{|path| assert(File.exists? path) }
+    path.values.each{|a_path| assert(File.exists? a_path) }
     assert(File.file? path[:config] )
     assert(File.directory? path[:transcript_dir] )
     assert(config = Typingpool::Config.file(path[:config]))
@@ -75,7 +75,7 @@ def test_config_editing
     assert(original_config = Typingpool::Config.file(path[:config]))
     [:key, :secret, :bucket].each{|param| refute_empty(original_config.amazon.send(param).to_s) }
     [:transcripts, :templates, :cache].each{|param| refute_empty(original_config.send(param).to_s) } 
-    assert(output = tp_config_with_input([path[:config], '--test'], ['keykey', 'secretsecret', path[:transcript_dir]]))
+    assert(tp_config_with_input([path[:config], '--test'], ['keykey', 'secretsecret', path[:transcript_dir]]))
     assert(edited_config = Typingpool::Config.file(path[:config]))
     [:key, :secret].each{|param| refute_equal(original_config.amazon.send(param), edited_config.amazon.send(param)) }
     assert_equal(original_config.amazon.bucket, edited_config.amazon.bucket)

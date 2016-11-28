@@ -60,15 +60,15 @@ class TestTpFinish < Typingpool::Test::Script
   end
 
   def tp_finish_with_vcr(*args)
-    script_with_vcr(*args){|args| tp_finish(*args) }
+    script_with_vcr(*args){|new_args| tp_finish(*new_args) }
   end
 
   def tp_finish_outside_sandbox_with_vcr(*args)
-    script_with_vcr(*args){|args| tp_finish_outside_sandbox(*args) }
+    script_with_vcr(*args){|new_args| tp_finish_outside_sandbox(*new_args) }
   end
 
   def tp_finish_inside_sandbox_with_vcr(*args)
-    script_with_vcr(*args){|args| tp_finish_inside_sandbox(*args) }
+    script_with_vcr(*args){|new_args| tp_finish_inside_sandbox(*new_args) }
   end
 
   def test_tp_finish_on_amazon_hits

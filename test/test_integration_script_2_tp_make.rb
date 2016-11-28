@@ -26,8 +26,8 @@ class TestTpMake < Typingpool::Test::Script
 
   def assert_tp_make_abort_match(args, regex)
     args.push('--testnoupload')
-    assert_script_abort_match(args, regex) do |args|
-      call_tp_make(*args)
+    assert_script_abort_match(args, regex) do |new_args|
+      call_tp_make(*new_args)
     end
   end
 
@@ -163,13 +163,13 @@ class TestTpMake < Typingpool::Test::Script
   end
 
   def originals_from_merged_audio_file(path)
-    out, err, status = Open3.capture3('mp3splt', '-l', path)
+    out, _, _ = Open3.capture3('mp3splt', '-l', path)
     refute_nil(out)
     refute_empty(out)
     paths = out.scan(/^\/.+\.mp3$/i)
     refute_empty(paths)
     assert(paths.count > 1)
-    paths.each{|path| assert(File.exists? path) }
+    paths.each{|a_path| assert(File.exists? a_path) }
     paths
   end
 

@@ -33,8 +33,8 @@ class TestTpAssign < Typingpool::Test::Script
   end
 
   def assert_tp_assign_abort_match(args, regex)
-    assert_script_abort_match(args, regex) do |args|
-      call_tp_assign(*args)
+    assert_script_abort_match(args, regex) do |new_args|
+      call_tp_assign(*new_args)
     end
   end
 
@@ -68,10 +68,10 @@ class TestTpAssign < Typingpool::Test::Script
           assert(assignment_html = fetch_url(assignment_urls.first).body)
           assert_match(/\b22[\s-]+second\b/, assignment_html)
           assert_all_assets_have_upload_status(sandbox_csv, 'assignment', 'yes')
-      ensure
-        tp_finish(dir) if (Typingpool::Test.record || Typingpool::Test.live)
-      end #begin
-      assert_empty(Typingpool::Amazon::HIT.all_for_project(project.local.id))
+        ensure
+          tp_finish(dir) if (Typingpool::Test.record || Typingpool::Test.live)
+        end #begin
+        assert_empty(Typingpool::Amazon::HIT.all_for_project(project.local.id))
       end #with_vcr do...
     end #with_temp_readymade_project do...
   end
@@ -114,7 +114,7 @@ class TestTpAssign < Typingpool::Test::Script
       csv = project.local.file('data', 'assignment.csv').as(:csv)
       csv.each!{|a| a['audio_uploaded'] = 'yes'}
       bad_config_path = setup_s3_config_with_bad_password(dir)
-      get_assignment_urls = lambda{|csv| csv.map{|assignment| assignment['assignment_url'] }.select{|url| url } }
+      get_assignment_urls = lambda{|assignments| assignments.map{|assignment| assignment['assignment_url'] }.select{|url| url } }
       assert_empty(get_assignment_urls.call(csv))
       begin
         exception = assert_raises(Typingpool::Error::Shell) do
@@ -178,16 +178,14 @@ class TestTpAssign < Typingpool::Test::Script
                  :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
                }) do
         begin
-          out, err = tp_assign_with_vcr(dir, vcr_names[0])
+          _, err = tp_assign_with_vcr(dir, vcr_names[0])
           assert_match(/would cost \$((0\.40)||(0\.47))\./, err)
           refute_empty(results = Typingpool::Amazon::HIT.all_for_project(project.local.id))
           assert_equal('0.06', results.first.at_amazon.reward_amount.to_s)
-      ensure
-        tp_finish(dir) if (Typingpool::Test.record || Typingpool::Test.live)
-      end #begin
-    end #with_temp_readymade_project do...
-  end #with_vcr...
-end
-
-
+        ensure
+          tp_finish(dir) if (Typingpool::Test.record || Typingpool::Test.live)
+        end #begin
+      end #with_temp_readymade_project do...
+    end #with_vcr...
+  end
 end #TestTpAssign
