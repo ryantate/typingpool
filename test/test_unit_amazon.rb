@@ -153,7 +153,7 @@ class TestAmazon < Typingpool::Test
     dummy_project = Typingpool::Project.new('dummy', config)
     url = dummy_project.remote.file_to_url(Typingpool::Project::Remote::S3.random_bucket_name(16,'dummy-missing-file-'))
     refute(working_url? url) if (Typingpool::Test.live || Typingpool::Test.record)
-    with_dummy_typingpool_hit_or_skip('test_handles_hits_with_broken_external_question', url) do |hit, config|
+    with_dummy_typingpool_hit_or_skip('test_handles_hits_with_broken_external_question', url) do |hit, dummy_config|
       assert_equal(hit.full.external_question_url, url) if (Typingpool::Test.live || Typingpool::Test.record)
       refute(hit.full.external_question)
       refute(hit.full.external_question_param(hit.class.url_at))

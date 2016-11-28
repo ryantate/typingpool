@@ -17,7 +17,7 @@ class TestProjectLocal < Typingpool::Test
 
   def test_project_local_named
     assert_nil(Typingpool::Project::Local.named(project_default[:title], fixtures_dir))
-    assert_kind_of(Typingpool::Project::Local, local = Typingpool::Project::Local.named('project', project_template_dir_parent))
+    assert_kind_of(Typingpool::Project::Local, Typingpool::Project::Local.named('project', project_template_dir_parent))
   end
 
   def test_project_local_valid_name

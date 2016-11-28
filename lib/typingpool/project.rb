@@ -79,6 +79,7 @@ module Typingpool
         seconds = seconds.round(2)
       end
       min_dot_sec = "#{(@interval.to_i / 60).floor}.#{seconds}"
+      min_dot_sec
     end
 
     #Takes an integer for setting the project.bitrate. The integer

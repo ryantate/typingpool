@@ -158,8 +158,8 @@ module Typingpool
       #following redirects). False if the HTTP response code indicates
       #an error (e.g. 4XX and 5XX response codes).
       def working_url?(url, max_redirects=6)
-        response = request_url_with(url, max_redirects) do |url, http|
-          http.request_head(url.path)
+        response = request_url_with(url, max_redirects) do |current_url, http|
+          http.request_head(current_url.path)
         end #request_url_with... do |url|
         response.kind_of?(Net::HTTPSuccess)
       end
@@ -177,8 +177,8 @@ module Typingpool
       # ==== Returns
       #A Net::HTTPResponse instance, if the request was successful.
       def fetch_url(url, max_redirects=6)
-        response = request_url_with(url, max_redirects) do |url, http|
-          http.request_get(url.path)
+        response = request_url_with(url, max_redirects) do |current_url, http|
+          http.request_get(current_url.path)
         end
         if response.kind_of?(Net::HTTPSuccess)
           return response

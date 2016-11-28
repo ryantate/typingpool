@@ -167,8 +167,8 @@ class TestFiler < Typingpool::Test
     dir2_path = File.join(fixtures_dir, 'doesntexist')
     assert(not(File.exists? dir2_path))
     assert(dir2 = Typingpool::Filer::Dir.new(dir2_path))
-    in_temp_dir do |dir|
-      dir3_path = File.join(dir, 'filer-dir-temp')
+    in_temp_dir do |temp_dir|
+      dir3_path = File.join(temp_dir, 'filer-dir-temp')
       assert(not(File.exists? dir3_path))
       assert(dir3 = Typingpool::Filer::Dir.create(dir3_path))
       assert(File.exists? dir3_path)
@@ -178,7 +178,7 @@ class TestFiler < Typingpool::Test
       assert_instance_of(Typingpool::Filer::Dir, dir3)
       assert_equal(dir3_path, dir3.to_s)
       assert_equal(dir3_path, dir3.to_str)
-      assert(filer = dir3.file('doesntexist'))
+      assert(dir3.file('doesntexist'))
     end #in_temp_dir
     assert(filer = dir.file('vcr', 'tp-collect-1.yml'))
     assert(File.exists? filer.path)

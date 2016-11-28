@@ -61,7 +61,7 @@ module Typingpool
         project.remote.put(files.to_streams, remote_files) do |file, as|
           yield(file, as) if block_given?
         end
-        assignments_files = [assignments_file]
+#        assignments_files = [assignments_file] #why did we make this var and never use?
         record_assignment_upload_status(assignments_file, uploading, ['audio'], 'yes')
         uploading.map{|assignment| assignment['audio_url'] }
       end
@@ -415,7 +415,7 @@ module Typingpool
         missing = []
         [['ffmpeg','-version'], ['mp3splt', '-v'], ['mp3wrap']].each do |cmdline|
           begin
-            out, err, status = Open3.capture3(*cmdline)
+            Open3.capture3(*cmdline)
           rescue
             missing.push(cmdline.first)
           end #begin

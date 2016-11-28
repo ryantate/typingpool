@@ -34,7 +34,7 @@ module Typingpool
       #integer corresponding to kb/s, or nil if the bitrate could not
       #be determined.
       def bitrate
-        out, err, status = Open3.capture3('ffmpeg', '-i', @path)
+        _, err, _ = Open3.capture3('ffmpeg', '-i', @path)
         bitrate = err.match(/(\d+) kb\/s/)
         return bitrate ? bitrate[1].to_i : nil
       end

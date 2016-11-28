@@ -22,7 +22,7 @@ module Typingpool
             @assignments_completed = rturk_hit.completed_assignments
             @assignments_pending = rturk_hit.pending_assignments
             self.annotation = annotation
-         end
+          end
 
           def external_question_url
             unless @checked_question

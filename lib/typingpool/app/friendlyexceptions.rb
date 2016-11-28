@@ -23,7 +23,7 @@ module Typingpool
           yield(*input)
         rescue Typingpool::Error::Argument => exception
           goodbye = "Could not make sense of #{name.to_s} "
-          goodbye += input.map{|input| "'#{input}'" }.join(', ')
+          goodbye += input.map{|input_chunk| "'#{input_chunk}'" }.join(', ')
           goodbye += ". #{exception.message}"
           goodbye += '.' unless goodbye.match(/\.$/)
           abort goodbye

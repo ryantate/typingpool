@@ -32,7 +32,6 @@ module Typingpool
       end
 
       def copy_readymade_project_into(config_path)
-        config = Typingpool::Config.file(config_path)
         FileUtils.cp_r(File.join(@@readymade_project_path, '.'), File.dirname(config_path))
       end
 
@@ -42,7 +41,6 @@ module Typingpool
         project = Project.new(project_default[:title], Config.file(config_path))
         File.delete(project.local.file('data', 'id.txt'))
         project.local.create_id
-        id = project.local.id
         reconfigure_project_csv_in(config_path)
       end
 
