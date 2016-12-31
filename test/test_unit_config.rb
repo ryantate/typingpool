@@ -36,8 +36,8 @@ class TestConfig < Typingpool::Test
     assert_equal('ryan', config.sftp.user)
     assert_equal('public_html/transfer/', config.sftp['path'])
     assert_equal('public_html/transfer', config.sftp.path)
-    assert_equal('http://example.com/mturk/', config.sftp['url'])
-    assert_equal('http://example.com/mturk', config.sftp.url)
+    assert_equal('https://example.com/mturk/', config.sftp['url'])
+    assert_equal('https://example.com/mturk', config.sftp.url)
   end
 
   def test_config_screwy_file

@@ -5,7 +5,7 @@ sftp:
   user: ryan
   host: example.com
   path: public_html/transfer/
-  url: http://example.com/mturk/
+  url: https://example.com/mturk/
 transcripts: ~/Documents/Transcripts/
 cache: ~/.typingpool.cache3
 app: ~/Documents/Software/dist/ruby/typingpool
