@@ -30,7 +30,7 @@ module Typingpool
 
     def delete_vcr_fixture(fixture_name)
       fixture_path = File.join(vcr_dir, [fixture_name, '.yml'].join)
-      File.delete(fixture_path) if File.exists? fixture_path
+      File.delete(fixture_path) if File.exist? fixture_path
     end
 
     def cleared_vcr_fixture_path_for(fixture_name)
@@ -55,7 +55,7 @@ module Typingpool
     end
 
     def config
-      if File.exists?(File.expand_path(Config.default_file))
+      if File.exist?(File.expand_path(Config.default_file))
         Config.file
       else
         Config.from_bundled_template

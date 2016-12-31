@@ -28,7 +28,7 @@ class TestFiler < Typingpool::Test
       assert(filer.write(data))
       assert_equal(data, filer.read)
       assert(path = filer.mv!(File.join(dir, 'filer-temp-2')))
-      assert(File.exists? filer.path)
+      assert(File.exist? filer.path)
       assert_equal('filer-temp-2', File.basename(filer.path))
     end #in_temp_dir
   end
@@ -110,7 +110,7 @@ class TestFiler < Typingpool::Test
       assert(chunks = mp3.split('0.25', 'filer-temp', Typingpool::Filer::Dir.new(dir)))
       assert(not(chunks.to_a.empty?))
       assert_equal(3, chunks.count)
-      chunks.each{|chunk| assert(File.exists? chunk) }
+      chunks.each{|chunk| assert(File.exist? chunk) }
       assert(chunks.first.offset)
       assert_match(/0\.00\b/, chunks.first.offset)
       assert_match(/0\.25\b/, chunks.to_a[1].offset)
@@ -149,7 +149,7 @@ class TestFiler < Typingpool::Test
       dest_filer = Typingpool::Filer::Dir.new(dir)
       assert(filer_conversion = filer_wma.to_mp3(dest_filer))
       assert_equal(filer_wma.files.count, filer_conversion.files.count)
-      assert_equal(filer_wma.files.count, filer_conversion.select{|file| File.exists? file }.count)
+      assert_equal(filer_wma.files.count, filer_conversion.select{|file| File.exist? file }.count)
       assert_equal(filer_wma.files.count, filer_conversion.select{|file|  file.mp3? }.count)
       assert_equal(filer_conversion.files.count, dest_filer.files.count)
       temp_path = File.join(dir, 'temp.mp3')
@@ -165,13 +165,13 @@ class TestFiler < Typingpool::Test
     assert(dir = Typingpool::Filer::Dir.new(fixtures_dir))
     assert_equal(fixtures_dir, dir.path)
     dir2_path = File.join(fixtures_dir, 'doesntexist')
-    assert(not(File.exists? dir2_path))
+    assert(not(File.exist? dir2_path))
     assert(dir2 = Typingpool::Filer::Dir.new(dir2_path))
     in_temp_dir do |temp_dir|
       dir3_path = File.join(temp_dir, 'filer-dir-temp')
-      assert(not(File.exists? dir3_path))
+      assert(not(File.exist? dir3_path))
       assert(dir3 = Typingpool::Filer::Dir.create(dir3_path))
-      assert(File.exists? dir3_path)
+      assert(File.exist? dir3_path)
       assert_instance_of(Typingpool::Filer::Dir, dir3)
       assert_nil(dir2 = Typingpool::Filer::Dir.named(File.basename(dir2_path), File.dirname(dir2_path)))
       assert(dir3 = Typingpool::Filer::Dir.named(File.basename(dir3_path), File.dirname(dir3_path)))
@@ -181,23 +181,23 @@ class TestFiler < Typingpool::Test
       assert(dir3.file('doesntexist'))
     end #in_temp_dir
     assert(filer = dir.file('vcr', 'tp-collect-1.yml'))
-    assert(File.exists? filer.path)
+    assert(File.exist? filer.path)
     assert_instance_of(Typingpool::Filer, filer)
     assert(csv = dir.file('tp_collect_sandbox-assignment.csv').as(:csv))
-    assert(File.exists? csv.path)
+    assert(File.exist? csv.path)
     assert_instance_of(Typingpool::Filer::CSV, csv)
     dir4 = Typingpool::Filer::Dir.new(audio_dir)
     assert(audio = dir4.file('mp3', 'interview.1.mp3').as(:audio))
-    assert(File.exists? audio.path)
+    assert(File.exist? audio.path)
     assert_instance_of(Typingpool::Filer::Audio, audio)
     assert(filers = dir.files)
     assert(not(filers.empty?))
     assert_kind_of(Typingpool::Filer, filers.first)
-    assert(File.exists? filers.first.path)
+    assert(File.exist? filers.first.path)
     dir_files = Dir.entries(dir.path).map{|entry| File.join(dir.path, entry)}.select{|path| File.file?(path) }.reject{|path| File.basename(path).match(/^\./) }
     assert_equal(dir_files.count, filers.count)
     assert(dir5 = dir.subdir('vcr'))
-    assert(File.exists? dir5.path)
+    assert(File.exist? dir5.path)
     assert_instance_of(Typingpool::Filer::Dir, dir5)
   end
 end #TestFiler

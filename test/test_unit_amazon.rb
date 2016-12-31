@@ -112,7 +112,7 @@ class TestAmazon < Typingpool::Test
     if Typingpool::Test.record
       File.write(time_path, Time.now.to_i.to_s)
     elsif not(Typingpool::Test.live)
-      File.exists? time_path or raise Typingpool::Error, "No time file at '#{time_path}'"
+      File.exist? time_path or raise Typingpool::Error, "No time file at '#{time_path}'"
       Timecop.travel(Time.at(File.read(time_path).to_i))
     end
   end

@@ -119,9 +119,9 @@ class TestTpMake < Typingpool::Test::Script
       end
       assert(project = transcripts_dir_project(dir))
       project_dir = project.local.path
-      assert(File.exists? project_dir)
+      assert(File.exist? project_dir)
       assert(File.directory? project_dir)
-      assert(File.exists? File.join(project_dir, 'data', 'assignment.csv'))
+      assert(File.exist? File.join(project_dir, 'data', 'assignment.csv'))
       originals_dir = File.join(project_dir, 'audio', 'originals')
       refute_empty(Dir.entries(originals_dir).reject{|entry| entry.match(/^\./) }.map{|entry| File.join(originals_dir, entry) }.select{|path| File.file? path })
       assert(assignment_csv = project.local.file('data', 'assignment.csv').as(:csv))
@@ -156,7 +156,7 @@ class TestTpMake < Typingpool::Test::Script
       assert(project = transcripts_dir_project(dir))
       check_project_files(project)
       assert(merged_audio_file = project.local.subdir('audio','originals').files.detect{|filer| filer.path.match(/.\.all\../)})
-      assert(File.exists? merged_audio_file)
+      assert(File.exist? merged_audio_file)
       actually_ordered_paths = originals_from_merged_audio_file(merged_audio_file)
       assert_equal(correctly_ordered_paths.map{|path| File.basename(path) }, actually_ordered_paths.map{|path| File.basename(path) })
     end #with_temp_transcripts_dir
@@ -169,7 +169,7 @@ class TestTpMake < Typingpool::Test::Script
     paths = out.scan(/^\/.+\.mp3$/i)
     refute_empty(paths)
     assert(paths.count > 1)
-    paths.each{|a_path| assert(File.exists? a_path) }
+    paths.each{|a_path| assert(File.exist? a_path) }
     paths
   end
 

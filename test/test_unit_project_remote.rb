@@ -103,7 +103,7 @@ class TestProjectRemote < Typingpool::Test
   def standard_put_remove_tests(remote)
     basenames = ['amazon-question-html.html', 'amazon-question-url.txt']
     local_files = basenames.map{|basename| File.join(fixtures_dir, basename) }
-    local_files.each{|path| assert(File.exists? path) }
+    local_files.each{|path| assert(File.exist? path) }
     strings = local_files.map{|path| File.read(path) }
     strings.each{|string| refute_empty(string) }
 

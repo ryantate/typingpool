@@ -14,7 +14,7 @@ class TestTpReview < Typingpool::Test::Script
       skip_if_no_amazon_credentials('tp-review integration test')
       copy_fixtures_to_transcripts_dir(dir, 'tp_review_')
       project = transcripts_dir_project(dir)
-      assert(File.exists? File.join(project.local, 'data','sandbox-assignment.csv'))
+      assert(File.exist? File.join(project.local, 'data','sandbox-assignment.csv'))
       assert_equal(7, project.local.file('data','sandbox-assignment.csv').as(:csv).reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
       begin
         output = nil

@@ -28,7 +28,7 @@ module Typingpool
 
     #Returns contents of file or nil if the file does not exist. 
     def read
-      if File.exists? @path
+      if File.exist? @path
         IO.read(@path, :encoding => @encoding)
       end
     end

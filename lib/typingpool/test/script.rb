@@ -286,7 +286,7 @@ module Typingpool
 
       def make_fixture_project_dir(name)
         dir = fixture_project_dir(name)
-        if File.exists? dir
+        if File.exist? dir
           raise Error::Test, "Fixture project already exists for #{name} at #{dir}"
         end
         Dir.mkdir(dir)
@@ -310,7 +310,7 @@ module Typingpool
       def copy_fixtures_to_transcripts_dir(dir, fixture_prefix)
         copies = 0
         with_fixtures_in_transcripts_dir(dir, fixture_prefix) do |fixture_path, project_path|
-          if File.exists? project_path
+          if File.exist? project_path
             FileUtils.mv(project_path, File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}"))
           end
           FileUtils.cp(fixture_path, project_path)
@@ -324,7 +324,7 @@ module Typingpool
         with_fixtures_in_transcripts_dir(dir, fixture_prefix) do |fixture_path, project_path|
           FileUtils.rm(project_path)
           path_to_orig = File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}")
-          if File.exists?(path_to_orig)
+          if File.exist?(path_to_orig)
             FileUtils.mv(path_to_orig, project_path)
           end
         end
@@ -332,7 +332,7 @@ module Typingpool
 
       def assert_has_transcript(dir, transcript_file='transcript.html')
         transcript_path = File.join(transcripts_dir_project(dir).local, transcript_file)
-        assert(File.exists?(transcript_path))
+        assert(File.exist?(transcript_path))
         assert(not((transcript = IO.read(transcript_path)).empty?))
         transcript
       end

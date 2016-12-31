@@ -29,7 +29,7 @@ end.parse!
 config_path = ARGV.first || Typingpool::Config.default_file
 config_path_full = File.expand_path(config_path)
 config = nil
-if File.exists? config_path_full
+if File.exist? config_path_full
   abort "Not a file: #{config_path}" unless File.file? config_path_full
   STDERR.puts "Editing existing config file '#{config_path}'"
   begin
@@ -41,7 +41,7 @@ else
   abort "Invalid path '#{config_path}'" unless File.dirname(config_path_full) && File.directory?(File.dirname(config_path_full))
   STDERR.puts "Making a new config file at '#{config_path}'"
   config = Typingpool::Config.from_bundled_template
-end #if File.exists? config_path
+end #if File.exist? config_path
 
 config.amazon ||= {}
 config.amazon.key = ask('Your Amazon Web Services "Access Key ID"? '){|q| q.default = config.amazon.key if config.amazon.key }.to_s.chomp
@@ -65,7 +65,7 @@ end
 
 unless config.transcripts
   desktop_path = File.expand_path(File.join('~', 'Desktop'))
-  if File.exists?(desktop_path) && File.directory?(desktop_path)
+  if File.exist?(desktop_path) && File.directory?(desktop_path)
     config.transcripts = File.join(desktop_path, 'Transcripts')
   else
     config.transcripts = File.join('~', 'transcripts')
@@ -76,7 +76,7 @@ transcripts = nil
 loop do
   transcripts = ask('Working directory/folder for transcripts? '){|q| q.default = config['transcripts'] }.to_s.chomp
   abort "Cannot proceed without a transcripts directory" if transcripts.empty?
-  if File.exists?(File.expand_path(transcripts))
+  if File.exist?(File.expand_path(transcripts))
     if File.directory?(File.expand_path(transcripts))
       break
     else
@@ -85,7 +85,7 @@ loop do
   else
     FileUtils.mkdir(File.expand_path(transcripts))
     break
-  end #if File.exists?...
+  end #if File.exist?...
 end #loop do
 config.transcripts = transcripts
 
@@ -94,7 +94,7 @@ unless config.templates
   transcripts_dir_capitalized = (transcripts_dir[0].upcase == transcripts_dir[0])
   templates =  transcripts_dir_capitalized ? 'Templates' : 'templates'
   config.templates = File.join(config['transcripts'], templates)
-  FileUtils.mkdir(config.templates) unless File.exists? config.templates
+  FileUtils.mkdir(config.templates) unless File.exist? config.templates
 end
 
 unless config.cache

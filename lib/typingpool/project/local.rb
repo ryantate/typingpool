@@ -51,7 +51,7 @@ module Typingpool
         #the file layout inside the dir indicates it is a
         #Project::Local instance.
         def ours?(dir)
-          File.exists?(dir.subdir('audio')) && File.exists?(dir.subdir('audio', 'originals'))
+          File.exist?(dir.subdir('audio')) && File.exist?(dir.subdir('audio', 'originals'))
         end
 
         #Takes the name of a project and returns true if it is a valid
@@ -63,7 +63,7 @@ module Typingpool
             rescue Errno::ENOENT
               return false
             end #begin
-            return File.exists?(File.join(dir, name))
+            return File.exist?(File.join(dir, name))
           end #Utility.in_temp_dir do...
         end
 
@@ -86,7 +86,7 @@ module Typingpool
               file('data',"#{sym.to_s}.txt").write(value)
             end
             define_method("delete_#{sym.to_s}".to_sym) do
-              if File.exists? file('data',"#{sym.to_s}.txt")
+              if File.exist? file('data',"#{sym.to_s}.txt")
                 File.delete(file('data',"#{sym.to_s}.txt"))
               end
             end

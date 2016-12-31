@@ -28,7 +28,7 @@ module Typingpool
         #the parent directory, returns it. If not, returns nil.
         def named(name, in_dir)
           path = File.join(in_dir, name)
-          if File.exists?(path) && File.directory?(path)
+          if File.exist?(path) && File.directory?(path)
             new(path)
           end
         end

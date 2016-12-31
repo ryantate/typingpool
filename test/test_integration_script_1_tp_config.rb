@@ -17,7 +17,7 @@ end
 
 def test_abort_with_directory_path
   dir = File.join(fixtures_dir, 'vcr')
-  assert(File.exists? dir)
+  assert(File.exist? dir)
   assert(File.directory? dir)
   exception = assert_raises(Typingpool::Error::Shell) do
     tp_config(dir)
@@ -27,7 +27,7 @@ end
 
 def test_abort_with_invalid_path
   path = '/jksdljs/euwiroeuw'
-  refute(File.exists? path)
+  refute(File.exist? path)
   exception = assert_raises(Typingpool::Error::Shell) do
     tp_config(path)
   end
@@ -46,10 +46,10 @@ def test_new_config_creation
       :config => File.join(dir, 'config.yml'),
       :transcript_dir => File.join(dir, 'transcriptionz')
     }
-    path.values.each{|a_path| refute(File.exists? a_path) }
+    path.values.each{|a_path| refute(File.exist? a_path) }
     assert(output = tp_config_with_input([path[:config], '--test'], ['keykey', 'secretsecret', path[:transcript_dir]]))
     assert_match(/wrote config to/i, output[:err])
-    path.values.each{|a_path| assert(File.exists? a_path) }
+    path.values.each{|a_path| assert(File.exist? a_path) }
     assert(File.file? path[:config] )
     assert(File.directory? path[:transcript_dir] )
     assert(config = Typingpool::Config.file(path[:config]))
@@ -68,10 +68,10 @@ def test_config_editing
       :fixture => File.join(fixtures_dir, 'config-1'),
       :transcript_dir => File.join(dir, 'transcriptionz')
     }
-    assert(File.exists? path[:fixture])
-    refute(File.exists? path[:config])
+    assert(File.exist? path[:fixture])
+    refute(File.exist? path[:config])
     FileUtils.cp(path[:fixture], path[:config])
-    assert(File.exists? path[:config])
+    assert(File.exist? path[:config])
     assert(original_config = Typingpool::Config.file(path[:config]))
     [:key, :secret, :bucket].each{|param| refute_empty(original_config.amazon.send(param).to_s) }
     [:transcripts, :templates, :cache].each{|param| refute_empty(original_config.send(param).to_s) } 
@@ -94,10 +94,10 @@ def test_skips_bucket_when_sftp_params_exist
       :fixture => File.join(fixtures_dir, 'config-2'),
       :transcript_dir => File.join(dir, 'transcriptionz')
     }
-    assert(File.exists? path[:fixture])
-    refute(File.exists? path[:config])
+    assert(File.exist? path[:fixture])
+    refute(File.exist? path[:config])
     FileUtils.cp(path[:fixture], path[:config])
-    assert(File.exists? path[:config])
+    assert(File.exist? path[:config])
     assert(original_config = Typingpool::Config.file(path[:config]))
     assert_empty(original_config.amazon.bucket.to_s)
     assert(output = tp_config_with_input([path[:config], '--test'], ['keykey', 'secretsecret', path[:transcript_dir]]))

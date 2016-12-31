@@ -12,7 +12,7 @@ module Typingpool
         def config_from_arg(arg=nil)
           if arg
             path = File.expand_path(arg)
-            return unless File.exists?(path) && File.file?(path)
+            return unless File.exist?(path) && File.file?(path)
             Config.file(path)
           else
             Config.file
@@ -40,13 +40,13 @@ module Typingpool
         # ==== Returns
         # A Project instance.
         def project_from_arg_and_config(arg, config)
-          path = if (File.exists?(arg) && File.directory?(arg))
+          path = if (File.exist?(arg) && File.directory?(arg))
                    config.transcripts = File.dirname(arg)
                    arg
                  else
                    abort "No 'transcripts' dir specified in your config file and '#{arg}' is not a valid path" unless config.transcripts
                    path = File.join(config.transcripts, arg)
-                   abort "No such project '#{arg}' in dir '#{config.transcripts}'" unless File.exists? path
+                   abort "No such project '#{arg}' in dir '#{config.transcripts}'" unless File.exist? path
                    abort "'#{arg}' is not a directory at '#{path}'" unless File.directory? path
                    path
                  end

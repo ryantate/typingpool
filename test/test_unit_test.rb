@@ -34,7 +34,7 @@ class TestTest < Typingpool::Test::Script
   def assert_is_proper_tp_dir(dir)
     assert(project = transcripts_dir_project(dir))
     assert(project.local)
-    assert(File.exists? project.local)
+    assert(File.exist? project.local)
     assert(File.directory? project.local)
     assert_equal(3, project.local.subdir('audio', 'originals').files.count)
     assert_equal(6, project.local.subdir('audio', 'chunks').files.count)
@@ -42,7 +42,7 @@ class TestTest < Typingpool::Test::Script
 
   def assert_has_proper_assignment_csv(dir)
     assert(project = transcripts_dir_project(dir))
-    assert(File.exists? project.local.file('data', 'assignment.csv').path)
+    assert(File.exist? project.local.file('data', 'assignment.csv').path)
     assert(assignments = project.local.file('data', 'assignment.csv').as(:csv).read)
     assert_equal(project.local.subdir('audio', 'chunks').files.count, assignments.count)
     assert_equal(assignments.count, assignments.select{|a| a['audio_url']}.count)

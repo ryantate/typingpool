@@ -8,10 +8,10 @@ require 'typingpool/test'
 
 class TestProjectLocal < Typingpool::Test
   def test_project_local_ours
-    assert(File.exists?(non_project_dir))
+    assert(File.exist?(non_project_dir))
     assert(File.directory?(non_project_dir))
     refute(Typingpool::Project::Local.ours?(Typingpool::Filer::Dir.new(non_project_dir)))
-    assert(File.exists?(project_template_dir))
+    assert(File.exist?(project_template_dir))
     assert(Typingpool::Project::Local.ours?(Typingpool::Filer::Dir.new(project_template_dir)))
   end
 
@@ -28,7 +28,7 @@ class TestProjectLocal < Typingpool::Test
   def test_project_local_create
     in_temp_dir do |dir|
       assert(local = create_project_local(dir))
-      assert(File.exists?(local.path))
+      assert(File.exist?(local.path))
       assert(File.directory?(local.path))
       assert_kind_of(Typingpool::Project::Local, local)
       refute_nil(local.id)

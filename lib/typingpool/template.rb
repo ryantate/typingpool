@@ -25,7 +25,7 @@ module Typingpool
 
       def validate_config(config)
         if config.templates
-          File.exists?(config.templates) or raise Error::File::NotExists, "No such templates dir: #{config.templates}"
+          File.exist?(config.templates) or raise Error::File::NotExists, "No such templates dir: #{config.templates}"
           File.directory?(config.templates) or raise Error::File::NotExists, "Templates dir not a directory: #{config.templates}"
         end
       end
@@ -71,7 +71,7 @@ module Typingpool
       look_in.each do |dir|
         extensions.each do |ext| 
           path = File.join(dir, [@path, ext].join)
-          if File.exists?(path) && File.file?(path)
+          if File.exist?(path) && File.file?(path)
             return path
           end
         end

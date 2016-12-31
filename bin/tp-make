@@ -120,7 +120,7 @@ abort "No title specified\n\n#{options[:banner]}" if options[:title].to_s.empty?
 options[:files].sort!
 options[:files].each do |file|
   File.extname(file) or abort "You need a file extension on the file '#{file}'"
-  File.exists?(file) or abort "There is no file '#{file}'"
+  File.exist?(file) or abort "There is no file '#{file}'"
   File.file?(file) or abort "Not a file: '#{file}'"
 end
 options[:unusual].map!{|unusual| unusual.split(/\s*,\s*/)}.flatten!
@@ -147,14 +147,14 @@ with_friendly_exceptions('--bitrate argument', options[:bitrate]) do
 end
 
 if project.local
-  if (File.exists?(project.local.file('data', 'assignment.csv')) &&
+  if (File.exist?(project.local.file('data', 'assignment.csv')) &&
       project.local.file('data', 'assignment.csv').as(:csv).read.select{|assignment| assignment['audio_uploaded'] == 'maybe' }.count > 0)
     #project where the upload died partway through
     STDERR.puts "Fixing incomplete project"
     STDERR.puts "Determining which mp3s need uploading"
   else
     abort "The title '#{options[:title]}' is taken"
-  end #if(File.exists(project.local.file('data', 'assignment.csv') &&...
+  end #if(File.exist?(project.local.file('data', 'assignment.csv') &&...
 else
   project.create_local
   project.local.subtitle = options[:subtitle] if options[:subtitle]

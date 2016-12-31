@@ -26,7 +26,7 @@ module Typingpool
       def to_mp3(dest=self.dir.file("#{File.basename(@path, '.*') }.mp3"), bitrate=nil)
         bitrate ||= self.bitrate || 192
         Utility.system_quietly('ffmpeg', '-i', @path, '-acodec', 'libmp3lame', '-ab', "#{bitrate}k", '-ac', '2', dest)
-        File.exists?(dest) or raise Error::Shell, "Could not found output from `ffmpeg` on #{path}"
+        File.exist?(dest) or raise Error::Shell, "Could not found output from `ffmpeg` on #{path}"
         self.class.new(dest.path)
       end
 

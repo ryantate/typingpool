@@ -110,7 +110,7 @@ end
 if project 
   #Don't want to delete audio if there's another assignments file
   #relying on it
-  delete_types = if (options[:sandbox] || (File.exists? project.local.file('data', 'sandbox-assignment.csv')))
+  delete_types = if (options[:sandbox] || (File.exist? project.local.file('data', 'sandbox-assignment.csv')))
                    ['assignment']
                  else
                    ['audio', 'assignment']

@@ -131,7 +131,7 @@ class TestProject < Typingpool::Test
       assert(result = project.create_assignment_csv(:path => relative_path, :urls => dummy_remote_files, :unusual => project_default[:unusual], :voices => voices, ))
       assert_includes(result, dir)
       csv_file = File.join(dir, project_default[:title], *relative_path)
-      assert(File.exists? csv_file)
+      assert(File.exist? csv_file)
       assert(File.file? csv_file)
       assert(parsed = CSV.read(csv_file))
       assignment_headers = parsed.shift

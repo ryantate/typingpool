@@ -219,7 +219,7 @@ module Typingpool
             need[hit.project_id] = false
             project = Typingpool::Project.new(hit.project_title_from_url, config)
             next unless project.local && (project.local.id == hit.project_id)
-            next if File.exists? project.local.file(transcript_filename[:done])
+            next if File.exist? project.local.file(transcript_filename[:done])
             by_project_id[hit.project_id] = {
               :project => project,
               :hits => [hit]
@@ -271,7 +271,7 @@ module Typingpool
         rescue Error => e
           abort "There was a fatal error with the transcript template: #{e}"
         end #begin
-        File.delete(project.local.file(transcript_filename[:working])) if File.exists?(project.local.file(transcript_filename[:working]))
+        File.delete(project.local.file(transcript_filename[:working])) if File.exist?(project.local.file(transcript_filename[:working]))
         File.open(project.local.file(out_file), 'w') do |out|
           out << template.render({:transcript => transcript})
         end #File.open...
@@ -288,8 +288,8 @@ module Typingpool
       #sandbox-assignmens.csv.
       def ensure_sandbox_assignment_csv(project)
         csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
-        return csv if File.exists? csv
-        raise Error, "No assignment CSV to copy" unless File.exists? project.local.file('data', 'assignment.csv')
+        return csv if File.exist? csv
+        raise Error, "No assignment CSV to copy" unless File.exist? project.local.file('data', 'assignment.csv')
         csv.write(
                   project.local.file('data', 'assignment.csv').as(:csv).map do |assignment|
                     unrecord_hit_in_csv_row(assignment)
