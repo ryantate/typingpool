@@ -163,7 +163,7 @@ class TestTpFinish < Typingpool::Test::Script
       config.amazon.bucket = new_bucket
       bad_config_path = setup_s3_config(dir, config, '.config_s3_bad')
       exception = assert_raises(Typingpool::Error::Shell) do
-        tp_finish_outside_sandbox(dir, bad_config_path)
+        tp_finish_outside_sandbox_with_vcr(dir, 'tp_finish_8', bad_config_path)
       end #assert_raises...
       assert_match(/\burls don't look right\b/i, exception.message)
     end #with_temp_readymade_project do...

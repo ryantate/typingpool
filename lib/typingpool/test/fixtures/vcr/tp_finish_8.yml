@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://mechanicalturk.amazonaws.com/
+    body:
+      encoding: UTF-8
+      base64_string: |
+        UGFnZVNpemU9MTAwJlBhZ2VOdW1iZXI9MSZPcGVyYXRpb249U2VhcmNoSElU
+        cyZTZXJ2aWNlPUFXU01lY2hhbmljYWxUdXJrUmVxdWVzdGVyJkFXU0FjY2Vz
+        c0tleUlkPTxBV1NfS0VZPiZUaW1lc3RhbXA9MjAxNi0xMi0zMVQwMiUzQTI1
+        JTNBMjlaJlZlcnNpb249MjAxMi0wMy0yNSZTaWduYXR1cmU9dkdBNWNpZU1v
+        cXFWWG8yVm9JOXpSeGdzekNFJTNE
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.0.0p353
+      Content-Length:
+      - '212'
+      Host:
+      - mechanicalturk.amazonaws.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sat, 31 Dec 2016 02:25:29 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      base64_string: |
+        PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxTZWFyY2hISVRzUmVzcG9uc2U+PE9w
+        ZXJhdGlvblJlcXVlc3Q+PFJlcXVlc3RJZD4xNGE1MzhjNC01NWFlLTQyNjgt
+        YjljZC1mZmIwYzM5ODI3NWM8L1JlcXVlc3RJZD48L09wZXJhdGlvblJlcXVl
+        c3Q+PFNlYXJjaEhJVHNSZXN1bHQ+PFJlcXVlc3Q+PElzVmFsaWQ+VHJ1ZTwv
+        SXNWYWxpZD48L1JlcXVlc3Q+PE51bVJlc3VsdHM+MDwvTnVtUmVzdWx0cz48
+        VG90YWxOdW1SZXN1bHRzPjA8L1RvdGFsTnVtUmVzdWx0cz48UGFnZU51bWJl
+        cj4xPC9QYWdlTnVtYmVyPjwvU2VhcmNoSElUc1Jlc3VsdD48L1NlYXJjaEhJ
+        VHNSZXNwb25zZT4=
+    http_version: 
+  recorded_at: Sat, 31 Dec 2016 02:25:29 GMT
+recorded_with: VCR 3.0.3
