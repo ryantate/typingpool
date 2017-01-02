@@ -24,6 +24,22 @@ class TestTpMake < Typingpool::Test::Script
     assert_tp_make_abort_match([], /\bUSAGE:/)
   end
 
+  def test_abort_with_sftp_http_url
+    with_temp_transcripts_dir do |dir|
+      config = Typingpool::Config.file(config_path(dir))
+      config.to_hash['sftp'] = {
+        'user' => 'test',
+        'host' => 'example.com',
+        'url' => 'http://example.com/foobar'
+      }
+      write_config(config, dir)
+      exception = assert_raises(Typingpool::Error::Shell) do
+        call_tp_make('--file', audio_files[0], '--title', 'Foo', '--config', config_path(dir), '--testnoupload')
+      end
+      assert_match(/must begin with 'https'/i, exception.message)
+    end #with_temp_transcripts_dir do...
+  end
+  
   def assert_tp_make_abort_match(args, regex)
     args.push('--testnoupload')
     assert_script_abort_match(args, regex) do |new_args|
@@ -90,7 +106,7 @@ class TestTpMake < Typingpool::Test::Script
       assert_all_assets_have_upload_status(project.local.file('data', 'assignment.csv').as(:csv), 'audio', 'no') 
     end #with_temp_transcripts_dir do...
   end
-
+  
   def test_tp_make_s3
     with_temp_transcripts_dir do |dir|
       skip_if_no_s3_credentials('tp-make S3 integration test', config)

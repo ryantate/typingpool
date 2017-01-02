@@ -31,7 +31,8 @@ module Typingpool
   #====amazon
   #  [url] Base URL to use when linking to files uploaded to S3. You
   #        may want to use this if you do custom domain mapping on
-  #        S3. Default is https://$bucket.s3.amazonaws.com.
+  #        S3. Default is https://$bucket.s3.amazonaws.com. MUST BE
+  #        HTTPS URL PER AMAZON POLICY.
   #====sftp
   #If you provide SFTP config, the specified SFTP server will be used
   #to host remote mp3 and html files rather than Amazon S3. At
@@ -41,8 +42,8 @@ module Typingpool
   #  [user] SFTP username
   #  [host] SFTP server
   #  [path] Files will be uploaded into this path. Optional.
-  #  [url]  Base URL to use when linking to files uploaded using the
-  #         preceding config.
+  #  [url] Base URL to use when linking to files uploaded using the
+  #         preceding config. MUST BE HTTPS URL PER AMAZON POLICY.
   #====assign
   #Defaults for tp-assign.
   #  [reward]   Pay per transcription chunk in U.S. dollars. Default: 0.75.

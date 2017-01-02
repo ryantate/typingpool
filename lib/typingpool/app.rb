@@ -422,6 +422,24 @@ module Typingpool
         end #...].each do |cmdline|
         yield(missing) unless missing.empty?
       end
+
+
+      #Checks if SFTP arguments are valid in case we want to abort
+      #before attempting upload
+      def validate_sftp(config)
+        if config.sftp
+          [:user, :host, :url].each do |param|
+            if (not(config.sftp.send(param)) || config.sftp.send(param).to_s.empty?)
+              raise Error, "Config file has an SFTP section but section is missing required parameter #{param}"
+            end
+          end #[:user, :host, :url].each...
+          unless config.sftp.url.match(/^https:\/\//i)
+            raise Error, "URL specified in the SFTP section of your config file must begin with 'https' per Amazon policy"
+          end
+        end #if config.sftp
+      end
+      
+
       #protected
 
       def with_abort_on_url_mismatch(url_type='')

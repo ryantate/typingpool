@@ -138,6 +138,12 @@ project = with_friendly_exceptions('project title', options[:title]) do
   Typingpool::Project.new(options[:title], config) 
 end
 
+begin
+  Typingpool::App.validate_sftp(config)
+rescue Typingpool::Error => e
+  abort e.message
+end
+
 with_friendly_exceptions('--chunk argument', options[:chunk]) do
   project.interval = options[:chunk] if options[:chunk] 
 end

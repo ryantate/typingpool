@@ -123,6 +123,12 @@ end.parse!
 
 config = Typingpool::App::CLI.config_from_arg(options[:config]) or abort "No config file at '#{options[:config]}'"
 
+begin
+  Typingpool::App.validate_sftp(config)
+rescue Typingpool::Error => e
+  abort e.message
+end
+
 if options[:keyword].count > 0
   config.assign.keywords = []
   config.assign.keywords.push(*options[:keyword])

@@ -32,6 +32,23 @@ class TestTpAssign < Typingpool::Test::Script
     assert_tp_assign_abort_match([project_default[:title], assign_default[:template], '--reward', 'foo'], /sense of --reward/i)
   end
 
+  
+  def test_abort_with_sftp_http_url
+    with_temp_readymade_project do |dir|
+      config = Typingpool::Config.file(config_path(dir))
+      config.to_hash['sftp'] = {
+        'user' => 'test',
+        'host' => 'example.com',
+        'url' => 'http://example.com/foobar'
+      }
+      write_config(config, dir)
+      exception = assert_raises(Typingpool::Error::Shell) do
+        call_tp_assign(project_default[:title], assign_default[:template], '--config', config_path(dir))
+      end
+      assert_match(/must begin with 'https'/i, exception.message)
+    end #with_temp_readymade_project do |dir|
+  end
+  
   def assert_tp_assign_abort_match(args, regex)
     assert_script_abort_match(args, regex) do |new_args|
       call_tp_assign(*new_args)
