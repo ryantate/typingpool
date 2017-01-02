@@ -4,7 +4,7 @@ module Typingpool
   #often modified at runtime, for example in response to script flags.
   #
   #==Fields
-  #  All listed defaults are populated when you run tp-install.
+  #  All listed defaults are populated when you run tp-config.
   #===Required
   #  [transcripts] Unexpanded path to working directory for
   #                transcripts. This is where tp-make creates new
@@ -19,7 +19,7 @@ module Typingpool
   #  [bucket] The name of the "bucket" on Amazon S3 where your uploads
   #           will be stored. Not required if you specify SFTP config
   #           instead (see below). Default: Generated for you when you
-  #           run tp-install.
+  #           run tp-config.
   #
   #===Optional
   #  [cache]     Unexpanded path to the cache file (pstore). Default:
