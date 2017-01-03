@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
    s.authors = ['Ryan Tate']
    s.email = 'ryantate@ryantate.com'
    s.homepage = 'http://github.com/ryantate/typingpool'
-   s.required_ruby_version = '>= 1.9.2'
+   s.required_ruby_version = '>= 2.0'
    s.requirements = ['ffmpeg', 'mp3splt', 'mp3wrap']
    s.add_runtime_dependency('rturk', '~> 2.11.0')
    s.add_runtime_dependency('highline', '>= 1.6')
