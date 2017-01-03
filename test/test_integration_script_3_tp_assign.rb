@@ -196,7 +196,7 @@ class TestTpAssign < Typingpool::Test::Script
                }) do
         begin
           _, err = tp_assign_with_vcr(dir, vcr_names[0])
-          assert_match(/would cost \$((0\.40)||(0\.47))\./, err)
+          assert_match(/would cost \$((0\.44)||(0\.51))\./, err)
           refute_empty(results = Typingpool::Amazon::HIT.all_for_project(project.local.id))
           assert_equal('0.06', results.first.at_amazon.reward_amount.to_s)
         ensure

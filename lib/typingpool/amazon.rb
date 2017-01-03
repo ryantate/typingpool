@@ -51,8 +51,7 @@ module Typingpool
       #Amazon.setup (or the default).
       def cache
         @@cache ||= PStore.new(File.expand_path(@@cache_file))
-      end
-
+      end      
     end #class << self
   end #Amazon
 end #Typingpool

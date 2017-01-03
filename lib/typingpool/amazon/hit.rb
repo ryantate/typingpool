@@ -227,6 +227,21 @@ module Typingpool
             selected
           end
         end
+
+        def reward_to_total_cost(reward)
+          amazon_fee = reward.to_f * commission_rate
+          amazon_fee = minimum_commission if amazon_fee < minimum_commission
+          reward + amazon_fee
+        end
+
+        def minimum_commission
+          0.01
+        end
+
+        def commission_rate
+          0.2
+        end
+
       end #class << self
 
       #Corresponds to the Amazon Mechanical Turk HIT#HITId

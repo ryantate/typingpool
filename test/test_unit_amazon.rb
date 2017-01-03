@@ -160,6 +160,14 @@ class TestAmazon < Typingpool::Test
    end #with_dummy....
   end
 
+
+  def test_calculates_hit_commission
+    assert_equal(0.072, Typingpool::Amazon::HIT.reward_to_total_cost(0.06))
+    assert_equal(0.02, Typingpool::Amazon::HIT.reward_to_total_cost(0.01))
+    assert_equal(1.212, Typingpool::Amazon::HIT.reward_to_total_cost(1.01))
+    assert_equal(1.2, Typingpool::Amazon::HIT.reward_to_total_cost(1))
+  end
+  
   #Lacks test for HIT::Assignment - needs VCR fixture (TODO)
 
   def question_html
