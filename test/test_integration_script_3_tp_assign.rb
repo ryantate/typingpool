@@ -82,7 +82,7 @@ class TestTpAssign < Typingpool::Test::Script
           assign_default[:keyword].each{|keyword| assert_includes(keywords, keyword)}
           sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
           refute_empty(assignment_urls = sandbox_csv.map{|assignment| assignment['assignment_url'] })
-          assert(assignment_html = fetch_url(assignment_urls.first).body)
+          assert(assignment_html = Typingpool::Utility.fetch_url(assignment_urls.first).body)
           assert_match(/\b22[\s-]+second\b/, assignment_html)
           assert_all_assets_have_upload_status(sandbox_csv, 'assignment', 'yes')
         ensure
@@ -102,7 +102,7 @@ class TestTpAssign < Typingpool::Test::Script
       copy_tp_assign_fixtures(dir, vcr_name)
       csv = project.local.file('data', 'assignment.csv').as(:csv)
       if (Typingpool::Test.record || Typingpool::Test.live)
-        assert_empty(csv.select{|assignment| working_url? assignment['audio_url']})
+        assert_empty(csv.select{|assignment| Typingpool::Utility.working_url? assignment['audio_url']})
       end
       csv.each{|assignment| assert_empty(assignment['audio_uploaded'].to_s) }
       begin
@@ -141,7 +141,7 @@ class TestTpAssign < Typingpool::Test::Script
         sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
         refute_empty(get_assignment_urls.call(sandbox_csv))
         if (Typingpool::Test.record || Typingpool::Test.live)
-          get_assignment_urls.call(sandbox_csv).each{|url| refute(working_url? url) }
+          get_assignment_urls.call(sandbox_csv).each{|url| refute(Typingpool::Utility.working_url? url) }
         end
         assert_all_assets_have_upload_status(sandbox_csv, 'assignment', 'maybe')
         tp_assign_with_vcr(dir, vcr_names[1], good_config_path)

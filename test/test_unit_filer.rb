@@ -18,7 +18,7 @@ class TestFiler < Typingpool::Test
     assert_match(/transcripts: ~\/Documents\/Transcripts\//, text)
     assert_match(/- mp3\s*$/, text)
     assert_equal(fixtures_dir, filer.dir.path)
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       path = File.join(dir, 'filer-temp')
       assert(filer = Typingpool::Filer.new(path))
       assert_instance_of(Typingpool::Filer::CSV, filer_csv = filer.as(:csv))
@@ -46,7 +46,7 @@ class TestFiler < Typingpool::Test
     assert(data.first['audio_url'])
     assert_match(/^https?:\/\/\w/, data.first['audio_url'])
     assert(filer.select{|r| r['audio_url'] }.count > 0)
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       path = File.join(dir, 'filer-temp')
       assert(filer2 = Typingpool::Filer::CSV.new(path))
       assert_equal([], filer2.read)
@@ -74,7 +74,7 @@ class TestFiler < Typingpool::Test
     assert(data = filer.read)
     assert_instance_of(Array, data)
     assert_instance_of(Hash, data.first)
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       path = File.join(dir, 'filer-temp')
       assert(filer2 = Typingpool::Filer::CSV.new(path))
       assert_equal([], filer2.read)
@@ -94,7 +94,7 @@ class TestFiler < Typingpool::Test
     wma = Typingpool::Filer::Audio.new(files_from(File.join(audio_dir, 'wma')).first)
     assert(mp3.mp3?)
     assert(not(wma.mp3?))
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       [mp3, wma].each do |file|
         FileUtils.cp(file, dir)
       end
@@ -145,7 +145,7 @@ class TestFiler < Typingpool::Test
     assert(filer_wma = Typingpool::Filer::Files::Audio.new(wmas))
     assert_equal(mp3s.count, filer_mp3.files.count)
     assert_equal(wmas.count, filer_wma.files.count)
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       dest_filer = Typingpool::Filer::Dir.new(dir)
       assert(filer_conversion = filer_wma.to_mp3(dest_filer))
       assert_equal(filer_wma.files.count, filer_conversion.files.count)
@@ -167,7 +167,7 @@ class TestFiler < Typingpool::Test
     dir2_path = File.join(fixtures_dir, 'doesntexist')
     assert(not(File.exist? dir2_path))
     assert(dir2 = Typingpool::Filer::Dir.new(dir2_path))
-    in_temp_dir do |temp_dir|
+    Typingpool::Utility.in_temp_dir do |temp_dir|
       dir3_path = File.join(temp_dir, 'filer-dir-temp')
       assert(not(File.exist? dir3_path))
       assert(dir3 = Typingpool::Filer::Dir.create(dir3_path))

@@ -134,13 +134,13 @@ class TestTpFinish < Typingpool::Test::Script
         assert_all_assets_have_upload_status(csv, 'audio', 'yes')
         bogus_url = urls.first.sub(/\.mp3/, '.foo.mp3')
         refute_equal(urls.first, bogus_url)
-        refute(working_url? bogus_url) if (Typingpool::Test.live || Typingpool::Test.record)
+        refute(Typingpool::Utility.working_url? bogus_url) if (Typingpool::Test.live || Typingpool::Test.record)
         bogus_assignment = assignments.first.dup
         bogus_assignment['audio_url'] = bogus_url
         assignments.insert(1, bogus_assignment)
         csv.write(assignments)
         assignments = csv.read
-        refute(working_url? assignments[1]['audio_url']) if (Typingpool::Test.live || Typingpool::Test.record)
+        refute(Typingpool::Utility.working_url? assignments[1]['audio_url']) if (Typingpool::Test.live || Typingpool::Test.record)
       ensure
         tp_finish_outside_sandbox_with_vcr(dir, 'tp_finish_7', s3_config_path)
       end #begin

@@ -17,11 +17,11 @@ class TestTemplate < Typingpool::Test
     assert_match(/#{signature}/, template1.render({:title => signature}))
     refute_match(/#{signature}/, template1.read)
     assert_match(/<h1><%= title/i, template1.read)
-    in_temp_dir do |dir1|
+    Typingpool::Utility.in_temp_dir do |dir1|
       assert(template = Typingpool::Template.new('template', [dir1, fixtures_dir]))
       assert(template.look_in.detect{|path| path == dir1})
       has_template_in_fixtures_dir_test(template)
-      in_temp_dir do |dir2|
+      Typingpool::Utility.in_temp_dir do |dir2|
         copy_template_fixture_into(dir2, '-2') do |path|
           assert(template = Typingpool::Template.new('template', [dir1, dir2, fixtures_dir]))
           assert_equal(path, template.full_path)
@@ -34,8 +34,8 @@ class TestTemplate < Typingpool::Test
   end
 
   def test_template_from_config
-    in_temp_dir do |dir1|
-      in_temp_dir do |dir2|
+    Typingpool::Utility.in_temp_dir do |dir1|
+      Typingpool::Utility.in_temp_dir do |dir2|
         copy_template_fixture_into(dir2, '-2') do |path|
           config = dummy_config
           config.templates = dir2
@@ -53,7 +53,7 @@ class TestTemplate < Typingpool::Test
   end
 
   def test_template_assignment
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       copy_template_fixture_into(dir) do |path|
         assignment_subdir = File.join(dir, 'assignment')
         FileUtils.mkdir(assignment_subdir)
@@ -75,7 +75,7 @@ class TestTemplate < Typingpool::Test
     assert_match(/<h1><%= title/i, rendered)
     assert_match(/<h1>#{signatures[0]}/i, rendered)
     assert_match(/<h1>#{signatures[1]}/i, rendered)
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       copy_template_fixture_into(dir) do |template_path|
         subdir = File.join(dir, 'closer')
         FileUtils.mkdir(subdir)

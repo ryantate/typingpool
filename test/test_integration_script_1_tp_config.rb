@@ -41,7 +41,7 @@ def test_usage_message
 end
 
 def test_new_config_creation
-  in_temp_dir do |dir|
+  Typingpool::Utility.in_temp_dir do |dir|
     path = {
       :config => File.join(dir, 'config.yml'),
       :transcript_dir => File.join(dir, 'transcriptionz')
@@ -62,7 +62,7 @@ def test_new_config_creation
 end
 
 def test_config_editing
-  in_temp_dir do |dir|
+  Typingpool::Utility.in_temp_dir do |dir|
     path = {
       :config => File.join(dir, 'config.yml'),
       :fixture => File.join(fixtures_dir, 'config-1'),
@@ -88,7 +88,7 @@ def test_config_editing
 end
 
 def test_skips_bucket_when_sftp_params_exist
-  in_temp_dir do |dir|
+  Typingpool::Utility.in_temp_dir do |dir|
     path = {
       :config => File.join(dir, 'config.yml'),
       :fixture => File.join(fixtures_dir, 'config-2'),

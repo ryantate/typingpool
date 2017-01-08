@@ -103,7 +103,7 @@ class TestProject < Typingpool::Test
 
   def test_project_base_create_local
     config = dummy_config
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       config.transcripts = dir
       assert(project = Typingpool::Project.new(project_default[:title], config))
       assert_nil(project.local)
@@ -114,7 +114,7 @@ class TestProject < Typingpool::Test
 
   def test_project_base_create_assignment_csv
     config = dummy_config
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       config.transcripts = dir
       assert(project = Typingpool::Project.new(project_default[:title], config))
       project.create_local

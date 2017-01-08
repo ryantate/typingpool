@@ -26,7 +26,7 @@ class TestProjectLocal < Typingpool::Test
   end
 
   def test_project_local_create
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       assert(local = create_project_local(dir))
       assert(File.exist?(local.path))
       assert(File.directory?(local.path))
@@ -36,7 +36,7 @@ class TestProjectLocal < Typingpool::Test
   end
 
   def test_project_instance
-    in_temp_dir do |dir|
+    Typingpool::Utility.in_temp_dir do |dir|
       assert(local = create_project_local(dir))
       refute_nil(local.id)
       assert_raises(Typingpool::Error) do

@@ -145,7 +145,7 @@ class TestTpMake < Typingpool::Test::Script
       assert_all_assets_have_upload_status(assignment_csv, 'audio', 'maybe')
       assert(audio_urls = assignment_csv.map{|assignment| assignment['audio_url'] })
       refute_empty(audio_urls)
-      assert_empty(audio_urls.select{|url| working_url? url })
+      assert_empty(audio_urls.select{|url| Typingpool::Utility.working_url? url })
       begin
         tp_make_with_vcr(dir, 'tp_make_2', good_config_path)
         refute_empty(assignment_csv.read)
