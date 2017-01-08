@@ -338,9 +338,6 @@ module Typingpool
             end
           end
         end
-
-
-
       
     end #Test
   end #Utility

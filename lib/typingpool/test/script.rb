@@ -56,6 +56,7 @@ module Typingpool
           assert_match(regex, exception.message)
         end #with_temp_transcripts_dir do...
       end
+
     end #Script
   end #Test
 end #Typingpool
