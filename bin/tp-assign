@@ -2,9 +2,11 @@
 
 require 'optparse'
 require 'typingpool'
+require 'typingpool/utility/test'
 require 'highline/import'
 include Typingpool::App::FriendlyExceptions
 include Typingpool::App::CLI::Formatter
+include Typingpool::Utility::Test
 
 options = {
   :keyword => [],
@@ -97,7 +99,6 @@ OptionParser.new do |opts|
   opts.on('--testfixture=PATH',
           'For testing purposes only. Ignore.',
           'A VCR fixture for running with mock data.') do |fixture|
-    require 'typingpool/app/test'
     options[:fixture] = fixture
   end
 
@@ -214,11 +215,11 @@ STDERR.puts "#{needed_assignments.count} assignments to assign"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 if options[:fixture]
-  Typingpool::App.vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
+  vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
                              :preserve_exact_body_bytes => true,
-                             :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                             :match_requests_on => [:method, vcr_core_host_matcher]
                            })
-  at_exit{ Typingpool::App.vcr_stop }
+  at_exit{ vcr_stop }
 end
 
 #Are there enough funds for this assignment?

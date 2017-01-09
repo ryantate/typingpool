@@ -5,6 +5,8 @@ $LOAD_PATH.unshift File.join(File.dirname(File.dirname(__FILE__)), 'lib')
 require 'minitest/autorun'
 require 'typingpool'
 require 'typingpool/test'
+require 'typingpool/utility/test'
+include Typingpool::Utility::Test
 
 class TestTpFinish < Typingpool::Test::Script
   def test_tp_finish_on_audio_files_with_sftp
@@ -83,7 +85,7 @@ class TestTpFinish < Typingpool::Test::Script
       csv=nil
       with_vcr('tp_finish_4', config, {
                  :preserve_exact_body_bytes => true,
-                 :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                 :match_requests_on => [:method, vcr_core_host_matcher]
                }) do
         begin
           tp_assign_with_vcr(dir, 'tp_finish_3', s3_config_path)

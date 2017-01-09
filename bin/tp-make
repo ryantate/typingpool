@@ -2,10 +2,12 @@
 
 require 'optparse'
 require 'typingpool'
+require 'typingpool/utility/test'
 require 'fileutils'
 require 'tempfile'
 require 'tmpdir'
 include Typingpool::App::FriendlyExceptions
+include Typingpool::Utility::Test
 
 options = {
   :files => [],
@@ -88,7 +90,6 @@ OptionParser.new do |opts|
   opts.on('--testfixture=PATH',
           'For testing purposes only. Ignore.',
           'A VCR fixture for running with mock data.') do |fixture|
-    require 'typingpool/app/test'
     options[:fixture] = fixture
   end
 
@@ -194,14 +195,14 @@ else
 end #if project.local
 
 unless options[:noupload]
-  Typingpool::App.vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
+  vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
                              :preserve_exact_body_bytes => true,
-                             :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                             :match_requests_on => [:method, vcr_core_host_matcher]
                            }) if options[:fixture]
   Typingpool::App.upload_audio_for_project(project) do |file, as|
     STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
   end
-  Typingpool::App.vcr_stop if options [:fixture]
+  vcr_stop if options [:fixture]
 end
 
 if STDOUT.tty? && Typingpool::Utility.os_x?

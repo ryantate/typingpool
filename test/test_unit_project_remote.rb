@@ -5,8 +5,10 @@ $LOAD_PATH.unshift File.join(File.dirname(File.dirname(__FILE__)), 'lib')
 require 'minitest/autorun'
 require 'typingpool'
 require 'typingpool/test'
+require 'typingpool/utility/test'
 require 'stringio'
 require 'aws-sdk'
+include Typingpool::Utility::Test
 
 class TestProjectRemote < Typingpool::Test
   def test_project_remote_from_config
@@ -45,7 +47,7 @@ class TestProjectRemote < Typingpool::Test
   def vcr_opts
     {
       :preserve_exact_body_bytes => true,
-      :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+      :match_requests_on => [:method, vcr_core_host_matcher]
     }
   end
 

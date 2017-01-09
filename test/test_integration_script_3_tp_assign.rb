@@ -5,6 +5,8 @@ $LOAD_PATH.unshift File.join(File.dirname(File.dirname(__FILE__)), 'lib')
 require 'minitest/autorun'
 require 'typingpool'
 require 'typingpool/test'
+require 'typingpool/utility/test'
+include Typingpool::Utility::Test
 
 class TestTpAssign < Typingpool::Test::Script
 
@@ -66,7 +68,7 @@ class TestTpAssign < Typingpool::Test::Script
       Typingpool::Amazon.setup(:sandbox => true, :config => Typingpool::Config.file(config_path(dir)))
       with_vcr(vcr_names[1], config, {
                  :preserve_exact_body_bytes => true,
-                 :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                 :match_requests_on => [:method, vcr_core_host_matcher]
                }) do
         begin
           assign_time = (Typingpool::Test.record || Typingpool::Test.live) ? Time.now : project_time(project)
@@ -192,7 +194,7 @@ class TestTpAssign < Typingpool::Test::Script
       Typingpool::Amazon.setup(:sandbox => true, :config => config)
       with_vcr(vcr_names[1], config, {
                  :preserve_exact_body_bytes => true,
-                 :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+                 :match_requests_on => [:method, vcr_core_host_matcher]
                }) do
         begin
           _, err = tp_assign_with_vcr(dir, vcr_names[0])

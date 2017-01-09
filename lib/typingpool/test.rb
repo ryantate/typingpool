@@ -1,6 +1,5 @@
 module Typingpool
   require 'minitest'
-  require 'typingpool/app/test'
   require 'typingpool/utility/test'
   
   class Test < Minitest::Test 

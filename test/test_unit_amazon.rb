@@ -5,11 +5,13 @@ $LOAD_PATH.unshift File.join(File.dirname(File.dirname(__FILE__)), 'lib')
 require 'minitest/autorun'
 require 'typingpool'
 require 'typingpool/test'
+require 'typingpool/utility/test'
 require 'uri'
 require 'cgi'
 require 'rturk'
 require 'ostruct'
 require 'timecop'
+include Typingpool::Utility::Test
 
 class TestAmazon < Typingpool::Test
 
@@ -195,7 +197,7 @@ class TestAmazon < Typingpool::Test
     config.assign.lifetime = '20m'
     cache = Tempfile.new('typingpool_cache')
     with_vcr(test_handle, config, {
-               :match_requests_on => [:method, Typingpool::App.vcr_core_host_matcher]
+               :match_requests_on => [:method, vcr_core_host_matcher]
              }) do
       begin
         config.cache = cache.path
