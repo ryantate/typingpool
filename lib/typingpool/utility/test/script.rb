@@ -101,7 +101,6 @@ module Typingpool
             assignment['project_id'] = project.local.id
           end
         end        
-      end
 
         def path_to_script(script_name)
           File.join(Utility.app_dir, 'bin', script_name)
@@ -193,13 +192,15 @@ module Typingpool
         end
 
         def tp_assign(dir, config_path=config_path(dir), *args)
-          call_tp_assign(
-                         project_default[:title],
-                         assign_default[:template],
-                         '--config', config_path,
-                         *[:deadline, :lifetime, :approval].map{|param| ["--#{param}", assign_default[param]] }.flatten,
-                         *[:qualify, :keyword].map{|param| assign_default[param].map{|value| ["--#{param}", value] } }.flatten,
-                         *args)
+          call_script(
+                      'tp-assign',
+                      '--sandbox',
+                      project_default[:title],
+                      assign_default[:template],
+                      '--config', config_path,
+                      *[:deadline, :lifetime, :approval].map{|param| ["--#{param}", assign_default[param]] }.flatten,
+                      *[:qualify, :keyword].map{|param| assign_default[param].map{|value| ["--#{param}", value] } }.flatten,
+                      *args)
           
         end
 
@@ -225,15 +226,14 @@ module Typingpool
           end
         end
 
-        def call_tp_collect(fixture_path, *args)
-          call_script('tp-collect', '--sandbox', '--fixture', fixture_path, *args)
-        end
-
-        def tp_collect_with_fixture(dir, fixture_path)
-          call_tp_collect(
-                          fixture_path,
-                          '--config', config_path(dir)
-                         )
+        def tp_collect_with_fixture(dir, fixture_name, are_recording=false)
+          fixture_path = File.join(vcr_dir, fixture_name)
+          args = ['tp-collect', '--sandbox', '--testfixture', fixture_path, '--config', config_path(dir)]
+          if are_recording
+            delete_vcr_fixture(fixture_name)
+            args.push('--testfixturerecord')
+          end
+          call_script(*args)
         end
 
         def tp_review_with_fixture(dir, fixture_path, choices)
@@ -336,9 +336,14 @@ module Typingpool
             if File.exist?(path_to_orig)
               FileUtils.mv(path_to_orig, project_path)
             end
-          end
+          end #with_fixtures_in_transctips_dir
         end
-      
+
+        def project_transcript_count(project, which_csv)
+          project.local.file('data', which_csv).as(:csv).reject{|assignment| assignment['transcript'].to_s.empty?}.size
+        end
+
+      end #Script      
     end #Test
   end #Utility
 end #Typingpool

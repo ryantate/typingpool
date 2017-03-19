@@ -17,11 +17,19 @@ OptionParser.new do |commands|
               "A config file") do |path|
     options[:config] = path
   end
-  commands.on('--fixture=PATH',
-              "Optional. For testing purposes only.",
+  commands.on('--testfixture=PATH',
+              "For testing purposes only. Ignore.",
               "A VCR ficture for running with mock data.") do |fixture|
     options[:fixture] = fixture
   end
+
+  commands.on('--testfixturerecord',
+          'For testing purposes only. Ignore.',
+          'Allows recording of a new fixture',
+          'to --testfixture path.') do
+    options[:fixturerecord] = true
+  end
+  
   commands.on('--help',
               "Display this screen") do
     STDERR.puts commands
@@ -32,14 +40,15 @@ end.parse!
 config = Typingpool::App::CLI.config_from_arg(options[:config]) or abort "No config file at '#{options[:config]}'"
 
 if options[:fixture]
-  vcr_load(options[:fixture], config, true)
+  vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
+
+           })
   at_exit{ vcr_stop }
 end
 
 STDERR.puts "Collecting results from Amazon"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 hits = Typingpool::Amazon::HIT.all_approved
-
 STDERR.puts "Looking for local project folders to receive results" unless hits.empty?
 Typingpool::App.find_projects_waiting_for_hits(hits, config) do |project, hits|
   assignments_file = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project)

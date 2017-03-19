@@ -1,4 +1,3 @@
-
 module Typingpool
   class Test 
     class Script < Test 
@@ -35,7 +34,7 @@ module Typingpool
       end
 
       def assert_assignment_csv_has_transcription_count(count, project, which_csv='assignment.csv')
-        assert_equal(count, project.local.file('data', which_csv).as(:csv).reject{|assignment| assignment['transcript'].to_s.empty?}.size)
+        assert_equal(count, project_transcript_count(project, which_csv))
       end
 
       def assert_html_has_audio_count(count, html)

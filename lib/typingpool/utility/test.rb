@@ -77,7 +77,7 @@ module Typingpool
           end #c.before_record do...
         end
         WebMock.allow_net_connect! 
-        opts = {:record => (read_only ? :none : :new_episodes)}
+        opts = {:record => (read_only ? :none : :once)}
         opts.merge!(vcr_params) if vcr_params
         VCR.turn_on!
         VCR.insert_cassette(File.basename(fixture_path, '.*'), 
