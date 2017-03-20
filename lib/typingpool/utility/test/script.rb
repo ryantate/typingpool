@@ -227,8 +227,8 @@ module Typingpool
         end
 
         def tp_collect_with_fixture(dir, fixture_name, are_recording=false)
-          fixture_path = File.join(vcr_dir, fixture_name)
-          args = ['tp-collect', '--sandbox', '--testfixture', fixture_path, '--config', config_path(dir)]
+          fixture_handle = File.join(vcr_dir, fixture_name)
+          args = ['tp-collect', '--sandbox', '--testfixture', fixture_handle, '--config', config_path(dir)]
           if are_recording
             delete_vcr_fixture(fixture_name)
             args.push('--testfixturerecord')
@@ -236,9 +236,22 @@ module Typingpool
           call_script(*args)
         end
 
-        def tp_review_with_fixture(dir, fixture_path, choices)
+        def tp_review_with_fixture(transcripts_dir, fixture_name, choices, are_recording=false)
+          fixture_handle = File.join(vcr_dir, fixture_name)
           output = {}
-          Open3.popen3(File.join(Utility.app_dir, 'bin', 'tp-review'), '--sandbox', '--fixture', fixture_path, '--config', config_path(dir), project_default[:title]) do |stdin, stdout, stderr, wait_thr|
+          args = [
+                  File.join(Utility.app_dir, 'bin', 'tp-review'),
+                  project_default[:title],
+                  '--sandbox',
+                  '--config', config_path(transcripts_dir),
+                  '--testfixture', fixture_handle
+                 ]
+          if are_recording
+            delete_vcr_fixture(fixture_name)
+            args.push('--testfixturerecord')
+          end
+          
+          Open3.popen3(*args) do |stdin, stdout, stderr, wait_thr|
             choices.each do |choice|
               stdin.puts(choice)
               if choice.strip.match(/^r/i)
