@@ -32,9 +32,9 @@ class TestTpMake < Typingpool::Test::Script
         'host' => 'example.com',
         'url' => 'http://example.com/foobar'
       }
-      write_config(config, dir)
+      write_config(dir, config)
       exception = assert_raises(Typingpool::Error::Shell) do
-        call_tp_make('--file', audio_files[0], '--title', 'Foo', '--config', config_path(dir), '--testnoupload')
+        call_script('tp-make', '--file', audio_files[0], '--title', 'Foo', '--config', config_path(dir), '--testnoupload')
       end
       assert_match(/must begin with 'https'/i, exception.message)
     end #with_temp_transcripts_dir do...
@@ -43,7 +43,7 @@ class TestTpMake < Typingpool::Test::Script
   def assert_tp_make_abort_match(args, regex)
     args.push('--testnoupload')
     assert_script_abort_match(args, regex) do |new_args|
-      call_tp_make(*new_args)
+      call_script('tp-make', *new_args)
     end
   end
 
@@ -85,7 +85,7 @@ class TestTpMake < Typingpool::Test::Script
         config_path = self.config_path(dir)
         skip_if_no_upload_credentials('tp-make audio handling test', Typingpool::Config.file(config_path))
         tp_make(dir, config_path, subdir, true)
-        assert(project = transcripts_dir_project(dir, Typingpool::Config.file(config_path)))
+        assert(project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path)))
         check_project_files(project)
       end #with_temp_transcripts_dir
     end #Dir.entries
@@ -97,7 +97,7 @@ class TestTpMake < Typingpool::Test::Script
       skip_if_no_sftp_credentials('tp-make SFTP upload test', config)
       begin
         tp_make(dir)
-        assert(project = transcripts_dir_project(dir))
+        assert(project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path(dir))))
         check_project_files(project)
         check_project_uploads(project)
       ensure
@@ -110,10 +110,10 @@ class TestTpMake < Typingpool::Test::Script
   def test_tp_make_s3
     with_temp_transcripts_dir do |dir|
       skip_if_no_s3_credentials('tp-make S3 integration test', config)
-      config_path = setup_s3_config(dir)
+      config_path = write_config(dir, reconfigure_for_s3(Typingpool::Config.file(config_path(dir))))
       begin
         tp_make_with_vcr(dir, 'tp_make_1', config_path)
-        assert(project = transcripts_dir_project(dir, Typingpool::Config.file(config_path)))
+        assert(project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path)))
         check_project_files(project)
         check_project_uploads(project, (Typingpool::Test.live || Typingpool::Test.record))
       ensure
@@ -128,12 +128,12 @@ class TestTpMake < Typingpool::Test::Script
     with_temp_transcripts_dir do |dir|
       config = Typingpool::Config.file(config_path(dir))
       skip_if_no_s3_credentials('tp-make failed upload integration test', config)
-      good_config_path = setup_s3_config(dir)
-      bad_config_path = setup_s3_config_with_bad_password(dir)
+      good_config_path = write_config(dir, reconfigure_for_s3(config))
+      bad_config_path = write_s3_config_with_bad_password(dir)
       assert_raises(Typingpool::Error::Shell) do
         tp_make(dir, bad_config_path, 'mp3')
       end
-      assert(project = transcripts_dir_project(dir))
+      assert(project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path(dir))))
       project_dir = project.local.path
       assert(File.exist? project_dir)
       assert(File.directory? project_dir)
@@ -169,7 +169,7 @@ class TestTpMake < Typingpool::Test::Script
       assert(audio_files('mp3').count > 1)
       correctly_ordered_paths = audio_files('mp3').sort
       tp_make(dir, config_path, 'mp3', true)
-      assert(project = transcripts_dir_project(dir))
+      assert(project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path(dir))))
       check_project_files(project)
       assert(merged_audio_file = project.local.subdir('audio','originals').files.detect{|filer| filer.path.match(/.\.all\../)})
       assert(File.exist? merged_audio_file)

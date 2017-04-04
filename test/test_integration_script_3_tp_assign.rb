@@ -14,7 +14,7 @@ class TestTpAssign < Typingpool::Test::Script
   #(or at least some xml parsing) since rturk doesn't provide an
   #easy way to look at HIT qualifications)
   def test_abort_with_no_input
-    assert_raises(Typingpool::Error::Shell){call_tp_assign}
+    assert_raises(Typingpool::Error::Shell){call_script('tp-assign','--sandbox')}
   end
 
   def test_abort_with_no_template
@@ -43,9 +43,9 @@ class TestTpAssign < Typingpool::Test::Script
         'host' => 'example.com',
         'url' => 'http://example.com/foobar'
       }
-      write_config(config, dir)
+      write_config(dir, config)
       exception = assert_raises(Typingpool::Error::Shell) do
-        call_tp_assign(project_default[:title], assign_default[:template], '--config', config_path(dir))
+        call_script('tp-assign','--sandbox', project_default[:title], assign_default[:template], '--config', config_path(dir))
       end
       assert_match(/must begin with 'https'/i, exception.message)
     end #with_temp_readymade_project do |dir|
@@ -53,7 +53,7 @@ class TestTpAssign < Typingpool::Test::Script
   
   def assert_tp_assign_abort_match(args, regex)
     assert_script_abort_match(args, regex) do |new_args|
-      call_tp_assign(*new_args)
+      call_script('tp-assign', '--sandbox', *new_args)
     end
   end
 
@@ -61,7 +61,7 @@ class TestTpAssign < Typingpool::Test::Script
     skip_if_no_amazon_credentials('tp-assign integration test')
     skip_if_no_s3_credentials('tp-assign integration test')
     with_temp_readymade_project do |dir|
-      project = transcripts_dir_project(dir)
+      project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path(dir)))
       vcr_names = ['tp_assign_1', 'tp_assign_2']
       copy_tp_assign_fixtures(dir, vcr_names[0])
       config = Typingpool::Config.file(config_path(dir))
@@ -99,7 +99,7 @@ class TestTpAssign < Typingpool::Test::Script
     skip_if_no_amazon_credentials('tp-assign unuploaded audio integration test')
     skip_if_no_s3_credentials('tp-assign unuploaded audio integration test')
     with_temp_readymade_project do |dir|
-      project = transcripts_dir_project(dir)
+      project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path(dir)))
       vcr_name = 'tp_assign_3'
       copy_tp_assign_fixtures(dir, vcr_name)
       csv = project.local.file('data', 'assignment.csv').as(:csv)
@@ -125,14 +125,14 @@ class TestTpAssign < Typingpool::Test::Script
     skip_if_no_amazon_credentials('tp-assign failed assignment upload integration test')
     skip_if_no_s3_credentials('tp-assign failed assignment upload integration test')
     with_temp_readymade_project do |dir|
-      good_config_path = setup_s3_config(dir)
-      reconfigure_readymade_project_in(good_config_path)
-      project = transcripts_dir_project(dir, Typingpool::Config.file(good_config_path))
+      config = reconfigure_for_s3(Typingpool::Config.file(config_path(dir)))
+      good_config_path = write_config(dir, config)
+      project = Typingpool::Project.new(project_default[:title], config)
       vcr_names = ['tp_assign_4', 'tp_assign_5']
       copy_tp_assign_fixtures(dir, vcr_names[0], good_config_path)
       csv = project.local.file('data', 'assignment.csv').as(:csv)
       csv.each!{|a| a['audio_uploaded'] = 'yes'}
-      bad_config_path = setup_s3_config_with_bad_password(dir)
+      bad_config_path = write_s3_config_with_bad_password(dir)
       get_assignment_urls = lambda{|assignments| assignments.map{|assignment| assignment['assignment_url'] }.select{|url| url } }
       assert_empty(get_assignment_urls.call(csv))
       begin
@@ -160,14 +160,14 @@ class TestTpAssign < Typingpool::Test::Script
   def test_abort_on_config_mismatch
     skip_if_no_s3_credentials('tp-assign abort on config mismatch test')
     with_temp_readymade_project do |dir|
-      config = Typingpool::Config.file(config_path(dir))
-      good_config_path = setup_s3_config(dir, config, '.config_s3_good')
-      reconfigure_readymade_project_in(good_config_path)
+      config = reconfigure_for_s3(Typingpool::Config.file(config_path(dir)))
+      good_config_path = write_config(dir, config, '.config_s3_good')
+      reconfigure_project(Typingpool::Project.new(project_default[:title], config))
       assert(config.amazon.bucket)
       new_bucket = 'configmismatch-test'
       refute_equal(new_bucket, config.amazon.bucket)
       config.amazon.bucket = new_bucket
-      bad_config_path = setup_s3_config(dir, config, '.config_s3_bad')
+      bad_config_path = write_config(dir, config, '.config_s3_bad')
       success = false
       begin
         exception = assert_raises(Typingpool::Error::Shell) do
@@ -183,10 +183,10 @@ class TestTpAssign < Typingpool::Test::Script
 
   def test_displays_and_uses_correct_reward_default
     with_temp_readymade_project do |dir| 
-      project = transcripts_dir_project(dir)
+      project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path(dir)))
       config = Typingpool::Config.file(config_path(dir))
       config.assign.reward = '0.06'
-      write_config(config, File.dirname(config_path(dir)), File.basename(config_path(dir)))
+      write_config(dir, config)
       vcr_names = ['tp_assign_6', 'tp_assign_7']
       copy_tp_assign_fixtures(dir, vcr_names[0])
       config = Typingpool::Config.file(config_path(dir))

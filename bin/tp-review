@@ -73,29 +73,33 @@ Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], options[:project]) if options[:project]
 STDERR.puts "Gathering submissions from Amazon"
 hits = if options[:project] && ((hit_ids = assignments.map{|assignment| assignment['hit_id'] }.select{|hit_id| hit_id }).count > 0)
-         Typingpool::Amazon::HIT.with_ids(hit_ids).select{|hit| hit.submitted? }
+         Typingpool::Amazon::HIT.with_ids(hit_ids).select{|hit| hit.submitted? || hit.approved? }
        else
-         hits = Typingpool::Amazon::HIT.all_reviewable{|hit| hit.submitted? && hit.ours? }
+         hits = Typingpool::Amazon::HIT.all_reviewable{|hit| (hit.submitted? || hit.approved?) && hit.ours? }
          if options[:project]
            #code path for projects assigned through RUI
            hits.select!{|hit| hit.project_id == options[:project].local.id }
          end
          hits
        end
-
 STDERR.puts "Matching submissions with local projects"
 choices = %w(approve reject quit skip)
 catch :quitting do
-  project_hits = Typingpool::App.find_projects_waiting_for_hits(hits, config) 
-  all_hits = project_hits.map{|hash| hash[:hits] }.flatten
-  i = 0
+  project_hits = Typingpool::App.find_projects_waiting_for_hits(hits, config)
+  hits_needing_decision_count = project_hits.map{|hash| hash[:hits] }.flatten.select{|hit| hit.submitted? }.count
+  hits_decided_count = 0
   project_hits.each do |hash|
     hits = hash[:hits]
     project = hash[:project]
     assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project)
     hits.sort!{|a, b| a.url <=> b.url }
     hits.each do |hit|
-      i += 1
+      if hit.approved?
+        #collect auto-approved hits so people don't have to run tp-collect
+        Typingpool::App.record_approved_hits_in_assignments_file(assignments, [hit])
+        next
+      end
+      hits_decided_count += 1
       say(cli_bold("\nTranscript for: ") + hit.url)
       project_info = cli_bold("Project: ") + project.name
       if project.local.subtitle
@@ -115,7 +119,7 @@ catch :quitting do
       prompt << cli_reverse('[') + prompt.pop + cli_reverse(']')
       prompt = prompt.join(cli_reverse(', ')) 
       prompt += cli_reverse('? ')
-      prompt += cli_reverse("(#{i}/#{all_hits.count}) ")
+      prompt += cli_reverse("(#{hits_decided_count}/#{hits_needing_decision_count}) ")
 
       choice=nil
       until choice

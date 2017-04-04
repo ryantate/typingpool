@@ -10,7 +10,7 @@ class TestTpConfig < Typingpool::Test::Script
 
 def test_abort_with_invalid_file
   exception = assert_raises(Typingpool::Error::Shell) do
-    tp_config(File.join(fixtures_dir, 'not_yaml.txt'))
+    call_script('tp-config', File.join(fixtures_dir, 'not_yaml.txt'))
   end
   assert_match(/not valid yaml/i, exception.message)
 end
@@ -20,7 +20,7 @@ def test_abort_with_directory_path
   assert(File.exist? dir)
   assert(File.directory? dir)
   exception = assert_raises(Typingpool::Error::Shell) do
-    tp_config(dir)
+    call_script('tp-config', dir)
   end
   assert_match(/not a file/i, exception.message)
 end
@@ -29,13 +29,13 @@ def test_abort_with_invalid_path
   path = '/jksdljs/euwiroeuw'
   refute(File.exist? path)
   exception = assert_raises(Typingpool::Error::Shell) do
-    tp_config(path)
+    call_script('tp-config', path)
   end
   assert_match(/valid path/i, exception.message)
 end
 
 def test_usage_message
-  out, _ = tp_config('--help')
+  out, _ = call_script('tp-config', '--help')
   assert(out)
   assert_match(/\bUSAGE:/, out)
 end

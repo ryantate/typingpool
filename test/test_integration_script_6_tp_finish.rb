@@ -19,7 +19,7 @@ class TestTpFinish < Typingpool::Test::Script
       begin
         #get audio uploaded by calling tp-make on existing project
         tp_make(dir)
-        project = transcripts_dir_project(dir)
+        project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path(dir)))
         csv = project.local.file('data', 'assignment.csv').as(:csv)
         urls = csv.map{|assignment| assignment['audio_url'] }
         refute_empty(urls)
@@ -37,13 +37,14 @@ class TestTpFinish < Typingpool::Test::Script
     skip_if_no_s3_credentials('tp-finish s3 audio test')
     skip_if_no_amazon_credentials('tp-finish s3 audio test')
     with_temp_readymade_project do |dir|
-      s3_config_path = setup_s3_config(dir)
-      reconfigure_readymade_project_in(s3_config_path)
+      config = reconfigure_for_s3(Typingpool::Config.file(config_path(dir)))
+      s3_config_path = write_config(dir, config)
+      project = Typingpool::Project.new(project_default[:title], config)
+      reconfigure_project(project)
       simulate_failed_audio_upload_in(dir, s3_config_path)
       begin
         #get audio uploaded by calling tp-make on existing project
         tp_make_with_vcr(dir, 'tp_finish_1', s3_config_path)
-        project = transcripts_dir_project(dir, Typingpool::Config.file(s3_config_path))
         csv = project.local.file('data', 'assignment.csv').as(:csv)
         urls = csv.map{|assignment| assignment['audio_url'] }
         refute_empty(urls)
@@ -58,7 +59,7 @@ class TestTpFinish < Typingpool::Test::Script
   end
 
   def script_with_vcr(dir, fixture_name, config_path=config_path(dir))
-    yield([dir, config_path, *vcr_args(fixture_name)])
+    yield([dir, config_path, project_default[:title], *vcr_args(fixture_name)])
   end
 
   def tp_finish_with_vcr(*args)
@@ -77,10 +78,11 @@ class TestTpFinish < Typingpool::Test::Script
     skip_if_no_amazon_credentials('tp-finish Amazon test')
     skip_if_no_s3_credentials('tp-finish Amazon test')
     with_temp_readymade_project do |dir|
-      s3_config_path = setup_s3_config(dir)
-      reconfigure_readymade_project_in(s3_config_path)
+      config = reconfigure_for_s3(Typingpool::Config.file(config_path(dir)))
+      s3_config_path = write_config(dir, config)
+      project = Typingpool::Project.new(project_default[:title], config)
+      reconfigure_project(project)
       copy_tp_assign_fixtures(dir, 'tp_finish_3', s3_config_path)
-      config = Typingpool::Config.file(s3_config_path)
       sandbox_csv=nil
       csv=nil
       with_vcr('tp_finish_4', config, {
@@ -89,7 +91,6 @@ class TestTpFinish < Typingpool::Test::Script
                }) do
         begin
           tp_assign_with_vcr(dir, 'tp_finish_3', s3_config_path)
-          project = transcripts_dir_project(dir, config)
           csv = project.local.file('data', 'assignment.csv').as(:csv)
           sandbox_csv = project.local.file('data', 'sandbox-assignment.csv').as(:csv)
           assert_all_assets_have_upload_status(sandbox_csv, 'assignment', 'yes')
@@ -122,13 +123,13 @@ class TestTpFinish < Typingpool::Test::Script
     skip_if_no_amazon_credentials('tp-finish missing files test')
     skip_if_no_s3_credentials('tp-finish missing files test')
     with_temp_readymade_project do |dir|
-      project = nil
-      s3_config_path = setup_s3_config(dir)
-      reconfigure_readymade_project_in(s3_config_path)
+      config = reconfigure_for_s3(Typingpool::Config.file(config_path(dir)))
+      s3_config_path = write_config(dir, config)
+      project = Typingpool::Project.new(project_default[:title], config)
+      reconfigure_project(project)
       simulate_failed_audio_upload_in(dir, s3_config_path)
       begin
         tp_make_with_vcr(dir, 'tp_finish_6', s3_config_path)
-        project = transcripts_dir_project(dir, Typingpool::Config.file(s3_config_path))
         csv = project.local.file('data', 'assignment.csv').as(:csv)
         assignments = csv.read
         urls = assignments.map{|assignment| assignment['audio_url'] }
@@ -155,15 +156,15 @@ class TestTpFinish < Typingpool::Test::Script
   def test_abort_on_config_mismatch
     skip_if_no_s3_credentials('tp-finish abort on config mismatch test')
     with_temp_readymade_project do |dir|
-      config = Typingpool::Config.file(config_path(dir))
-      good_config_path = setup_s3_config(dir, config, '.config_s3_good')
-      reconfigure_readymade_project_in(good_config_path)
+      config = reconfigure_for_s3(Typingpool::Config.file(config_path(dir)))
+      good_config_path = write_config(dir, config, '.config_s3_good')
+      reconfigure_project(Typingpool::Project.new(project_default[:title], config))
       simulate_failed_audio_upload_in(dir, good_config_path)
       assert(config.amazon.bucket)
       new_bucket = 'configmismatch-test'
       refute_equal(new_bucket, config.amazon.bucket)
       config.amazon.bucket = new_bucket
-      bad_config_path = setup_s3_config(dir, config, '.config_s3_bad')
+      bad_config_path = write_config(dir, config, '.config_s3_bad')
       exception = assert_raises(Typingpool::Error::Shell) do
         tp_finish_outside_sandbox_with_vcr(dir, 'tp_finish_8', bad_config_path)
       end #assert_raises...

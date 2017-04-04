@@ -14,23 +14,23 @@ module Typingpool
         Minitest.after_run{ yield }
       end
 
-      def setup_s3_config_with_bad_password(dir, config=Config.file(config_path(dir)))
+      def write_s3_config_with_bad_password(dir, config=Config.file(config_path(dir)))
         bad_password = 'f'
         refute_equal(config.to_hash['amazon']['secret'], bad_password)
         config.to_hash['amazon']['secret'] = bad_password
-        setup_s3_config(dir, config, '.config_s3_bad')
+        write_config(dir, reconfigure_for_s3(config), '.config_s3_bad')
       end
 
 
-      def assert_has_transcript(dir, transcript_file='transcript.html')
-        transcript_path = File.join(transcripts_dir_project(dir).local, transcript_file)
+      def assert_has_transcript(project, transcript_file='transcript.html')
+        transcript_path = File.join(project.local, transcript_file)
         assert(File.exist?(transcript_path))
         assert(not((transcript = IO.read(transcript_path)).empty?))
         transcript
       end
 
-      def assert_has_partial_transcript(dir)
-        assert_has_transcript(dir, 'transcript_in_progress.html')
+      def assert_has_partial_transcript(project)
+        assert_has_transcript(project, 'transcript_in_progress.html')
       end
 
       def assert_assignment_csv_has_transcription_count(count, project, which_csv='assignment.csv')

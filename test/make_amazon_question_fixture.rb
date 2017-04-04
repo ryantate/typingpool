@@ -11,7 +11,7 @@ class MakeAmazonQuestion < Typingpool::Test::Script
     with_temp_transcripts_dir do |dir|
       tp_make(dir)
       template = Typingpool::Template::Assignment.from_config(assign_default[:template], config_from_dir(dir))
-      assignment = transcripts_dir_project(dir).local.file('data', 'assignment.csv').as(:csv).read.first
+      assignment = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path(dir))).local.file('data', 'assignment.csv').as(:csv).read.first
       question_html = template.render(assignment)
       question_url = 'http://example.com/assignments/101.html'
       assert_match(question_html, /\S/)

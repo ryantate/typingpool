@@ -5,6 +5,7 @@ module Typingpool
         require 'yaml'
         require 'fileutils'
         require 'open3'
+        require 'tmpdir'
         require 'typingpool/utility/test'
         
         include Typingpool::Utility::Test
@@ -13,63 +14,71 @@ module Typingpool
         @@readymade_project_path = nil
 
         def with_temp_readymade_project
-          with_temp_transcripts_dir do |dir|
-            setup_readymade_project_into(config_path(dir))
-            yield(dir)
+          Dir.mktmpdir('typingpool_') do |transcripts_dir|
+            FileUtils.cp_r(File.join(readymade_project_path, '.'), transcripts_dir)
+            config = reconfigure_for_transcripts_dir(
+                                                     Config.file(config_path(transcripts_dir)),
+                                                     transcripts_dir)
+            write_config(transcripts_dir, config)
+            reconfigure_project(Project.new(project_default[:title], config))
+            yield(transcripts_dir)
           end
         end
 
         def with_temp_transcripts_dir
-          Dir.mktmpdir('typingpool_') do |dir|
-            make_transcripts_dir_config(dir, self.config)
-            yield(dir)
+          Dir.mktmpdir('typingpool_') do |transcripts_dir|
+            write_testing_config_for_transcripts_dir(transcripts_dir, self.config)
+            yield(transcripts_dir)
           end
         end
         
-        def make_transcripts_dir_config(dir, config=self.config)
-          config.transcripts = dir
-          config.cache = File.join(dir, '.cache')
-          config['assign']['reward'] = '0.02'
-          config.assign.to_hash.delete('qualify')
-          write_config(config, dir, project_default[:config_filename])   
+        def reconfigure_for_s3(config)
+          unless s3_credentials?(config)
+            raise Error::Test, "No S3 credentials available"
+          end
+          config.to_hash.delete('sftp')
+          config
+        end
+
+        def reconfigure_for_transcripts_dir(config, transcripts_dir)
+          config.transcripts = transcripts_dir
+          config.cache = File.join(transcripts_dir, '.cache')
+          config
         end
         
-        def write_config(config, dir, filename=project_default[:config_filename])
+        def reconfigure_for_testing(config)
+          config['assign']['reward'] = '0.02'
+          config.assign.to_hash.delete('qualify')
+          config
+        end
+        
+        def write_config(dir, config, filename=project_default[:config_filename])
           path = File.join(dir, filename)
           File.write(path, YAML.dump(config.to_hash))
           path
         end
-        
-        def setup_readymade_project_into(config_path)
-          init_readymade_project
-          copy_readymade_project_into(config_path)
-          reconfigure_readymade_project_in(config_path)
+
+        def write_testing_config_for_transcripts_dir(transcripts_dir, config=self.config)
+          write_config(
+                       transcripts_dir,
+                       reconfigure_for_transcripts_dir(reconfigure_for_testing(config), transcripts_dir),
+                       project_default[:config_filename])
         end
 
-        def init_readymade_project
+        
+        def readymade_project_path
           unless @@readymade_project_path
-            dir = @@readymade_project_path = Dir.mktmpdir('typingpool_')
-            do_later{ FileUtils.remove_entry_secure(dir) }
-            make_transcripts_dir_config(dir, Config.file(setup_s3_config(dir, self.config)))
-            tp_make(dir, config_path(dir), 'mp3', true)
-          end 
+            transcripts_dir = @@readymade_project_path = Dir.mktmpdir('typingpool_')
+            do_later{ FileUtils.remove_entry_secure(transcripts_dir) }
+            write_testing_config_for_transcripts_dir(transcripts_dir, reconfigure_for_s3(self.config))
+            tp_make(transcripts_dir, config_path(transcripts_dir), 'mp3', true)
+          end
+          @@readymade_project_path
         end
 
         def config_path(dir)
           File.join(dir, project_default[:config_filename])   
         end
-
-        def transcripts_dir_project(dir, config=Config.file(config_path(dir)))
-          Project.new(project_default[:title], config)
-        end
-
-        
-        def setup_s3_config(dir, config=Config.file(config_path(dir)), filename='.config_s3')
-          return unless s3_credentials?(config)
-          config.to_hash.delete('sftp')
-          write_config(config, dir, filename)
-        end
-        
 
         #Intended to be overriden by some classes that mixin this
         #module
@@ -77,29 +86,22 @@ module Typingpool
           at_exit{ yield }
         end
 
-
-
-        def copy_readymade_project_into(config_path)
-          FileUtils.cp_r(File.join(@@readymade_project_path, '.'), File.dirname(config_path))
-        end
-
-        def reconfigure_readymade_project_in(config_path)
+        def reconfigure_project(project)
           #rewrite URLs in assignment.csv according to config at config_path
-          make_transcripts_dir_config(File.dirname(config_path), Config.file(config_path))
-          project = Project.new(project_default[:title], Config.file(config_path))
           File.delete(project.local.file('data', 'id.txt'))
           project.local.create_id
-          reconfigure_project_csv_in(config_path)
+          reconfigure_project_csv(project)
+          project
         end
 
-        def reconfigure_project_csv_in(config_path)
-          project = Project.new(project_default[:title], Config.file(config_path))
+        def reconfigure_project_csv(project)
           assignments = project.local.file('data', 'assignment.csv').as(:csv)
           urls = project.create_remote_names(assignments.map{|assignment| Project.local_basename_from_url(assignment['audio_url']) }).map{|file| project.remote.file_to_url(file) }
           assignments.each! do |assignment|
             assignment['audio_url'] = urls.shift
             assignment['project_id'] = project.local.id
           end
+          assignments
         end        
 
         def path_to_script(script_name)
@@ -119,11 +121,6 @@ module Typingpool
             end
           end
         end
-
-        def call_tp_make(*args)
-          call_script('tp-make', *args)
-        end
-
         
         def tp_make(in_dir, config=config_path(in_dir), audio_subdir='mp3', devtest_mode_skipping_upload=false, *args)
           commands = [
@@ -135,7 +132,7 @@ module Typingpool
                       *args
                      ]
           commands.push('--testnoupload', '--testkeepmergefile') if devtest_mode_skipping_upload
-          call_tp_make(*commands)
+          call_script('tp-make', *commands)
         end
 
         def tp_make_with_vcr(dir, fixture_name, config_path=config_path(dir))
@@ -153,31 +150,23 @@ module Typingpool
           args
         end
 
-        def call_tp_finish(*args)
-          call_script('tp-finish', *args)
-        end
-
-        def tp_finish(dir, config_path=config_path(dir), *args)
-          tp_finish_inside_sandbox(dir, config_path, *args)
-          tp_finish_outside_sandbox(dir, config_path, *args)
+        def tp_finish(dir, config_path=config_path(dir), project_title=project_default[:title], *args)
+          tp_finish_inside_sandbox(dir, config_path, project_title, *args)
+          tp_finish_outside_sandbox(dir, config_path, project_title, *args)
         end
 
 
-        def tp_finish_inside_sandbox(dir, config_path=config_path(dir), *args)
-          tp_finish_outside_sandbox(dir, config_path, '--sandbox', *args)
+        def tp_finish_inside_sandbox(dir, config_path=config_path(dir), project_title=project_default[:title], *args)
+          tp_finish_outside_sandbox(dir, config_path, project_title, '--sandbox', *args)
         end
 
-        def tp_finish_outside_sandbox(dir, config_path=config_path(dir), *args)
-          call_tp_finish(project_default[:title], '--config', config_path, *args)
+        def tp_finish_outside_sandbox(dir, config_path=config_path(dir), project_title=project_default[:title], *args)
+          call_script('tp-finish', project_title, '--config', config_path, *args)
         end
 
         def audio_files(subdir='mp3')
           dir = File.join(audio_dir, subdir)
           Dir.entries(dir).reject{|entry| entry.match(/^\./) }.map{|entry| File.join(dir, entry)}.select{|path| File.file?(path) }
-        end
-
-        def call_tp_assign(*args)
-          call_script('tp-assign', '--sandbox', *args)
         end
 
         def assign_default
@@ -191,11 +180,11 @@ module Typingpool
               ]
         end
 
-        def tp_assign(dir, config_path=config_path(dir), *args)
+        def tp_assign(dir, config_path=config_path(dir), project_title=project_default[:title], *args)
           call_script(
                       'tp-assign',
                       '--sandbox',
-                      project_default[:title],
+                      project_title,
                       assign_default[:template],
                       '--config', config_path,
                       *[:deadline, :lifetime, :approval].map{|param| ["--#{param}", assign_default[param]] }.flatten,
@@ -204,25 +193,25 @@ module Typingpool
           
         end
 
-        def tp_assign_with_vcr(dir, fixture_name, config_path=config_path(dir))
-          project = transcripts_dir_project(dir, Typingpool::Config.file(config_path))
-          args = [dir, config_path, *vcr_args(fixture_name)]
+        def tp_assign_with_vcr(dir, fixture_name, config_path=config_path(dir), project_title=project_default[:title])
+          project = Project.new(project_default[:title], Typingpool::Config.file(config_path))
+          args = [dir, config_path, project_title, *vcr_args(fixture_name)]
           unless (Typingpool::Test.live || Typingpool::Test.record)
             args.push('--testtime', project_time(project).to_i.to_s)
           end
           tp_assign(*args)
         end
 
-        def copy_tp_assign_fixtures(dir, fixture_prefix, config_path=config_path(dir))
-          project = transcripts_dir_project(dir, Config.file(config_path))
+        def copy_tp_assign_fixtures(dir, fixture_prefix, config_path=config_path(dir), project_title=project_default[:title])
+          project = Project.new(project_title, Config.file(config_path))
           if Typingpool::Test.record
             project_time(project, Time.now)
-            with_fixtures_in_transcripts_dir(dir, "#{fixture_prefix}_") do |fixture_path, project_path|
+            with_fixtures_in_transcripts_dir(dir, "#{fixture_prefix}_", project_title) do |fixture_path, project_path|
               FileUtils.cp(project_path, fixture_path)
             end
           elsif not(Typingpool::Test.live)
-            copy_fixtures_to_transcripts_dir(dir, "#{fixture_prefix}_")
-            reconfigure_project_csv_in(config_path)
+            copy_fixtures_to_project_dir("#{fixture_prefix}_", File.join(dir, project_title))
+            reconfigure_project_csv(project)
           end
         end
 
@@ -236,16 +225,16 @@ module Typingpool
           call_script(*args)
         end
 
-        def tp_review_with_fixture(transcripts_dir, fixture_name, choices, are_recording=false)
+        def tp_review_with_fixture(transcripts_dir, fixture_name, choices, are_recording=false, project_name=nil)
           fixture_handle = File.join(vcr_dir, fixture_name)
           output = {}
           args = [
                   File.join(Utility.app_dir, 'bin', 'tp-review'),
-                  project_default[:title],
                   '--sandbox',
                   '--config', config_path(transcripts_dir),
                   '--testfixture', fixture_handle
                  ]
+          args.push(project_name) if project_name
           if are_recording
             delete_vcr_fixture(fixture_name)
             args.push('--testfixturerecord')
@@ -266,10 +255,6 @@ module Typingpool
           output
         end
 
-        def tp_config(*args)
-          call_script('tp-config', *args)
-        end
-
         def tp_config_with_input(args, input)
           output = {}
           Open3.popen3(path_to_script('tp-config'), *args) do |stdin, stdout, stderr, wait_thr|
@@ -283,7 +268,6 @@ module Typingpool
           end #Open3.popen3...
           output
         end
-
         
         def project_time(project, time=nil)
           file = project.local.file('data', 'time.txt')
@@ -294,60 +278,51 @@ module Typingpool
           end
           time
         end
-
         
         def simulate_failed_audio_upload_in(dir, config_path=config_path(dir))
-          project = Project.new(project_default[:title], Config.file(config_path))
+          project = Typingpool::Project.new(project_default[:title], Config.file(config_path))
           csv = project.local.file('data', 'assignment.csv').as(:csv)
           csv.each!{|a| a['audio_uploaded'] = 'maybe'}
         end
 
-        def fixture_project_dir(name)
-          File.join(fixtures_dir, name)
-        end
-
-        def make_fixture_project_dir(name)
-          dir = fixture_project_dir(name)
+        def make_fixture_transcripts_dir(name)
+          dir = File.join(fixtures_dir, name)
           if File.exist? dir
-            raise Error::Test, "Fixture project already exists for #{name} at #{dir}"
+            raise Error::Test, "Fixture transcript dir already exists for #{name} at #{dir}"
           end
           Dir.mkdir(dir)
           dir
         end
 
-        def remove_fixture_project_dir(name)
-          FileUtils.remove_entry_secure(fixture_project_dir(name), :secure => true)
-        end
-
-        def with_fixtures_in_transcripts_dir(dir, fixture_prefix)
+        def with_fixtures_in_project_dir(fixture_prefix, project_path)
           fixtures = Dir.entries(fixtures_dir).select{|entry| entry.include?(fixture_prefix) && entry.index(fixture_prefix) == 0 }.select{|entry| File.file?(File.join(fixtures_dir, entry)) }
           fixtures.map!{|fixture| fixture[fixture_prefix.size .. -1] }
           fixtures.each do |fixture|
-            project_path = File.join(transcripts_dir_project(dir).local, 'data', fixture)
-            fixture_path = File.join(fixtures_dir, [fixture_prefix, fixture].join )
-            yield(fixture_path, project_path)
+            project_fixture_path = File.join(project_path, 'data', fixture)
+            source_fixture_path = File.join(fixtures_dir, [fixture_prefix, fixture].join )
+            yield(source_fixture_path, project_fixture_path)
           end
         end
 
-        def copy_fixtures_to_transcripts_dir(dir, fixture_prefix)
+        def copy_fixtures_to_project_dir(fixture_prefix, project_path)
           copies = 0
-          with_fixtures_in_transcripts_dir(dir, fixture_prefix) do |fixture_path, project_path|
-            if File.exist? project_path
-              FileUtils.mv(project_path, File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}"))
+          with_fixtures_in_project_dir(fixture_prefix, project_path) do |source_fixture_path, project_fixture_path|
+            if File.exist? project_fixture_path
+              FileUtils.mv(project_fixture_path, File.join(File.dirname(project_fixture_path), "orig_#{File.basename(project_fixture_path)}"))
             end
-            FileUtils.cp(fixture_path, project_path)
+            FileUtils.cp(source_fixture_path, project_fixture_path)
             copies += 1
           end
           copies > 0 or raise Error, "No fixtures to copy with prefix #{fixture_prefix} from dir #{dir}"
           copies
         end
 
-        def rm_fixtures_from_transcripts_dir(dir, fixture_prefix)
-          with_fixtures_in_transcripts_dir(dir, fixture_prefix) do |fixture_path, project_path|
-            FileUtils.rm(project_path)
-            path_to_orig = File.join(File.dirname(project_path), "orig_#{File.basename(project_path)}")
+        def restore_project_dir_from_fixtures(fixture_prefix, project_path)
+          with_fixtures_in_project_dir(fixture_prefix, project_path) do |source_fixture_path, project_fixture_path|
+            FileUtils.rm(project_fixture_path)
+            path_to_orig = File.join(File.dirname(project_fixture_path), "orig_#{File.basename(project_fixture_path)}")
             if File.exist?(path_to_orig)
-              FileUtils.mv(path_to_orig, project_path)
+              FileUtils.mv(path_to_orig, project_fixture_path)
             end
           end #with_fixtures_in_transctips_dir
         end
@@ -356,6 +331,11 @@ module Typingpool
           project.local.file('data', which_csv).as(:csv).reject{|assignment| assignment['transcript'].to_s.empty?}.size
         end
 
+        def split_reviews(output)
+          output.split(/Transcript for\b/)
+        end
+
+        
       end #Script      
     end #Test
   end #Utility
