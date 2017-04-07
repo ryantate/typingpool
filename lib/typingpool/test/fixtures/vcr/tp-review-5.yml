@@ -1,0 +1,248 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: PageSize=100&PageNumber=1&Operation=GetReviewableHITs&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2017-04-07T19%3A02%3A26Z&Version=2012-03-25&Signature=ljeZ8VjWoXvnodR6V9x6xt2LiR8%3D
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.3.3p222
+      Content-Length:
+      - '219'
+      Host:
+      - mechanicalturk.sandbox.amazonaws.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 07 Apr 2017 19:02:27 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <GetReviewableHITsResponse><OperationRequest><RequestId>29c80a88-7c18-445c-a53c-7af71e6bec65</RequestId></OperationRequest><GetReviewableHITsResult><Request><IsValid>True</IsValid></Request><NumResults>70</NumResults><TotalNumResults>70</TotalNumResults><PageNumber>1</PageNumber><HIT><HITId>3WA2XVDZEMX9ABEMKZBQSN1KQKME6H</HITId></HIT><HIT><HITId>3WYZV0QBFJTOMNMYBVIQRS8JKR8BX8</HITId></HIT><HIT><HITId>3QE4DGPGBRRTF26Z768ZVS2I79VG4F</HITId></HIT><HIT><HITId>36GJS3V78V6JIKPKADV31UR1P6LGJ6</HITId></HIT><HIT><HITId>3EKZL9T8Y82AA2EPKRWZZQQ7EMPCHN</HITId></HIT><HIT><HITId>3IKDQS3DQEGA6XP9Q9EKZ2RMEZ4CIG</HITId></HIT><HIT><HITId>3KL228NDMV2ET4V2SYVF29RE4VLGK5</HITId></HIT><HIT><HITId>3FBEFUUYRKL6KYXA4U94W4BT55P6AF</HITId></HIT><HIT><HITId>3FI30CQHVKZB3822A890RFVZNNA6BA</HITId></HIT><HIT><HITId>3RWB1RTQDJ30BGM0MSOZ6DWFAMF8PJ</HITId></HIT><HIT><HITId>386659BNTLXFCZYV6M0UC28ZO8X10L</HITId></HIT><HIT><HITId>3D42WVSDH8B3Z9OOLTQOTW6D1VUYFJ</HITId></HIT><HIT><HITId>3PEG1BH7AE7I2NNRCC311Y0HOIUBKK</HITId></HIT><HIT><HITId>37SQU136V74FJOJD254UQ7R9T0311O</HITId></HIT><HIT><HITId>37SOB9Z0SSDOJY1WIJ0WYFFKPQM3LO</HITId></HIT><HIT><HITId>3UXQ63NLAA2TMT59XCF2GYDWDIZBLN</HITId></HIT><HIT><HITId>3Q2T3FD0ONO8PGJHIV1BYSU9PVC3MQ</HITId></HIT><HIT><HITId>3D7VY91L65DDSBNUXOGHGBSLDNPBMP</HITId></HIT><HIT><HITId>3TZDZ3Y0JSMX8TM86IJN5D9SRCR19X</HITId></HIT><HIT><HITId>36AZSFEYZ4GWIYH3BGH837BY4G1BV6</HITId></HIT><HIT><HITId>33NOQL7T9OFUPKO691M1XBYTKLM8Z4</HITId></HIT><HIT><HITId>3HFWPF5AK9ZBNBWM2SXXA1TFHKU3S2</HITId></HIT><HIT><HITId>30ZKOOGW2WMBDCWDYOXN18KCXU91AC</HITId></HIT><HIT><HITId>306996CF6W0GWM1542XJWJ4IFCU1B7</HITId></HIT><HIT><HITId>3UDTAB6HH6FX141QAZFNR8QIMKL902</HITId></HIT><HIT><HITId>3APP19WN71U7UPADQU1ESQMW3026GR</HITId></HIT><HIT><HITId>3HY86PZXPYYE3PDPETZ9XRA3I971E7</HITId></HIT><HIT><HITId>37VUR2VJ6A5Z6RTBI2TE73A0XXUC1P</HITId></HIT><HIT><HITId>3Z8UJEJOCZTTIW0NTMX6T6OPPW593X</HITId></HIT><HIT><HITId>3BCRDCM0ODACWB6WGLMTQIEPAHJ6KU</HITId></HIT><HIT><HITId>3PKVGQTFIH002ZTXCOQIALKW4J5YRE</HITId></HIT><HIT><HITId>3O0M2G5VC6IE0SJRT02P3BGV3W194I</HITId></HIT><HIT><HITId>3GS542CVJV3WWBNR75LZ83M93SW95N</HITId></HIT><HIT><HITId>3PGQRAZX020C3ETARDQN0VPSQLOYS2</HITId></HIT><HIT><HITId>3TFJJUELSH56VCB716TSCMK5P38C26</HITId></HIT><HIT><HITId>38B7Q9C28GLSFFN5COV40909ZN7963</HITId></HIT><HIT><HITId>3ZURAPD2883693DL94JFF9V3UAM1FP</HITId></HIT><HIT><HITId>3RDTX9JRTYHBJF1AVY0W6N05UYR972</HITId></HIT><HIT><HITId>3PZDSVZ3J5XZPUNLUALULCBF8LIN4V</HITId></HIT><HIT><HITId>3SR6AEG6W59ND5FUGJEOWHIQHA8HY1</HITId></HIT><HIT><HITId>366FYU4PTG5G9QZBM35R2662RF7KET</HITId></HIT><HIT><HITId>3AC6MFV69KYNIVPZC5G7AORSN4CHZS</HITId></HIT><HIT><HITId>3VO4XFFP152HBEIWC0BISIQU4YVQ75</HITId></HIT><HIT><HITId>3ZUE82NE0AHOK3X68PSUUJIB8GSF8N</HITId></HIT><HIT><HITId>3HRWUH63QUIHLDRL8F44Q4HT8HDN50</HITId></HIT><HIT><HITId>3L1EFR8WWTLOY8GGDHY8UFDMSMAF9C</HITId></HIT><HIT><HITId>3XABXM4AJ1LLBSNFM53O6IMPFI1Q8S</HITId></HIT><HIT><HITId>39AYGO6AFF0D4HRZDYE9IAVT4CON6G</HITId></HIT><HIT><HITId>3JHB4BPSFKPLPX6PRX926EH0ZOJQ9H</HITId></HIT><HIT><HITId>3O2Y2UIUCQA8F4Z7HEPXKOR23GMKFB</HITId></HIT><HIT><HITId>37VHPF5VYCJHHRDWHN2TMDX8B318C6</HITId></HIT><HIT><HITId>3SSN80MU8C4PFQQSH8VJQVR97LIXKF</HITId></HIT><HIT><HITId>32LAQ1JNT95W15MK6CYO7FF1WGSUTQ</HITId></HIT><HIT><HITId>3XBXDSS888Z0ZW8A287K5V4OWLNXLI</HITId></HIT><HIT><HITId>3XWUWJ18TL6B1I196HOYCB13FUZUUH</HITId></HIT><HIT><HITId>3QGTX7BCHPIB2254B3FYLRO2IVM5Z0</HITId></HIT><HIT><HITId>3P7QK0GJ3T1J35MHTKD0NKLQYLV2ZW</HITId></HIT><HIT><HITId>38G0E1M85MLBEXQ9B7Y38X3MT18UV6</HITId></HIT><HIT><HITId>3SMIWMMK61LOTMQE1H3ZUZM00AAUWG</HITId></HIT><HIT><HITId>3NI0WFPPI9WAJLZSCSCB7YZGWJE60P</HITId></HIT><HIT><HITId>3Y40HMYLL1Y3IMV4BMZLWI079CGUX9</HITId></HIT><HIT><HITId>389A2A304OYZZ28TMJPETYRQS5P0CB</HITId></HIT><HIT><HITId>38XPGNCKHTGCXZWUW17LVT5SUOKV4K</HITId></HIT><HIT><HITId>3538U0YQ1FA2J6R0W8XY32A0SU13FK</HITId></HIT><HIT><HITId>30P8I9JKOI1UTI0UA6QV0LB6UKFV5P</HITId></HIT><HIT><HITId>3SA4EMRVJVIITRHXROBKDYQXRO40PP</HITId></HIT><HIT><HITId>3ZQX1VYFTDLIQGAZ7SBKHDRP0HK8O3</HITId></HIT><HIT><HITId>3YO4AH2FPD03T3ICR1Q9D3G7WKQ0QG</HITId></HIT><HIT><HITId>3S8A4GJRD3JQCM08FP00SRP6QFQV65</HITId></HIT><HIT><HITId>3APP19WN71U7UPADQU1ESQMW3036GS</HITId></HIT></GetReviewableHITsResult></GetReviewableHITsResponse>
+    http_version: 
+  recorded_at: Fri, 07 Apr 2017 19:02:27 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: PageSize=100&PageNumber=2&Operation=GetReviewableHITs&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2017-04-07T19%3A02%3A28Z&Version=2012-03-25&Signature=Kb1B1BmJ8JEFNXf208j9IyDCRwU%3D
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.3.3p222
+      Content-Length:
+      - '219'
+      Host:
+      - mechanicalturk.sandbox.amazonaws.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 07 Apr 2017 19:02:27 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <GetReviewableHITsResponse><OperationRequest><RequestId>445f45ac-15be-44e3-876e-9bdf5b762bc3</RequestId></OperationRequest><GetReviewableHITsResult><Request><IsValid>True</IsValid></Request><NumResults>0</NumResults><TotalNumResults>70</TotalNumResults><PageNumber>2</PageNumber></GetReviewableHITsResult></GetReviewableHITsResponse>
+    http_version: 
+  recorded_at: Fri, 07 Apr 2017 19:02:28 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: HITId=3538U0YQ1FA2J6R0W8XY32A0SU13FK&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2017-04-07T19%3A02%3A29Z&Version=2012-03-25&Signature=qI8o8bF9GuhqkUd2JNoUxTeKy7g%3D
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.3.3p222
+      Content-Length:
+      - '246'
+      Host:
+      - mechanicalturk.sandbox.amazonaws.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 07 Apr 2017 19:02:30 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <GetAssignmentsForHITResponse><OperationRequest><RequestId>9c3bb611-3155-4c57-a2ab-c1b32446738a</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>34QN5IT0T0709JGAV9EAGWRNF2E80E</AssignmentId><WorkerId>A108A5T4U9V27P</WorkerId><HITId>3538U0YQ1FA2J6R0W8XY32A0SU13FK</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2017-04-07T18:59:07Z</AutoApprovalTime><AcceptTime>2017-04-07T18:53:58Z</AcceptTime><SubmitTime>2017-04-07T18:54:07Z</SubmitTime><ApprovalTime>2017-04-07T18:59:52Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+        &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;https://webmasher.com/mturk/Typingpool%27s%20Test%20%26%20Interview.01.06.d842e1b78da507e1e0136efcc666a40d.BEPRVF.mp3&lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;d842e1b78da507e1e0136efcc666a40d&lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;Ryan: I'm still reading through your archive -- but I look forward to finishing it because I'm really interested in these issues.&amp;#13;
+        &amp;#13;
+        Havi: Ya I think it was a really interesting.... theme that came out during that election that's one of the themese that truly led to reporting on it &amp;#13;
+        &amp;#13;
+        Ryan: Ya.&amp;#13;
+        &amp;#13;
+        Havi: ....outside of my work plans was that theme of um&amp;#13;
+        &lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;/QuestionFormAnswers&gt;
+        </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+    http_version: 
+  recorded_at: Fri, 07 Apr 2017 19:02:29 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: HITId=3ZQX1VYFTDLIQGAZ7SBKHDRP0HK8O3&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2017-04-07T19%3A02%3A29Z&Version=2012-03-25&Signature=qI8o8bF9GuhqkUd2JNoUxTeKy7g%3D
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.3.3p222
+      Content-Length:
+      - '246'
+      Host:
+      - mechanicalturk.sandbox.amazonaws.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 07 Apr 2017 19:02:30 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <GetAssignmentsForHITResponse><OperationRequest><RequestId>19b286fd-8101-43a5-9928-d889e9ab1c36</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>39LOEL67OTLWQBF7EWWTIUPUIEY384</AssignmentId><WorkerId>A108A5T4U9V27P</WorkerId><HITId>3ZQX1VYFTDLIQGAZ7SBKHDRP0HK8O3</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2017-04-07T18:57:09Z</AutoApprovalTime><AcceptTime>2017-04-07T18:52:01Z</AcceptTime><SubmitTime>2017-04-07T18:52:09Z</SubmitTime><ApprovalTime>2017-04-07T18:56:25Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+        &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;https://webmasher.com/mturk/Typingpool%27s%20Test%20%26%20Interview.01.50.d842e1b78da507e1e0136efcc666a40d.XAITXC.mp3&lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;d842e1b78da507e1e0136efcc666a40d&lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;Ryan: This is probably a dumb question but in Grand Rapids -- are you guys connected to the auto industry or are you  too far from Detroit to be...&amp;#13;
+        &amp;#13;
+        Havi: We are. We're connected to the buyers for the auto industry in Detroit and Flint. It's kind of a - it's a statewide business here but We definitely get our&amp;#13;
+        &lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;/QuestionFormAnswers&gt;
+        </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+    http_version: 
+  recorded_at: Fri, 07 Apr 2017 19:02:30 GMT
+- request:
+    method: post
+    uri: https://mechanicalturk.sandbox.amazonaws.com/
+    body:
+      encoding: UTF-8
+      string: HITId=3APP19WN71U7UPADQU1ESQMW3036GS&PageSize=100&Operation=GetAssignmentsForHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2017-04-07T19%3A02%3A30Z&Version=2012-03-25&Signature=LP8zIWm0dwTj6d5I9YDmltcmYvE%3D
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.3.3p222
+      Content-Length:
+      - '246'
+      Host:
+      - mechanicalturk.sandbox.amazonaws.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Fri, 07 Apr 2017 19:02:31 GMT
+      Server:
+      - MTurk
+    body:
+      encoding: UTF-8
+      string: |-
+        <?xml version="1.0"?>
+        <GetAssignmentsForHITResponse><OperationRequest><RequestId>eced7c63-6f18-47e3-9055-a66da5d7fb63</RequestId></OperationRequest><GetAssignmentsForHITResult><Request><IsValid>True</IsValid></Request><NumResults>1</NumResults><TotalNumResults>1</TotalNumResults><PageNumber>1</PageNumber><Assignment><AssignmentId>3Y9N9SS8LZR876BYV4794M3VT5V3DA</AssignmentId><WorkerId>A108A5T4U9V27P</WorkerId><HITId>3APP19WN71U7UPADQU1ESQMW3036GS</HITId><AssignmentStatus>Approved</AssignmentStatus><AutoApprovalTime>2017-04-07T18:58:08Z</AutoApprovalTime><AcceptTime>2017-04-07T18:53:01Z</AcceptTime><SubmitTime>2017-04-07T18:53:08Z</SubmitTime><ApprovalTime>2017-04-07T18:56:24Z</ApprovalTime><Answer>&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+        &lt;QuestionFormAnswers xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2005-10-01/QuestionFormAnswers.xsd"&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;typingpool_url&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;https://webmasher.com/mturk/Second%20Typingpool%27s%20Test%20%26%20Interview.01.28.15bbc71773f68a788b2fffded085d153.CFUXCM.mp3&lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;typingpool_project_id&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;15bbc71773f68a788b2fffded085d153&lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;Answer&gt;
+        &lt;QuestionIdentifier&gt;transcription&lt;/QuestionIdentifier&gt;
+        &lt;FreeText&gt;Havi: ....disillusionment and kind of abandonment and that a lot of people in the Midwest &amp;#13;
+        &amp;#13;
+        Ryan: Right.&amp;#13;
+        &amp;#13;
+        Havi: Felt that they were playing the pawn in this particular election.&amp;#13;
+        &lt;/FreeText&gt;
+        &lt;/Answer&gt;
+        &lt;/QuestionFormAnswers&gt;
+        </Answer></Assignment></GetAssignmentsForHITResult></GetAssignmentsForHITResponse>
+    http_version: 
+  recorded_at: Fri, 07 Apr 2017 19:02:31 GMT
+recorded_with: VCR 3.0.3

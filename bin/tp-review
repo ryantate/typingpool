@@ -97,6 +97,7 @@ catch :quitting do
       if hit.approved?
         #collect auto-approved hits so people don't have to run tp-collect
         Typingpool::App.record_approved_hits_in_assignments_file(assignments, [hit])
+        Typingpool::App.create_transcript(project, assignments)
         next
       end
       hits_decided_count += 1

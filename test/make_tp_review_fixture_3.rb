@@ -17,7 +17,7 @@ projects = [
 begin
   projects.each do |project| 
     tp_make(transcripts_dir, config_path(transcripts_dir), 'mp3', false, '--title', project[:title])
-    tp_assign(transcripts_dir, config_path(transcripts_dir), project[:title])
+    tp_assign(transcripts_dir, config_path(transcripts_dir), project[:title], '--approval', '5m')
   end
 rescue
   FileUtils.remove_entry_secure(transcripts_dir)

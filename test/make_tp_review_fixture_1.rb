@@ -12,7 +12,7 @@ dir = make_fixture_transcripts_dir('tp_review_project_temp')
 write_testing_config_for_transcripts_dir(dir, self.config)
 begin
   tp_make(dir)
-  tp_assign(dir)
+  tp_assign(dir, config_path(dir), project_default[:title], '--approval', '5m')
 rescue
   FileUtils.remove_entry_secure(dir)
   raise
