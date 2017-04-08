@@ -8,7 +8,7 @@ require 'fileutils'
 
 include Typingpool::Utility::Test::Script
 
-dir = make_fixture_project_dir('tp_collect_project_temp')
+dir = make_fixture_transcripts_dir("tp_collect_project_temp")
 write_testing_config_for_transcripts_dir(dir, self.config)
 begin
   tp_make(dir)
@@ -22,4 +22,4 @@ with_fixtures_in_project_dir('tp_collect_', File.join(dir, project_default[:titl
   FileUtils.cp(project_fixture_path, source_fixture_path)
 end
 
-STDERR.puts("Temp project assigned in Mechanical Turk sandbox. Complete and approve TWO assignments and immediately (within 4 minutes) run make_tp_collect_fixture_2.rb. Check for assignments at\nhttps://workersandbox.mturk.com/mturk/searchbar?minReward=0.00&searchWords=typingpooltest&selectedSearchType=hitgroups\n...and then approve them at\nhttps://requestersandbox.mturk.com/mturk/manageHITs?hitSortType=CREATION_DESCENDING&%2Fsort.x=11&%2Fsort.y=7")
+STDERR.puts("Temp project assigned in Mechanical Turk sandbox. Complete and approve TWO assignments and run make_tp_collect_fixture_2.rb. Check for assignments at\nhttps://workersandbox.mturk.com/mturk/searchbar?minReward=0.00&searchWords=typingpooltest&selectedSearchType=hitgroups\n...and then approve them at\nhttps://requestersandbox.mturk.com/mturk/manageHITs?hitSortType=CREATION_DESCENDING&%2Fsort.x=11&%2Fsort.y=7")

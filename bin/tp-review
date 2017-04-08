@@ -83,23 +83,36 @@ hits = if options[:project] && ((hit_ids = assignments.map{|assignment| assignme
          hits
        end
 STDERR.puts "Matching submissions with local projects"
+project_with_hits_needing_decision = []
+hits_needing_decision_count = 0
+Typingpool::App.find_projects_waiting_for_hits(hits, config).each do |project_with_hits|
+  hits = project_with_hits[:hits]
+  project = project_with_hits[:project]
+  assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project)
+  hits.sort!{|a, b| a.url <=> b.url }
+  hits_needing_decision=[]
+  hits.each do |hit|
+    if hit.approved?
+      #collect auto-approved hits so people don't have to run tp-collect
+      Typingpool::App.record_approved_hits_in_assignments_file(assignments, [hit])
+      Typingpool::App.create_transcript(project, assignments)
+    else
+      hits_needing_decision.push(hit)
+      hits_needing_decision_count += 1
+    end
+  end #hits.each do...
+  if hits_needing_decision.count > 0
+    project_with_hits_needing_decision.push({project: project, hits: hits_needing_decision})
+  end
+end #Typingpool::App::find_projects_waiting_for_hits.each do ...
 choices = %w(approve reject quit skip)
+hits_decided_count = 0
 catch :quitting do
-  project_hits = Typingpool::App.find_projects_waiting_for_hits(hits, config)
-  hits_needing_decision_count = project_hits.map{|hash| hash[:hits] }.flatten.select{|hit| hit.submitted? }.count
-  hits_decided_count = 0
-  project_hits.each do |hash|
-    hits = hash[:hits]
-    project = hash[:project]
+  project_with_hits_needing_decision.each do |project_with_hits|
+    hits = project_with_hits[:hits]
+    project = project_with_hits[:project]
     assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project)
-    hits.sort!{|a, b| a.url <=> b.url }
     hits.each do |hit|
-      if hit.approved?
-        #collect auto-approved hits so people don't have to run tp-collect
-        Typingpool::App.record_approved_hits_in_assignments_file(assignments, [hit])
-        Typingpool::App.create_transcript(project, assignments)
-        next
-      end
       hits_decided_count += 1
       say(cli_bold("\nTranscript for: ") + hit.url)
       project_info = cli_bold("Project: ") + project.name
@@ -121,7 +134,7 @@ catch :quitting do
       prompt = prompt.join(cli_reverse(', ')) 
       prompt += cli_reverse('? ')
       prompt += cli_reverse("(#{hits_decided_count}/#{hits_needing_decision_count}) ")
-
+      
       choice=nil
       until choice
         input = ask(prompt)
@@ -131,15 +144,15 @@ catch :quitting do
           say("Invalid selection '#{input}'.")
         end
       end #until choice
-
+      
       case choice
       when 'approve'
         begin
           hit.assignment.at_amazon.approve!
         rescue RTurk::InvalidRequest => exception
-            #assignment may have passed its approval deadline since
-            #the session started and has been auto approved. In that
-            #case, add to the transcript; no need to tell the user.
+          #assignment may have passed its approval deadline since
+          #the session started and has been auto approved. In that
+          #case, add to the transcript; no need to tell the user.
           unless exception.message.match(/AWS.MechanicalTurk.InvalidAssignmentState\b.+\bstatus of:\s*Submitted/i)
             #different issue than auto approval; raise exception
             raise exception
@@ -175,9 +188,8 @@ catch :quitting do
         say(cli_bold("Skipping\n"))
         next
       end #case choice
-    end #hits.each_with_index
-
-  end #find_projects_waiting_for(...) do
+    end #hits.each do....
+  end # project_with_hits_needing_decision.each do
 end #catch :quitting do
 
 #Put project path on STDOUT so script can be pipelined, e.g.

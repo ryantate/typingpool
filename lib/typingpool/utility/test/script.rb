@@ -313,7 +313,7 @@ module Typingpool
             FileUtils.cp(source_fixture_path, project_fixture_path)
             copies += 1
           end
-          copies > 0 or raise Error, "No fixtures to copy with prefix #{fixture_prefix} from dir #{dir}"
+          copies > 0 or raise Error, "No fixtures to copy with prefix #{fixture_prefix}"
           copies
         end
 
