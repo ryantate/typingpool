@@ -3,8 +3,12 @@
 require 'optparse'
 require 'typingpool'
 require 'fileutils'
-require 'typingpool/utility/test'
-include Typingpool::Utility::Test
+require 'typingpool/utility/test/script'
+require 'typingpool/app/cli/formatter'
+require 'highline/import'
+
+include Typingpool::Utility::Test::Script
+include Typingpool::App::CLI::Formatter
 
 options = {}
 OptionParser.new do |commands|
@@ -19,6 +23,14 @@ OptionParser.new do |commands|
     options[:dead] = true
   end
 
+  commands.on('--force',
+              "Do not prompt for confirmation.",
+              "Will delete HITs even if they're approved but not in the transcript yet and",
+              "will silently skip HITs even if they're submitted and not reviewed") do
+
+    options[:force] = true
+  end
+  
   commands.on('--sandbox',
               "Test in Mechanical Turk's sandbox") do
     options[:sandbox] = true
@@ -85,6 +97,58 @@ results = if project
             end
           end
 
+#Check for potential data loss -- submitted HITs not yet reviewed,
+#approved HITs not yet in the local transcript
+submitted_count = results.select{|r| r.submitted? }.count
+if submitted_count > 0
+  unless options[:force]
+    are, submissions, them = if submitted_count == 1
+                               ['is', 'submission', 'it']
+                             else
+                               ['are', 'submissions', 'them']
+                             end
+    STDERR.puts "There #{are} #{submitted_count} unreviewed #{submissions} that cannot be finished."
+    choices = ["skip them", "quit"]
+    choice = ask_for_selection(choices, 0, prompt_from_choices(choices, 0) + cli_reverse('? '))
+    case choice
+    when 'quit'
+      exit
+    when 'skip them'
+      STDERR.puts "Skipping unreviewed #{submissions}..."
+    end #case choice
+  end #unless options[:force]
+  results.reject!{|r| r.submitted? }
+end
+
+unless options[:force]
+  Typingpool::App.find_projects_waiting_for_hits(results.select{|r| r.approved? }, config) do |project, hits|
+    assignments = Typingpool::App.assignments_file_for_sandbox_status(options[:sandbox], project)
+    unrecorded_approved_hits_in_project = []
+    Typingpool::App.with_hits_in_assignments_file(assignments, hits) do |hit, assignment|
+      next if assignment['transcript']
+      unrecorded_approved_hits_in_project.push(hit)
+    end
+    if unrecorded_approved_hits_in_project.count > 0
+      are, submissions, them, have = if unrecorded_approved_hits_in_project.count == 1
+                               ['is', 'submission', 'it', 'has']
+                             else
+                               ['are', 'submissions', 'them', 'have']
+                             end
+      
+      STDERR.puts "There #{are} #{unrecorded_approved_hits_in_project.count} approved #{submissions} that #{have} not been added\nto the transcript for #{project.name}."
+      choices = ['add to transcript', 'delete without adding', 'quit']
+      choice = ask_for_selection(choices, 0, prompt_from_choices(choices, 0) + cli_reverse('? '))
+      case choice
+      when 'quit'
+        exit
+      when 'add to transcript'
+        Typingpool::App.record_approved_hits_in_assignments_file(assignments, unrecorded_approved_hits_in_project)
+        Typingpool::App.create_transcript(project, assignments)
+      end #case choice
+    end #if unrecorded_approved_hits_in_project_count > 0
+  end #App.find_projects_waiting_for_hits do
+end #unless options[:force]
+
 #Remove the results from Mechanical Turk
 fails = []
 results.each do |result| 
@@ -120,8 +184,8 @@ if project
     STDERR.puts "Removing #{file} from #{project.remote.host}"
   end
   if options[:sandbox]
-    #delete sandbox-assignment.csv so we know it's safe to delete
+    #move sandbox-assignment.csv so we know it's safe to delete
     #audio files when we finish using regular assignment.csv
-    FileUtils.remove_entry_secure project.local.file('data', 'sandbox-assignment.csv')
+    File.rename project.local.file('data', 'sandbox-assignment.csv').to_s, project.local.file('data', 'old-sandbox-assignment.csv').to_s
   end
 end #if project

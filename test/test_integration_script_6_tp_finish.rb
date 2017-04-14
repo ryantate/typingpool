@@ -58,21 +58,6 @@ class TestTpFinish < Typingpool::Test::Script
     end #with_temp_readymade_project do |dir|
   end
 
-  def script_with_vcr(dir, fixture_name, config_path=config_path(dir))
-    yield([dir, config_path, project_default[:title], *vcr_args(fixture_name)])
-  end
-
-  def tp_finish_with_vcr(*args)
-    script_with_vcr(*args){|new_args| tp_finish(*new_args) }
-  end
-
-  def tp_finish_outside_sandbox_with_vcr(*args)
-    script_with_vcr(*args){|new_args| tp_finish_outside_sandbox(*new_args) }
-  end
-
-  def tp_finish_inside_sandbox_with_vcr(*args)
-    script_with_vcr(*args){|new_args| tp_finish_inside_sandbox(*new_args) }
-  end
 
   def test_tp_finish_on_amazon_hits
     skip_if_no_amazon_credentials('tp-finish Amazon test')
@@ -153,6 +138,34 @@ class TestTpFinish < Typingpool::Test::Script
     end #with_temp_readymade_project do...
   end
 
+
+  def test_tp_finish_warns_on_data_loss
+    skip_if_no_amazon_credentials('tp-finish warns on data loss test')
+    skip_if_no_s3_credentials('tp-finish wanrs on data loss test')
+    with_temp_readymade_project do |transcripts_dir|
+      copy_fixtures_to_project_dir('tp_finish_4_', File.join(transcripts_dir, project_default[:title]))
+      project = Typingpool::Project.new(project_default[:title], Typingpool::Config.file(config_path(transcripts_dir)))
+      begin
+        assert(File.exist? File.join(project.local, 'data','sandbox-assignment.csv'))
+        assert_equal(6, project.local.file('data','sandbox-assignment.csv').as(:csv).reject{|assignment| assignment['hit_id'].to_s.empty? }.count)
+        output = tp_review_with_fixture(transcripts_dir, 'tp_finish_9', %w(a r q), false, project_default[:title])
+        assert_equal(0, output[:status].to_i)
+        assert_equal(1, project_transcript_count(project, 'sandbox-assignment.csv'))
+        assert_equal(1, project_hits_rejected(project, 'sandbox-assignment.csv').count)
+        assert_equal(1, project_hits_approved(project, 'sandbox-assignment.csv').count)
+        assert_equal(1, project_transcript_count(project, 'sandbox-assignment.csv'))
+        out, err = tp_finish_inside_sandbox_with_vcr(transcripts_dir, 'tp_finish_10', config_path(transcripts_dir), false, false, %w(s a))
+        assert_match(/not been added/, err)
+        assert_match(/unreviewed submission/, err)
+        assert_equal(2, project_transcript_count(project, 'old-sandbox-assignment.csv'))
+        assert_equal(2, project_hits_approved(project, 'old-sandbox-assignment.csv').count)
+      ensure
+        restore_project_dir_from_fixtures('tp_finish_4_', File.join(transcripts_dir, project_default[:title]))
+      end #begin
+      
+    end #with_temp_readymade_project do...
+  end
+  
   def test_abort_on_config_mismatch
     skip_if_no_s3_credentials('tp-finish abort on config mismatch test')
     with_temp_readymade_project do |dir|
@@ -172,4 +185,26 @@ class TestTpFinish < Typingpool::Test::Script
     end #with_temp_readymade_project do...
   end
 
+
+  def project_hits_rejected(project, csv='sandbox-assignment.csv')
+    project.local.file('data', csv).as(:csv).select{|assignment| assignment_rejected?(assignment) }
+  end
+  
+  def project_hits_approved(project, csv='sandbox-assignment.csv')
+    project.local.file('data', csv).as(:csv).select{|assignment| assignment_approved?(assignment) }
+  end
+
+  def project_hits_pending(project, csv='sandbox-assignment.csv')
+    project.local.file('data', csv).as(:csv).reject{|assignment| assignment_approved?(assignment) || assignment_rejected?(assignment)}
+  end
+
+  def assignment_rejected?(assignment)
+    assignment['hit_id'].to_s.empty?
+  end
+
+  def assignment_approved?(assignment)
+    assignment['transcript'].to_s.match(/\S/)
+  end
+
+  
 end #TestTpFinish

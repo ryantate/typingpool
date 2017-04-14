@@ -84,7 +84,7 @@ class TestAmazon < Typingpool::Test
       assert_instance_of(Typingpool::Transcript::Chunk, hit.transcript)
       assert_kind_of(RTurk::Hit, hit.at_amazon)
       assert_instance_of(Typingpool::Amazon::HIT::Full, hit.full)
-      assert_instance_of(Typingpool::Amazon::HIT::Assignment::Empty, hit.assignment)
+      assert_instance_of(Typingpool::Amazon::HIT::Assignment, hit.assignment)
     end #with_dummy_hit_or_skip
   end
 

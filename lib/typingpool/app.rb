@@ -325,11 +325,11 @@ module Typingpool
       #                   were just assigned (that is, that have one
       #                   assignment, which has a blank status).
       def record_assigned_hits_in_assignments_file(assignments_file, hits)
-        record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
+        with_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
           csv_row['hit_id'] = hit.id
           csv_row['hit_expires_at'] = hit.full.expires_at.to_s
           csv_row['hit_assignments_duration'] = hit.full.assignments_duration.to_s
-        end #record_hits_in_project do....
+        end #with_hits_in_assignments_file do....
       end        
 
       #Extracts relevant information from a collection of
@@ -344,12 +344,12 @@ module Typingpool
       # [hits]             An enumerable collection of Amazon::HIT instances whose
       #                    one assignment has the status 'Approved'.
       def record_approved_hits_in_assignments_file(assignments_file, hits)
-        record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
+        with_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
           next if csv_row['transcript']
           csv_row['transcript'] = hit.transcript.body
           csv_row['worker'] = hit.transcript.worker
           csv_row['hit_id'] = hit.id
-        end #record_hits_in_project do...
+        end #with_hits_in_assignments_file do...
       end
 
       #Given a Project instance and an array of modified assignment
@@ -376,7 +376,7 @@ module Typingpool
       # [hits]              An enumerable collection of Amazon::HIT instances to be
       #                     deleted.
       def unrecord_hits_in_assignments_file(assignments_file, hits)
-        record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
+        with_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
           unrecord_hit_in_csv_row(csv_row)
         end
       end
@@ -402,7 +402,7 @@ module Typingpool
       #                    HITs in the Project assignment CSV will be
       #                    deleted.
       def unrecord_hits_details_in_assignments_file(assignments_file, hits=nil)
-        record_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
+        with_hits_in_assignments_file(assignments_file, hits) do |hit, csv_row|
           unrecord_hit_details_in_csv_row(csv_row)
         end
       end
@@ -439,6 +439,17 @@ module Typingpool
         end #if config.sftp
       end
       
+      def with_hits_in_assignments_file(assignments_file, hits)
+        hits_by_url = self.hits_by_url(hits) if hits
+        assignments_file.each! do |csv_row|
+          hit = nil
+          if hits
+            hit = hits_by_url[csv_row['audio_url']] or next
+          end
+          yield(hit, csv_row)
+        end
+      end
+      
 
       #protected
 
@@ -453,17 +464,6 @@ module Typingpool
             raise exception
           end
         end #begin
-      end
-
-      def record_hits_in_assignments_file(assignments_file, hits)
-        hits_by_url = self.hits_by_url(hits) if hits
-        assignments_file.each! do |csv_row|
-          hit = nil
-          if hits
-            hit = hits_by_url[csv_row['audio_url']] or next
-          end
-          yield(hit, csv_row)
-        end
       end
 
       def record_assignment_upload_status(assignments, uploading, types, status)

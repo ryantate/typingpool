@@ -125,25 +125,11 @@ catch :quitting do
           cli_bold(" by ") +
           hit.assignment.worker_id)
       say(cli_encode(hit.transcript.body_as_text(4, 68)))
-      prompt = choices.map do |c| 
-        cli_reverse('(') +
-          cli_reverse(cli_bold(c.slice(0).upcase)) +
-          cli_reverse(")#{c.slice(1, c.size)}") 
-      end
-      prompt << cli_reverse('[') + prompt.pop + cli_reverse(']')
-      prompt = prompt.join(cli_reverse(', ')) 
+      prompt = prompt_from_choices(choices, -1)
       prompt += cli_reverse('? ')
       prompt += cli_reverse("(#{hits_decided_count}/#{hits_needing_decision_count}) ")
       
-      choice=nil
-      until choice
-        input = ask(prompt)
-        if input.to_s.match(/^\s*$/)
-          choice = choices.last
-        elsif not(choice = choices.detect{|possible| possible[0] == input.downcase[0] })
-          say("Invalid selection '#{input}'.")
-        end
-      end #until choice
+      choice = ask_for_selection(choices, -1, prompt)
       
       case choice
       when 'approve'

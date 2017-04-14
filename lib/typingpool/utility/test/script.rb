@@ -139,30 +139,68 @@ module Typingpool
           tp_make(dir, config_path, 'mp3', false, *vcr_args(fixture_name))
         end
 
-        def vcr_args(fixture_name)
+        def vcr_args(fixture_name, can_ever_run_live=true, are_recording=Typingpool::Test.record)
           args = []
-          if fixture = cleared_vcr_fixture_path_for(fixture_name)
+          if fixture = cleared_vcr_fixture_path_for(fixture_name, can_ever_run_live, are_recording)
             args.push('--testfixture', fixture)
-            if Typingpool::Test.record
-              args.push('--testfixturerecord') 
-            end
+            args.push('--testfixturerecord') if are_recording
           end #if fixture = ...
           args
         end
 
-        def tp_finish(dir, config_path=config_path(dir), project_title=project_default[:title], *args)
-          tp_finish_inside_sandbox(dir, config_path, project_title, *args)
-          tp_finish_outside_sandbox(dir, config_path, project_title, *args)
+        def tp_finish(dir, config_path=config_path(dir), project_title=project_default[:title], choices=nil, *args)
+          tp_finish_inside_sandbox(dir, config_path, project_title, choices, *args)
+          tp_finish_outside_sandbox(dir, config_path, project_title, choices, *args)
         end
 
 
-        def tp_finish_inside_sandbox(dir, config_path=config_path(dir), project_title=project_default[:title], *args)
-          tp_finish_outside_sandbox(dir, config_path, project_title, '--sandbox', *args)
+        def tp_finish_inside_sandbox(dir, config_path=config_path(dir), project_title=project_default[:title], choices=nil, *args)
+          tp_finish_outside_sandbox(dir, config_path, project_title, choices, '--sandbox', *args)
         end
 
-        def tp_finish_outside_sandbox(dir, config_path=config_path(dir), project_title=project_default[:title], *args)
-          call_script('tp-finish', project_title, '--config', config_path, *args)
+        def tp_finish_outside_sandbox(dir, config_path=config_path(dir), project_title=project_default[:title], choices=nil, *args)
+          output = {}
+          args = [
+                  File.join(Utility.app_dir, 'bin', 'tp-finish'),
+                  project_title,
+                  '--config',
+                  config_path,
+                  *args
+                 ]
+          Open3.popen3(*args) do |stdin, stdout, stderr, wait_thr|
+            choices.each{|choice| stdin.puts(choice) } if choices
+            output[:out] = stdout.gets(nil)
+            output[:err] = stderr.gets(nil)
+            [stdin, stdout, stderr].each{|stream| stream.close }
+            output[:status] = wait_thr.value
+          end
+          if output[:status] == 0
+            return [output[:out].to_s.chomp, output[:err].to_s.chomp]
+          else
+            if output[:err]
+              raise Error::Shell, output[:err].chomp
+            else
+              raise Error::Shell
+            end
+          end #if output[:status] != 0  
         end
+
+        def script_with_vcr(dir, fixture_name, config_path=config_path(dir), can_ever_run_live=true, are_recording=Typingpool::Test.record, choices=nil)
+          yield([dir, config_path, project_default[:title], choices, *vcr_args(fixture_name, can_ever_run_live, are_recording)])
+        end
+
+        def tp_finish_with_vcr(*args)
+          script_with_vcr(*args){|new_args| tp_finish(*new_args) }
+        end
+
+        def tp_finish_outside_sandbox_with_vcr(*args)
+          script_with_vcr(*args){|new_args| tp_finish_outside_sandbox(*new_args) }
+        end
+
+        def tp_finish_inside_sandbox_with_vcr(*args)
+          script_with_vcr(*args){|new_args| tp_finish_inside_sandbox(*new_args) }
+        end
+
 
         def audio_files(subdir='mp3')
           dir = File.join(audio_dir, subdir)
@@ -319,7 +357,7 @@ module Typingpool
 
         def restore_project_dir_from_fixtures(fixture_prefix, project_path)
           with_fixtures_in_project_dir(fixture_prefix, project_path) do |source_fixture_path, project_fixture_path|
-            FileUtils.rm(project_fixture_path)
+            FileUtils.rm(project_fixture_path) if File.exists? project_fixture_path
             path_to_orig = File.join(File.dirname(project_fixture_path), "orig_#{File.basename(project_fixture_path)}")
             if File.exist?(path_to_orig)
               FileUtils.mv(path_to_orig, project_fixture_path)
@@ -334,6 +372,7 @@ module Typingpool
         def split_reviews(output)
           output.split(/Transcript for\b/)
         end
+
 
         
       end #Script      

@@ -5,16 +5,16 @@ http_interactions:
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body:
       encoding: UTF-8
-      string: Title=Transcribe+MP3+of+1-minute+phone+calll&Description=I+split+up+a+telephone+conversation+into+1-minute+parts%2C+you+transcribe+the+audio+for+one+1-minute+part.&AssignmentDurationInSeconds=600&Reward.Amount=0.01&Reward.CurrencyCode=USD&Keywords=transcription%2C+audio%2C+mp3&AutoApprovalDelayInSeconds=86400&QualificationRequirement.1.QualificationTypeId=000000000000000000L0&QualificationRequirement.1.Comparator=GreaterThanOrEqualTo&QualificationRequirement.1.IntegerValue=95&QualificationRequirement.1.RequiredToPreview=true&QualificationRequirement.2.QualificationTypeId=00000000000000000040&QualificationRequirement.2.Comparator=GreaterThanOrEqualTo&QualificationRequirement.2.IntegerValue=100&QualificationRequirement.2.RequiredToPreview=true&MaxAssignments=1&Question=%3CExternalQuestion+xmlns%3D%22http%3A%2F%2Fmechanicalturk.amazonaws.com%2FAWSMechanicalTurkDataSchemas%2F2006-07-14%2FExternalQuestion.xsd%22%3E%0A++%3CExternalURL%3Ehttps%3A%2F%2Fexample.com%2Fassignments%2F101.html%3C%2FExternalURL%3E%0A++%3CFrameHeight%3E400%3C%2FFrameHeight%3E%0A%3C%2FExternalQuestion%3E%0A&LifetimeInSeconds=1200&RequesterAnnotation=typingpool_url%3Dhttp%253A%252F%252Fwebmasher.com%252Fmturk%252FTestTpInterview.00.00.77421e0a6302f4c8c34e24004a4ad828.YSOQJU.mp3%26amp%3Btypingpool_project_id%3D77421e0a6302f4c8c34e24004a4ad828&Operation=CreateHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2016-12-31T02%3A09%3A27Z&Version=2012-03-25&Signature=CHUxScE6k%2BTjD8vU6fIRBJ5k%2FOw%3D
+      string: Title=Transcribe+MP3+of+1-minute+phone+calll&Description=I+split+up+a+telephone+conversation+into+1-minute+parts%2C+you+transcribe+the+audio+for+one+1-minute+part.&AssignmentDurationInSeconds=600&Reward.Amount=0.01&Reward.CurrencyCode=USD&Keywords=transcription%2C+audio%2C+mp3&AutoApprovalDelayInSeconds=86400&QualificationRequirement.1.QualificationTypeId=000000000000000000L0&QualificationRequirement.1.Comparator=GreaterThanOrEqualTo&QualificationRequirement.1.IntegerValue=95&QualificationRequirement.1.RequiredToPreview=true&QualificationRequirement.2.QualificationTypeId=00000000000000000040&QualificationRequirement.2.Comparator=GreaterThanOrEqualTo&QualificationRequirement.2.IntegerValue=100&QualificationRequirement.2.RequiredToPreview=true&MaxAssignments=1&Question=%3CExternalQuestion+xmlns%3D%22http%3A%2F%2Fmechanicalturk.amazonaws.com%2FAWSMechanicalTurkDataSchemas%2F2006-07-14%2FExternalQuestion.xsd%22%3E%0A++%3CExternalURL%3Ehttps%3A%2F%2Fexample.com%2Fassignments%2F101.html%3C%2FExternalURL%3E%0A++%3CFrameHeight%3E400%3C%2FFrameHeight%3E%0A%3C%2FExternalQuestion%3E%0A&LifetimeInSeconds=1200&RequesterAnnotation=typingpool_url%3Dhttp%253A%252F%252Fwebmasher.com%252Fmturk%252FTestTpInterview.00.00.77421e0a6302f4c8c34e24004a4ad828.YSOQJU.mp3%26amp%3Btypingpool_project_id%3D77421e0a6302f4c8c34e24004a4ad828&Operation=CreateHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2017-04-14T20%3A48%3A06Z&Version=2012-03-25&Signature=twsWUN5pMNYG%2BM6lAzCZGy9zpCc%3D
     headers:
       Accept:
-      - '*/*'
+      - "*/*"
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.0.0p353
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.3.3p222
       Content-Length:
-      - '1519'
+      - '1517'
       Host:
       - mechanicalturk.sandbox.amazonaws.com
   response:
@@ -27,29 +27,29 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Dec 2016 02:09:27 GMT
+      - Fri, 14 Apr 2017 20:48:07 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       string: |-
         <?xml version="1.0"?>
-        <CreateHITResponse><OperationRequest><RequestId>fe37ca22-e143-4113-9e24-fe1fab98a5ef</RequestId></OperationRequest><HIT><Request><IsValid>True</IsValid></Request><HITId>37M4O367VJYB3V6LWEP4DPST2LBM5U</HITId><HITTypeId>3FJMTJX97O5QAQ6TYMEKGK4K51PA6J</HITTypeId></HIT></CreateHITResponse>
+        <CreateHITResponse><OperationRequest><RequestId>6f975b4c-65db-4490-b431-6106479aede8</RequestId></OperationRequest><HIT><Request><IsValid>True</IsValid></Request><HITId>3IWA71V4TIWIGB53F41IGCMR6VU6XP</HITId><HITTypeId>3FJMTJX97O5QAQ6TYMEKGK4K51PA6J</HITTypeId></HIT></CreateHITResponse>
     http_version: 
-  recorded_at: Sat, 31 Dec 2016 02:09:28 GMT
+  recorded_at: Fri, 14 Apr 2017 20:48:07 GMT
 - request:
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body:
       encoding: UTF-8
-      string: HITId=37M4O367VJYB3V6LWEP4DPST2LBM5U&ResponseGroup.0=HITDetail&ResponseGroup.1=HITQuestion&ResponseGroup.2=Minimal&ResponseGroup.3=HITAssignmentSummary&Operation=GetHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2016-12-31T02%3A09%3A28Z&Version=2012-03-25&Signature=wbJaRkjW3X0UDy1SOJXxBq4FL50%3D
+      string: HITId=3IWA71V4TIWIGB53F41IGCMR6VU6XP&ResponseGroup.0=HITDetail&ResponseGroup.1=HITQuestion&ResponseGroup.2=Minimal&ResponseGroup.3=HITAssignmentSummary&Operation=GetHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2017-04-14T20%3A48%3A07Z&Version=2012-03-25&Signature=RHXe1m8FvVtC5K7V7XJHhSc1yu0%3D
     headers:
       Accept:
-      - '*/*'
+      - "*/*"
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.0.0p353
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.3.3p222
       Content-Length:
       - '334'
       Host:
@@ -64,33 +64,33 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Dec 2016 02:09:27 GMT
+      - Fri, 14 Apr 2017 20:48:07 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       string: |-
         <?xml version="1.0"?>
-        <GetHITResponse><OperationRequest><RequestId>91a0bd6d-de75-4b5c-856b-a2345c405c7b</RequestId></OperationRequest><HIT><Request><IsValid>True</IsValid></Request><HITId>37M4O367VJYB3V6LWEP4DPST2LBM5U</HITId><HITTypeId>3FJMTJX97O5QAQ6TYMEKGK4K51PA6J</HITTypeId><HITGroupId>346AHROM60PF93NK7E74UE17XHEHQ0</HITGroupId><CreationTime>2016-12-31T02:09:27Z</CreationTime><Title>Transcribe MP3 of 1-minute phone calll</Title><Description>I split up a telephone conversation into 1-minute parts, you transcribe the audio for one 1-minute part.</Description><Question>&lt;ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"&gt;
+        <GetHITResponse><OperationRequest><RequestId>6b743d30-8d1e-4cd0-9205-6b11f863eb5a</RequestId></OperationRequest><HIT><Request><IsValid>True</IsValid></Request><HITId>3IWA71V4TIWIGB53F41IGCMR6VU6XP</HITId><HITTypeId>3FJMTJX97O5QAQ6TYMEKGK4K51PA6J</HITTypeId><HITGroupId>346AHROM60PF93NK7E74UE17XHEHQ0</HITGroupId><CreationTime>2017-04-14T20:48:07Z</CreationTime><Title>Transcribe MP3 of 1-minute phone calll</Title><Description>I split up a telephone conversation into 1-minute parts, you transcribe the audio for one 1-minute part.</Description><Question>&lt;ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"&gt;
           &lt;ExternalURL&gt;https://example.com/assignments/101.html&lt;/ExternalURL&gt;
           &lt;FrameHeight&gt;400&lt;/FrameHeight&gt;
         &lt;/ExternalQuestion&gt;
-        </Question><Keywords>transcription, audio, mp3</Keywords><HITStatus>Assignable</HITStatus><MaxAssignments>1</MaxAssignments><Reward><Amount>0.01</Amount><CurrencyCode>USD</CurrencyCode><FormattedPrice>$0.01</FormattedPrice></Reward><AutoApprovalDelayInSeconds>86400</AutoApprovalDelayInSeconds><Expiration>2016-12-31T02:29:27Z</Expiration><AssignmentDurationInSeconds>600</AssignmentDurationInSeconds><RequesterAnnotation>typingpool_url=http%3A%2F%2Fwebmasher.com%2Fmturk%2FTestTpInterview.00.00.77421e0a6302f4c8c34e24004a4ad828.YSOQJU.mp3&amp;amp;typingpool_project_id=77421e0a6302f4c8c34e24004a4ad828</RequesterAnnotation><QualificationRequirement><QualificationTypeId>000000000000000000L0</QualificationTypeId><Comparator>GreaterThanOrEqualTo</Comparator><IntegerValue>95</IntegerValue><RequiredToPreview>1</RequiredToPreview></QualificationRequirement><QualificationRequirement><QualificationTypeId>00000000000000000040</QualificationTypeId><Comparator>GreaterThanOrEqualTo</Comparator><IntegerValue>100</IntegerValue><RequiredToPreview>1</RequiredToPreview></QualificationRequirement><HITReviewStatus>NotReviewed</HITReviewStatus><NumberOfAssignmentsPending>0</NumberOfAssignmentsPending><NumberOfAssignmentsAvailable>1</NumberOfAssignmentsAvailable><NumberOfAssignmentsCompleted>0</NumberOfAssignmentsCompleted></HIT></GetHITResponse>
+        </Question><Keywords>transcription, audio, mp3</Keywords><HITStatus>Assignable</HITStatus><MaxAssignments>1</MaxAssignments><Reward><Amount>0.01</Amount><CurrencyCode>USD</CurrencyCode><FormattedPrice>$0.01</FormattedPrice></Reward><AutoApprovalDelayInSeconds>86400</AutoApprovalDelayInSeconds><Expiration>2017-04-14T21:08:07Z</Expiration><AssignmentDurationInSeconds>600</AssignmentDurationInSeconds><RequesterAnnotation>typingpool_url=http%3A%2F%2Fwebmasher.com%2Fmturk%2FTestTpInterview.00.00.77421e0a6302f4c8c34e24004a4ad828.YSOQJU.mp3&amp;amp;typingpool_project_id=77421e0a6302f4c8c34e24004a4ad828</RequesterAnnotation><QualificationRequirement><QualificationTypeId>000000000000000000L0</QualificationTypeId><Comparator>GreaterThanOrEqualTo</Comparator><IntegerValue>95</IntegerValue><RequiredToPreview>1</RequiredToPreview></QualificationRequirement><QualificationRequirement><QualificationTypeId>00000000000000000040</QualificationTypeId><Comparator>GreaterThanOrEqualTo</Comparator><IntegerValue>100</IntegerValue><RequiredToPreview>1</RequiredToPreview></QualificationRequirement><HITReviewStatus>NotReviewed</HITReviewStatus><NumberOfAssignmentsPending>0</NumberOfAssignmentsPending><NumberOfAssignmentsAvailable>1</NumberOfAssignmentsAvailable><NumberOfAssignmentsCompleted>0</NumberOfAssignmentsCompleted></HIT></GetHITResponse>
     http_version: 
-  recorded_at: Sat, 31 Dec 2016 02:09:28 GMT
+  recorded_at: Fri, 14 Apr 2017 20:48:07 GMT
 - request:
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body:
       encoding: UTF-8
-      string: HITId=37M4O367VJYB3V6LWEP4DPST2LBM5U&ResponseGroup.0=HITDetail&ResponseGroup.1=HITQuestion&ResponseGroup.2=Minimal&ResponseGroup.3=HITAssignmentSummary&Operation=GetHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2016-12-31T02%3A09%3A28Z&Version=2012-03-25&Signature=wbJaRkjW3X0UDy1SOJXxBq4FL50%3D
+      string: HITId=3IWA71V4TIWIGB53F41IGCMR6VU6XP&ResponseGroup.0=HITDetail&ResponseGroup.1=HITQuestion&ResponseGroup.2=Minimal&ResponseGroup.3=HITAssignmentSummary&Operation=GetHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2017-04-14T20%3A48%3A07Z&Version=2012-03-25&Signature=RHXe1m8FvVtC5K7V7XJHhSc1yu0%3D
     headers:
       Accept:
-      - '*/*'
+      - "*/*"
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.0.0p353
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.3.3p222
       Content-Length:
       - '334'
       Host:
@@ -105,35 +105,35 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Dec 2016 02:09:27 GMT
+      - Fri, 14 Apr 2017 20:48:07 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       string: |-
         <?xml version="1.0"?>
-        <GetHITResponse><OperationRequest><RequestId>52712075-042e-47ef-acd1-429a536eee38</RequestId></OperationRequest><HIT><Request><IsValid>True</IsValid></Request><HITId>37M4O367VJYB3V6LWEP4DPST2LBM5U</HITId><HITTypeId>3FJMTJX97O5QAQ6TYMEKGK4K51PA6J</HITTypeId><HITGroupId>346AHROM60PF93NK7E74UE17XHEHQ0</HITGroupId><CreationTime>2016-12-31T02:09:27Z</CreationTime><Title>Transcribe MP3 of 1-minute phone calll</Title><Description>I split up a telephone conversation into 1-minute parts, you transcribe the audio for one 1-minute part.</Description><Question>&lt;ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"&gt;
+        <GetHITResponse><OperationRequest><RequestId>e864cd7d-55a8-4d94-90ab-395251cee5f6</RequestId></OperationRequest><HIT><Request><IsValid>True</IsValid></Request><HITId>3IWA71V4TIWIGB53F41IGCMR6VU6XP</HITId><HITTypeId>3FJMTJX97O5QAQ6TYMEKGK4K51PA6J</HITTypeId><HITGroupId>346AHROM60PF93NK7E74UE17XHEHQ0</HITGroupId><CreationTime>2017-04-14T20:48:07Z</CreationTime><Title>Transcribe MP3 of 1-minute phone calll</Title><Description>I split up a telephone conversation into 1-minute parts, you transcribe the audio for one 1-minute part.</Description><Question>&lt;ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"&gt;
           &lt;ExternalURL&gt;https://example.com/assignments/101.html&lt;/ExternalURL&gt;
           &lt;FrameHeight&gt;400&lt;/FrameHeight&gt;
         &lt;/ExternalQuestion&gt;
-        </Question><Keywords>transcription, audio, mp3</Keywords><HITStatus>Assignable</HITStatus><MaxAssignments>1</MaxAssignments><Reward><Amount>0.01</Amount><CurrencyCode>USD</CurrencyCode><FormattedPrice>$0.01</FormattedPrice></Reward><AutoApprovalDelayInSeconds>86400</AutoApprovalDelayInSeconds><Expiration>2016-12-31T02:29:27Z</Expiration><AssignmentDurationInSeconds>600</AssignmentDurationInSeconds><RequesterAnnotation>typingpool_url=http%3A%2F%2Fwebmasher.com%2Fmturk%2FTestTpInterview.00.00.77421e0a6302f4c8c34e24004a4ad828.YSOQJU.mp3&amp;amp;typingpool_project_id=77421e0a6302f4c8c34e24004a4ad828</RequesterAnnotation><QualificationRequirement><QualificationTypeId>000000000000000000L0</QualificationTypeId><Comparator>GreaterThanOrEqualTo</Comparator><IntegerValue>95</IntegerValue><RequiredToPreview>1</RequiredToPreview></QualificationRequirement><QualificationRequirement><QualificationTypeId>00000000000000000040</QualificationTypeId><Comparator>GreaterThanOrEqualTo</Comparator><IntegerValue>100</IntegerValue><RequiredToPreview>1</RequiredToPreview></QualificationRequirement><HITReviewStatus>NotReviewed</HITReviewStatus><NumberOfAssignmentsPending>0</NumberOfAssignmentsPending><NumberOfAssignmentsAvailable>1</NumberOfAssignmentsAvailable><NumberOfAssignmentsCompleted>0</NumberOfAssignmentsCompleted></HIT></GetHITResponse>
+        </Question><Keywords>transcription, audio, mp3</Keywords><HITStatus>Assignable</HITStatus><MaxAssignments>1</MaxAssignments><Reward><Amount>0.01</Amount><CurrencyCode>USD</CurrencyCode><FormattedPrice>$0.01</FormattedPrice></Reward><AutoApprovalDelayInSeconds>86400</AutoApprovalDelayInSeconds><Expiration>2017-04-14T21:08:07Z</Expiration><AssignmentDurationInSeconds>600</AssignmentDurationInSeconds><RequesterAnnotation>typingpool_url=http%3A%2F%2Fwebmasher.com%2Fmturk%2FTestTpInterview.00.00.77421e0a6302f4c8c34e24004a4ad828.YSOQJU.mp3&amp;amp;typingpool_project_id=77421e0a6302f4c8c34e24004a4ad828</RequesterAnnotation><QualificationRequirement><QualificationTypeId>000000000000000000L0</QualificationTypeId><Comparator>GreaterThanOrEqualTo</Comparator><IntegerValue>95</IntegerValue><RequiredToPreview>1</RequiredToPreview></QualificationRequirement><QualificationRequirement><QualificationTypeId>00000000000000000040</QualificationTypeId><Comparator>GreaterThanOrEqualTo</Comparator><IntegerValue>100</IntegerValue><RequiredToPreview>1</RequiredToPreview></QualificationRequirement><HITReviewStatus>NotReviewed</HITReviewStatus><NumberOfAssignmentsPending>0</NumberOfAssignmentsPending><NumberOfAssignmentsAvailable>1</NumberOfAssignmentsAvailable><NumberOfAssignmentsCompleted>0</NumberOfAssignmentsCompleted></HIT></GetHITResponse>
     http_version: 
-  recorded_at: Sat, 31 Dec 2016 02:09:28 GMT
+  recorded_at: Fri, 14 Apr 2017 20:48:07 GMT
 - request:
     method: post
     uri: https://mechanicalturk.sandbox.amazonaws.com/
     body:
       encoding: UTF-8
-      string: HITId=37M4O367VJYB3V6LWEP4DPST2LBM5U&Operation=DisableHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2016-12-31T02%3A09%3A28Z&Version=2012-03-25&Signature=RRMtixv3J5311YWqRjsyeh0Hs6s%3D
+      string: HITId=3IWA71V4TIWIGB53F41IGCMR6VU6XP&Operation=DisableHIT&Service=AWSMechanicalTurkRequester&AWSAccessKeyId=<AWS_KEY>&Timestamp=2017-04-14T20%3A48%3A07Z&Version=2012-03-25&Signature=CEb4SA2Ozhz2rzUPu8MR%2F%2FwmxBk%3D
     headers:
       Accept:
-      - '*/*'
+      - "*/*"
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.0.0p353
+      - rest-client/2.0.0 (darwin15.6.0 x86_64) ruby/2.3.3p222
       Content-Length:
-      - '223'
+      - '227'
       Host:
       - mechanicalturk.sandbox.amazonaws.com
   response:
@@ -146,14 +146,14 @@ http_interactions:
       Transfer-Encoding:
       - chunked
       Date:
-      - Sat, 31 Dec 2016 02:09:28 GMT
+      - Fri, 14 Apr 2017 20:48:07 GMT
       Server:
       - MTurk
     body:
       encoding: UTF-8
       string: |-
         <?xml version="1.0"?>
-        <DisableHITResponse><OperationRequest><RequestId>3d7cc2b5-ac57-4aab-8a08-e4fa0f01828e</RequestId></OperationRequest><DisableHITResult><Request><IsValid>True</IsValid></Request></DisableHITResult></DisableHITResponse>
+        <DisableHITResponse><OperationRequest><RequestId>da06f211-ea12-4e6f-b30a-50dc9fb9d1dd</RequestId></OperationRequest><DisableHITResult><Request><IsValid>True</IsValid></Request></DisableHITResult></DisableHITResponse>
     http_version: 
-  recorded_at: Sat, 31 Dec 2016 02:09:28 GMT
+  recorded_at: Fri, 14 Apr 2017 20:48:08 GMT
 recorded_with: VCR 3.0.3

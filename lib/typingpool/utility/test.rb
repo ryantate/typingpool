@@ -21,11 +21,11 @@ module Typingpool
         File.delete(fixture_path) if File.exist? fixture_path
       end
       
-      def cleared_vcr_fixture_path_for(fixture_name)
-        if Typingpool::Test.record
+      def cleared_vcr_fixture_path_for(fixture_name, can_ever_run_live=true, are_recording=Typingpool::Test.record)
+        if are_recording
           delete_vcr_fixture(fixture_name)
         end
-        if (Typingpool::Test.record || not(Typingpool::Test.live))
+        if (are_recording || not(Typingpool::Test.live) || not(can_ever_run_live))
           File.join(vcr_dir, fixture_name)
         end
       end

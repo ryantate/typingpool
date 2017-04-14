@@ -284,7 +284,11 @@ module Typingpool
       #assignments -- hit.full.assignments_completed == 0. This check
       #is only performed when hit.full has already been loaded.)
       def approved?
-        assignment_status_match?('Approved')
+        if @full
+          return false if full.assignments_completed == 0
+          return false if full.status != 'Reviewable'
+        end
+        assignment.status == 'Approved'
       end
 
       #Returns true if this HIT has a rejected assignment associated
@@ -292,7 +296,11 @@ module Typingpool
       #Typingpool::Amazon::HIT::Assignment, see the documentation for
       #approved?.)
       def rejected?
-        assignment_status_match?('Rejected')
+        if @full
+          return false if full.assignments_completed == 0
+          return false if full.status != 'Reviewable'
+        end
+        assignment.status == 'Rejected'
       end
 
       #Returns true if this HIT has a submitted assignment associated
@@ -300,7 +308,10 @@ module Typingpool
       #Typingpool::Amazon::HIT::Assignment, see the documentation for
       #approved?.)
       def submitted?
-        assignment_status_match?('Submitted')
+        if @full
+          return false if full.status != 'Reviewable'
+        end
+        assignment.status == 'Submitted'
       end
 
 
@@ -396,18 +407,7 @@ module Typingpool
       #this is called, an Amazon HTTP request is typically (but not
       #always) sent.
       def assignment
-        if @assignment.nil?
-          if @full && full.assignments_completed == 0
-            #It would be dangerous to do this if the HIT were to be
-            #cached, since we would then never check for the
-            #assignment again. But we know this HIT won't be cached
-            #while it is active, since we only cache approved and
-            #rejected HITs.
-            @assignment = Assignment::Empty.new
-          else
-            @assignment = Assignment.new(at_amazon) #expensive
-          end
-        end
+        @assignment ||= Assignment.new(at_amazon) #expensive
         @assignment
       end
 
@@ -448,15 +448,6 @@ module Typingpool
           return full.external_question_param(param)
         end
       end
-
-      def assignment_status_match?(status)
-        if @full
-          return false if full.assignments_completed == 0
-          return false if full.status != 'Reviewable'
-        end
-        assignment.status == status
-      end
-
 
       @@cacheable_assignment_status = Set.new %w(Approved Rejected)
       def cacheable?
