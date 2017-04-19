@@ -3,11 +3,9 @@
 require 'optparse'
 require 'typingpool'
 require 'fileutils'
-require 'typingpool/utility/test/script'
 require 'typingpool/app/cli/formatter'
 require 'highline/import'
 
-include Typingpool::Utility::Test::Script
 include Typingpool::App::CLI::Formatter
 
 options = {}
@@ -78,6 +76,8 @@ end
 
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 if options[:fixture]
+  require 'typingpool/utility/test/script'
+  include Typingpool::Utility::Test::Script
   vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
                              :preserve_exact_body_bytes => true,
                              :match_requests_on => [:method, vcr_core_host_matcher]

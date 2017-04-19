@@ -2,12 +2,10 @@
 
 require 'optparse'
 require 'typingpool'
-require 'typingpool/utility/test'
 require 'fileutils'
 require 'tempfile'
 require 'tmpdir'
 include Typingpool::App::FriendlyExceptions
-include Typingpool::Utility::Test
 
 options = {
   :files => [],
@@ -195,10 +193,14 @@ else
 end #if project.local
 
 unless options[:noupload]
-  vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
+  if options[:fixture]
+    require 'typingpool/utility/test'
+    include Typingpool::Utility::Test
+    vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
                              :preserve_exact_body_bytes => true,
                              :match_requests_on => [:method, vcr_core_host_matcher]
-                           }) if options[:fixture]
+             }) 
+  end
   Typingpool::App.upload_audio_for_project(project) do |file, as|
     STDERR.puts "Uploading #{File.basename(file)} to #{project.remote.host}/#{project.remote.path} as #{as}"
   end

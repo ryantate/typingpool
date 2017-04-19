@@ -1,11 +1,9 @@
 #!/usr/bin/env ruby
 
 require 'typingpool'
-require 'typingpool/utility/test'
 require 'highline/import'
 require 'optparse'
 include Typingpool::App::CLI::Formatter
-include Typingpool::Utility::Test
 
 options = {}
 OptionParser.new do |commands|
@@ -64,6 +62,8 @@ if options[:project]
 end
 
 if options[:fixture]
+  require 'typingpool/utility/test'
+  include Typingpool::Utility::Test
   vcr_load(options[:fixture], config, not(options[:fixturerecord]))
   at_exit{ vcr_stop }
 end

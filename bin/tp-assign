@@ -2,11 +2,9 @@
 
 require 'optparse'
 require 'typingpool'
-require 'typingpool/utility/test'
 require 'highline/import'
 include Typingpool::App::FriendlyExceptions
 include Typingpool::App::CLI::Formatter
-include Typingpool::Utility::Test
 
 options = {
   :keyword => [],
@@ -215,6 +213,8 @@ STDERR.puts "#{needed_assignments.count} assignments to assign"
 Typingpool::Amazon.setup(:sandbox => options[:sandbox], :config => config)
 
 if options[:fixture]
+  require 'typingpool/utility/test'
+  include Typingpool::Utility::Test
   vcr_load(options[:fixture], config, not(options[:fixturerecord]), {
                              :preserve_exact_body_bytes => true,
                              :match_requests_on => [:method, vcr_core_host_matcher]
